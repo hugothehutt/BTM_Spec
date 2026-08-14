@@ -1,0 +1,115 @@
+# BTM Engine — Architecture Specification
+
+A cross-market optimisation engine for a behind-the-meter battery, co-optimising
+day-ahead spot, continuous intraday, and aFRR (capacity + energy) against peak
+shaving, load shifting and arbitrage, under asset, POI and German grid-fee
+constraints.
+
+**This repository contains no implementation.** It contains the normative
+contracts, the layer designs, the compliance architecture and the sequencing
+plan. Implementation happens in the engine repository against these documents.
+
+---
+
+## Status of this specification
+
+| Part | Status |
+|---|---|
+| Layer model and clocks | Normative |
+| Units, signs, time grid | Normative |
+| ADR-001 … ADR-014 | Accepted |
+| ADR-015 (open register) | Open — three decisions deferred by design |
+| Seam contracts C1–C6 | Normative, versioned |
+| Layer designs L0–L5 | Normative for structure, indicative for algorithm choice |
+| Compliance architecture | Normative |
+| Implementation plan | Advisory |
+| `RECONCILIATION.md` | Cross-consistency findings: 16 resolved, 8 open |
+
+Three decisions are deliberately **deferred** and tracked in `01-adr/ADR-015`:
+the MILP solver (Gurobi intended), the per-tick latency budget, and intraday
+fill-model fidelity. Nothing in this specification depends on them. Where a
+document must reference one, it references the *abstraction*, never the choice.
+
+---
+
+## How to read this
+
+Read in this order. Each part assumes the previous one.
+
+1. `00-overview/01-system-model.md` — the layer model, the two feedback edges
+   and how they are resolved, the four clocks. **Start here.**
+2. `00-overview/02-conventions.md` — units, sign conventions, the time grid,
+   naming. Every other document depends on these being unambiguous.
+3. `01-adr/` — the fifteen decisions that are expensive to reverse, each with
+   context, decision, consequences and the rejected alternatives.
+4. `03-contracts/` — the six seams. These are the frozen surface. If you read
+   only one section, read `C0-conventions` and `C2-valuation-to-planner`.
+5. `02-layers/` — the internals of each layer.
+6. `04-compliance/` — how we know it works: the seven test levels.
+7. `05-implementation/` — sequencing and the agent playbook.
+8. `RECONCILIATION.md` — what was inconsistent and how it was resolved, plus the
+   eight small decisions still open. Read before starting W0.
+
+---
+
+## The one-paragraph summary
+
+The engine is a strictly layered pipeline. **Belief** is a bitemporal,
+content-addressed view over market and site data that can physically not return
+information the engine did not yet know. **Valuation** turns beliefs into
+*linearizable economic primitives* — piecewise-linear curves, epigraph
+coefficients, bounds — never into scalar prices, because peak and reserve terms
+are not linear in the decision. **Planner** composes those primitives into a
+single MILP family solved at staged market gates, carrying a commitment ledger
+forward, and emits order *intent*. **Execution** is the pre-existing market
+simulation and is treated as an external system behind a thin adapter.
+**Settlement** recomputes the truth ex post and decomposes the gap between
+planned and realised value into four attributable buckets. A sixth component,
+the **State/Value store**, holds everything that must survive a tick — realised
+peak, tariff qualification state, and the end-of-horizon value function V(SOC) —
+and is the only path by which information flows backwards, always with a
+one-tick lag.
+
+---
+
+## Repository map
+
+```
+00-overview/     system model, conventions
+01-adr/          architecture decision records (stable IDs, referenced everywhere)
+02-layers/       per-layer internal design (L0-L5)
+03-contracts/    the six seams — the frozen surface (C0 conventions, C1-C6)
+04-compliance/   invariants, property tests, replay, gap instrumentation (T0-T6)
+05-implementation/ workstreams, sequencing, agent playbook
+stubs/           C# interface stubs — signatures only, no bodies
+RECONCILIATION.md  cross-consistency findings and open decisions
+```
+
+## The five architectural corrections
+
+The original five-layer framing was sound. Five things in it did not survive
+contact with the detail, and each is now an ADR:
+
+1. **The graph had a cycle.** λ_SOC is a Planner dual and `peak_to_go` is a
+   Settlement output, yet both sat in Valuation. Resolved by L0 and a strict
+   forward-within-a-tick, lagged-across-ticks rule (ADR-006).
+2. **λ_SOC as a scalar misprices the curve.** Replaced by a concave piecewise
+   linear V(SOC); λ becomes an *output*, the subgradient at the optimum (ADR-007).
+3. **"Publish functions, not scalars" needed a form.** Five linearizable
+   primitives, so Valuation can express non-linear economics and the Planner
+   stays a MILP of statically known class (ADR-008).
+4. **Hard pre-allocation of aFRR capacity is a primal restriction** — it deletes
+   options and the loss is invisible. Replaced by a *dual price* for headroom,
+   discovered by Lagrangian decomposition, with a certified gap (ADR-010).
+5. **The tariff regime is about to change.** AgNes moves the Leistungspreis to a
+   booked-capacity structure from 2029, and §19(2) intensive-use qualification is
+   a cliff that battery operation directly moves. `PeakView` is a plug-in and
+   qualification state is a dimension of V (ADR-011).
+
+## Change discipline
+
+A change to any file in `03-contracts/` requires, in the same commit:
+its version bump, an update to the affected layer designs, and an update to the
+corresponding conformance tests. This rule is the single most important process
+constraint in the project and is restated in the engine repository's
+`CLAUDE.md`.
