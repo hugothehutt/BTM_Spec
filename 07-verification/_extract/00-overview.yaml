@@ -1,0 +1,575 @@
+# 00-overview/01-system-model.md
+- id: CLM-0001
+  statement: "The engine has six components: five form the pipeline and the sixth exists to make the pipeline acyclic."
+  owner: 00-overview/01-system-model.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0002
+  statement: "L0 is stateful by definition and holds everything that survives a tick: realised peak, tariff qualification state, commitment ledger, V(SOC)."
+  owner: 00-overview/01-system-model.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0003
+  statement: L1 Belief is a pure read over immutable data and is the single source of truth about the world as known at a point in time.
+  owner: 00-overview/01-system-model.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0004
+  statement: L2 Valuation is a pure function mapping beliefs to linearizable economic primitives.
+  owner: 00-overview/01-system-model.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0005
+  statement: L3 Planner is a pure function given a solver seed, mapping primitives and commitments to order intent.
+  owner: 00-overview/01-system-model.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0006
+  statement: L4 Execution is an external, pre-existing simulator that maps order intent to market outcomes.
+  owner: 00-overview/01-system-model.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0007
+  statement: L5 Settlement is a pure function mapping outcomes to ex-post truth, P&L attribution and error decomposition.
+  owner: 00-overview/01-system-model.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0008
+  statement: L1, L2, L3 and L5 being pure functions of their declared inputs is what makes every seam independently recordable, replayable and property-testable.
+  owner: 00-overview/01-system-model.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0009
+  statement: Any hidden state in L2 or L3 destroys the independent recordability, replayability and property-testability of every seam.
+  owner: 00-overview/01-system-model.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0010
+  statement: The one-directional flow L1 to L2 to L3 to L4 to L5, as drawn, is not acyclic.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0011
+  statement: λ_SOC is a dual variable of the Planner's own optimisation, so Valuation cannot compute it without solving the Planner's problem.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0012
+  statement: PeakView prices the marginal kW of grid peak, which requires the peak already realised in the current accounting period, and that is a Settlement output.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0013
+  statement: The §19(2) qualification state — accumulated full-load hours and HLZF exposure — is realised history.
+  owner: 00-overview/01-system-model.md §2
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0014
+  statement: λ_SOC and peak_to_go are both feedback edges from downstream components to upstream components.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0015
+  statement: All feedback is strictly forward within a tick and lagged across ticks, passing through L0.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0016
+  statement: Within a single tick every arrow in the component graph points right.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0017
+  statement: L0 is read at the top of the tick and written at the end of the tick.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0018
+  statement: No component reads a value written later in the same tick.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0019
+  statement: Acyclicity within a tick is machine-checkable by the T3 acyclicity audit.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0020
+  statement: L2 publishes the value function V(SOC) as a concave piecewise-linear curve and does not publish a scalar λ_SOC.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0021
+  statement: V(SOC) is produced by the slow loop and read from L0.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0022
+  statement: The Planner obtains λ_SOC endogenously as the subgradient of V at the optimal terminal SOC.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0023
+  statement: Publishing V(SOC) rather than a scalar λ_SOC removes the circularity between Valuation and Planner.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0024
+  statement: Publishing V(SOC) is strictly more accurate than marking a scalar, because it prices the whole SOC distribution rather than a linearisation around a guess.
+  owner: 00-overview/01-system-model.md §2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0025
+  statement: "The engine is driven by four distinct clocks, not one loop: C_accounting, C_slow, C_gate and C_tick."
+  owner: 00-overview/01-system-model.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0026
+  statement: Each of the four clocks has a different information set and a different irreversibility.
+  owner: 00-overview/01-system-model.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0027
+  statement: C_accounting runs on the month and year boundary and drives peak accounting reset and §19(2) qualification evaluation.
+  owner: 00-overview/01-system-model.md §3
+  class: regulatory
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0028
+  statement: A qualification lost in an accounting period is lost for that period and cannot be recovered.
+  owner: 00-overview/01-system-model.md §3
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0029
+  statement: C_slow runs daily or on material state change, drives recomputation of V(SOC, peak_state, qualification_state) and recalibration of the fill and activation models, and is cheap to redo.
+  owner: 00-overview/01-system-model.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0030
+  statement: C_gate is market-defined, drives binding submissions, and a submission becomes a commitment binding at the gate.
+  owner: 00-overview/01-system-model.md §3
+  class: regulatory
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0031
+  statement: C_tick is event-driven and sub-gate, drives continuous intraday re-optimisation and dispatch, and its decisions are reversible until the ID gate.
+  owner: 00-overview/01-system-model.md §3
+  class: regulatory
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0032
+  statement: Gate times are configuration and never code, living in a MarketCalendar loaded from data, versioned, and replayed with the backtest.
+  owner: 00-overview/01-system-model.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0033
+  statement: Market rules change, so a market rule change must be a data change and not a code change.
+  owner: 00-overview/01-system-model.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0034
+  statement: Every solve is stamped with the clock that triggered it, and the clock stamp is part of the content hash of the resulting plan.
+  owner: 00-overview/01-system-model.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0035
+  statement: Two solves at the same wall time triggered by different clocks are different artefacts.
+  owner: 00-overview/01-system-model.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0036
+  statement: C_slow output is an input to the Planner and never a dependency, so the Planner never blocks on the slow loop.
+  owner: 00-overview/01-system-model.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0037
+  statement: If the slow loop has not run, the Planner uses the last valid V(SOC) with a staleness penalty.
+  owner: 00-overview/01-system-model.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0038
+  statement: Each seam exists because the two sides have different rates of change, different failure modes, or different testability.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0039
+  statement: Belief changes when data sources change and Valuation changes when economics change.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0040
+  statement: Crossing the C1 seam with raw arrays would let a data-source change silently alter a price.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0041
+  statement: The C1 contract carries values and quality metadata and never handles into Belief storage.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0042
+  statement: C2 is the seam that carries the most design load.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0043
+  statement: Valuation knows economics but not feasibility, and the Planner knows feasibility but must not re-derive economics.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0044
+  statement: C2 carries linearizable primitives so that Valuation can express non-linear economics without the Planner needing to know what a bid curve is.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0045
+  statement: L4 Execution is a pre-existing, strategy-independent simulator.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0046
+  statement: The Planner emits intent — what orders, at what price and volume, with what validity — and nothing about how they are routed.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0047
+  statement: Emitting intent keeps the Planner testable without a market and keeps the simulator replaceable by a real venue adapter.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0048
+  statement: Settlement can reconstruct ex-post truth from fills, activations and meter data alone, with no access to what the Planner intended.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0049
+  statement: Denying Settlement access to Planner intent is what prevents ex-post accounting being contaminated by ex-ante belief.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0050
+  statement: C5 Settlement to State is the only backwards edge in the system.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0051
+  statement: C5 carries realised peak, qualification progress, closed commitments and the error attribution that feeds the slow loop.
+  owner: 00-overview/01-system-model.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0052
+  statement: L4 exists and is fixed, and this specification treats it as an external system with a defined adapter.
+  owner: 00-overview/01-system-model.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0053
+  statement: Forecasts enter the engine through L1 as data with declared provenance and quality.
+  owner: 00-overview/01-system-model.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0054
+  statement: Model training is an offline concern and the engine consumes forecast artefacts rather than fitting them online.
+  owner: 00-overview/01-system-model.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0055
+  statement: "v1 is a single site, single POI, single battery system."
+  owner: 00-overview/01-system-model.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0056
+  statement: Multi-asset operation is anticipated in the contracts by keying every quantity by AssetId and PoiId, but is not designed for.
+  owner: 00-overview/01-system-model.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0057
+  statement: Sub-second dispatch and aFRR activation response are a separate, simpler control layer downstream of the Planner's setpoints.
+  owner: 00-overview/01-system-model.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null

@@ -1,0 +1,239 @@
+# statement	owner	class	blast_radius	br_source	anchors	vague
+# ---- 00-overview/01-system-model.md ----
+The engine has six components: five form the pipeline and the sixth exists to make the pipeline acyclic.	00-overview/01-system-model.md §1	analytic	very-expensive	argued
+L0 is stateful by definition and holds everything that survives a tick: realised peak, tariff qualification state, commitment ledger, V(SOC).	00-overview/01-system-model.md §1	analytic	very-expensive	argued
+L1 Belief is a pure read over immutable data and is the single source of truth about the world as known at a point in time.	00-overview/01-system-model.md §1	analytic	very-expensive	ADR-004	ADR-004
+L2 Valuation is a pure function mapping beliefs to linearizable economic primitives.	00-overview/01-system-model.md §1	analytic	very-expensive	ADR-008	ADR-008
+L3 Planner is a pure function given a solver seed, mapping primitives and commitments to order intent.	00-overview/01-system-model.md §1	analytic	very-expensive	ADR-013	ADR-013
+L4 Execution is an external, pre-existing simulator that maps order intent to market outcomes.	00-overview/01-system-model.md §1	analytic	moderate	argued
+L5 Settlement is a pure function mapping outcomes to ex-post truth, P&L attribution and error decomposition.	00-overview/01-system-model.md §1	analytic	very-expensive	argued
+L1, L2, L3 and L5 being pure functions of their declared inputs is what makes every seam independently recordable, replayable and property-testable.	00-overview/01-system-model.md §1	analytic	very-expensive	argued
+Any hidden state in L2 or L3 destroys the independent recordability, replayability and property-testability of every seam.	00-overview/01-system-model.md §1	analytic	very-expensive	argued
+The one-directional flow L1 to L2 to L3 to L4 to L5, as drawn, is not acyclic.	00-overview/01-system-model.md §2	analytic	very-expensive	ADR-006	ADR-006
+λ_SOC is a dual variable of the Planner's own optimisation, so Valuation cannot compute it without solving the Planner's problem.	00-overview/01-system-model.md §2	analytic	expensive-later	ADR-007	ADR-007
+PeakView prices the marginal kW of grid peak, which requires the peak already realised in the current accounting period, and that is a Settlement output.	00-overview/01-system-model.md §2	analytic	very-expensive	ADR-006	ADR-006
+The §19(2) qualification state — accumulated full-load hours and HLZF exposure — is realised history.	00-overview/01-system-model.md §2	regulatory	expensive-later	ADR-011	ADR-011
+λ_SOC and peak_to_go are both feedback edges from downstream components to upstream components.	00-overview/01-system-model.md §2	analytic	very-expensive	ADR-006	ADR-006
+All feedback is strictly forward within a tick and lagged across ticks, passing through L0.	00-overview/01-system-model.md §2	analytic	very-expensive	ADR-006	ADR-006
+Within a single tick every arrow in the component graph points right.	00-overview/01-system-model.md §2	analytic	very-expensive	ADR-006	ADR-006
+L0 is read at the top of the tick and written at the end of the tick.	00-overview/01-system-model.md §2	analytic	very-expensive	ADR-006	ADR-006
+No component reads a value written later in the same tick.	00-overview/01-system-model.md §2	analytic	very-expensive	ADR-006	ADR-006
+Acyclicity within a tick is machine-checkable by the T3 acyclicity audit.	00-overview/01-system-model.md §2	analytic	very-expensive	ADR-013	ADR-013
+L2 publishes the value function V(SOC) as a concave piecewise-linear curve and does not publish a scalar λ_SOC.	00-overview/01-system-model.md §2	analytic	expensive-later	ADR-007	ADR-007
+V(SOC) is produced by the slow loop and read from L0.	00-overview/01-system-model.md §2	analytic	expensive-later	ADR-007	ADR-007
+The Planner obtains λ_SOC endogenously as the subgradient of V at the optimal terminal SOC.	00-overview/01-system-model.md §2	analytic	expensive-later	ADR-007	ADR-007
+Publishing V(SOC) rather than a scalar λ_SOC removes the circularity between Valuation and Planner.	00-overview/01-system-model.md §2	analytic	expensive-later	ADR-007	ADR-007
+Publishing V(SOC) is strictly more accurate than marking a scalar, because it prices the whole SOC distribution rather than a linearisation around a guess.	00-overview/01-system-model.md §2	analytic	expensive-later	ADR-007	ADR-007	y
+The engine is driven by four distinct clocks, not one loop: C_accounting, C_slow, C_gate and C_tick.	00-overview/01-system-model.md §3	analytic	moderate	ADR-002	ADR-002
+Each of the four clocks has a different information set and a different irreversibility.	00-overview/01-system-model.md §3	analytic	moderate	ADR-002	ADR-002
+C_accounting runs on the month and year boundary and drives peak accounting reset and §19(2) qualification evaluation.	00-overview/01-system-model.md §3	regulatory	moderate	ADR-002	ADR-002
+A qualification lost in an accounting period is lost for that period and cannot be recovered.	00-overview/01-system-model.md §3	regulatory	expensive-later	ADR-011	ADR-011
+C_slow runs daily or on material state change, drives recomputation of V(SOC, peak_state, qualification_state) and recalibration of the fill and activation models, and is cheap to redo.	00-overview/01-system-model.md §3	analytic	moderate	ADR-002	ADR-002	y
+C_gate is market-defined, drives binding submissions, and a submission becomes a commitment binding at the gate.	00-overview/01-system-model.md §3	regulatory	moderate	ADR-002	ADR-002
+C_tick is event-driven and sub-gate, drives continuous intraday re-optimisation and dispatch, and its decisions are reversible until the ID gate.	00-overview/01-system-model.md §3	regulatory	moderate	ADR-002	ADR-002
+Gate times are configuration and never code, living in a MarketCalendar loaded from data, versioned, and replayed with the backtest.	00-overview/01-system-model.md §3	analytic	moderate	ADR-002	ADR-002
+Market rules change, so a market rule change must be a data change and not a code change.	00-overview/01-system-model.md §3	analytic	moderate	ADR-002	ADR-002
+Every solve is stamped with the clock that triggered it, and the clock stamp is part of the content hash of the resulting plan.	00-overview/01-system-model.md §3	analytic	very-expensive	ADR-013	ADR-013
+Two solves at the same wall time triggered by different clocks are different artefacts.	00-overview/01-system-model.md §3	analytic	very-expensive	ADR-013	ADR-013
+C_slow output is an input to the Planner and never a dependency, so the Planner never blocks on the slow loop.	00-overview/01-system-model.md §3	analytic	moderate	ADR-002	ADR-002
+If the slow loop has not run, the Planner uses the last valid V(SOC) with a staleness penalty.	00-overview/01-system-model.md §3	analytic	moderate	ADR-014	ADR-014
+Each seam exists because the two sides have different rates of change, different failure modes, or different testability.	00-overview/01-system-model.md §4	analytic	very-expensive	argued		y
+Belief changes when data sources change and Valuation changes when economics change.	00-overview/01-system-model.md §4	analytic	moderate	argued
+Crossing the C1 seam with raw arrays would let a data-source change silently alter a price.	00-overview/01-system-model.md §4	analytic	very-expensive	ADR-004	ADR-004
+The C1 contract carries values and quality metadata and never handles into Belief storage.	00-overview/01-system-model.md §4	analytic	very-expensive	ADR-004	ADR-004
+C2 is the seam that carries the most design load.	00-overview/01-system-model.md §4	analytic	very-expensive	ADR-008	ADR-008	y
+Valuation knows economics but not feasibility, and the Planner knows feasibility but must not re-derive economics.	00-overview/01-system-model.md §4	analytic	very-expensive	ADR-008	ADR-008
+C2 carries linearizable primitives so that Valuation can express non-linear economics without the Planner needing to know what a bid curve is.	00-overview/01-system-model.md §4	analytic	very-expensive	ADR-008	ADR-008
+L4 Execution is a pre-existing, strategy-independent simulator.	00-overview/01-system-model.md §4	analytic	moderate	ADR-012	ADR-012
+The Planner emits intent — what orders, at what price and volume, with what validity — and nothing about how they are routed.	00-overview/01-system-model.md §4	analytic	moderate	ADR-012	ADR-012
+Emitting intent keeps the Planner testable without a market and keeps the simulator replaceable by a real venue adapter.	00-overview/01-system-model.md §4	analytic	moderate	ADR-012	ADR-012
+Settlement can reconstruct ex-post truth from fills, activations and meter data alone, with no access to what the Planner intended.	00-overview/01-system-model.md §4	analytic	very-expensive	argued
+Denying Settlement access to Planner intent is what prevents ex-post accounting being contaminated by ex-ante belief.	00-overview/01-system-model.md §4	analytic	very-expensive	argued
+C5 Settlement to State is the only backwards edge in the system.	00-overview/01-system-model.md §4	analytic	very-expensive	ADR-006	ADR-006
+C5 carries realised peak, qualification progress, closed commitments and the error attribution that feeds the slow loop.	00-overview/01-system-model.md §4	analytic	very-expensive	ADR-006	ADR-006
+L4 exists and is fixed, and this specification treats it as an external system with a defined adapter.	00-overview/01-system-model.md §5	analytic	moderate	argued
+Forecasts enter the engine through L1 as data with declared provenance and quality.	00-overview/01-system-model.md §5	analytic	very-expensive	ADR-004	ADR-004
+Model training is an offline concern and the engine consumes forecast artefacts rather than fitting them online.	00-overview/01-system-model.md §5	analytic	moderate	argued
+v1 is a single site, single POI, single battery system.	00-overview/01-system-model.md §5	analytic	expensive-later	argued
+Multi-asset operation is anticipated in the contracts by keying every quantity by AssetId and PoiId, but is not designed for.	00-overview/01-system-model.md §5	analytic	expensive-later	ADR-003	ADR-003
+Sub-second dispatch and aFRR activation response are a separate, simpler control layer downstream of the Planner's setpoints.	00-overview/01-system-model.md §5	analytic	moderate	argued
+# ---- 00-overview/02-conventions.md ----
+There are two distinct sign reference frames and they must never be conflated.	00-overview/02-conventions.md §1	analytic	expensive-later	ADR-003	ADR-003
+In the battery frame p_batt > 0 is discharge, the battery delivering energy, and p_batt < 0 is charge, the battery absorbing energy.	00-overview/02-conventions.md §1	analytic	expensive-later	ADR-003	ADR-003
+The battery sign convention aligns with the market convention that a positive traded quantity is a sale, so every market-facing quantity shares the sign of p_batt.	00-overview/02-conventions.md §1	analytic	expensive-later	ADR-003	ADR-003
+In the POI frame p_poi > 0 is import from the grid and p_poi < 0 is export to the grid.	00-overview/02-conventions.md §1	analytic	expensive-later	ADR-003	ADR-003
+The Leistungspreis, §19(2) StromNEV and all network charges are levied on import peak.	00-overview/02-conventions.md §1	regulatory	expensive-later	ADR-011	ADR-011
+The quantity the tariff measures must have the sign that makes peak a maximum rather than a minimum.	00-overview/02-conventions.md §1	analytic	expensive-later	ADR-003	ADR-003
+The POI bridge is p_poi[t] = load[t] − Σ_k ( pv_avail[t,k] − q[t,k] ) − p_batt[t], in kW slot-average.	00-overview/02-conventions.md §1	analytic	very-expensive	argued
+pv_avail is a belief about available generation and q ≥ 0 is curtailed generation, which is a decision.	00-overview/02-conventions.md §1	analytic	moderate	ADR-016	ADR-016
+Writing the POI bridge without q makes the generation allocation an equality over non-negative terms, which is infeasible whenever available PV exceeds load plus charge headroom plus the export limit.	00-overview/02-conventions.md §1	analytic	moderate	ADR-016	ADR-016
+The condition under which the q-free bridge is infeasible is an ordinary condition, not an edge case.	00-overview/02-conventions.md §1	empirical	moderate	ADR-016	ADR-016	y
+Losses are inside p_batt.	00-overview/02-conventions.md §1	analytic	expensive-later	argued
+The sign frames are enforced as distinct C# value types BatteryPowerKw, PoiPowerKw, LoadKw and PvKw, which do not implicitly convert.	00-overview/02-conventions.md §1	analytic	expensive-later	ADR-003	ADR-003
+The POI bridge is the only sanctioned conversion between the two frames and lives in exactly one place.	00-overview/02-conventions.md §1	analytic	expensive-later	ADR-003	ADR-003
+Typed sign frames cost a little ceremony and eliminate an entire bug class.	00-overview/02-conventions.md §1	empirical	expensive-later	ADR-003	ADR-003	y
+Power is in kW with type *PowerKw; site scale is kW while aFRR is quoted in MW, converted at the market adapter only.	00-overview/02-conventions.md §2	analytic	expensive-later	ADR-003	ADR-003
+Energy is in kWh with type EnergyKwh.	00-overview/02-conventions.md §2	analytic	expensive-later	ADR-003	ADR-003
+Reserve capacity is in MW with type ReserveMw and is never mixed with kW types.	00-overview/02-conventions.md §2	analytic	expensive-later	ADR-003	ADR-003
+Energy price is in EUR/MWh with type EnergyPrice, by market convention, and not EUR/kWh.	00-overview/02-conventions.md §2	analytic	expensive-later	ADR-003	ADR-003
+Reserve capacity price is in EUR/MW/h with type CapacityPrice, per hour of the product block.	00-overview/02-conventions.md §2	regulatory	expensive-later	ADR-003	ADR-003
+Network peak price is in EUR/kW/period with type PeakPrice, where the period is a year or a month depending on the regime.	00-overview/02-conventions.md §2	regulatory	expensive-later	ADR-011	ADR-011
+Tariff components — levies, taxes and surcharges — are normalised to EUR/MWh with type EnergyPrice.	00-overview/02-conventions.md §2	analytic	expensive-later	ADR-003	ADR-003
+SOC is in kWh with type EnergyKwh, absolute and never percent internally.	00-overview/02-conventions.md §2	analytic	expensive-later	ADR-003	ADR-003
+SOC as a fraction 0..1 with type SocFraction is presentation only and never appears in the objective.	00-overview/02-conventions.md §2	analytic	expensive-later	ADR-003	ADR-003
+Efficiency is a one-way fraction 0..1 with type Efficiency, and round-trip efficiency is η_c · η_d.	00-overview/02-conventions.md §2	analytic	expensive-later	ADR-003	ADR-003
+Duration is a slot count integer with type SlotSpan and is never seconds in business logic.	00-overview/02-conventions.md §2	analytic	expensive-later	ADR-003	ADR-003
+The objective function is denominated in EUR and nothing else.	00-overview/02-conventions.md §2	analytic	very-expensive	argued
+Every term converts to EUR at its own boundary, and a term that emits anything else is a contract violation.	00-overview/02-conventions.md §2	analytic	very-expensive	argued
+kW to MW conversion happens only at market adapters, is a typed operation, and there is exactly one 1000.0 in the codebase per direction.	00-overview/02-conventions.md §2	analytic	expensive-later	ADR-003	ADR-003
+Losses are charged at the battery terminal, one-way, on each direction.	00-overview/02-conventions.md §3	analytic	expensive-later	argued
+The SOC state equation is soc[t+1] = soc[t] + Δt · ( η_c · p_charge[t] − p_discharge[t] / η_d ).	00-overview/02-conventions.md §3	analytic	very-expensive	argued
+Battery power decomposes as p_batt[t] = p_discharge[t] − p_charge[t] with p_charge[t] ≥ 0 and p_discharge[t] ≥ 0.	00-overview/02-conventions.md §3	analytic	very-expensive	argued
+Charge and discharge must be separate non-negative variables whenever η < 1, because a single signed variable lets the optimiser round-trip for free through the loss term.	00-overview/02-conventions.md §3	analytic	very-expensive	argued
+With η_c · η_d < 1 and non-negative energy prices, simultaneous charge and discharge is never optimal.	00-overview/02-conventions.md §3	analytic	very-expensive	argued
+Because simultaneous charge and discharge is never optimal under those conditions, the complementarity constraint is usually redundant and can be omitted.	00-overview/02-conventions.md §3	analytic	very-expensive	argued
+The complementarity constraint is not redundant when negative prices, an aFRR activation obligation, or a peak-driven incentive to import make burning energy profitable.	00-overview/02-conventions.md §3	analytic	very-expensive	argued
+The simultaneity policy is to omit the binary by default, enable it under a configuration flag, and run an invariant monitor that alerts whenever a solution contains simultaneous charge and discharge above tolerance.	00-overview/02-conventions.md §3	analytic	very-expensive	argued	INV-P-07
+Omitting the simultaneity binary by default gives LP-speed in the common case and correctness detection in the rare one.	00-overview/02-conventions.md §3	empirical	very-expensive	argued		y
+Auxiliary load — HVAC, BMS, standby — is modelled explicitly as a LoadKw component rather than folded into η, so it appears in the POI balance and therefore in the peak.	00-overview/02-conventions.md §3	analytic	expensive-later	argued
+The canonical resolution is 15 minutes, the market time unit.	00-overview/02-conventions.md §4	analytic	moderate	ADR-002	ADR-002
+SlotId is an int64 count of quarter-hours since the Unix epoch in UTC, and is monotone, gap-free and DST-independent.	00-overview/02-conventions.md §4.1	analytic	moderate	ADR-002	ADR-002
+All internal timestamps are UTC and there are no local-time fields in any contract.	00-overview/02-conventions.md §4.1	analytic	moderate	ADR-002	ADR-002
+Tariff logic is not UTC: Hochlastzeitfenster, monthly and annual peak accounting, and §19(2) qualification are defined on the Europe/Berlin civil calendar.	00-overview/02-conventions.md §4.2	regulatory	moderate	ADR-002	ADR-002
+A civil day has 92, 96, or 100 quarter-hour slots depending on DST transitions, so any code that assumes 96 is wrong twice a year.	00-overview/02-conventions.md §4.2	analytic	moderate	ADR-002	ADR-002
+The DST spring-forward day has a nonexistent local hour and the autumn transition has a repeated local hour, and repeated local times are distinguished only by UTC offset.	00-overview/02-conventions.md §4.2	analytic	moderate	ADR-002	ADR-002
+Month boundaries for peak accounting are local-midnight boundaries, which are not fixed UTC offsets across the year.	00-overview/02-conventions.md §4.2	regulatory	moderate	ADR-002	ADR-002
+A CivilCalendar service is the only component permitted to map SlotId to local date, local time and tariff window.	00-overview/02-conventions.md §4.2	analytic	moderate	ADR-002	INV-T-01; INV-T-02; INV-T-03; INV-T-04
+The CivilCalendar is backed by a pinned IANA tzdata version recorded in the run manifest, because tzdata itself changes and a backtest must be reproducible.	00-overview/02-conventions.md §4.2	analytic	very-expensive	ADR-013	ADR-013
+Every calendar-dependent test includes both DST transition days as fixtures.	00-overview/02-conventions.md §4.2	analytic	moderate	ADR-002	ADR-002
+H_plan, the Planner's optimisation horizon, must span at least to the end of the current accounting period in value terms.	00-overview/02-conventions.md §4.3	analytic	very-expensive	argued
+H_plan does not span to the end of the accounting period: it is truncated, and the truncation is priced by V(SOC) and by the peak state carried in L0.	00-overview/02-conventions.md §4.3	analytic	expensive-later	ADR-007	ADR-007
+The truncation of H_plan is why the value function is not optional.	00-overview/02-conventions.md §4.3	analytic	expensive-later	ADR-007	ADR-007
+H_hot, the Belief hot window, satisfies H_hot ≥ H_plan and bounds memory.	00-overview/02-conventions.md §4.3	analytic	very-expensive	ADR-004	ADR-004
+Every fact carries two times: valid_time, the slot the fact is about, and knowledge_time, when the engine learned it.	00-overview/02-conventions.md §4.4	analytic	very-expensive	ADR-004	ADR-004
+A read is always of the form Get(series, valid_time, as_of: knowledge_time).	00-overview/02-conventions.md §4.4	analytic	very-expensive	ADR-004	ADR-004
+There is no API that returns a fact with knowledge_time greater than as_of.	00-overview/02-conventions.md §4.4	analytic	very-expensive	ADR-004	ADR-004
+The bitemporal read discipline is structural rather than disciplinary, and it is what makes backtests trustworthy.	00-overview/02-conventions.md §4.4	analytic	very-expensive	ADR-004	ADR-004
+Contract DTOs are named as a <Seam><Payload> record.	00-overview/02-conventions.md §5	analytic	cheap	argued
+Valuation views are named <Lever>View.	00-overview/02-conventions.md §5	analytic	cheap	argued
+Emitted terms are named <Shape>Term.	00-overview/02-conventions.md §5	analytic	cheap	argued
+Invariants are named INV-<layer>-<nn>.	00-overview/02-conventions.md §5	analytic	cheap	argued
+Test levels are named T0 to T6.	00-overview/02-conventions.md §5	analytic	cheap	argued
+Decisions are named ADR-nnn.	00-overview/02-conventions.md §5	analytic	cheap	argued
+Contracts are named C0 to C5.	00-overview/02-conventions.md §5	analytic	cheap	argued
+Degradation modes are named in UPPERCASE.	00-overview/02-conventions.md §5	analytic	cheap	argued
+The invariant layer letters are D for Belief/data, V for Valuation, P for Planner, X for Execution boundary, S for Settlement, T for Time/calendar and G for Global.	00-overview/02-conventions.md §5	analytic	cheap	argued
+Storage and transport use float32 for forecast ensembles and price series where the source precision does not justify more.	00-overview/02-conventions.md §6	analytic	expensive-later	ADR-003	ADR-003
+Storage and transport use float64 for money, SOC, and anything entering the objective.	00-overview/02-conventions.md §6	analytic	expensive-later	ADR-003	ADR-003
+NaN is never a valid value in a contract, and missing is expressed by an explicit quality or provenance field rather than by a sentinel.	00-overview/02-conventions.md §6	analytic	very-expensive	argued	INV-G-01
+Money comparisons use an absolute tolerance of 1e-6 EUR and power comparisons an absolute tolerance of 1e-6 kW.	00-overview/02-conventions.md §6	analytic	expensive-later	ADR-003	ADR-003
+The numeric comparison tolerances live in one constants file and are referenced, never re-typed.	00-overview/02-conventions.md §6	analytic	cheap	argued
+Rounding to market tick sizes and lot sizes happens once, at the order intent boundary C3, and the rounded value is what Settlement reconciles against.	00-overview/02-conventions.md §6	analytic	moderate	ADR-012	ADR-012
+Rounding to tick and lot sizes earlier than C3 corrupts the optimality gap measurement.	00-overview/02-conventions.md §6	analytic	moderate	ADR-010	ADR-010
+# ---- 00-overview/03-mispel-reference.md ----
+Basisfall A1 "Stromspeicher" is one Entnahme-/Einspeisestelle, one EE-Anlage, one Stromspeicher without Ladepunkt, plus sonstiger Verbrauch.	00-overview/03-mispel-reference.md §1	regulatory	very-expensive	ADR-017	ADR-017
+A1 is measured by two quarter-hour-accurate Zweirichtungszähler, Z1 at the grid point and Z2 at the storage.	00-overview/03-mispel-reference.md §1	regulatory	very-expensive	ADR-017	ADR-017
+Sonderfall A5 is A1 with several gleichartige EE-Anlagen behind one Einspeisestelle, settled over a joint measurement per § 24 Abs. 3 (i.V.m. § 19 Abs. 3 S. 2 Halbsatz 2) EEG.	00-overview/03-mispel-reference.md §1	regulatory	very-expensive	ADR-017	ADR-017
+Measurement in A5 is unchanged from A1: Z1 and Z2 suffice.	00-overview/03-mispel-reference.md §1	regulatory	very-expensive	ADR-017	ADR-017
+The sole addition in A5 is the leistungsgewichteter Zuordnungs-Faktor ZF, splitting the förderfähige Netzeinspeisung per plant so each is settled at its own AW.	00-overview/03-mispel-reference.md §1	regulatory	very-expensive	ADR-017	ADR-017
+In A5 the Saldierung, the Speicherverluste and the umlagebelasteter Netzbezug are determined as in A1.	00-overview/03-mispel-reference.md §1	regulatory	very-expensive	ADR-017	ADR-017
+The scope is the Abgrenzungsoption only, with no Pauschaloption and no Ausschließlichkeitsoption.	00-overview/03-mispel-reference.md §1	regulatory	very-expensive	ADR-017	ADR-017
+PV is in Direktvermarktung only, with no Volleinspeisung, no Indifferenzbereich, no Ladepunkt and no A2, A3, A4 or A6.	00-overview/03-mispel-reference.md §1	regulatory	very-expensive	ADR-017	ADR-017
+Energy carries two labels only: green and grey.	00-overview/03-mispel-reference.md §1	regulatory	very-expensive	ADR-017	ADR-017
+Z1NB¼ is the Netzbezug at the Entnahmestelle, in kWh per quarter-hour.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+Z1NE¼ is the Netzeinspeisung at the Einspeisestelle, in kWh per quarter-hour.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+Z2V¼ is the Verbrauch im Stromspeicher, in kWh per quarter-hour.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+Z2E¼ is the Erzeugung im Stromspeicher, in kWh per quarter-hour.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+AW¼ is the anzulegender Wert of the EE-Anlage, in EUR/MWh per quarter-hour.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+Px_inst is the installierte Leistung of EE-Anlage x per § 24 Abs. 3 S. 2 Halbsatz 2 EEG, in kW, and is static.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+For gleichartige Windenergieanlagen an Land, Referenzertrag or Standardertrag is used in place of installierte Leistung per § 24 Abs. 3 S. 2 Halbsatz 1 EEG.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+ZF is the leistungsgewichteter share of the Netzeinspeisung assigned to one plant, a static fraction between 0 and 1.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+∑M sums over the quarter-hours of a calendar month and ∑J sums over the months of a calendar year.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+Monthly and yearly boundaries in the delineation machinery are Europe/Berlin civil-calendar boundaries.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+Within the A1/A5 scope (14) is identical to (14)A1 and (19) is identical to (19)A1,A4, so (20) carries no case distinction.	00-overview/03-mispel-reference.md §2	regulatory	very-expensive	ADR-017	ADR-017
+Formula (1)¼ = MIN[ Z1NB¼ ; Z2V¼ ] is the zeitgleicher Netzstromverbrauch im Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (2)¼ = MIN[ Z1NE¼ ; Z2E¼ ] is the zeitgleiche Netzeinspeisung aus dem Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (23)¼ = Z1NE¼ − (2)¼ is the grundsätzlich förderfähige zeitgleiche Netzeinspeisung direct from the EE-Anlage, before the AW>0 condition is applied.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (24)¼ = WENN[ AW¼ > 0 ; 1 ; 0 ] is the AW>0 indicator of the quarter-hour.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (25)¼ = (24)¼ · (23)¼ is the förderfähige zeitgleiche Netzeinspeisung direct from the EE-Anlage in AW>0 hours.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (27)¼ = (24)¼ · (2)¼ is the zeitgleiche Netzeinspeisung aus dem Stromspeicher in AW>0 hours.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (3) = ∑M Z1NB¼ is the gesamter Netzbezug.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (4) = ∑M Z1NE¼ is the gesamte Netzeinspeisung.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (5) = ∑M Z2V¼ is the Verbrauch im Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (6) = ∑M Z2E¼ is the Erzeugung im Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (9) = ∑M (1)¼ is the zeitgleicher Netzstromverbrauch im Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (10) = (5) − (9) is the zeitgleicher Verbrauch von EE-Strom im Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (11) = ∑M (2)¼ is the Basiswert der zeitgleichen Netzeinspeisung aus dem Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (12) = MAX[ (6) − (5) ; 0 ] is the Fremdtankstrom.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (13) = MAX[ (11) − (12) ; 0 ] is the berücksichtigungsfähige zeitgleiche Netzeinspeisung aus dem Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (14)A1 = (6) / (5) is the Wirkungsgrad der Stromspeicherung.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (15) = (14) · (10) is the EE-Speichererzeugung.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (16) = MAX[ (13) − (15) ; 0 ] is the saldierungsfähige Netzeinspeisung.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (17)A1 = MAX[ (5) − (6) ; 0 ] is the Verluste im Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (18) = (16) / (6) is the share of the saldierungsfähige Netzeinspeisung in der Speichererzeugung.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (19)A1 = (18) · (17) is the privilegierungsfähige Stromspeicherverluste per § 21 EnFG.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (20) = MIN[ (16) + (19) ; (3) ] is the umlagereduzierende Strommenge.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (21) = (3) − (20) is the umlagebelasteter Netzbezug.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (26) = ∑M (25)¼ is the förderfähige Netzeinspeisung direct from the EE-Anlage in AW>0 hours.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (28) = MIN[ (13) ; (15) ] is the grundsätzlich förderfähige Netzeinspeisung von EE-Speichererzeugung, before the AW>0 condition is applied.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (29) = ∑M (27)¼ is the zeitgleiche Netzeinspeisung aus dem Stromspeicher in AW>0 hours.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (30) = (29) / (11) is the AW>0-Anteil der zeitgleichen Netzeinspeisung aus dem Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (31) = (30) · (28) is the förderfähige Netzeinspeisung von EE-Speichererzeugung in AW>0 hours.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (32) = (26) + (31) is the insgesamt förderfähige Netzeinspeisung.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (22) = ∑J (21) is the umlagebelasteter Netzbezug im Kalenderjahr.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (33) = ∑J (32) is the insgesamt förderfähige Netzeinspeisung im Kalenderjahr.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+In A5 the formulas (2)¼, (11), (23)¼ and (28) are reused unchanged and refer to the sum of the jointly measured plants.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (ZFx) = Px_inst / (Pa_inst + Pb_inst) is the Zuordnungs-Faktor of plant x.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (23x)¼ A5 = (ZFx) · (23)¼ is the grundsätzlich förderfähige zeitgleiche Netzeinspeisung attributed to plant x.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (24x)¼ = WENN[ AWx¼ > 0 ; 1 ; 0 ] is the AWx>0 indicator of plant x.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (25x)¼ = (24x)¼ · (23x)¼ is the förderfähige zeitgleiche Netzeinspeisung of plant x in AWx>0 hours.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (27x)¼ = (24x)¼ · (2)¼ is the zeitgleiche Netzeinspeisung aus dem Stromspeicher in AWx>0 hours.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (26x) = ∑M (25x)¼ is the monthly förderfähige Netzeinspeisung direct from plant x.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (28x)A5 = (ZFx) · (28) is the grundsätzlich förderfähige Netzeinspeisung von EE-Speichererzeugung attributed to plant x.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (29x) = ∑M (27x)¼ is the monthly zeitgleiche Netzeinspeisung aus dem Stromspeicher in AWx>0 hours.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (30x) = (29x) / (11) is the AWx>0-Anteil der zeitgleichen Netzeinspeisung aus dem Stromspeicher.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (31x) = (30x) · (28x) is the förderfähige Netzeinspeisung von EE-Speichererzeugung for plant x in AWx>0 hours.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (32x) = (26x) + (31x) is the insgesamt förderfähige Netzeinspeisung for plant x, monthly.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formula (33x) = ∑J (32x) is the insgesamt förderfähige Netzeinspeisung for plant x, yearly.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Formulas (1)¼ and (2)¼ implement the gesetzlich gewillkürte vorrangige Zuordnung: on charging, grid supply is assigned first, and on discharging, storage generation is assigned first.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+η_c and η_d are constant, non-calibrated inputs of each backtest and generate Z2V¼ and Z2E¼.	00-overview/03-mispel-reference.md §3	analytic	very-expensive	ADR-017	ADR-017
+Formula (14) deviates from η_c · η_d whenever SOC crosses a month boundary.	00-overview/03-mispel-reference.md §3	analytic	very-expensive	ADR-017	ADR-017
+Formula (14) is never fitted.	00-overview/03-mispel-reference.md §3	analytic	very-expensive	ADR-017	ADR-017
+Formula (12) has no Ladepunkt source in A1 and can be positive only through SOC carried across the month boundary.	00-overview/03-mispel-reference.md §3	analytic	very-expensive	ADR-017	ADR-017
+The source prints (29b) = ∑J (27b)¼, but by symmetry with (29a) and its own caption this is ∑M, and ∑M is what this repository uses.	00-overview/03-mispel-reference.md §3	regulatory	very-expensive	ADR-017	ADR-017
+Meters record energy per slot while engine variables are slot-average power, converted with Δt = 0.25 h in the meter-to-engine mapping and nowhere else.	00-overview/03-mispel-reference.md §4	analytic	very-expensive	ADR-017	ADR-017
+P_net = Σ_k ( pv_avail[t,k] − q[t,k] ).	00-overview/03-mispel-reference.md §4	analytic	very-expensive	ADR-017	ADR-017
+Z1NB¼ / Δt = MAX( 0, load + p_charge − P_net − p_discharge ).	00-overview/03-mispel-reference.md §4	analytic	very-expensive	ADR-017	ADR-017
+Z1NE¼ / Δt = MAX( 0, P_net + p_discharge − load − p_charge ).	00-overview/03-mispel-reference.md §4	analytic	very-expensive	ADR-017	ADR-017
+Z2V¼ / Δt = p_charge.	00-overview/03-mispel-reference.md §4	analytic	very-expensive	ADR-017	ADR-017
+Z2E¼ / Δt = p_discharge.	00-overview/03-mispel-reference.md §4	analytic	very-expensive	ADR-017	ADR-017
+Z1NB¼ · Z1NE¼ = 0, because one Zweirichtungszähler cannot import and export in one slot.	00-overview/03-mispel-reference.md §4	analytic	very-expensive	ADR-017	ADR-017
+(Z1NB¼ − Z1NE¼) / Δt = load + p_charge − P_net − p_discharge, which is the POI bridge.	00-overview/03-mispel-reference.md §4	analytic	very-expensive	ADR-017	ADR-017
+Off-take is not a control: load is fixed and no flexible loads are in scope.	00-overview/03-mispel-reference.md §5	analytic	very-expensive	ADR-017	ADR-017
+Curtailment is a priced decision and never a deterministic rule, and its effect changes branch inside the same solve.	00-overview/03-mispel-reference.md §5	analytic	moderate	ADR-016	ADR-016
+Raising q by one unit while exporting with Z1NE ≤ Z2E gives ∂(3) = 0, ∂(9) = 0, ∂(2)¼ = −1 and ∂(23)¼ = 0.	00-overview/03-mispel-reference.md §5	analytic	very-expensive	ADR-017	ADR-017
+Raising q by one unit while exporting with Z1NE > Z2E gives ∂(3) = 0, ∂(9) = 0, ∂(2)¼ = 0 and ∂(23)¼ = −1.	00-overview/03-mispel-reference.md §5	analytic	very-expensive	ADR-017	ADR-017
+Raising q by one unit while importing with Z1NB < Z2V gives ∂(3) = +1, ∂(9) = +1, ∂(2)¼ = 0 and ∂(23)¼ = 0.	00-overview/03-mispel-reference.md §5	analytic	very-expensive	ADR-017	ADR-017
+Raising q by one unit while importing with Z1NB ≥ Z2V gives ∂(3) = +1, ∂(9) = 0, ∂(2)¼ = 0 and ∂(23)¼ = 0.	00-overview/03-mispel-reference.md §5	analytic	very-expensive	ADR-017	ADR-017
+There are four curtailment regimes, each selected by which side of a MIN is active.	00-overview/03-mispel-reference.md §5	analytic	very-expensive	ADR-017	ADR-017
+The same four-regime structure holds for aFRR down-activation, which is grid-driven charging.	00-overview/03-mispel-reference.md §5	analytic	very-expensive	ADR-017	ADR-017
+No lever may carry a delineation coefficient of its own.	00-overview/03-mispel-reference.md §5	analytic	very-expensive	ADR-017	ADR-017
+The delineation machinery is monthly while the decision is quarter-hourly: (16), (18), (30) and (32) are calendar-month sums and ratios, so a quarter-hour action is valued only through its effect on the month's aggregate.	00-overview/03-mispel-reference.md §5	analytic	very-expensive	ADR-017	ADR-017
+H_plan truncation and the separable V_del must carry the monthly aggregation of the delineation machinery.	00-overview/03-mispel-reference.md §5	analytic	very-expensive	ADR-017	ADR-017
+Formula (11), the storage energy that reached the grid, is what both routes compete for, and it splits at the PV-attributed share of storage generation.	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+pv_share = (10) / (5).	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+(28) = MIN[ (11) ; (6) · pv_share ] is the green route.	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+(16) = MAX[ (11) − (6) · pv_share ; 0 ] is the grey route.	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+(28) + (16) = (13) always.	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+(16) + (19) = (16) / η_month, where η_month = (6) / (5).	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+When (9) = 0, that is with no grid charging, (31) = (29): the ratio cancels and the green route is a per-slot linear sum.	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+When load = 0, the connection never clips discharge and (12) = 0, then (16) + (19) = (9) = (3) and therefore (21) = 0 identically.	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+When (12) > 0, relief falls by (12) / η_rt.	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+(12) = 0 is arithmetically impossible to violate once monthly charge throughput exceeds η_d · E_usable / (1 − η_rt), approximately 8 charge-equivalent cycles.	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+Discharging into load forfeits both routes: such a kWh never enters (11), so it earns neither (30) · premium nor levy_rate / η_month.	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+The forfeiture of both routes by discharging into load is priced by the state equations and not by a term.	00-overview/03-mispel-reference.md §6	analytic	very-expensive	ADR-017	ADR-017
+Green and grey energy are identical everywhere behind the meter and differ only at injection to the grid.	00-overview/03-mispel-reference.md §7	regulatory	very-expensive	ADR-017	ADR-017
+Green energy becomes förderfähige Netzeinspeisung (32), in A5 per plant (32x), settled at that plant's AW and only in AW>0 quarter-hours via (24)¼.	00-overview/03-mispel-reference.md §7	regulatory	very-expensive	ADR-017	ADR-017
+Grey energy becomes saldierungsfähige Netzeinspeisung (16), which through (20) and (21) reduces the umlagebelasteter Netzbezug to zero in its own amount.	00-overview/03-mispel-reference.md §7	regulatory	very-expensive	ADR-017	ADR-017
+No Umlagen are levied on the saldierungsfähige Netzeinspeisung.	00-overview/03-mispel-reference.md §7	regulatory	very-expensive	ADR-017	ADR-017
+Formula (19)A1 extends the same relief to the privilegierungsfähige Stromspeicherverluste per § 21 EnFG, in the share (18).	00-overview/03-mispel-reference.md §7	regulatory	very-expensive	ADR-017	ADR-017
