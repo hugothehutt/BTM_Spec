@@ -180,7 +180,7 @@ public readonly record struct CapacityPrice(double Value)
 /// <summary>
 /// Network peak (demand) charge. <b>Unit: EUR/kW/period</b>, where the period is
 /// a year or a month depending on the active <see cref="TariffRegimeId"/>
-/// (ADR-011). Also carries the AgNes booked-capacity and overage rates.
+/// (ADR-011).
 /// </summary>
 /// <remarks>
 /// A horizon shorter than the accounting period must apply

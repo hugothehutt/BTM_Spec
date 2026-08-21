@@ -12,7 +12,7 @@ matters more than the fix.
 | # | Finding | Resolution |
 |---|---|---|
 | 1 | **`SpotEnergyValue` was owned by nobody.** The ownership matrix listed the owner as "the Planner objective", contradicting ADR-009 (every effect maps to exactly one *view*), `INV-V-02` (a term's `originView` must be the effect's owner — unsatisfiable if the owner is a layer), and L3 §2 ("the Planner adds no economics of its own"). The largest term in the objective had no owner. | A thin **`SpotView`** is now the normative owner (L2 §5). ADR-009 annotated to state the matrix in L2 §5 is authoritative and that no effect may be owned by the Planner. |
-| 2 | **`TermBase` enumeration mismatch.** ADR-009 listed four bases; C2 and L2 use five (adding `ReserveCapacity`). | ADR-009 corrected. Five bases. |
+| 2 | **`TermBase` enumeration mismatch.** ADR-009 listed four bases; C2 and L2 use five (adding `ReserveCapacity`). | ADR-009 corrected. Six bases, `Delineation` having since been added by ADR-017. |
 | 3 | **`StateSnapshot` had no contract.** ADR-006 asserted it "is a contract with a field table, a version and invariants like every other seam" — and no such document existed. Four documents read fields from it. | **`03-contracts/C6-state-to-layers.md`** written. Numbered separately from C5 because it has a different direction, different consumers and a different failure policy. |
 | 4 | **`peakCritical` was read but never defined.** L3 §3 and ADR-011 both use it as an escalation trigger; C5 defined only `qualCritical`. | Defined in C5 §2 and C6 §2, alongside a continuous `headroomToPeakKw`. Computed by Settlement, never by the Planner, so the trigger cannot be influenced by the thing it guards. |
 | 5 | **`INV-G-02` ("no bare `double`") was violated by the contracts themselves** — fractions, weights, ratios, probabilities and full-load hours are all legitimately dimensionless or scalar. As written, the invariant was unsatisfiable and would have been quietly ignored, which is worse than not having it. | Reworded: dimensioned quantities must use a typed quantity; dimensionless fields may be primitive but must declare `—` as their unit and carry a range constraint. |
@@ -53,7 +53,29 @@ Small, but each will otherwise be decided by whoever writes the code first.
 | E | `ValueFunctionContext` — the types of `peakState`, `qualState`, `calendarContext` are not given. The stubs use opaque string keys. | This is the **value function's state space**, so it is a modelling decision, not a typing one. Belongs to the slow-loop workstream (W7). |
 | F | Invariant IDs `INV-V-08`, `INV-V-09`, `INV-V-10`, `INV-P-08` are referenced by nothing. | Recorded as permanently **Reserved** in `04-compliance/T1` §10 rather than recycled, so alert history stays readable. Confirm that policy. |
 | G | `INV-T-05` (MarketCalendar artefact conformance) was newly allocated during the compliance pass; ADR-002 states the invariant in prose without an ID. | Annotate ADR-002. |
-| H | `SelfConsumptionView` is absent from the valuation catalog (L2 §3). In many BTM cases the avoided retail energy price is the **largest** term. | Decide whether it is in scope for v1, and if so which `EconomicEffect` it claims and whether it overlaps `TariffView`. This is the largest open economic question in the spec. |
+
+
+---
+
+### Resolved during the delineation pass (ADR-017)
+
+| # | Finding | Resolution |
+|---|---|---|
+| H | **`SelfConsumptionView` absent from the catalog.** Framed as the largest open economic question: is avoided retail price in scope, and does it overlap `TariffView`? | **Resolved negatively — the view is not needed.** Avoided import is already `TariffView` + `SpotView`. The missing half was never the retail price: it is that a kWh discharged into load *never enters `(11)`* and so forfeits **both** delineation routes. That falls out of the accumulator state equations (ADR-017), so no view owns it. Revisit only if retail supply stops being spot-indexed. |
+| I | **`LeviesAndTaxes` was charged on the wrong base.** L5 §4 levied it on `PoiImport`; under the Abgrenzungsoption the reducible components are charged on `(21) = MAX[(3)−(16)−(19); 0]`. Every levy euro was overstated by the whole relief. | Base split: `LeviesAndTaxes` keeps the non-reducible components on `PoiImport`; a new `EnfgLevies` carries the reducible EnFG components on `(21)`. A base split, not relief booked as revenue, so ADR-009 exclusivity is untouched. |
+| J | **No effect owned the Marktprämie.** The largest revenue line for a PV+storage site was unowned — the same failure class as finding 1. | `SubsidyRevenue`, owned by a new `DelineationView`. Spot revenue on the same kWh stays in `SpotEnergyValue`, making the double count impossible by construction. |
+| K | **`INV-S-10` (zero-gap) would have failed permanently.** L2 linearises the month, L5 evaluates it exactly; they are different functions by construction. | `modelError` gains a declared `linearizationGap` sub-bucket, budgeted and reported. Residual `modelError` still asserted zero. |
+
+---
+
+## Open — added by the delineation pass
+
+| # | Item | Needs |
+|---|---|---|
+| L | The `linearizationGap` budget has no number. | A backtest, not a guess. Until then `INV-S-03`'s tolerance absorbs it, which is exactly the blindness the sub-bucket exists to remove. |
+| M | Settlement finality calendar for `(32)`/`(33)`. The Netzbetreiber's Jahresendabrechnung runs on a different clock from the DSO invoice, and `L5` §3's `X` is configured per DSO and per BRP only. | A third `X`, per Netzbetreiber. |
+| N | Item E above asked for `ValueFunctionContext`'s state space. ADR-017 answers it for `V_del` — the delineation coordinates plus `slotsToMonthEnd`, evaluated arithmetically — but not for `V_soc`. | Close E for the delineation half; the SOC half stays with W7. |
+| O | Whether every plant in scope shares an EEG vintage. The A5 collapse to A1, and with it the absence of per-plant accumulators, depends on it. | Confirm against the actual estate. `commonEegVintage` on C1 §6.1 is the flag that must refuse the collapse when it is false. |
 
 ---
 

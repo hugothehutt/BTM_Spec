@@ -53,6 +53,54 @@ The margin, not just the status, is carried. A binary "qualified" flag tells the
 engine nothing until the moment it is too late; the margin lets the value
 function price the approach to the cliff continuously.
 
+## 3.1 Delineation state (ADR-017)
+
+Month-to-date accumulators of the Abgrenzungsoption machinery
+(`00-overview/03-mispel-reference.md`). Computed by Settlement Phase A from `Z1`/`Z2`
+alone. **Seven accumulators are carried and no others**: everything from `(10)` to
+`(33)` is a closed-form function of them.
+
+| Field | Formula | Type | Unit | Null | Default | Notes |
+|---|---|---|---|---|---|---|
+| `mtdGridImport` | `(3)` | `EnergyKwh` | kWh | no | `0` | gesamter Netzbezug |
+| `mtdStorageCharge` | `(5)` | `EnergyKwh` | kWh | no | `0` | Verbrauch im Stromspeicher |
+| `mtdStorageDischarge` | `(6)` | `EnergyKwh` | kWh | no | `0` | Erzeugung im Stromspeicher |
+| `mtdSimultaneousGridCharge` | `(9)` | `EnergyKwh` | kWh | no | `0` | `∑ MIN[Z1NB¼; Z2V¼]` |
+| `mtdStorageExport` | `(11)` | `EnergyKwh` | kWh | no | `0` | `∑ MIN[Z1NE¼; Z2E¼]` |
+| `mtdDirectFeedInAwPos` | `(26)` | `EnergyKwh` | kWh | no | `0` | direct feed-in, AW>0 hours only |
+| `mtdStorageExportAwPos` | `(29)` | `EnergyKwh` | kWh | no | `0` | storage feed-in, AW>0 hours only |
+
+Derived and published for readability and for the escalation triggers. Recomputable
+from the seven above; carried so that four layers do not each re-derive them.
+
+| Field | Formula | Type | Unit | Notes |
+|---|---|---|---|---|
+| `pvShare` | `(10)/(5)` | `double` | — | PV share of charging; sets the route split |
+| `awPositiveShare` | `(30)` | `double` | — | A ratio, so a late-month AW=0 export dilutes the whole month's `(28)` |
+| `saldierungsfaehig` | `(16)` | `EnergyKwh` | kWh | grey route |
+| `foerderfaehig` | `(32)` | `EnergyKwh` | kWh | green route |
+| `umlagebelasteterNetzbezug` | `(21)` | `EnergyKwh` | kWh | base of `EnfgLevies` |
+| `fremdtank` | `(12)` | `EnergyKwh` | kWh | Expected zero; see `INV-S-16` |
+
+Calendar and status:
+
+| Field | Type | Unit | Null | Default | Notes |
+|---|---|---|---|---|---|
+| `monthStart`, `monthEnd` | `SlotId` | — | no | — | Europe/Berlin civil-calendar bounds, derived via `CivilCalendar` (`INV-S-12`) |
+| `slotsToMonthEnd` | `SlotSpan` | — | no | — | Coordinate of `V_del`; the accumulators reset at `monthEnd` |
+| `throughputBoundMet` | `bool` | — | no | `false` | Charge throughput exceeds `η_d·E_usable/(1−η_rt)`, so `(12) = 0` is arithmetically assured (`INV-S-16`). Conservative default: not assured |
+| `delineationIsProvisional` | `bool` | — | no | `true` | True while the month's meter data is unfinal |
+| `unsettledGapFrom` | `SlotId` | — | yes | — | Earliest slot not yet reflected in the accumulators |
+
+**The accumulators reset to zero at `monthEnd`, and SOC does not.** That discontinuity
+is in value, not in physics: the same kWh in the same battery is worth a different
+amount either side of the boundary because the aggregates its route ran through have
+vanished. `slotsToMonthEnd` is what lets `V_del` price the approach continuously, and
+it is the delineation counterpart of `qualificationMarginHours`.
+
+`unsettledGapFrom` carries the same meaning as in §2: the Planner treats the gap with
+its own modelled trajectory rather than assuming it contributed nothing.
+
 ## 4. Commitment ledger
 
 | Field | Type | Notes |

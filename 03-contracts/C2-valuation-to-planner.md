@@ -40,7 +40,18 @@ variables; Valuation may only name them.
 | `rUp`,`rDn` | aFRR capacity offered | market | `[B]` |
 | `eAfrrUp`,`eAfrrDn` | aFRR activated energy | market | `[S,H]` |
 | `eImbalance` | Imbalance exposure | market | `[S,H]` |
-| `cBooked` | Booked capacity (AgNes regime only) | POI | 1 |
+| `q` | Curtailed generation (ADR-016) | — | per plant, `[H]` |
+| `aDel` | Month-to-date delineation accumulator `A_j` (ADR-017) | — | per accumulator |
+
+`aDel` spans `j ∈ {(3),(5),(6),(9),(11),(26),(29)}`. Like `zPeak` it is not a free
+decision — the Planner's state equations (`L3` §2) pin it — but a term must be able
+to name it, because `DelineationView` prices it at `λ_j = ∂V_del/∂A_j`.
+
+**Meter-shaped only.** No symbol attributes energy to a path or to a named
+installation. The delineation's own per-slot variables — `Z1NB`, `Z1NE`, `Z2V`,
+`Z2E` and the `MIN` selectors — are Planner-internal and deliberately absent:
+ADR-017 forbids any lever from carrying a delineation coefficient, so Valuation
+never names them. `INV-V-17`.
 
 Adding a symbol is a **major version bump**. This list is the shared vocabulary
 of the two layers and must not drift.
@@ -56,7 +67,7 @@ Exactly five (ADR-008). Every term carries a common header.
 | `termId` | `string` | Stable, unique within the bundle |
 | `originView` | `ViewId` | Which view emitted it |
 | `effect` | `EconomicEffect` | From the closed enumeration; basis of the exclusivity check |
-| `base` | `TermBase` | `PoiImport \| BatteryThroughput \| MarketVolume \| TerminalSoc \| ReserveCapacity` |
+| `base` | `TermBase` | `PoiImport \| BatteryThroughput \| MarketVolume \| TerminalSoc \| ReserveCapacity \| Delineation` |
 | `slots` | `SlotRange` | Which slots it applies to |
 | `mandatory` | `bool` | If true, dropping it invalidates the plan (peak protection is mandatory) |
 | `confidence` | `Confidence` | Propagated from input quality; feeds `riskProfile`, never a branch |
@@ -201,6 +212,7 @@ down, `binariesByOrigin` names the term responsible.
 | `INV-V-14` | `binariesByOrigin` sums to `binaryCount` | warn |
 | `INV-V-15` | Every `BoundTerm` has a `reason`; no `Physical` bound is soft | `HALT` |
 | `INV-V-16` | `FillProbView` emits only `BoundTerm`; it has no priced term | `HALT` |
+| `INV-V-17` | No term references a provenance flow — energy attributed to a path or to a named installation (§2) | `HALT` |
 
 ## 9. What deliberately does *not* cross C2
 

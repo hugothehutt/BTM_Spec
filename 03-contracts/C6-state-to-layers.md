@@ -89,6 +89,33 @@ reduction is a year of network-charge relief (ADR-011).
 
 ---
 
+## 3.1 Delineation state (ADR-017)
+
+Mirrors C5 §3.1. Read by `DelineationView` (L2) and by L3, which carries the
+accumulators forward as MILP variables over the horizon.
+
+| Field | Type | Unit | Null | Default | Notes |
+|---|---|---|---|---|---|
+| `mtdGridImport` … `mtdStorageExportAwPos` | `EnergyKwh` | kWh | no | `0` | The seven accumulators of C5 §3.1, unchanged |
+| `pvShare`, `awPositiveShare` | `double` | — | no | `0` | Conservative defaults: no PV attribution, no AW>0 share |
+| `saldierungsfaehig`, `foerderfaehig`, `umlagebelasteterNetzbezug`, `fremdtank` | `EnergyKwh` | kWh | no | `0` | |
+| `monthStart`, `monthEnd` | `SlotId` | — | no | — | |
+| `slotsToMonthEnd` | `SlotSpan` | — | no | — | `V_del` coordinate |
+| `throughputBoundMet` | `bool` | — | no | `false` | False forces the Planner to carry `(12)` explicitly rather than assume it away |
+| `delineationIsProvisional` | `bool` | — | no | `true` | |
+| `unsettledGapFrom` | `SlotId` | — | yes | — | |
+
+The conservative defaults bias toward **understating** delineation value: a zero
+`awPositiveShare` prices the green route at nothing, and `throughputBoundMet = false`
+costs binaries rather than correctness. Both are the safe direction — the failure mode
+worth avoiding is an engine that charges from the grid on the strength of a route it
+turns out not to have.
+
+`DelineationView` reads this block and the `MW_month` belief, and publishes the seven
+`λ_j` (ADR-017). It reads no other view's output.
+
+---
+
 ## 4. Commitment ledger (read view)
 
 Mirrors C5 §4. Read by L3.

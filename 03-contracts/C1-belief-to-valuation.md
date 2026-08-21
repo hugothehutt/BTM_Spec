@@ -80,10 +80,25 @@ quoting policy by a different route, outside C2.
 | `activeRegimes` | `TariffRegimeId[]` | — | `1..n` | non-empty | no | — | — | From the calendar (ADR-011) |
 | `peakPrice` | `PeakPrice` | EUR/kW/period | per regime | `≥0` | no | — | — | |
 | `volumetricCharge` | `EnergyPrice` | EUR/MWh | `[H]` | `≥0` | no | — | — | Network volumetric component |
-| `leviesAndTaxes` | `EnergyPrice` | EUR/MWh | `[H]` | — | no | — | — | Closed enumerated list, summed |
+| `leviesAndTaxes` | `EnergyPrice` | EUR/MWh | `[H]` | — | no | — | — | Closed enumerated list of the **non-reducible** components, summed (ADR-017) |
+| `enfgLevies` | `EnergyPrice` | EUR/MWh | 1 | `≥0` | no | — | — | The reducible EnFG components, summed. Charged on `(21)`, never on metered import |
 | `isHlzf` | `bool` | — | `[H]` | — | no | `true` | — | From the DSO HLZF table; conservative default is *inside* the window |
-| `bookedCapacity` | `PoiPowerKw` | kW | 1 | `≥0` | yes | — | — | AgNes regime only; null otherwise |
-| `overagePenalty` | `PeakPrice` | EUR/kW/period | 1 | `≥0` | yes | — | — | AgNes regime only |
+
+## 6.1 Delineation (ADR-017)
+
+Both fields are **derived** in L1 §4.2.1, not ingested.
+
+| Field | Type | Unit | Card. | Range | Null | Default | Notes |
+|---|---|---|---|---|---|---|---|
+| `awPositive` | `bool` | — | `[H]` | — | no | `false` | `(24)¼`. A realised parameter within the settled day-ahead horizon; scenario-indexed `[S, H]` beyond it. Conservative default forfeits the premium |
+| `anzulegenderWert` | `EnergyPrice` | EUR/MWh | per plant | `≥0` | no | — | `AW`, static per plant and EEG vintage |
+| `zuordnungsFaktor` | `double` | — | per plant | `0..1` | no | — | `ZF`, power-weighted; sums to 1 across plants |
+| `marktwertMonth` | `EnergyPrice` | EUR/MWh | `[S]` | — | no | — | `MW_month`, derived **per scenario** from national spot and national solar generation on the shared axis (ADR-005). Never an independent series |
+| `commonEegVintage` | `bool` | — | 1 | — | no | `false` | True only when every plant shares a § 51 / § 51b threshold, which is what makes the AW forfeit simultaneous and collapses A5 to A1. False forbids the collapse |
+
+The premium is `MAX[anzulegenderWert − marktwertMonth; 0]`, which is **convex** in
+`marktwertMonth`. That is why the latter crosses as `[S]` and not as a scalar: a point
+forecast understates the premium, most severely when the two are close.
 
 ## 7. Reserve product structure
 

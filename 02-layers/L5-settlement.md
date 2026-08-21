@@ -52,7 +52,7 @@ It recomputes using the **same `EconomicEffect` enumeration Valuation used**
 (ADR-009, `L2-valuation.md` §5). That shared enumeration is the whole mechanism:
 
 - `plannedByEffect` (from `PlanResult`, `L3-planner.md` §8) and `realisedByEffect`
-  (from Phase A) are indexed by the same closed set of eleven effects, so
+  (from Phase A) are indexed by the same closed set of thirteen effects, so
   planned-versus-realised is a term-by-term comparison, not an aggregate one.
 - A discrepancy localises to an effect, and the ownership matrix maps that effect
   to exactly one view. "We lost money" becomes "`NetworkPeakCharge` came in 4 kEUR
@@ -141,9 +141,24 @@ NetworkPeakCharge      = peak engine output (§5), negative
 NetworkVolumetricCharge= − Σ_t (meteredPoiImport[t]/1000) · volumetricRate(t)
 
 LeviesAndTaxes         = − Σ_t (meteredPoiImport[t]/1000) · Σ_c leviesRate_c(t)
-                         [ closed component list, mirroring TariffView's
-                           enumeration; an unrecognised invoice line is a
-                           configuration error, not an absorbed cost ]
+                         [ closed component list of the components a delineation
+                           regime cannot reduce — Stromsteuer, Konzessionsabgabe —
+                           mirroring TariffView's enumeration; an unrecognised
+                           invoice line is a configuration error, not an absorbed
+                           cost ]
+
+EnfgLevies             = − ((21)/1000) · Σ_c enfgRate_c(month)
+                         [ (21) = MAX[(3) − (16) − (19); 0], from §5.1. The
+                           reducible EnFG components only. Charged on (21), never
+                           on (3) — booking them on metered import overstates the
+                           charge by the whole relief ]
+
+SubsidyRevenue         = ((32)/1000) · Σ_x ZFx · MAX[ AWx − marktwertMonth ; 0 ]
+                         [ Marktprämie per § 19 EEG. Spot revenue on the same kWh
+                           stays in SpotEnergyValue, which is what makes the
+                           double count impossible rather than merely checked.
+                           Under a common EEG vintage (32x) = ZFx·(32), so the
+                           per-plant sum collapses to one weighted premium ]
 
 CycleDegradation       = − degCostPerKwh
                            · Σ_t (batteryChargeEnergy[t] + batteryDischargeEnergy[t]) / 2
@@ -202,7 +217,6 @@ realisedPeakKw = max over t ∈ periodSlots(regime) of p_import_kw[t]
 | `MonthlyLeistungspreis` | all slots in the local calendar month | `peakPrice · realisedPeakKw` per month |
 | `AtypicalHlzf` (§19(2) S.1) | HLZF slots only, from the DSO's published window table for that year | `hlzfPeakPrice · hlzfPeakKw` |
 | `IntensiveUse` (§19(2) S.2) | all slots in the qualification year | reduced rate conditional on qualification |
-| `BookedCapacityAgNes` | all slots in the booking year | capacity + within-capacity consumption + overage surcharge |
 
 ### Intensive-use qualification tracking
 
@@ -226,23 +240,6 @@ the cliff.
 margin lets `V` price the approach continuously and drives `qualCritical`, which
 forces tier escalation and the protective bound (`INV-S-13`, C5 §3).
 
-### AgNes booked capacity
-
-```
-overageKw       = max(0, realisedPeakKw − bookedCapacityKw)
-capacityCharge  = bookedCapacityKw · capacityPriceEurPerKwYr · prorationFactor
-withinCharge    = Σ_t min(p_import_kw[t], bookedCapacityKw) · Δt_h/1000 · withinRate
-overageCharge   = overageKw · overagePenaltyEurPerKw
-```
-
-`bookedCapacityKw` is the slow loop's annual decision (`L3-planner.md` §1, S0),
-read from L0 — Settlement accounts against it, it does not choose it. Capacity and
-overage carry `NetworkPeakCharge`; the within-capacity consumption term carries
-`NetworkVolumetricCharge`. For storage the interim position is a capacity fee with
-no work charge, so `withinRate` is zero under that configuration — a config value,
-not a code branch. Every rate and threshold above is configuration sourced from the
-published tables per DSO and per year (ADR-011).
-
 ### Calendar rules
 
 - **Period boundaries are local-calendar boundaries.** They are derived only via
@@ -258,6 +255,46 @@ published tables per DSO and per year (ADR-011).
   local-calendar boundary (`INV-S-01`). An off-by-one-hour reset at a DST boundary
   either destroys a period's accumulated peak or carries it into the next one, and
   both are silent.
+
+---
+
+## 5.1 The delineation accounting engine
+
+Per active delineation regime (ADR-011, ADR-017). Evaluates the machinery of
+`00-overview/03-mispel-reference.md` **exactly**, from `Z1`/`Z2` and the tariff sheet
+alone. This is the reference against which Valuation's linearisation is measured, and
+it is the only place in the system where the monthly formulas are evaluated.
+
+```
+Z1NB¼ = meteredPoiImport[t]          Z2V¼ = batteryChargeEnergy[t]
+Z1NE¼ = meteredPoiExport[t]          Z2E¼ = batteryDischargeEnergy[t]
+
+(1)¼ = MIN[Z1NB¼; Z2V¼]     (2)¼ = MIN[Z1NE¼; Z2E¼]     (23)¼ = Z1NE¼ − (2)¼
+(24)¼ from the settled day-ahead price series and the EEG vintage's § 51 / § 51b
+       duration rule — a realised parameter here, never a belief
+```
+
+Monthly aggregation runs `(3)`–`(33)` unchanged from the reference. Two identities
+are asserted rather than assumed, because they are cheap and they catch a whole class
+of sign and attribution error (§9):
+
+```
+(28) + (16) = (13)                    the route split
+(16) + (19) = (16) · (5)/(6)          the loss-relief multiplier
+```
+
+**Period boundaries are Europe/Berlin civil-calendar month boundaries**, derived
+through `CivilCalendar` under the manifest's pinned tzdata exactly as the peak engine's
+are (`INV-S-12`). The seven accumulators reset at the boundary; a month containing a
+DST transition is a permanent fixture in the test set.
+
+`(12)` is computed unconditionally even though `INV-S-16` asserts the throughput
+condition under which it must be zero. Settlement never assumes what it can measure —
+the assumption belongs to the Planner, and a violated month must show as a booked cost
+and a fired invariant rather than as a silent divergence.
+
+The A5 case adds only `ZF`. Under a common EEG vintage the AW forfeit is simultaneous,
+so `(24x)¼ = (24)¼`, hence `(32x) = ZFx·(32)` and no per-plant accumulator exists.
 
 ---
 
@@ -303,6 +340,9 @@ J  = Book(x)           what Settlement booked
 | `executionSlippage` | `A − C` | Score plan versus realised positions under one common belief `b*` | We could not get the trades, or got them worse | Quoting policy (ADR-012) |
 | `modelError` | `C − J` | Value the realised trajectory with L2's terms and compare against Phase A's independent accounting of the same trajectory | Valuation and Settlement disagree about what a term means | L2 |
 
+`modelError` carries a declared sub-bucket, `linearizationGap` — see below. Residual
+`modelError` net of it is still asserted zero.
+
 By construction these telescope:
 
 ```
@@ -326,6 +366,14 @@ tier lowers the planned *and* the realised side and is invisible in `Ĵ − J`.
   within the corridor). Without the unfilled term the bucket cannot separate "we
   were wrong about value" from "we could not get the trade", which is precisely why
   C4 §3 exists.
+- `linearizationGap` splits out of `modelError`: L2's `λ`-linearisation of the
+  delineation machinery, scored on the realised trajectory, against §5.1's exact
+  evaluation of the same trajectory. It is **expected, budgeted and reported**, not a
+  defect. Without the split, `INV-S-10` fails permanently from the first day the
+  delineation regime is active, and the most valuable test in the layer stops meaning
+  anything. It is interpretable as exactly one thing — projection error, since `V_del`
+  is evaluated arithmetically and never fitted (ADR-017) — which is what makes a budget
+  for it meaningful rather than arbitrary.
 - `valueOfForesight = Score(Plan(Val(b*)) ; b*) − A` is computed and reported
   alongside `forecastError`. It answers a different question — what perfect
   information would have been worth — and it is the ADR-010 upper bound that
@@ -412,7 +460,7 @@ own self-test, and several are the earliest available warning of a model defect.
 
 | Check | Assertion | Signal |
 |---|---|---|
-| **Energy balance** | `poiImport − poiExport = load − pv + chargeEnergy − dischargeEnergy` within meter tolerance (`INV-X-03`) | Sub-metering fault, or a sign convention inverted somewhere |
+| **Energy balance** | `poiImport − poiExport = load − pv (realized after curtailment) + chargeEnergy − dischargeEnergy` within meter tolerance (`INV-X-03`) | Sub-metering fault, or a sign convention inverted somewhere |
 | **SOC consistency** | `socMeasured[t+1] ≈ socMeasured[t] + η_c·charge[t] − discharge[t]/η_d` (`INV-X-05`) | **The early-warning signal for efficiency and SOH model drift.** Persistent one-signed divergence means η or the degradation model is wrong, and it feeds `modelError` directly |
 | **Fee reconciliation** | Σ of C4 `fees` equals fees booked per effect; no fee netted into a price (`INV-S-11`) | Broker or venue fee schedule changed, or a price arrived net |
 | **No phantom fills** | Every `fillId` maps to an `intentId` submitted this run (`INV-X-01`) | Adapter reconciliation failure — see `L4-execution-boundary.md` §6 |
@@ -420,6 +468,10 @@ own self-test, and several are the earliest available warning of a model defect.
 | **Delivery** | `deliveryShortfall = 0` (`INV-S-04`) | Reserve delivery failure — prequalification risk, alert and `HALT` |
 | **Peak monotonicity** | `realisedPeak` non-decreasing in period, resets at the local boundary (`INV-S-01`) | Calendar or DST defect |
 | **FLH identity** | `fullLoadHours = annualEnergyKwh / annualPeakKw` (`INV-S-06`) | Unit error in the qualification path |
+| **Route split** | `(28) + (16) = (13)` (`INV-S-17`) | A `MIN`/`MAX` branch implemented with the wrong comparison |
+| **Relief multiplier** | `(16) + (19) = (16)·(5)/(6)` (`INV-S-17`) | `(18)` or `(17)` mis-derived |
+| **Throughput bound** | Charge throughput above `η_d·E_usable/(1−η_rt)` implies `(12) = 0` (`INV-S-16`) | An idle month, or a SOC/meter disagreement large enough to fake one |
+| **Levy base** | `EnfgLevies` charged on `(21)`, never on `(3)` | The single most expensive available mistake in this layer: it overstates the charge by the whole relief |
 
 `INV-X-05` deserves its emphasis. It costs almost nothing to evaluate, it needs no
 market data, and it is the only check that catches a slowly wrong efficiency model
@@ -438,6 +490,9 @@ before that model has quietly mispriced a quarter of arbitrage decisions.
 | `INV-S-13` | While an `IntensiveUse` regime is active, `qualificationMarginHours` is published every tick and reflects both the FLH and the annual-energy threshold | `HALT` |
 | `INV-S-14` | `isFinal` is monotone per settlement period; a provisional artefact never supersedes a final one | `HALT` |
 | `INV-S-15` | Per-tag P&L plus `unallocated` sums to `realisedByEffect` per effect | warn |
+| `INV-S-16` | While monthly charge throughput exceeds `η_d·E_usable/(1−η_rt)`, `(12) = 0`. Settlement computes `(12)` regardless and publishes `throughputBoundMet` | warn, escalating to alert |
+| `INV-S-17` | The delineation identities hold: `(28)+(16) = (13)` and `(16)+(19) = (16)·(5)/(6)`, within meter tolerance | `HALT` |
+| `INV-S-18` | The seven delineation accumulators are derived in Phase A from `Z1`/`Z2` and the settled price series alone; no belief, forecast or planned quantity enters them | `HALT` |
 
 ---
 
@@ -475,6 +530,20 @@ right answer is often computable by hand.
 - **Calendar** — both DST transition days, a month boundary, and a year boundary
   as permanent fixtures; peak reset asserted to the exact slot (`INV-S-01`,
   `INV-S-12`).
+- **Co-location identity** — the cheapest exact test in the layer. Settle a month with
+  `load = 0`, no clipping of discharge and `(12) = 0`, and assert `(21) = 0` **to the
+  cent**. The identity `(16)+(19) = (9) = (3)` holds independently of η, of the dispatch
+  pattern, of `AW` and of prices, so any deviation localises a defect in the delineation
+  chain with no modelling judgement involved.
+- **Route split** — property-tested over generated months: `(28)+(16) = (13)` and
+  `(16)+(19) = (16)·(5)/(6)`. Both are algebraic identities of the published formulas,
+  so a failure is always an implementation defect and never a data artefact.
+- **A5 collapse** — two plants on a common EEG vintage; assert `(32x) = ZFx·(32)` exactly
+  and that no per-plant accumulator is required. Then a mixed case with one ungeförderte
+  plant, asserting the collapse is **refused** rather than silently applied.
+- **Month boundary** — accumulators reset at the exact slot of the Europe/Berlin month
+  boundary, with a DST-containing month as a permanent fixture. A boundary off by one
+  slot moves value between two months and is otherwise silent.
 - **Qualification cliff** — construct a year that lands just above and just below
   each threshold; assert the margin is continuous through the crossing, that
   `qualCritical` fires at the configured distance, and that a single trade cannot

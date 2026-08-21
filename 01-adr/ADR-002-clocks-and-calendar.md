@@ -30,8 +30,8 @@ time itself is versioned data.
 ## Consequences
 
 - A regulatory or venue change is a data change plus a test fixture, not a code
-  change. Given that AgNes changes the German network charge structure with
-  effect from 2029 (ADR-011), this is not hypothetical.
+  change. Given that HLZF windows and §19(2) thresholds are republished per DSO
+  per year (ADR-011), this is not hypothetical.
 - The engine cannot hardcode "96 slots per day". Every horizon is expressed in
   `SlotSpan` derived from the calendar. DST days are test fixtures, not edge
   cases discovered in production.

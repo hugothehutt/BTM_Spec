@@ -127,10 +127,10 @@ Sources: `C2` §8, `C2` §3.3, `L2` §2/§4/§5, ADR-008, ADR-009.
 | `INV-V-01` | No `(effect, decision variable, slot)` triple is priced by more than one term. Exclusivity, per the term ownership matrix (`L2` §5). | Composer, ownership check | `HALT` — double count | `T1`, `T2` (duplicate-effect injection) |
 | `INV-V-02` | Every term's `originView` is the declared owner of its `effect` in the ownership matrix. | Composer, ownership check | `HALT` | `T1`, `T2` |
 | `INV-V-03` | Every term references only decision-variable symbols from the closed vocabulary in `C2` §2. | Composer, then `C2` consumer | `HALT` | `T1` |
-| `INV-V-04` | Every term marked `mandatory` is present in the bundle. Peak protection and confirmed-commitment terms are mandatory in every degradation mode (ADR-014 §3). | Composer, stage 5 | `HALT` | `T1`, `T2` (degradation matrix) |
+| `INV-V-04` | Every term marked `mandatory` is present in the bundle. Peak protection and confirmed-commitment terms are mandatory in every degradation mode (ADR-014 §3). | Composer, stage 6 | `HALT` | `T1`, `T2` (degradation matrix) |
 | `INV-V-05` | `unclaimedEffects` is logged. An unclaimed effect is priced at zero and the omission recorded; if the effect is in the configured critical set, escalate. Silently missing revenue is safer than silently double-counting cost (ADR-009). | Composer, coverage check | `warn`; `alert` + escalate if critical | `T1`, `T2` |
 | `INV-V-06` | No scenario array and no Belief handle, cursor, delegate or `object` appears anywhere in the bundle. Scenario structure reaches the Planner only through `CouplingConstraint.scenarioScope` and through terms already aggregated by Valuation. | `C2` producer and consumer | `HALT` | `T1`, `T2` (schema closure) |
-| `INV-V-07` | `compositionOrder` satisfies the stage precondition table (ADR-009, `L2` §4): Tariff → OppCost+V → ReserveCoupling → Peak → Validate, each stage's `Requires` established by an earlier stage. | Composer, before each stage runs | `HALT` | `T1`, `T2` (out-of-order composition) |
+| `INV-V-07` | `compositionOrder` satisfies the stage precondition table (ADR-009, `L2` §4), each stage's `Requires` established by an earlier stage. The table is the single source for the order; restating it here would let the two drift. | Composer, before each stage runs | `HALT` | `T1`, `T2` (out-of-order composition) |
 | `INV-V-08` | *Reserved. Not allocated. Do not reuse — see §10.* | — | — | — |
 | `INV-V-09` | *Reserved. Not allocated. Do not reuse — see §10.* | — | — | — |
 | `INV-V-10` | *Reserved. Not allocated. Do not reuse — see §10.* | — | — | — |
@@ -140,6 +140,7 @@ Sources: `C2` §8, `C2` §3.3, `L2` §2/§4/§5, ADR-008, ADR-009.
 | `INV-V-14` | `binariesByOrigin` sums to `binaryCount`, and `binaryCount` matches the binaries the Planner actually builds. | Composer, then `L3` model build | `warn` | `T1`, `T2` |
 | `INV-V-15` | Every `BoundTerm` carries a `reason`; no bound with `reason = Physical` or `reason = Regulatory` is soft (`softPenalty` must be null). Feasibility restoration depends on this tagging (`L3` §6). | Composer; `C2` consumer | `HALT` | `T1`, `T2` (restoration ordering) |
 | `INV-V-16` | `FillProbView` emits only `BoundTerm`. It carries no priced term. Fill probability constrains the Planner and never prices for it (ADR-008, ADR-012). | Composer; view schema check | `HALT` | `T1`, `T0` |
+| `INV-V-17` | No term, bound or coupling row references a provenance flow — energy attributed to a path (PV→battery, battery→grid) or to a named installation. The delineation is arithmetic on four metered scalars per quarter-hour and grants no attribution freedom; a routing variable invents one and books value settlement will not pay (ADR-017 §Rejected). `INV-V-03` catches the symbol; this catches the intent, and names it in the alert. | Composer; `C2` producer and consumer | `HALT` | `T1`, `T6` |
 
 ---
 
@@ -179,7 +180,8 @@ Sources: `C4` §7, `C3` §2.
 
 ## 7. `INV-S-*` — Settlement and state
 
-Sources: `C5` §9, `C4` §7 (`INV-S-04` is mirrored there deliberately).
+Sources: `C5` §9, `C4` §7 (`INV-S-04` is mirrored there deliberately), and
+`02-layers/L5-settlement.md` §10 for `INV-S-09`–`INV-S-18`.
 
 | ID | Statement | Where checked | Severity | Test level |
 |---|---|---|---|---|
@@ -191,6 +193,9 @@ Sources: `C5` §9, `C4` §7 (`INV-S-04` is mirrored there deliberately).
 | `INV-S-06` | `fullLoadHours = annualEnergyKwh / annualPeakKw` within tolerance. Battery operation moves both numerator and denominator (ADR-011), so a stale or inconsistent pair silently mis-states qualification. | `L5` at `C5` write | `HALT` | `T1`, `T2` |
 | `INV-S-07` | `unexplainedRatio` is below the configured threshold. A rising ratio is the single best early warning that a term definition has drifted between Valuation and Settlement. | `L5`, per settlement period | `warn`, escalating to `alert` | `T2`, `T4` |
 | `INV-S-08` | State is never written for a slot earlier than the previous update's `effectiveFrom`, except as an explicit `revisionOf`. Restatements are new artefacts referencing the old one, never in-place edits (ADR-004). | `L0` write path | `HALT` | `T1`, `T2` (restatement idempotency) |
+| `INV-S-16` | While monthly charge throughput exceeds `η_d·E_usable/(1−η_rt)`, `(12)` Fremdtankstrom is zero. The Planner may assume it (ADR-017); Settlement computes it regardless and publishes `throughputBoundMet`. A violated month is a booked cost and a fired invariant, never a silent divergence. | `L5` §5.1; `L3` at model build | `warn`, escalating to `alert` | `T1`, `T2` |
+| `INV-S-17` | The delineation identities hold within meter tolerance: `(28) + (16) = (13)` and `(16) + (19) = (16)·(5)/(6)`. Both are algebraic consequences of the published formulas, so a failure is always an implementation defect. | `L5` §5.1, Phase A | `HALT` | `T1`, `T2` |
+| `INV-S-18` | The seven delineation accumulators are derived from `Z1`/`Z2` and the settled price series alone. No belief, forecast, planned quantity or Valuation output enters them. | `L5` Phase A, before sealing | `HALT` | `T1`, `T6` |
 
 ---
 

@@ -19,23 +19,10 @@ Verified August 2026 (sources at the end):
   point, with tiered reductions. Full-load hours are annual energy divided by
   annual peak power — so **battery operation moves both the numerator and the
   denominator**, and therefore moves qualification directly.
-- **AgNes reform.** BNetzA's interim position (27 May 2026, non-binding; formal
-  consultation summer 2026; final regulation expected end 2026) moves consumers
-  above 100,000 kWh/yr from a Leistungspreis to a **Kapazitätspreis** structure:
-  a booked-capacity charge in EUR/kW/yr, a consumption charge within booked
-  capacity, and a surcharge for exceeding it. Target implementation **1 January
-  2029**. Bandlast protection continues to 31 December 2031. For storage, the
-  interim position is a capacity fee with no work charges, with §118(6) EnWG
-  grandfathering for existing assets and for projects whose FID predates the new
-  rules.
 
-Two structural consequences:
+One structural consequence:
 
-1. **A booked-capacity regime is a fundamentally different optimisation.** It is
-   not "minimise the max". It is a two-level decision: a slow, annual decision
-   about how much capacity to book, and a fast decision to stay inside it with a
-   penalised overage. An engine that hardcodes `max` cannot express it.
-2. **§19(2) S.2 qualification is a cliff.** Falling below 7,000 full-load hours
+1. **§19(2) S.2 qualification is a cliff.** Falling below 7,000 full-load hours
    loses the reduction for the entire year. A myopic optimiser that shaves a peak
    in December can raise full-load hours and gain; one that discharges to capture
    a spread can lower annual consumption and lose far more than the spread. This
@@ -55,10 +42,9 @@ Regimes in scope:
 | `MonthlyLeistungspreis` | `EpigraphTerm` per calendar month | |
 | `AtypicalHlzf` (§19(2) S.1) | `EpigraphTerm` over HLZF slots only, from the calendar table | window table is data (ADR-002) |
 | `IntensiveUse` (§19(2) S.2) | `EpigraphTerm` + discrete qualification state | cliff — see below |
-| `BookedCapacityAgNes` | booked capacity as a slow decision variable; `EpigraphTerm` for overage with a penalty rate; volumetric term within booked capacity | not yet in force; formulate now, enable by date |
 
 **Regimes compose.** A site can be subject to more than one simultaneously (an
-HLZF-based charge and a volumetric charge and, from 2029, a capacity charge).
+HLZF-based charge and a volumetric charge).
 Each regime emits terms tagged with its own `EconomicEffect` (ADR-009), so the
 composer's exclusivity check keeps them from overlapping.
 
@@ -79,33 +65,24 @@ must not be reachable through an approximation error.
 
 ## Consequences
 
-- The 2029 regime change is a configuration date plus a new regime
-  implementation, not a rewrite.
+- A regime change is a configuration date plus a new regime implementation, not a
+  rewrite.
 - Backtests spanning a regime change are honest, because the regime is selected
   from the versioned calendar (ADR-002).
-- `BookedCapacityAgNes` introduces a genuinely new decision type — an annual
-  booking — which the slow loop owns. Formulating it now, before it is needed,
-  keeps the slow-loop interface from having to grow later.
-- All numeric thresholds (7,000 h; 10 GWh; tier percentages; HLZF windows;
-  overage penalty) are **configuration**, sourced from the current published
-  tables per DSO and per year, never constants. Regulation in this area is
-  actively moving and the interim AgNes position is explicitly non-binding.
+- All numeric thresholds (7,000 h; 10 GWh; tier percentages; HLZF windows) are
+  **configuration**, sourced from the current published tables per DSO and per
+  year, never constants. Regulation in this area is actively moving.
 
 ## Rejected
 
-- **Hardcode `max` over the month.** Cannot express HLZF, cannot express booked
-  capacity, and silently mis-prices the cliff.
+- **Hardcode `max` over the month.** Cannot express HLZF and silently mis-prices
+  the cliff.
 - **Treat qualification as a post-hoc report.** Guarantees the engine will
   eventually trade through a cliff for a small gain.
-- **Wait for the final AgNes regulation.** The interface cost of anticipating it
-  now is small; the cost of retrofitting a second decision level into the slow
-  loop later is not.
 
 ## Sources
 
 - [BNetzA — Individuelle Netzentgelte Strom gemäß § 19 StromNEV](https://www.bundesnetzagentur.de/DE/Beschlusskammern/BK04/BK4_71_NetzE/BK4_71_Ind_NetzE_Strom/BK4_Ind_NetzEntg_Strom.html)
 - [BNetzA — Orientierungspunkte Speichernetzentgelte, Jan 2026 (PDF)](https://www.bundesnetzagentur.de/DE/Beschlusskammern/GBK/GBK_Termine/Downloads/2026/01_2026/30_01/Orientierungspunkte_Speichernetzentgelte.pdf?__blob=publicationFile&v=4)
-- [AgNes interim status — Netzentgelte 2029](https://www.energieundrecht.com/blog/agnes-zwischenstand-bnetza-netzentgelte-2029)
 - [EHA — Individuelle Netzentgelte nach § 19 StromNEV](https://www.eha.net/blog/details/stromnev-individuelle-netzentgelte.html)
 - [Avacon Netz — Hochlastzeitfenster 2026 (PDF, example DSO table)](https://www.avacon-netz.de/content/dam/revu-global/avacon-netz/documents/netzentgelte-strom/2026/Hochlastzeitfenster_2026_reg.Methode.pdf)
-- [CMS — Update zum AgNes-Verfahren](https://cms.law/de/deu/legal-updates/update-zum-agnes-verfahren)

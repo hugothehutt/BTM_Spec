@@ -17,13 +17,15 @@ plan. Implementation happens in the engine repository against these documents.
 |---|---|
 | Layer model and clocks | Normative |
 | Units, signs, time grid | Normative |
-| ADR-001 … ADR-014 | Accepted |
+| Delineation regime (MiSpel, A1/A5) | Normative, transcribed from Anlage 1; route split and identities derived |
+| Delineation in the objective (ADR-017) | Normative — accumulators on C5/C6, state equations in L3, exact recomputation in L5 |
+| ADR-001 … ADR-014, ADR-016, ADR-017 | Accepted |
 | ADR-015 (open register) | Open — three decisions deferred by design |
 | Seam contracts C1–C6 | Normative, versioned |
 | Layer designs L0–L5 | Normative for structure, indicative for algorithm choice |
 | Compliance architecture | Normative |
 | Implementation plan | Advisory |
-| `RECONCILIATION.md` | Cross-consistency findings: 16 resolved, 8 open |
+| `RECONCILIATION.md` | Cross-consistency findings: 20 resolved, 11 open |
 
 Three decisions are deliberately **deferred** and tracked in `01-adr/ADR-015`:
 the MILP solver (Gurobi intended), the per-tick latency budget, and intraday
@@ -40,14 +42,16 @@ Read in this order. Each part assumes the previous one.
    and how they are resolved, the four clocks. **Start here.**
 2. `00-overview/02-conventions.md` — units, sign conventions, the time grid,
    naming. Every other document depends on these being unambiguous.
-3. `01-adr/` — the fifteen decisions that are expensive to reverse, each with
+3. `00-overview/03-mispel-reference.md` — the MiSpel delineation machinery
+   (Abgrenzungsoption, cases A1 and A5) in the regulator's own notation.
+4. `01-adr/` — the sixteen decisions that are expensive to reverse, each with
    context, decision, consequences and the rejected alternatives.
-4. `03-contracts/` — the six seams. These are the frozen surface. If you read
+5. `03-contracts/` — the six seams. These are the frozen surface. If you read
    only one section, read `C0-conventions` and `C2-valuation-to-planner`.
-5. `02-layers/` — the internals of each layer.
-6. `04-compliance/` — how we know it works: the seven test levels.
-7. `05-implementation/` — sequencing and the agent playbook.
-8. `RECONCILIATION.md` — what was inconsistent and how it was resolved, plus the
+6. `02-layers/` — the internals of each layer.
+7. `04-compliance/` — how we know it works: the seven test levels.
+8. `05-implementation/` — sequencing and the agent playbook.
+9. `RECONCILIATION.md` — what was inconsistent and how it was resolved, plus the
    eight small decisions still open. Read before starting W0.
 
 ---
@@ -101,11 +105,6 @@ contact with the detail, and each is now an ADR:
 4. **Hard pre-allocation of aFRR capacity is a primal restriction** — it deletes
    options and the loss is invisible. Replaced by a *dual price* for headroom,
    discovered by Lagrangian decomposition, with a certified gap (ADR-010).
-5. **The tariff regime is about to change.** AgNes moves the Leistungspreis to a
-   booked-capacity structure from 2029, and §19(2) intensive-use qualification is
-   a cliff that battery operation directly moves. `PeakView` is a plug-in and
-   qualification state is a dimension of V (ADR-011).
-
 ## Change discipline
 
 A change to any file in `03-contracts/` requires, in the same commit:

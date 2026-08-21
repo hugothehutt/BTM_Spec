@@ -463,11 +463,6 @@ relative to its share of the codebase. The measurement is the one ADR-007 names:
 does a better `V` produce better *realised* P&L, evaluated through C5's
 attribution rather than through the fit's own objective.
 
-The slow loop also owns the AgNes booked-capacity decision (L3 §1 stage S0,
-ADR-011) — an annual, slow decision variable that has no meaningful
-representation in a per-tick solve. Formulating it now keeps the slow-loop
-interface from having to grow in 2029.
-
 ---
 
 ## 6. The unsettled gap

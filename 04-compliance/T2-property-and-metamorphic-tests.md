@@ -398,8 +398,8 @@ visible.
 
 **Property.** Multiply every price input by a constant `k > 0` — `daPrice`,
 `idPriceRef`, `idSpreadBelief`, `afrrCapPrice`, `afrrEnergyPrice*`,
-`imbalancePrice`, `peakPrice`, `volumetricCharge`, `leviesAndTaxes`,
-`overagePenalty`, and the value function's `Y` breakpoints. Then:
+`imbalancePrice`, `peakPrice`, `volumetricCharge`, `leviesAndTaxes`, and the
+value function's `Y` breakpoints. Then:
 
 - **every EUR-denominated quantity scales by exactly `k`** — every
   `LinearTerm.coefficient`, every `PwlTerm.breakpointsY`, every
@@ -568,12 +568,13 @@ exception, **not** a wrong number. This is, in ADR-009's words, the entire point
 
 | Order run | Violated precondition | Expected |
 |---|---|---|
-| `Peak` before `Tariff` | Stage 4 requires POI energy marked | `HALT` `INV-V-07`, naming stage 4 and the unmet precondition |
-| `Peak` before `OppCost` | Stage 4 requires battery energy marked | `HALT` `INV-V-07` — and this is the double-count the ordering exists to prevent |
-| `ReserveCoupling` before `OppCost` | Stage 3 requires battery energy marked | `HALT` `INV-V-07` |
-| `Validate` first | Stage 5 requires all above | `HALT` `INV-V-07` |
-| `Tariff` → `OppCost+V` → `ReserveCoupling` → `Peak` → `Validate` | — | accepted; `compositionOrder` recorded in the bundle for audit |
-| Correct order, one stage omitted | Stage 5's coverage check | `HALT` `INV-V-04` if a mandatory term is now absent, else `warn` `INV-V-05` |
+| `Peak` before `Tariff` | Stage 5 requires POI energy marked | `HALT` `INV-V-07`, naming stage 5 and the unmet precondition |
+| `Peak` before `OppCost` | Stage 5 requires battery energy marked | `HALT` `INV-V-07` — and this is the double-count the ordering exists to prevent |
+| `ReserveCoupling` before `OppCost` | Stage 4 requires battery energy marked | `HALT` `INV-V-07` |
+| `Delineation` before `OppCost` | Stage 3 requires battery energy marked | `HALT` `INV-V-07` — `(21)` is not knowable until battery energy is marked |
+| `Validate` first | Stage 6 requires all above | `HALT` `INV-V-07` |
+| The order declared by `L2` §4 | — | accepted; `compositionOrder` recorded in the bundle for audit |
+| Correct order, one stage omitted | Stage 6's coverage check | `HALT` `INV-V-04` if a mandatory term is now absent, else `warn` `INV-V-05` |
 
 ```
 property CompositionOrderEnforced(bundle):
@@ -886,7 +887,6 @@ monitor fires exactly when it should.
 | Negative energy prices for a block of slots | off | Simultaneity **may** appear; if it does, `alert` `INV-P-07`, the tick is flagged, and the plan is still emitted |
 | Same, binary enabled by config | on | No simultaneity; objective ≤ the binary-off objective (the binary restricts) |
 | aFRR down-activation obligation forcing import while discharge is committed | off | Monitor fires or does not, but the trajectory is recorded either way |
-| Peak-driven import incentive (AgNes overage avoided by charging) | off | As above |
 
 ```
 property SimultaneityMonitor(fixture):
@@ -1069,6 +1069,55 @@ check and destroy the diagnostic value of the whole decomposition.
 
 ---
 
+### 5.9 Delineation
+
+Purity claim under test: the accumulators are a function of `Z1`/`Z2` and the settled
+price series alone (`INV-S-18`).
+
+**Property — route split.** `(28) + (16) = (13)` over generated months. Algebraic, so a
+failure is always an implementation defect and never a data artefact.
+
+**Property — relief multiplier.** `(16) + (19) = (16)·(5)/(6)`. Catches a mis-derived
+`(17)` or `(18)`, which are otherwise invisible because both routes still look plausible.
+
+**Property — throughput bound.** Generate months with charge throughput above
+`η_d·E_usable/(1−η_rt)`; assert `(12) = 0` and `throughputBoundMet` (`INV-S-16`). Then
+generate an idle month below the bound and assert the invariant fires rather than the
+Planner silently assuming it away.
+
+**Fixture — co-location identity.** The cheapest exact test in the suite. A month with
+`load = 0`, discharge never clipped, `(12) = 0`; assert `(21) = 0` **to the cent**. The
+identity `(16)+(19) = (9) = (3)` is independent of η, of dispatch, of `AW` and of prices,
+so any deviation localises a defect with no modelling judgement involved.
+
+**Fixture — A5 collapse.** Two plants on a common EEG vintage; assert `(32x) = ZFx·(32)`
+exactly and that no per-plant accumulator is built. Then a mixed estate with one
+ungeförderte plant, asserting the collapse is **refused** rather than silently applied
+(`commonEegVintage = false`).
+
+**Metamorphic — premium.** Raise `MAX[AW − MW_month; 0]`: planned PV charging must be
+non-decreasing, because PV charging is what raises `(15)` and converts grey to green.
+
+**Metamorphic — levy.** Raise the EnFG rate in a slack regime: planned grid charging must
+not decrease. In a saturated regime it must not change the plan at all, since the
+marginal relief is zero there.
+
+**Metamorphic — dilution.** Add a storage export in an AW=0 quarter-hour late in the
+month: `(30)` must fall and `(31)` must fall with it. This is the one term in the system
+where a late action lowers the value of earlier ones, and a test that does not exercise
+it will not notice when the ratio is implemented as a per-slot quantity.
+
+**Zero-gap, split.** Feed the planned trajectory back as realised; assert residual
+`modelError = 0` and `linearizationGap` within its declared budget. A `linearizationGap`
+of zero is as suspicious as one above budget — it means the linearisation is not being
+exercised.
+
+**Calendar.** Accumulator reset asserted to the exact slot of the Europe/Berlin month
+boundary, with a DST-containing month as a permanent fixture. An off-by-one-slot reset
+moves value between two months and is otherwise silent.
+
+---
+
 ## 6. Cross-seam properties
 
 These apply to every seam and are generated once, parameterised by contract type.
@@ -1178,7 +1227,7 @@ versioned artefacts.
 | `LedgerGen` | Commitment ledgers | Mixed `Pending`/`Confirmed`, servable and unservable awards |
 | `CalendarGen` | Calendar windows | Biased toward DST days, month boundaries, year boundaries, HLZF edges |
 | `QualityGen` | `QualityStamp` assignments | The full quality matrix of §2.5, plus random mixtures |
-| `RegimeGen` | Tariff regime combinations | Single and composed regimes, including `BookedCapacityAgNes` |
+| `RegimeGen` | Tariff regime combinations | Single and composed regimes across the `TariffRegimeId` set |
 
 **Shrinking is mandatory.** A property failure that reports a 192-slot,
 64-scenario counterexample is not actionable. Every generator declares a shrink

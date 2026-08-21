@@ -35,8 +35,14 @@ that makes "peak" a maximum rather than a minimum.
 ### The bridge
 
 ```
-p_poi[t] = load[t] − pv[t] − p_batt[t]        (all in kW, slot-average)
+p_poi[t] = load[t] − Σ_k ( pv_avail[t,k] − q[t,k] ) − p_batt[t]     (kW, slot-average)
 ```
+
+where `pv_avail` is a **belief** about available generation and `q ≥ 0` is
+**curtailed** generation, a decision (ADR-016). Writing the bridge without `q`
+makes the generation allocation an equality over non-negative terms, which is
+infeasible whenever available PV exceeds load plus charge headroom plus the
+export limit — an ordinary condition, not an edge case.
 
 Losses are inside `p_batt`: see §3.
 

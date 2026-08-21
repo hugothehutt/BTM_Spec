@@ -18,12 +18,29 @@ the mistake that makes the problem look intractable.
 
 | Stage | Clock | Decides | Freezes | Information added since last stage |
 |---|---|---|---|---|
-| S0 Slow loop | `C_slow` | `V(SOC, peakState, qualState)`; AgNes booked capacity | nothing | new realised state, refreshed long-horizon scenarios |
+| S0 Slow loop | `C_slow` | `V(SOC, peakState, qualState)`| nothing | new realised state, refreshed long-horizon scenarios |
 | S1 Reserve | `C_gate` (aFRR capacity gate) | `rUp[b]`, `rDn[b]` offers | reserve offers once submitted | reserve price beliefs |
 | S2 Day-ahead | `C_gate` (DA gate) | DA bid curve per slot | DA position at clearing | reserve awards from S1 |
 | S3 Post-DA rebalance | `C_gate` | initial intraday target position | nothing | realised DA clearing |
 | S4 Continuous intraday | `C_tick` | intraday target position, re-optimised | progressively, as fills occur | book state, updated forecasts |
 | S5 Dispatch | real time | setpoint within the SOC corridor | — | activation signal |
+
+### Delineation information set per stage
+
+The delineation machinery is monthly, so each gate commits under a different amount of
+knowledge about the month it is committing into (ADR-017).
+
+| Stage | Delineation information | Measurement of what not knowing it cost |
+|---|---|---|
+| S0 | MTD accumulators; `MW_month` distribution; AW>0 forecast for the remaining month | `V_del` projection drift against the previous slow tick |
+| S1 | Same, **without** D+1 certainty — the widest delineation uncertainty of any stage | Re-solve on the realised D+1 `(24)¼` vector; the objective delta is the reserve gate's delineation foresight cost |
+| S2 | Realised D+1 `(24)¼`, since § 51 / § 51b make it a function of day-ahead price signs | Value of the S1-forecast versus realised indicator |
+| S3–S4 | Elapsed-slot `(2)¼`, `(23)¼` realised; `(30)` firming as the month proceeds | Intraday drift of the `λ_j` within the day |
+
+S1 is the row that matters. The reserve gate is the one commitment made before the
+month's route is knowable, so a large measured cost there is a direct argument for
+smaller reserve volumes late in an undecided month — and a small one retires the
+question.
 
 **The same core model is solved at every stage.** What changes is which variables
 are free and which are fixed by the commitment ledger. One formulation, one set
@@ -57,11 +74,38 @@ soc[t] + rDn[b(t)]·D·η_c  ≤ socMax
 soc[s,t] ∈ [socMin, socMax]  for weighted scenario mass ≥ 1−ε
 ```
 
+**Delineation** (ADR-017). The seven month-to-date accumulators of C6 §3.1 are carried
+forward as variables over the horizon, and their state equations are constraints:
+
+```
+A_j = A_j^MTD + Σ_{t ∈ H} contribution_j(t)          j ∈ {(3),(5),(6),(9),(11),(26),(29)}
+
+Z1NB[t] − Z1NE[t] = (load + p_c − P_net − p_d)·Δt    Z1NB, Z1NE ≥ 0
+(1)¼ = MIN[Z1NB; Z2V]    (2)¼ = MIN[Z1NE; Z2E]    (23)¼ = Z1NE − (2)¼
+(25)¼ = (24)¼·(23)¼      (27)¼ = (24)¼·(2)¼
+```
+
+Linearisation, and where the binaries actually go:
+
+| Construct | Binary | Why |
+|---|---|---|
+| `Z1NB · Z1NE = 0` | one per slot | Levies penalise import while the premium rewards export, so adding the same δ to both pays whenever the premium exceeds the levy. Unbounded without complementarity |
+| `(2)¼ = MIN[Z1NE; Z2E]` | **none** | `λ_11 ≥ 0` — `(11)` feeds `(13)`, the base of *both* routes — so the objective pushes `(2)` up and `(2) ≤ Z1NE, (2) ≤ Z2E` is tight |
+| `(1)¼ = MIN[Z1NB; Z2V]` | one per slot, when load is present | `λ_9` carries the sign of `(30)·premium − levy_rate` and flips with the route. With `load = 0`, `Z1NB ≤ Z2V` always and the `MIN` is linear |
+| `(24)¼` | none | A parameter from the day-ahead price series (L1 §4), not a variable |
+
+**No lever carries a delineation coefficient.** Curtailment `q`, charge source,
+discharge routing and reserve headroom are priced through these constraints against the
+`λ_j` from C2. Writing a coefficient on any of them would require the `MIN`-branch case
+analysis of `00-overview/03` §5, evaluated at a state this solve has not yet chosen —
+which is ADR-016's rejected rule one level up.
+
 **Objective.** Assembled entirely from C2 terms. The Planner adds no economics
 of its own — if it needs a number, a view must own it.
 
 ```
 max  Σ LinearTerms + Σ PwlTerms + V(socTerminal) − Σ peakPrice·zPeak·proration
+     + Σ_j λ_j · A_j
      − cvarWeight · CVaR_α(imbalance + activation cost)
 ```
 
@@ -224,7 +268,10 @@ Detail in `04-compliance/T2`. The properties that matter most:
   and satisfies confirmed commitments under **every** scenario in the ensemble,
   not just the mean.
 - **Determinism** — same C2 and same manifest, byte-identical C3.
-- **Metamorphic** — raise `afrrCapPrice`: planned reserve MW must be
+- **Metamorphic** — raise the Marktprämie `MAX[AW − MW_month; 0]`: planned PV charging
+  must be non-decreasing, since PV charging is what moves `(15)` and converts grey to
+  green. Raise the EnFG rate in a slack regime: planned grid charging must not decrease.
+  Raise `afrrCapPrice`: planned reserve MW must be
   non-decreasing. Shift all prices up uniformly: planned discharge must not
   decrease. Raise `peakPrice`: planned peak must not increase. These are cheap to
   state and catch formulation errors that feasibility tests cannot.

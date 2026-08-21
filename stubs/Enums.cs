@@ -52,9 +52,21 @@ public enum EconomicEffect
     /// different effect (ADR-009 §Decision 3).</summary>
     NetworkVolumetricCharge,
 
-    /// <summary>Levies, taxes and surcharges, normalised to EUR/MWh.
-    /// Owner: <c>TariffView</c>.</summary>
+    /// <summary>Levies, taxes and surcharges a delineation regime cannot reduce —
+    /// Stromsteuer, Konzessionsabgabe — normalised to EUR/MWh.
+    /// Owner: <c>TariffView</c>. Base <c>PoiImport</c>.</summary>
     LeviesAndTaxes,
+
+    /// <summary>The reducible EnFG components, charged on the umlagebelasteter
+    /// Netzbezug (21) rather than on metered import. Owner: <c>DelineationView</c>.
+    /// Base <c>Delineation</c> (ADR-017). Charging these on (3) overstates the
+    /// charge by the whole relief.</summary>
+    EnfgLevies,
+
+    /// <summary>Marktprämie MAX[AW - MW_month; 0] on the insgesamt förderfähige
+    /// Netzeinspeisung (32). Owner: <c>DelineationView</c>. Base <c>Delineation</c>.
+    /// Spot revenue on the same kWh stays in <see cref="SpotEnergyValue"/>.</summary>
+    SubsidyRevenue,
 
     /// <summary>Cycle/throughput degradation cost, charged once.
     /// Owner: <c>OppCostView</c>. Base <c>BatteryThroughput</c>.</summary>
@@ -80,6 +92,10 @@ public enum TermBase
     MarketVolume,
     TerminalSoc,
     ReserveCapacity,
+
+    /// <summary>The Abgrenzungsoption monthly aggregates (ADR-017). Distinct from
+    /// <see cref="PoiImport"/> because (21) is not metered import.</summary>
+    Delineation,
 }
 
 /// <summary>
@@ -135,9 +151,6 @@ public enum VarSymbol
     /// <summary>Imbalance exposure. Frame: market. Index <c>[S,H]</c>.</summary>
     EImbalance,
 
-    /// <summary>Booked capacity — <c>BookedCapacityAgNes</c> regime only.
-    /// Frame: POI. Index <c>1</c>. Unit kW. A slow-loop decision (ADR-011).</summary>
-    CBooked,
 }
 
 /// <summary>
@@ -234,16 +247,22 @@ public enum StageId
     /// Establishes: battery energy marked, terminal value attached.</summary>
     OppCost,
 
-    /// <summary>Stage 3. Requires battery energy marked.
+    /// <summary>Stage 3. Requires battery energy marked. Establishes: <c>(21)</c>
+    /// established, delineation <c>λ</c> attached. The reducible EnFG components are
+    /// charged here, not at stage 1: their base <c>(21)</c> depends on the month's
+    /// PV-versus-grid charging mix (ADR-017).</summary>
+    Delineation,
+
+    /// <summary>Stage 4. Requires battery energy marked.
     /// Establishes: SOC corridor and headroom constraints present.</summary>
     ReserveCoupling,
 
-    /// <summary>Stage 4. Requires POI <b>and</b> battery energy marked.
+    /// <summary>Stage 5. Requires POI <b>and</b> battery energy marked.
     /// Establishes: <c>zPeak</c> bounded below by realised peak. Reversing this
     /// with stage 2 double-counts.</summary>
     Peak,
 
-    /// <summary>Stage 5. Requires all above. Establishes: bundle well-formed and complete.</summary>
+    /// <summary>Stage 6. Requires all above. Establishes: bundle well-formed and complete.</summary>
     Validate,
 }
 
@@ -412,7 +431,7 @@ public enum Disposition
 /// </remarks>
 public enum GateId
 {
-    /// <summary>S0, <c>C_slow</c>. Produces V and the AgNes booked capacity. Submits nothing.</summary>
+    /// <summary>S0, <c>C_slow</c>. Produces V. Submits nothing.</summary>
     SlowLoop,
 
     /// <summary>S1, <c>C_gate</c>. aFRR capacity auction. Freezes <c>rUp</c>/<c>rDn</c> offers.</summary>
@@ -444,7 +463,7 @@ public enum GateId
 /// a site may be subject to several simultaneously, each emitting terms tagged
 /// with its own <see cref="EconomicEffect"/> so the composer's exclusivity check
 /// keeps them from overlapping. All numeric thresholds (7,000 h; 10 GWh; tier
-/// percentages; HLZF windows; overage penalty) are configuration, never constants.
+/// percentages; HLZF windows) are configuration, never constants.
 /// </summary>
 public enum TariffRegimeId
 {
@@ -463,12 +482,6 @@ public enum TariffRegimeId
     /// qualification state. A cliff: battery operation moves both the numerator
     /// and the denominator of full-load hours.</summary>
     IntensiveUse,
-
-    /// <summary>AgNes booked-capacity regime, target 1 January 2029. Booked
-    /// capacity is a slow decision variable (<see cref="VarSymbol.CBooked"/>);
-    /// overage is an <c>EpigraphTerm</c> with a penalty rate. Formulated now,
-    /// enabled by date.</summary>
-    BookedCapacityAgNes,
 }
 
 /// <summary>

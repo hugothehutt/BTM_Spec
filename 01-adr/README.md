@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Fifteen decisions that are expensive to reverse. Each records context, the
+Seventeen decisions that are expensive to reverse. Each records context, the
 decision, its consequences, and what was rejected and why. ADR IDs are stable
 and referenced throughout the specification.
 
@@ -16,16 +16,18 @@ and referenced throughout the specification.
 | [008](ADR-008-linearizable-primitives.md) | Valuation emits linearizable primitives, not prices | Accepted | Very expensive |
 | [009](ADR-009-term-ownership.md) | Term ownership matrix; composer enforces no double count | Accepted | Moderate |
 | [010](ADR-010-cross-market-tier-ladder.md) | Three-tier co-optimisation ladder with a measured gap | Accepted | Moderate |
-| [011](ADR-011-tariff-regime-plugin.md) | Tariff regime is a plug-in; AgNes capacity price is a first-class regime | Accepted | Expensive later |
+| [011](ADR-011-tariff-regime-plugin.md) | Tariff regime is a plug-in; qualification state is a state variable | Accepted | Expensive later |
 | [012](ADR-012-order-intent.md) | Planner emits intent; quoting is a separate policy | Accepted | Moderate |
 | [013](ADR-013-determinism-and-replay.md) | Content-addressed determinism; every artefact is replayable | Accepted | Very expensive |
 | [014](ADR-014-degradation-ladder.md) | Five named degradation modes; quality drives risk, not branches | Accepted | Moderate |
 | [015](ADR-015-open-decisions.md) | Register of deliberately deferred decisions | **Open** | — |
+| [016](ADR-016-curtailment-as-priced-decision.md) | Curtailment is a priced MILP decision, never a rule | Accepted | Moderate |
+| [017](ADR-017-delineation-in-the-objective.md) | Delineation as MILP state equations plus marginal values | Accepted | Very expensive |
 
 ## Reversibility as a sequencing guide
 
 "Very expensive" decisions must be implemented first and correctly, because
 retrofitting them means rewriting every layer above. In practice this means the
 first two workstreams are the Belief store (004, 005) and the contract surface
-(006, 008), before any economics or optimisation is written. See
+(006, 008, 017), before any economics or optimisation is written. See
 `05-implementation/P0-workstreams.md`.

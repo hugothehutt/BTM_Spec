@@ -226,14 +226,6 @@ public sealed record TariffAndNetwork
     /// — inside the window (C1 §6). Drives <c>EpigraphTerm.overSlots</c> for the
     /// <c>AtypicalHlzf</c> regime.</summary>
     public required ReadOnlyMemory<bool> IsHlzf { get; init; }
-
-    /// <summary>Booked capacity. Unit kW. Card. <c>1</c>. Range <c>≥0</c>.
-    /// <b>AgNes regime only; null otherwise.</b></summary>
-    public PoiPowerKw? BookedCapacity { get; init; }
-
-    /// <summary>Overage penalty rate. Unit EUR/kW/period. Card. <c>1</c>.
-    /// Range <c>≥0</c>. <b>AgNes regime only; null otherwise.</b></summary>
-    public PeakPrice? OveragePenalty { get; init; }
 }
 
 // =============================================================================

@@ -43,7 +43,8 @@ Each term carries an `EconomicEffect` tag from a closed enumeration:
 ```
 SpotEnergyValue · IdEnergyValue · ReserveCapacityRevenue · ReserveEnergyRevenue
 ImbalanceCost · NetworkPeakCharge · NetworkVolumetricCharge · LeviesAndTaxes
-CycleDegradation · StoredEnergyContinuation · ActivationRisk
+EnfgLevies · SubsidyRevenue · CycleDegradation · StoredEnergyContinuation
+ActivationRisk
 ```
 
 The normative owner for each effect is the matrix in `02-layers/L2-valuation.md`
@@ -61,10 +62,16 @@ table mapping each effect to exactly one owning view. The composer asserts:
    Violation is a hard failure (`INV-V-01`), never a warning.
 3. **Base correctness** — terms declare the *base* they apply to
    (`PoiImport`, `BatteryThroughput`, `MarketVolume`, `TerminalSoc`,
-   `ReserveCapacity`). A volumetric
+   `ReserveCapacity`, `Delineation`). A volumetric
    network charge on `PoiImport` and a peak charge on `PoiImport` are both legal
    because they are different effects on the same base; two `NetworkPeakCharge`
    terms on the same base are not.
+
+   `LeviesAndTaxes` on `PoiImport` and `EnfgLevies` on `Delineation` are likewise
+   legal and are **not** a double count: they are disjoint component lists on
+   disjoint bases (ADR-017). The reducible EnFG components are charged on `(21)`;
+   what a delineation regime cannot reduce stays on `PoiImport`. Relief is never
+   booked as revenue — `(20)` is a diagnostic quantity, not an effect.
 
 **Ordering becomes a declared, verified property rather than a convention.** The
 composition pipeline declares each stage's preconditions and postconditions:

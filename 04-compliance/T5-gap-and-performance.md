@@ -250,7 +250,7 @@ the report.
 | Tier1 → PF large, Tier k → Tier 1 small | The optimiser is close to the best achievable under uncertainty; the loss is informational | Forecast quality, ensemble structure, scenario count. Optimisation work here has almost no headroom |
 | Tier1 → PF small, Tier k → Tier 1 large | The problem is nearly deterministic and the heuristic is leaving money on the table | The tier ladder. This is the case where escalation thresholds or `μ̂` need work |
 | Both large | Two independent problems | Address them separately; do not let one hide behind the other |
-| Both small | The system is near its ceiling on this corpus | Look for a missing lever — `L2` §3 names `SelfConsumptionView` as conspicuously absent, and in many BTM cases it is the largest term |
+| Both small | The system is near its ceiling on this corpus | Look for a missing lever. `L2` §3 names the remaining gaps; note that self-consumption is *not* one of them — it is priced through the delineation accumulators (ADR-017), and a plan that over-consumes behind the meter shows up as a `λ_11` misprice rather than as a missing view |
 
 Without this decomposition, a team spends quarters improving an optimiser whose
 remaining gap is entirely forecast uncertainty, or tuning forecasts to close a

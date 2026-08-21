@@ -179,8 +179,8 @@ public interface IValuationView<TConfig>
 /// assembly; problem class hint; seal (compute <c>contentHash</c>, emit).
 /// </para>
 /// <para>
-/// Stage ordering — <c>Tariff → OppCost+V → ReserveCoupling → Peak → Validate</c>
-/// — is a <b>machine-checked property, not a convention</b>. Composing in the
+/// Stage ordering — declared by the precondition table in L2 §4, which is its
+/// single source — is a <b>machine-checked property, not a convention</b>. Composing in the
 /// wrong order raises rather than producing a plausible wrong number, which is
 /// the entire point of ADR-009: an economic effect counted twice produces a
 /// number that passes every type check and biases the strategy in a direction
@@ -211,23 +211,21 @@ public interface IValuationComposer
 /// <remarks>
 /// <c>PeakView</c> selects regimes from configuration and emits shapes
 /// accordingly. <b>Regimes compose</b>: a site can be subject to more than one
-/// simultaneously — an HLZF-based charge, a volumetric charge and, from 2029, a
-/// capacity charge. Each regime emits terms tagged with its own
-/// <see cref="EconomicEffect"/>, so the composer's exclusivity check keeps them
-/// from overlapping.
+/// simultaneously — an HLZF-based charge and a volumetric charge. Each regime
+/// emits terms tagged with its own <see cref="EconomicEffect"/>, so the
+/// composer's exclusivity check keeps them from overlapping.
 /// <para>
-/// The interface exists because <c>PeakView</c> must not hardcode
-/// <c>max(·)</c>: <see cref="TariffRegimeId.BookedCapacityAgNes"/> is not
-/// "minimise the max" but a two-level decision — a slow annual booking plus a
-/// penalised overage. An engine that hardcodes <c>max</c> cannot express it, and
-/// the 2029 regime change would be a rewrite instead of a configuration date plus
-/// a new implementation.
+/// The interface exists because <c>PeakView</c> must not hardcode <c>max(·)</c>:
+/// <see cref="TariffRegimeId.AtypicalHlzf"/> is a max over a slot <i>subset</i>
+/// and <see cref="TariffRegimeId.IntensiveUse"/> carries a discrete
+/// qualification state. An engine that hardcodes <c>max</c> over the period
+/// cannot express either, and a regime change would be a rewrite instead of a
+/// configuration date plus a new implementation.
 /// </para>
 /// <para>
-/// All numeric thresholds (7,000 h; 10 GWh; tier percentages; HLZF windows;
-/// overage penalty) are configuration sourced from the published tables per DSO
-/// and per year, never constants. Regulation here is actively moving and the
-/// interim AgNes position is explicitly non-binding.
+/// All numeric thresholds (7,000 h; 10 GWh; tier percentages; HLZF windows) are
+/// configuration sourced from the published tables per DSO and per year, never
+/// constants. Regulation here is actively moving.
 /// </para>
 /// </remarks>
 public interface ITariffRegime
@@ -658,10 +656,7 @@ public interface IStateStore
 /// <remarks>
 /// Produces <c>V(SOC, peakState, qualState)</c> by a rolling-horizon or
 /// approximate dynamic programming solve over a horizon long enough to see the
-/// end of the accounting period, using the joint ensemble (ADR-005). It also owns
-/// the AgNes booked-capacity decision, which is a genuinely new decision type —
-/// an annual booking — and is why the interface anticipates it now rather than
-/// growing later (ADR-011).
+/// end of the accounting period, using the joint ensemble (ADR-005).
 /// <para>
 /// <b>Its output is an input, never a dependency.</b> If the slow loop has not
 /// run, the Planner uses the last valid <c>V</c> with a staleness penalty and
@@ -680,11 +675,6 @@ public interface ISlowLoop
     /// non-concavity around a §19(2) cliff is represented as a separate discrete
     /// state (ADR-007, INV-V-11).</summary>
     ValueFunctionCurve FitValueFunction(in StateSnapshot state, in BeliefSnapshot longHorizonBelief);
-
-    /// <summary>The AgNes annual booked-capacity decision
-    /// (<see cref="VarSymbol.CBooked"/>). Returns null when no
-    /// <see cref="TariffRegimeId.BookedCapacityAgNes"/> regime is active.</summary>
-    PoiPowerKw? DecideBookedCapacity(in StateSnapshot state, in BeliefSnapshot longHorizonBelief);
 
     /// <summary>Whether a refresh is due, from <c>vSocStale</c> and
     /// <c>stateDriftSignal</c> (C5 §8). Lets the loop be event-driven rather than

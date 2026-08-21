@@ -20,8 +20,8 @@ StateSnapshot  ─┼─▶ OppCostView        │
                 ├─▶ ImbalanceRiskView  │      │
                 ├─▶ IdOptionView       │      ├─ ownership check
                 ├─▶ FillProbView       │      ├─ stage preconditions
-                └─▶ TariffView        ─┘      ├─ curvature verification
-                                              └─ problem-class hint
+                ├─▶ TariffView         │      ├─ curvature verification
+                └─▶ DelineationView   ─┘      └─ problem-class hint
 ```
 
 Views are **independent**. A view may not read another view's output, may not
@@ -52,8 +52,7 @@ documented.
 Prices the marginal kW of grid peak, under whichever tariff regimes are active
 (ADR-011).
 
-- **Emits:** one `EpigraphTerm` per active regime, plus `BoundTerm`s for the
-  AgNes booked-capacity regime.
+- **Emits:** one `EpigraphTerm` per active regime.
 - **Slot set:** all slots for `AnnualLeistungspreis`; **HLZF slots only** for
   `AtypicalHlzf` — expressed through `EpigraphTerm.overSlots`, which is why that
   field is a slot *set* rather than a range.
@@ -124,11 +123,35 @@ Prices the marginal kW of grid peak, under whichever tariff regimes are active
 - The full fill-probability curve is available to the quoting policy through a
   separate path (ADR-012), which is where the price/probability trade-off belongs.
 
+### DelineationView — the Abgrenzungsoption routes
+
+Prices the two delineation routes and the levies they relieve (ADR-017,
+`00-overview/03-mispel-reference.md`).
+
+- **Emits:** `LinearTerm`s carrying the marginal values `λ_j = ∂V_del/∂A_j` of the
+  seven month-to-date accumulators `{(3),(5),(6),(9),(11),(26),(29)}`, plus the
+  `BoundTerm`s bounding `q` to available generation (ADR-016).
+- **Emits no coefficient on any lever.** Curtailment, charge source, discharge routing
+  and reserve headroom reach the objective only through the accumulator state
+  equations the Planner carries (L3 §2). A lever coefficient would have to embed a
+  `MIN`-branch case analysis evaluated at a state not yet chosen.
+- **`V_del` is evaluated arithmetically, never fitted.** Given a projection of the
+  remaining month, every quantity from `(10)` to `(33)` is closed-form, so the `λ_j`
+  are derivatives of published formulas. There is no artefact to go stale — only a
+  projection to refresh.
+- **Risk treatment:** `V_del` is evaluated per scenario and the tail of `V_del` itself
+  is taken, not a per-accumulator sign. `MAX[AW − MW_month; 0]` is convex, so the mean
+  projection understates the premium; the direction of pessimism differs per
+  accumulator and a single `cvarLevel` would push some of them the wrong way.
+- **Curvature exists only through grid charging.** At `(9) = 0` the ratio in
+  `(31) = (30)·(28)` cancels and the whole green route is a per-slot linear sum.
+
 ### TariffView — the closed list of scarcity-euro terms
 
-- **Emits:** `LinearTerm`s only, from a closed enumerated list (volumetric
-  network charge, levies, taxes, surcharges), all normalised to EUR/MWh and all
-  stamped for the tick.
+- **Emits:** `LinearTerm`s only, from a closed enumerated list — volumetric network
+  charge, and the taxes and surcharges a delineation regime cannot reduce — all
+  normalised to EUR/MWh and all stamped for the tick. The **reducible** EnFG components
+  are not here: they are charged on `(21)` by `DelineationView` at stage 3 (ADR-017).
 - "Closed list" is enforced: the configuration enumerates permitted components
   and an unrecognised component is a configuration error, not a silently ignored
   field.
@@ -139,12 +162,15 @@ Prices the marginal kW of grid peak, under whichever tariff regimes are active
 
 Recorded so the gaps are deliberate:
 
-- **PvCurtailmentView** — where feed-in is capped or negatively priced.
-- **SelfConsumptionView** — where avoided retail energy price differs materially
-  from the wholesale marginal cost. In many BTM cases this is the *largest* term,
-  and it is conspicuously absent from the current catalog. It is listed here
-  rather than added silently because it needs a decision about which effect it
-  claims and whether it overlaps `TariffView`.
+- **PvCurtailmentView** — **not needed, and deliberately absent.** `q` is a decision
+  variable of the Planner's MILP (ADR-016), bounded by `DelineationView` to available
+  generation and priced against spot and the delineation `λ_j`. A view that scheduled
+  curtailment would be a rule wearing a price.
+- **SelfConsumptionView** — **not needed, and deliberately absent** (ADR-017). Avoided
+  import is already `TariffView` + `SpotView`, and the delineation leg — a kWh
+  discharged into load never enters `(11)` and so forfeits both routes — falls out of
+  the accumulator state equations. Revisit only if retail supply stops being
+  spot-indexed.
 - **CapacityMarketView / redispatch** — out of scope for v1.
 
 ---
@@ -160,14 +186,18 @@ plausible wrong number (ADR-009).
 |---|---|---|---|
 | 1 `Tariff` | — | POI energy fully marked | Everything downstream prices *marked* energy |
 | 2 `OppCost + V` | POI energy marked | Battery energy marked; terminal value attached | Battery energy must carry its own cost before anything prices its use |
-| 3 `ReserveCoupling` | Battery energy marked | SOC corridor and headroom constraints present | Reserve consumes headroom, which must exist before peak prices it |
-| 4 `Peak` | POI **and** battery energy marked | `zPeak` bounded below by realised peak | Peak headroom is priced on top of a battery whose energy is already marked — reversing this double-counts |
-| 5 `Validate` | all above | Bundle well-formed and complete | |
+| 3 `Delineation` | Battery energy marked | `(21)` established; delineation `λ` attached | Levies are charged on `(21)`, which depends on the month's PV-versus-grid charging mix — so it cannot be marked at stage 1 |
+| 4 `ReserveCoupling` | Battery energy marked | SOC corridor and headroom constraints present | Reserve consumes headroom, which must exist before peak prices it |
+| 5 `Peak` | POI **and** battery energy marked | `zPeak` bounded below by realised peak | Peak headroom is priced on top of a battery whose energy is already marked — reversing this double-counts |
+| 6 `Validate` | all above | Bundle well-formed and complete | |
 
-The original ordering — `tariff → opp-cost + λ_SOC → peak_to_go (last) →
-validate` — is preserved exactly. What changes is that it is now a machine-checked
-property rather than a convention, and stage 3 is made explicit because reserve
-coupling sits between the two.
+This table is the **single source** for stage order. `INV-V-07`, `T2` §3.9 and
+`stubs/Interfaces.cs` point at it rather than restating it.
+
+Stage 1 carries only the **non-reducible** tariff surface and stays linear. The
+reducible EnFG components move to stage 3, because their base `(21)` is not knowable
+until battery energy is marked — the one place where the original
+`tariff → opp-cost → peak` ordering could not be preserved.
 
 ### Composer responsibilities, in order
 
@@ -201,6 +231,8 @@ Normative. Each effect has exactly one owner.
 | `NetworkPeakCharge` | `PeakView` | `PoiImport` |
 | `NetworkVolumetricCharge` | `TariffView` | `PoiImport` |
 | `LeviesAndTaxes` | `TariffView` | `PoiImport` |
+| `EnfgLevies` | `DelineationView` | `Delineation` |
+| `SubsidyRevenue` | `DelineationView` | `Delineation` |
 | `CycleDegradation` | `OppCostView` | `BatteryThroughput` |
 | `StoredEnergyContinuation` | `OppCostView` (via `V`) | `TerminalSoc` |
 | `ActivationRisk` | `AfrrEnergyView` | `MarketVolume` |
@@ -212,6 +244,16 @@ uses the DA price" — is how the largest term in the objective ends up owned by
 nobody, and it would violate both `INV-V-02` (every term's `originView` is the
 effect's owner) and L3 §2 ("the Planner adds no economics of its own"). `SpotView`
 is trivial to implement and its existence is what keeps those two rules true.
+
+**Note on the levy split.** `LeviesAndTaxes` carries the components a delineation
+regime cannot reduce — Stromsteuer, Konzessionsabgabe — on `PoiImport`. `EnfgLevies`
+carries the reducible EnFG components on `(21)`. This is a **base split, not relief
+booked as revenue** (ADR-017), so exclusivity is unaffected: `(20)` is reported as a
+diagnostic quantity and never as an effect.
+
+**Note on `SubsidyRevenue`.** It is the Marktprämie `MAX[AW − MW_month; 0]` on `(32)`
+only. Spot revenue on the same exported kWh stays in `SpotEnergyValue`, which is what
+makes the double count impossible by construction rather than by check.
 
 Two effects may share a **base** (`NetworkPeakCharge` and
 `NetworkVolumetricCharge` both apply to `PoiImport`) — that is legitimate and

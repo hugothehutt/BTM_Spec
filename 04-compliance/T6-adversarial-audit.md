@@ -174,8 +174,8 @@ that other levels assume.
 `L2` §2 states it for `TariffView`: *"Closed list" is enforced: the configuration
 enumerates permitted components and an unrecognised component is a configuration
 error, not a silently ignored field.* ADR-011 requires the same of every
-numeric threshold — 7,000 h, 10 GWh, tier percentages, HLZF windows, overage
-penalty — all configuration, never constants.
+numeric threshold — 7,000 h, 10 GWh, tier percentages, HLZF windows — all
+configuration, never constants.
 
 The failure mode is specific and expensive: a typo'd key is silently dropped, the
 default applies, and the engine runs a configuration nobody intended while every
@@ -230,7 +230,7 @@ silently become a hardcoded constant is detected:
 ```
 property ThresholdsAreConfiguration():
     for threshold in {fullLoadHoursThreshold, annualEnergyThresholdKwh,
-                      hlzfWindows, overagePenalty, qualificationMargin}:
+                      hlzfWindows, qualificationMargin}:
         a = Run(config)
         b = Run(config.with(threshold materially changed))
         assert a.goldenRunHash != b.goldenRunHash    # it is actually consulted

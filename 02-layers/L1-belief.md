@@ -351,11 +351,44 @@ spec hash is not in the manifest is a hard failure, not a fallback. `INV-D-14`.
 | Price-impact curve | `volume → expected price concession` | **not C1** — quoting policy only (ADR-012) | recalibration |
 | Activation-probability model | exported PWL / lookup table | §4 `activationUp`, `activationDn` | `C_slow` |
 | Peak / load climatology | quantile surfaces by calendar bucket | ladder rung 4 imputation (§7) | seasonal |
+| AW>0 indicator `(24)¼` | `bool[H]`, and `bool[S, H]` beyond the settled day-ahead horizon | C1 delineation block | `C_gate`, on day-ahead publication |
+| `MW_month` (Monatsmarktwert) | `double[S]` per calendar month | C1 delineation block | derived per scenario, `C_slow` |
 
 The value function `V` is also a materialised, content-hashed artefact, but it is
 produced by the slow loop and lives in **L0**, not L1 — see
 `02-layers/L0-state-value-store.md` §5. L1 does not read it and does not carry it
 across C1.
+
+### 4.2.1 The two delineation inputs
+
+Both are **derived**, not ingested, and both are derived in ways that are easy to get
+subtly wrong (ADR-017).
+
+**`(24)¼` is a state machine, not a comparison.** AW drops to zero under § 51 / § 51b
+EEG on negative day-ahead prices, but the rule carries a **duration condition**, so the
+indicator for one quarter-hour depends on a run of neighbouring prices. It is therefore
+computed by a small automaton over the day-ahead price series, with the run-length
+threshold as configuration **per EEG vintage**. Two consequences:
+
+- For D+1 it is a **realised parameter**, known at the day-ahead gate. Beyond that
+  horizon it is scenario-dependent and carries the scenario axis like any other belief.
+- Plants on different EEG vintages can forfeit at different times. The A5 collapse
+  (ADR-017) assumes a common vintage; the automaton is where a mixed estate would first
+  become visible, and it must refuse to emit a single site-level indicator in that case
+  rather than silently picking one.
+
+**`MW_month` is derived per scenario, never modelled independently.** It is a
+deterministic functional of national spot prices and national solar generation, both of
+which are already dimensions of the joint ensemble (ADR-005), so it is computed *inside*
+each scenario. Modelling it as its own series would destroy the correlation the
+delineation economics turns on: a month with many negative-price hours has a *lower*
+`MW_month`, which raises the premium `MAX[AW − MW_month; 0]`, while simultaneously
+lowering `(30)`, which reduces the volume that premium applies to. Those two channels
+oppose each other, and only a joint derivation can represent that.
+
+The premium's floor at zero makes it **convex** in `MW_month`, so a point forecast
+understates it — most severely when `MW_month` sits near `AW`. This is why it crosses
+C1 as `double[S]` rather than as a scalar.
 
 ### 4.3 Notation, and a warning about `S`
 
