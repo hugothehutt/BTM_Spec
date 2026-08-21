@@ -76,6 +76,45 @@ exact, no binaries.** But `C2`'s `EpigraphTerm` and `ADR-008`:36-41 / `ADR-010`:
 carry **one** `z_peak`, unindexed by `s`. That is a deterministic epigraph on a single
 trajectory. §5 treats the consequence.
 
+**The convexity here is on the *level*, not on the price — and the distinction binds.**
+`max_t p_poi` is convex in `x` unconditionally. What the exactness argument additionally
+needs is that the **charge is convex and non-decreasing in the level**. The spec supplies
+that by pricing at a single scalar rate — `−peakPrice · zPeak · proration` (`L3`:107),
+settled as `peakPrice · realisedPeakKw` (`L5`:216) — which is linear, hence convex. All
+four `ADR-011` regimes are of this shape. **On the spec as written the condition holds.**
+
+It fails the moment the rate is piecewise with a *decreasing* marginal €/kW — a first
+slope steeper than the second. Then `c(·)` is concave non-decreasing and
+`c(max_t p_poi)` is **not convex**. Consequences, kept separate because they fail
+differently:
+
+- The epigraph still pins the level: `c` non-decreasing drives `z` down to `max_t p_poi`.
+- Representing a **concave** PWL under minimisation requires SOS2 / binaries. The
+  convex-combination LP relaxation is not tight — it returns the lower convex envelope,
+  i.e. a **cheaper peak than the tariff charges**. A *third* downward bias on this term,
+  stacking with the two in §5b.
+- `CVaR_α` preserves convexity only for per-scenario convex `L` (§2). With `c` concave
+  the composed risk term is non-convex in `x`. `ADR-008`:46 ("a CVaR-penalised objective
+  stays a MILP") survives; `ADR-008`:37 ("no binaries, exact") does not.
+- **RU is untouched.** It requires integrability, not convexity of `L`. The LP block of
+  §1 stands. What is lost is convexity and tightness *in the decision variables* — a
+  different failure mode from the one this section is about, and worth not conflating.
+
+The German utilisation-hour bands (`<2500 h/a` vs `≥2500 h/a`) are the live instance and
+are **worse than a kink**: two price sheets, and crossing reprices all energy, so total
+cost is *discontinuous*, not merely concave. No such band appears anywhere in this
+repository. Under the regulatory-primitive rule it is a primitive the repo is silent on —
+supplied by the owner on request, not researched here.
+
+**If it applies, it does not belong in the tick as a PWL.** Band membership is settled by
+realised annual energy and peak; the horizon is two days. Carry the band as a further
+discrete conditioning dimension of `V`, exactly as `ADR-011` already carries `qualState`
+for the §19(2) S.2 cliff. `peakPrice` is then a parameter within the tick, the term is
+linear in the level again, and convexity and the no-binaries claim are both restored —
+with the non-convexity living where `L0` §5.3 says it should. The alternative costs
+`S·(bands−1)` binaries, because band membership is a scenario-dependent second-stage
+quantity: **64 per regime at `S = 64`**, for a term currently priced with none.
+
 **1b. Joint minimisation is valid, and valid under integrality.** Minimising over
 `(x, ζ)` jointly equals minimising `CVaR_α(L(x))` over `x` (RU 2002, Thm 10),
 and the joint problem is convex when `L(·, ω)` is convex for each `ω`. With binaries
@@ -446,6 +485,7 @@ should be deleted, not qualified.
 | 16 | A single `cvarLevel` "would push some accumulators the wrong way" | `L2`:142-147 | **Refuted** — vacuous under the aggregate-tail decision it sits beside; delete |
 | 17 | `MW_month` must cross C1 as `double[S]` on the shared axis | `ADR-017`:102-106 | **Confirmed** — follows from 14 plus ADR-005 |
 | 18 | `V` is risk-neutral while the tick objective is risk-averse | `L0` §5.4 + `L3`:103-110 | **Confirmed as a defect** — risk attitude is discontinuous at a horizon boundary that moves every tick |
+| 19 | The peak term is convex, hence exact with no binaries | `ADR-008`:37, `ADR-011`:41-44 | **Conditional** — holds because `peakPrice` is a **scalar**, so the charge is linear in the level. A rate with decreasing marginal €/kW makes the term concave: relaxation understates the charge (third downward bias) and the risk term loses convexity. RU is unaffected |
 
 ---
 
