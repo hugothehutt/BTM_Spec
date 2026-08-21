@@ -1,0 +1,76 @@
+# ---- 03-contracts/C6 ----
+C6 carries the StateSnapshot payload at version 1.0 from L0 to L1, L2 and L3, and is the read side of L0.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	ADR-006
+C6 is the contract the state store was asserted to be, with a field table, a version and invariants like every other seam.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	ADR-006
+C6 is numbered separately from C5 rather than folded into it because it has a different direction, a different set of consumers and a different failure policy.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	ADR-006
+The StateSnapshot is taken once, immutably, at the top of every tick, and every layer that needs state reads that one object.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	ADR-006
+No layer consults L0 directly mid-tick, which is what makes the no-read-of-a-same-tick-write audit mechanically decidable.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	ADR-006; T3
+StateUpdate and StateSnapshot are deliberately not the same type: the snapshot is a coherent read view of the whole store at an instant, and the update is a delta produced by one component at the end of a tick.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	ADR-006
+snapshotAt is the tick at which the snapshot was taken.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	ADR-006
+stateAsOf is the latest tick whose StateUpdate is included and is always strictly less than snapshotAt.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	INV-G-12
+lagSlots equals snapshotAt minus stateAsOf and is the explicit feedback lag.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	INV-G-12
+isColdStart is true on the first tick after a restart, before reconciliation completes.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	INV-G-16
+lagSlots is a first-class field rather than an implementation detail, and consumers are expected to reason about it.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	ADR-006
+A Planner that knows the peak state is three slots stale treats the gap conservatively rather than assuming it was empty.	03-contracts/C6-state-to-layers.md §1	analytic	very-expensive	ADR-006	ADR-006
+The C6 peak state block mirrors C5 §2 and is read by PeakView in L2 and by the escalation policy in L3.	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-011	ADR-011
+realisedPeak on C6 is the EpigraphTerm floor.	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-008	ADR-008
+peakIsProvisional defaults to true.	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-014	ADR-014
+The peak is authoritative only up to unsettledGapFrom.	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-006	ADR-006
+The conservative default for headroomToPeakKw is zero, meaning no headroom.	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-014	ADR-014
+The conservative default for peakCritical is true, meaning treat the state as critical.	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-014	ADR-014
+The unsettled gap is not optional to handle.	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-006	ADR-006
+Between unsettledGapFrom and snapshotAt no settled meter data exists.	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-006	ADR-006
+The Planner must substitute its own modelled POI trajectory over the unsettled window as a provisional peak contribution.	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-006	ADR-006
+effectiveFloor is the maximum of realisedPeak and the maximum modelled POI import over the slots in [unsettledGapFrom, snapshotAt).	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-006	ADR-006
+Assuming the unsettled gap contained nothing is the single most likely way to set a new monthly peak by accident, because the gap is exactly the window in which the engine was most recently active.	03-contracts/C6-state-to-layers.md §2	analytic	very-expensive	ADR-011	ADR-011
+The C6 qualification state block mirrors C5 §3 and is read by TariffView and PeakView in L2 and by the slow loop.	03-contracts/C6-state-to-layers.md §3	analytic	expensive-later	ADR-011	ADR-011
+fullLoadHours is a declared exception to the dimensionless rule, carrying the declared unit h.	03-contracts/C6-state-to-layers.md §3	analytic	expensive-later	ADR-003	ADR-003
+The conservative default for qualificationStatus is AtRisk.	03-contracts/C6-state-to-layers.md §3	analytic	expensive-later	ADR-014	ADR-014
+The conservative default for qualificationMarginHours is zero, meaning no margin.	03-contracts/C6-state-to-layers.md §3	analytic	expensive-later	ADR-014	ADR-014
+The conservative default for qualCritical is true.	03-contracts/C6-state-to-layers.md §3	analytic	expensive-later	ADR-014	ADR-014
+Every conservative default in the qualification block biases toward protecting the qualification, because the asymmetry is extreme: the downside of an unnecessary protective bound is a day's foregone spread while the downside of losing a §19(2) reduction is a year of network-charge relief.	03-contracts/C6-state-to-layers.md §3	analytic	expensive-later	ADR-011	ADR-011
+The C6 delineation state block mirrors C5 §3.1 and is read by DelineationView in L2 and by L3, which carries the accumulators forward as MILP variables over the horizon.	03-contracts/C6-state-to-layers.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+The seven accumulators cross C6 unchanged from C5 §3.1, defaulting to zero.	03-contracts/C6-state-to-layers.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+The conservative defaults for pvShare and awPositiveShare are zero, meaning no PV attribution and no AW>0 share.	03-contracts/C6-state-to-layers.md §3.1	analytic	very-expensive	ADR-017	ADR-014; ADR-017
+A false throughputBoundMet forces the Planner to carry (12) explicitly rather than assume it away.	03-contracts/C6-state-to-layers.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+The delineation conservative defaults bias toward understating delineation value: a zero awPositiveShare prices the green route at nothing, and throughputBoundMet = false costs binaries rather than correctness.	03-contracts/C6-state-to-layers.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+The failure mode worth avoiding is an engine that charges from the grid on the strength of a route it turns out not to have.	03-contracts/C6-state-to-layers.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+DelineationView reads the C6 delineation block and the MW_month belief and publishes the seven λ_j, and it reads no other view's output.	03-contracts/C6-state-to-layers.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+The commitment ledger read view mirrors C5 §4 and is read by L3.	03-contracts/C6-state-to-layers.md §4	analytic	very-expensive	ADR-006	ADR-006
+Ledger entries are ordered by (slot, entryId) for determinism.	03-contracts/C6-state-to-layers.md §4	analytic	very-expensive	ADR-013	ADR-013
+confirmedReserveUp and confirmedReserveDn are denormalised per block for the Planner's hard constraints.	03-contracts/C6-state-to-layers.md §4	analytic	very-expensive	ADR-006	ADR-006
+confirmedSpotPosition is denormalised, signed, and in the market frame.	03-contracts/C6-state-to-layers.md §4	analytic	very-expensive	ADR-003	ADR-003
+pendingExposure is signed and probabilistic rather than an obligation.	03-contracts/C6-state-to-layers.md §4	analytic	very-expensive	ADR-006	ADR-006
+requiredSocCorridor is the union of all confirmed feasibilityRequirements.	03-contracts/C6-state-to-layers.md §4	analytic	very-expensive	ADR-006	ADR-006
+A false ledgerConsistent triggers SAFE mode.	03-contracts/C6-state-to-layers.md §4	analytic	very-expensive	ADR-014	ADR-014
+The denormalised ledger views exist because the Planner needs them on every solve, and recomputing them from entries per tick is both wasteful and a chance to disagree.	03-contracts/C6-state-to-layers.md §4	analytic	very-expensive	ADR-006	INV-G-11
+requiredSocCorridor is the single most safety-critical field in C6.	03-contracts/C6-state-to-layers.md §4	analytic	very-expensive	ADR-014	ADR-014
+requiredSocCorridor is a hard constraint in every degradation mode including SAFE, and a plan that violates it never reaches C3.	03-contracts/C6-state-to-layers.md §4	analytic	very-expensive	ADR-014	INV-P-02
+The value function is read from C6 by OppCostView in L2, which republishes it across C2 §4.	03-contracts/C6-state-to-layers.md §5	analytic	expensive-later	ADR-007	ADR-007
+isStale is true when snapshotAt minus producedAt exceeds validityHorizon.	03-contracts/C6-state-to-layers.md §5	analytic	expensive-later	ADR-007	ADR-007
+contextDrift is the distance from the state at which V was fitted.	03-contracts/C6-state-to-layers.md §5	analytic	expensive-later	ADR-007	ADR-007	y
+Value function staleness is never silent.	03-contracts/C6-state-to-layers.md §5	analytic	expensive-later	ADR-014	ADR-014
+If the value function is stale the mode escalates to at least DEFENSIVE and stalenessPenalty shrinks V's slopes toward zero.	03-contracts/C6-state-to-layers.md §5	analytic	expensive-later	ADR-014	ADR-014
+Shrinking V's slopes toward zero makes the Planner progressively indifferent to terminal SOC rather than confidently wrong about it.	03-contracts/C6-state-to-layers.md §5	analytic	expensive-later	ADR-007	ADR-007
+T6 includes a stale-artefact audit asserting the engine refuses a value function beyond its validity horizon rather than using it quietly.	03-contracts/C6-state-to-layers.md §5	analytic	expensive-later	ADR-014	ADR-014; T6
+degradationMode on C6 is the mode in force entering the tick.	03-contracts/C6-state-to-layers.md §6	analytic	moderate	ADR-014	ADR-014
+modeEnteredAt is carried for hysteresis accounting.	03-contracts/C6-state-to-layers.md §6	analytic	moderate	ADR-014	ADR-014
+consecutiveBadTicks and consecutiveGoodTicks are the hysteresis counters.	03-contracts/C6-state-to-layers.md §6	analytic	moderate	ADR-014	ADR-014
+seriesQualityState carries the last known QualityStamp per series.	03-contracts/C6-state-to-layers.md §6	analytic	moderate	ADR-014	ADR-014
+The mode in the snapshot is a floor and not a verdict.	03-contracts/C6-state-to-layers.md §6	analytic	moderate	ADR-014	ADR-014
+L1 may raise the degradation mode within the tick from its own same-tick inputs but may never lower it.	03-contracts/C6-state-to-layers.md §6	analytic	moderate	ADR-014	ADR-014
+A critical series missing now escalates now and does not wait a tick.	03-contracts/C6-state-to-layers.md §6	analytic	moderate	ADR-014	ADR-014
+De-escalation of the degradation mode is central and hysteretic.	03-contracts/C6-state-to-layers.md §6	analytic	moderate	ADR-014	ADR-014
+Raising a floor from a component's own inputs is not a read of another component's same-tick write, so in-tick escalation does not violate ADR-006.	03-contracts/C6-state-to-layers.md §6	analytic	moderate	ADR-014	ADR-006; ADR-014
+artefactVersions maps each ArtefactKind — scenario generator, value function, fill model, tier-3 surface, market calendar, tzdata — to a content hash.	03-contracts/C6-state-to-layers.md §7	analytic	very-expensive	ADR-013	ADR-013
+artefactVersions is carried so that every downstream artefact can record which model versions produced it and so a backtest can be re-run with the versions actually in force.	03-contracts/C6-state-to-layers.md §7	analytic	very-expensive	ADR-013	ADR-013
+Denormalised ledger views reconcile with entries, and violation is a HALT.	03-contracts/C6-state-to-layers.md §8	analytic	very-expensive	ADR-006	INV-G-11
+stateAsOf is strictly less than snapshotAt and lagSlots is consistent with both, and violation is a HALT because a zero lag means a same-tick read.	03-contracts/C6-state-to-layers.md §8	analytic	very-expensive	ADR-006	INV-G-12
+The snapshot is immutable for the duration of the tick and no consumer holds a mutable reference, enforced structurally and audited in T3.	03-contracts/C6-state-to-layers.md §8	analytic	very-expensive	ADR-006	INV-G-13
+Every C6 field marked Null = no is present, or the default is applied and recorded, and otherwise the engine escalates.	03-contracts/C6-state-to-layers.md §8	analytic	very-expensive	ADR-014	INV-G-14
+requiredSocCorridor is non-empty wherever confirmedReserveUp or confirmedReserveDn is non-zero, and violation is a HALT.	03-contracts/C6-state-to-layers.md §8	analytic	very-expensive	ADR-006	INV-G-15
+On isColdStart no speculative intent is emitted until reconciliation completes, and violation is a HALT.	03-contracts/C6-state-to-layers.md §8	analytic	very-expensive	ADR-014	INV-G-16
+The lag invariant is the mechanical enforcement of ADR-006, because a lag of zero would mean some component read state written in the same tick, which is precisely the cycle the architecture exists to exclude.	03-contracts/C6-state-to-layers.md §8	analytic	very-expensive	ADR-006	INV-G-12
+No belief or forecast crosses C6, because those come from L1 via C1.	03-contracts/C6-state-to-layers.md §9	analytic	very-expensive	ADR-006	ADR-006
+No valuation output crosses C6: L0 stores V as an artefact and does not store prices.	03-contracts/C6-state-to-layers.md §9	analytic	very-expensive	ADR-006	ADR-006
+No raw settlement detail crosses C6; only the aggregated state the next tick needs.	03-contracts/C6-state-to-layers.md §9	analytic	very-expensive	ADR-006	ADR-006
+No mutable references to the store cross C6, because the snapshot is a value.	03-contracts/C6-state-to-layers.md §9	analytic	very-expensive	ADR-006	INV-G-13

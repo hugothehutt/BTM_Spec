@@ -8050,3 +8050,4374 @@
   evidence: unlabelled
   tn: null
   band: null
+
+# ---- 03-contracts-a.tsv ----
+# ---- 03-contracts/C0 and C1 ----
+- id: CLM-0797
+  statement: "A contract is the complete, closed description of what crosses a seam: if it is not in the field table, it does not cross."
+  owner: 03-contracts/C0-contract-conventions.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0798
+  statement: There is no additional-context parameter, no object and no dictionary of extras in any contract.
+  owner: 03-contracts/C0-contract-conventions.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0799
+  statement: "A contract is a value: immutable record types and readonly structs, with no references to mutable state, no handles into another layer's storage and no delegates."
+  owner: 03-contracts/C0-contract-conventions.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0800
+  statement: A contract is serialisable and round-trips to a stable binary and a stable JSON form.
+  owner: 03-contracts/C0-contract-conventions.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0801
+  statement: Serialisability is what makes seam recording and per-layer golden tests possible.
+  owner: 03-contracts/C0-contract-conventions.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0802
+  statement: Every payload carries schemaVersion, and a consumer rejects a version it does not understand rather than guessing.
+  owner: 03-contracts/C0-contract-conventions.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0803
+  statement: Every payload carries contentHash of itself and inputHashes of the payloads that produced it, forming the Merkle chain.
+  owner: 03-contracts/C0-contract-conventions.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0804
+  statement: Every contract documents its fields in a table with the columns Field, Type, Unit, Card., Range, Null, Default, MaxStale and Notes.
+  owner: 03-contracts/C0-contract-conventions.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0805
+  statement: The Type column names the typed quantity and not a primitive.
+  owner: 03-contracts/C0-contract-conventions.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0806
+  statement: The Unit column is explicit even when implied by the type.
+  owner: 03-contracts/C0-contract-conventions.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0807
+  statement: Cardinality is one of 1, [H] per slot, [S,H] per scenario and slot, [B] per block, or 0..1 optional.
+  owner: 03-contracts/C0-contract-conventions.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0808
+  statement: A value outside the declared Range is a contract failure.
+  owner: 03-contracts/C0-contract-conventions.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0809
+  statement: The Default column carries the conservative default, or an em dash if none exists.
+  owner: 03-contracts/C0-contract-conventions.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0810
+  statement: MaxStale is the maximum age before quality degrades, expressed in SlotSpan.
+  owner: 03-contracts/C0-contract-conventions.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0811
+  statement: A field with Null = yes must have either a Default or a documented escalation, and a nullable field with no defined behaviour on absence is an incomplete contract.
+  owner: 03-contracts/C0-contract-conventions.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0812
+  statement: The universal invariants are applied at every seam by a shared validator invoked on both sides.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0813
+  statement: No numeric field contains NaN or infinity.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0814
+  statement: Every numeric field has a declared unit in its field table; dimensioned quantities use a typed quantity while dimensionless fields may be double or int but must be declared with an em dash in the Unit column and range-constrained, and a dimensioned field typed as a bare double is a violation.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-003
+  anchors: [INV-G-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0815
+  statement: schemaVersion is recognised by the consumer.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0816
+  statement: contentHash matches the payload, and inputHashes are present and non-empty.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0817
+  statement: No payload contains a wall-clock timestamp taken at construction.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0818
+  statement: All slot-indexed arrays have the length declared by horizon.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0819
+  statement: All scenario-indexed arrays share the scenario axis length and ordering.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-G-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0820
+  statement: asOf is non-decreasing across successive payloads on the same seam.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-G-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0821
+  statement: Every field marked Null = no is present.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0822
+  statement: Declared ranges hold for every element, not merely the first.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0823
+  statement: Validation is on by default in every environment, including production.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0824
+  statement: Validation costs a few microseconds against a solve measured in milliseconds.
+  owner: 03-contracts/C0-contract-conventions.md §3
+  class: empirical
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [y]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0825
+  statement: "Each seam is validated twice: the producer validates before emitting and the consumer validates on receipt."
+  owner: 03-contracts/C0-contract-conventions.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0826
+  statement: A producer-side validation failure enters the producing layer's degradation ladder.
+  owner: 03-contracts/C0-contract-conventions.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0827
+  statement: A consumer-side validation failure goes to HALT, because a contract violation means the producer is in an unknown state and nothing downstream can be trusted.
+  owner: 03-contracts/C0-contract-conventions.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0828
+  statement: An additive change — a new optional field with a default — is a minor version bump and old consumers keep working.
+  owner: 03-contracts/C0-contract-conventions.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0829
+  statement: Removing a field, changing a type, changing a unit, changing a semantic or tightening a range is a major version bump, and the consumer must be updated in the same commit.
+  owner: 03-contracts/C0-contract-conventions.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0830
+  statement: Unit changes are always major, even when the type is unchanged, because a field silently moving from EUR/MWh to EUR/kWh is the archetypal catastrophic change.
+  owner: 03-contracts/C0-contract-conventions.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0831
+  statement: A contract change requires the doc, the version and the conformance tests in one commit.
+  owner: 03-contracts/C0-contract-conventions.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0832
+  statement: Fields subject to data quality carry a parallel quality channel rather than embedding quality in the value.
+  owner: 03-contracts/C0-contract-conventions.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0833
+  statement: A QualityStamp carries provenance, quality, knowledgeTime, sourceId and maxStaleBreached.
+  owner: 03-contracts/C0-contract-conventions.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0834
+  statement: A QualityStamp is carried per series where quality is uniform across the array and per element where it is not, such as a forecast with a measured prefix and a forecast suffix.
+  owner: 03-contracts/C0-contract-conventions.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0835
+  statement: Consumers map quality to risk parameters and never to branches.
+  owner: 03-contracts/C0-contract-conventions.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0836
+  statement: Every payload carries tickId as (SlotId, clock, sequence), which identifies the tick uniquely.
+  owner: 03-contracts/C0-contract-conventions.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0837
+  statement: Every payload carries asOf, the knowledge-time boundary for every fact inside it.
+  owner: 03-contracts/C0-contract-conventions.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0838
+  statement: Every payload carries horizon as a SlotSpan, assetId for the battery, poiId for the connection point, and manifestId as the run manifest hash.
+  owner: 03-contracts/C0-contract-conventions.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0839
+  statement: Multi-asset is not in scope for v1, but assetId and poiId are present in every contract from the start so that adding a second asset is not a schema break.
+  owner: 03-contracts/C0-contract-conventions.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0840
+  statement: C1 carries the BeliefSnapshot payload at version 1.0 from L1 to L2.
+  owner: 03-contracts/C1-belief-to-valuation.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0841
+  statement: C1 carries everything Valuation may know about the world, as of a knowledge-time boundary, over the hot window, and nothing else reaches Valuation.
+  owner: 03-contracts/C1-belief-to-valuation.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0842
+  statement: Valuation has no access to the Belief store, to the network, or to a clock.
+  owner: 03-contracts/C1-belief-to-valuation.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0843
+  statement: The C1 envelope adds scenarioCount, the shared scenario axis length S; scenarioWeights, non-negative and summing to 1; slotStart, the first slot of the window; and slotCount, equal to H_hot.
+  owner: 03-contracts/C1-belief-to-valuation.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0844
+  statement: socNow is measured, and if telemetry is lost the engine escalates rather than defaulting.
+  owner: 03-contracts/C1-belief-to-valuation.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0845
+  statement: The operating band socMin to socMax includes warranty derates.
+  owner: 03-contracts/C1-belief-to-valuation.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0846
+  statement: pMaxDischarge and pMaxCharge are per-slot and may derate on temperature or state of health.
+  owner: 03-contracts/C1-belief-to-valuation.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0847
+  statement: sohFraction is informational, and derates flow through pMax* and socMax rather than through it.
+  owner: 03-contracts/C1-belief-to-valuation.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0848
+  statement: poiImportLimit and poiExportLimit are the contractual and physical POI envelope, per slot.
+  owner: 03-contracts/C1-belief-to-valuation.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0849
+  statement: auxLoad is explicit per slot and not folded into η, and its conservative default is the site maximum.
+  owner: 03-contracts/C1-belief-to-valuation.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0850
+  statement: The conservative default for load is a high quantile, because a high load protects the peak.
+  owner: 03-contracts/C1-belief-to-valuation.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0851
+  statement: The conservative default for pv is zero, because zero PV protects the peak.
+  owner: 03-contracts/C1-belief-to-valuation.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0852
+  statement: loadQuality and pvQuality are per-element QualityStamps, carrying a measured prefix and a forecast suffix.
+  owner: 03-contracts/C1-belief-to-valuation.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0853
+  statement: daPrice is scenario- and slot-indexed in EUR/MWh with range [-9999, 9999], and negative prices are legal and material.
+  owner: 03-contracts/C1-belief-to-valuation.md §4
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0854
+  statement: daCleared is present only post-gate and null pre-gate.
+  owner: 03-contracts/C1-belief-to-valuation.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0855
+  statement: idSpreadBelief is a half-spread belief whose wide default suppresses trading.
+  owner: 03-contracts/C1-belief-to-valuation.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0856
+  statement: afrrCapPrice is per product block with a zero default, so the engine does not chase reserve revenue on invented prices.
+  owner: 03-contracts/C1-belief-to-valuation.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0857
+  statement: activationUp and activationDn are fractions of committed MW in [0,1] and are scenario-consistent with prices.
+  owner: 03-contracts/C1-belief-to-valuation.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0858
+  statement: imbalancePrice is a reBAP-type belief.
+  owner: 03-contracts/C1-belief-to-valuation.md §4
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0859
+  statement: Every scenario-indexed array shares the axis, so index s denotes the same state of the world in load, pv, daPrice, activationUp and all others.
+  owner: 03-contracts/C1-belief-to-valuation.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0860
+  statement: Violation of the shared scenario axis is a hard failure and not a warning.
+  owner: 03-contracts/C1-belief-to-valuation.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0861
+  statement: idReliableVolumeBuy and idReliableVolumeSell are the volumes that may be counted on, defaulting to zero.
+  owner: 03-contracts/C1-belief-to-valuation.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0862
+  statement: idVolumeByPriceBand is an optional refinement pending the fill-fidelity decision.
+  owner: 03-contracts/C1-belief-to-valuation.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0863
+  statement: The liquidity beliefs are volumes only, with no price field, which is the C1-side enforcement of the rule that fill probability constrains the Planner but never prices for it.
+  owner: 03-contracts/C1-belief-to-valuation.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008, ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0864
+  statement: Prices for quoting reach the quoting policy by a different route, outside C2.
+  owner: 03-contracts/C1-belief-to-valuation.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0865
+  statement: activeRegimes is a non-empty list of TariffRegimeIds taken from the calendar.
+  owner: 03-contracts/C1-belief-to-valuation.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0866
+  statement: peakPrice is carried per regime in EUR/kW/period and is non-negative.
+  owner: 03-contracts/C1-belief-to-valuation.md §6
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0867
+  statement: leviesAndTaxes is a closed enumerated list of the non-reducible components, summed.
+  owner: 03-contracts/C1-belief-to-valuation.md §6
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0868
+  statement: enfgLevies is the reducible EnFG components summed, charged on (21) and never on metered import.
+  owner: 03-contracts/C1-belief-to-valuation.md §6
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0869
+  statement: isHlzf comes from the DSO HLZF table and its conservative default is true, inside the window.
+  owner: 03-contracts/C1-belief-to-valuation.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011, ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0870
+  statement: awPositive and anzulegenderWert are derived in L1 §4.2.1 and not ingested.
+  owner: 03-contracts/C1-belief-to-valuation.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0871
+  statement: awPositive carries (24)¼, is a realised parameter within the settled day-ahead horizon and scenario-indexed beyond it, and its conservative default of false forfeits the premium.
+  owner: 03-contracts/C1-belief-to-valuation.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-014, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0872
+  statement: anzulegenderWert is AW, static per plant and EEG vintage.
+  owner: 03-contracts/C1-belief-to-valuation.md §6.1
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0873
+  statement: zuordnungsFaktor is ZF, power-weighted, and sums to 1 across plants.
+  owner: 03-contracts/C1-belief-to-valuation.md §6.1
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0874
+  statement: marktwertMonth is MW_month, derived per scenario from national spot and national solar generation on the shared axis, and never an independent series.
+  owner: 03-contracts/C1-belief-to-valuation.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-005, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0875
+  statement: commonEegVintage is true only when every plant shares a § 51 or § 51b threshold, which is what makes the AW forfeit simultaneous and collapses A5 to A1, and false forbids the collapse.
+  owner: 03-contracts/C1-belief-to-valuation.md §6.1
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0876
+  statement: The premium is MAX[anzulegenderWert − marktwertMonth; 0], which is convex in marktwertMonth.
+  owner: 03-contracts/C1-belief-to-valuation.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0877
+  statement: marktwertMonth crosses as [S] rather than as a scalar because a point forecast understates the premium, most severely when AW and MW_month are close.
+  owner: 03-contracts/C1-belief-to-valuation.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0878
+  statement: blockIndex maps each slot to its aFRR product block.
+  owner: 03-contracts/C1-belief-to-valuation.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0879
+  statement: blockSlots carries the aFRR block lengths and comes from the calendar.
+  owner: 03-contracts/C1-belief-to-valuation.md §7
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0880
+  statement: sustainDuration is the prequalification requirement D.
+  owner: 03-contracts/C1-belief-to-valuation.md §7
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0881
+  statement: minBidMw and bidStepMw are the aFRR product granularity and are strictly positive.
+  owner: 03-contracts/C1-belief-to-valuation.md §7
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0882
+  statement: symmetricProduct declares whether up and down reserve must be equal.
+  owner: 03-contracts/C1-belief-to-valuation.md §7
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0883
+  statement: seriesQuality carries one QualityStamp per series and is the basis of the risk multiplier.
+  owner: 03-contracts/C1-belief-to-valuation.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0884
+  statement: degradationMode is read from L0 and echoed in C1 so Valuation need not consult L0 separately.
+  owner: 03-contracts/C1-belief-to-valuation.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0885
+  statement: criticalMissing is empty in NORMAL, and a non-empty criticalMissing implies a mode of at least DEFENSIVE.
+  owner: 03-contracts/C1-belief-to-valuation.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0886
+  statement: socMin ≤ socNow ≤ socMax, and violation is a HALT because telemetry or the model is wrong.
+  owner: 03-contracts/C1-belief-to-valuation.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0887
+  statement: No fact inside a BeliefSnapshot has knowledgeTime greater than asOf, and violation is a HALT for lookahead.
+  owner: 03-contracts/C1-belief-to-valuation.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0888
+  statement: Every [H] array in C1 has length slotCount, and violation is a HALT.
+  owner: 03-contracts/C1-belief-to-valuation.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0889
+  statement: blockIndex is non-decreasing and covers every slot exactly once, and violation is a HALT.
+  owner: 03-contracts/C1-belief-to-valuation.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [INV-D-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0890
+  statement: scenarioWeights are non-negative and sum to 1 within 1e-9, and violation is a HALT.
+  owner: 03-contracts/C1-belief-to-valuation.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0891
+  statement: Reduced-ensemble marginal means match the full ensemble within tolerance, and violation warns and sets DEGRADED.
+  owner: 03-contracts/C1-belief-to-valuation.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0892
+  statement: pMaxCharge and pMaxDischarge are non-negative and finite for every slot, and violation is a HALT.
+  owner: 03-contracts/C1-belief-to-valuation.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0893
+  statement: etaCharge · etaDischarge ≤ 1, and violation is a HALT.
+  owner: 03-contracts/C1-belief-to-valuation.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0894
+  statement: Every C1 field marked Null = no is present or is listed in criticalMissing, and otherwise the engine escalates per the ladder.
+  owner: 03-contracts/C1-belief-to-valuation.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [INV-D-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0895
+  statement: No handle, cursor or reference into the Belief store crosses C1.
+  owner: 03-contracts/C1-belief-to-valuation.md §10
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0896
+  statement: No raw order-book data crosses C1; only the derived volume beliefs do.
+  owner: 03-contracts/C1-belief-to-valuation.md §10
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0897
+  statement: No Planner or Settlement output crosses C1, because that arrives via L0 at a lag.
+  owner: 03-contracts/C1-belief-to-valuation.md §10
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0898
+  statement: No wall-clock time crosses C1.
+  owner: 03-contracts/C1-belief-to-valuation.md §10
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0899
+  statement: No model objects cross C1; only their evaluated outputs and their version hashes do.
+  owner: 03-contracts/C1-belief-to-valuation.md §10
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+
+# ---- 03-contracts-b.tsv ----
+# ---- 03-contracts/C2 ----
+- id: CLM-0900
+  statement: C2 carries the ValuationBundle payload at version 1.0 from L2 to L3 and is the load-bearing seam.
+  owner: 03-contracts/C2-valuation-to-planner.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0901
+  statement: Everything the Planner knows about economics arrives through C2, expressed in the closed algebra of five shapes.
+  owner: 03-contracts/C2-valuation-to-planner.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0902
+  statement: The Planner has no access to Belief, to prices, or to scenario arrays.
+  owner: 03-contracts/C2-valuation-to-planner.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0903
+  statement: compositionOrder records the stages actually applied, in order, for audit.
+  owner: 03-contracts/C2-valuation-to-planner.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0904
+  statement: effectCoverage records which view owned which effect this tick.
+  owner: 03-contracts/C2-valuation-to-planner.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0905
+  statement: unclaimedEffects are priced at zero, and an empty unclaimedEffects is the expected case.
+  owner: 03-contracts/C2-valuation-to-planner.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0906
+  statement: "Terms refer to decision variables by a closed enumeration: the Planner owns the variables and Valuation may only name them."
+  owner: 03-contracts/C2-valuation-to-planner.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0907
+  statement: The decision variable vocabulary is pCharge, pDischarge, soc, socTerminal, pPoi, zPeak, vDaBuy, vDaSell, vIdBuy, vIdSell, rUp, rDn, eAfrrUp, eAfrrDn, eImbalance, q and aDel.
+  owner: 03-contracts/C2-valuation-to-planner.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0908
+  statement: pCharge and pDischarge are in the battery frame, pPoi and zPeak in the POI frame.
+  owner: 03-contracts/C2-valuation-to-planner.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0909
+  statement: aDel spans the accumulators j in {(3),(5),(6),(9),(11),(26),(29)}.
+  owner: 03-contracts/C2-valuation-to-planner.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0910
+  statement: Like zPeak, aDel is not a free decision because the Planner's state equations pin it, but a term must be able to name it because DelineationView prices it at λ_j = ∂V_del/∂A_j.
+  owner: 03-contracts/C2-valuation-to-planner.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0911
+  statement: "The C2 vocabulary is meter-shaped only: no symbol attributes energy to a path or to a named installation."
+  owner: 03-contracts/C2-valuation-to-planner.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-V-17]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0912
+  statement: The delineation's per-slot variables Z1NB, Z1NE, Z2V, Z2E and the MIN selectors are Planner-internal and deliberately absent from C2, because no lever may carry a delineation coefficient.
+  owner: 03-contracts/C2-valuation-to-planner.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-V-17]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0913
+  statement: Adding a symbol to the decision variable vocabulary is a major version bump.
+  owner: 03-contracts/C2-valuation-to-planner.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0914
+  statement: Every term carries a common header of termId, originView, effect, base, slots, mandatory and confidence.
+  owner: 03-contracts/C2-valuation-to-planner.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0915
+  statement: termId is stable and unique within the bundle.
+  owner: 03-contracts/C2-valuation-to-planner.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0916
+  statement: The effect field is from the closed enumeration and is the basis of the exclusivity check.
+  owner: 03-contracts/C2-valuation-to-planner.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0917
+  statement: The base field is one of PoiImport, BatteryThroughput, MarketVolume, TerminalSoc, ReserveCapacity or Delineation.
+  owner: 03-contracts/C2-valuation-to-planner.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0918
+  statement: If mandatory is true, dropping the term invalidates the plan, and peak protection is mandatory.
+  owner: 03-contracts/C2-valuation-to-planner.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0919
+  statement: The confidence field is propagated from input quality, feeds riskProfile, and never drives a branch.
+  owner: 03-contracts/C2-valuation-to-planner.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0920
+  statement: A LinearTerm carries a variable from the vocabulary, a per-slot coefficient in EUR per variable unit, and a sense of Maximize or Minimize.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0921
+  statement: A PwlTerm carries the abscissa variable, strictly increasing breakpointsX in variable units, breakpointsY in EUR, a curvature, a sense, and an extrapolation of Clamp or Forbid.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0922
+  statement: A PwlTerm's curvature is verified against the breakpoints and not trusted.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0923
+  statement: An extrapolation of Forbid adds bounds at the end breakpoints.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0924
+  statement: The combinations (Concave, Maximize) and (Convex, Minimize) require no binaries and are LP-exact.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0925
+  statement: Any other curvature-sense combination, and any General curvature, requires SOS2 or binaries.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0926
+  statement: The bundle must declare the binary count in problemClassHint so a solve-time regression is attributable to a specific economic modelling choice.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0927
+  statement: An EpigraphTerm carries epigraphVar, dominates, overSlots, floor, unitPrice and prorationFactor.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0928
+  statement: The overSlots subset is how HLZF is expressed.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0929
+  statement: The epigraph floor is the realised peak so far, taken from L0.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0930
+  statement: prorationFactor is the fraction of the accounting period inside this horizon.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0931
+  statement: Because the horizon is shorter than the accounting period, the full period charge must not be applied to a partial window.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0932
+  statement: The remaining accounting-period value is carried by V.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0933
+  statement: Mis-setting prorationFactor is a classic overweighting of peak.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-13]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0934
+  statement: A BoundTerm carries a target variable or linear expression, per-slot lower and upper bounds either of which may be null for a one-sided bound, a reason, and an optional softPenalty where null means a hard bound.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0935
+  statement: A BoundTerm's reason is one of Physical, Contractual, Liquidity, Risk or Regulatory.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0936
+  statement: "Feasibility restoration relaxes bounds in a declared order: Risk first, then Liquidity, and never Physical or Regulatory."
+  owner: 03-contracts/C2-valuation-to-planner.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0937
+  statement: Without the reason tag an infeasible model can only be relaxed blindly.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0938
+  statement: A CouplingConstraint carries a kind from the closed set ReserveCorridor, ReservePowerHeadroom, Commitment, ChanceConstraint or Custom, its rows as linear rows per slot or per block, a scenarioScope, and a declared introducesBinaries count.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0939
+  statement: A CouplingConstraint's declared introducesBinaries is checked against what is built.
+  owner: 03-contracts/C2-valuation-to-planner.md §3.5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0940
+  statement: The value function is carried separately from the term list because it is structurally distinctive and its staleness is handled specially.
+  owner: 03-contracts/C2-valuation-to-planner.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0941
+  statement: vSocBreakpointsX is strictly increasing and spans [socMin, socMax].
+  owner: 03-contracts/C2-valuation-to-planner.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0942
+  statement: vSocSlopes is strictly decreasing, which is concavity, and this is asserted.
+  owner: 03-contracts/C2-valuation-to-planner.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-007
+  anchors: [INV-V-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0943
+  statement: The value function is conditioned on (peakState, qualState, calendarContext).
+  owner: 03-contracts/C2-valuation-to-planner.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0944
+  statement: The value function carries producedAt, the slot when the slow loop produced it, and a validityHorizon beyond which a staleness penalty applies.
+  owner: 03-contracts/C2-valuation-to-planner.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0945
+  statement: stalenessPenalty is a shrink factor in [0,1] applied when the value function is stale.
+  owner: 03-contracts/C2-valuation-to-planner.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0946
+  statement: The value function carries an artefactHash for the Merkle chain.
+  owner: 03-contracts/C2-valuation-to-planner.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0947
+  statement: rUpMax and rDnMax are the per-block reserve envelope from prequalification and asset limits.
+  owner: 03-contracts/C2-valuation-to-planner.md §5
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0948
+  statement: capacityValueCurveUp and capacityValueCurveDn are per-block PwlTerms, concave in offered MW, carrying the expected value of the bid curve.
+  owner: 03-contracts/C2-valuation-to-planner.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0949
+  statement: deliveryObligation carries already-confirmed awards from L0 as a hard commitment.
+  owner: 03-contracts/C2-valuation-to-planner.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0950
+  statement: deliveryObligation is separated from the offer decision because confirmed awards are physical obligations that survive every degradation mode, whereas offers are decisions.
+  owner: 03-contracts/C2-valuation-to-planner.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0951
+  statement: The risk profile is how input quality reaches the optimisation without becoming control flow.
+  owner: 03-contracts/C2-valuation-to-planner.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0952
+  statement: cvarLevel is widened when quality degrades.
+  owner: 03-contracts/C2-valuation-to-planner.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0953
+  statement: cvarWeight is the weight on the CVaR term against expectation.
+  owner: 03-contracts/C2-valuation-to-planner.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0954
+  statement: chanceLevel is the ε for SOC feasibility chance constraints.
+  owner: 03-contracts/C2-valuation-to-planner.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0955
+  statement: positionScale is a multiplier in [0,1] on speculative position bounds.
+  owner: 03-contracts/C2-valuation-to-planner.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0956
+  statement: peakSafetyMarginKw is added to the epigraph floor under degraded load quality.
+  owner: 03-contracts/C2-valuation-to-planner.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0957
+  statement: driverSummary records which quality issues moved which parameter, for the audit trail.
+  owner: 03-contracts/C2-valuation-to-planner.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0958
+  statement: The problem class hint is computed by the composer from the terms present, before the solver sees anything.
+  owner: 03-contracts/C2-valuation-to-planner.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0959
+  statement: isLinearProgram is true when no term introduces a binary.
+  owner: 03-contracts/C2-valuation-to-planner.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0960
+  statement: binariesByOrigin attributes the binary count to the term that caused it.
+  owner: 03-contracts/C2-valuation-to-planner.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0961
+  statement: The problem class hint is the instrument that keeps solve time explainable, and when a solve slows down binariesByOrigin names the term responsible.
+  owner: 03-contracts/C2-valuation-to-planner.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0962
+  statement: No (effect, variable, slot) triple is priced by more than one term, and violation is a HALT for double counting.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-V-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0963
+  statement: Every term's originView is the owner of its effect in the ownership matrix, and violation is a HALT.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-V-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0964
+  statement: Every term references only symbols in the C2 vocabulary, and violation is a HALT.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0965
+  statement: Every mandatory term is present, and violation is a HALT.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0966
+  statement: unclaimedEffects are logged, and if any is in the critical set the engine escalates.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-V-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0967
+  statement: No scenario array and no Belief handle appears anywhere in the bundle, and violation is a HALT.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0968
+  statement: compositionOrder satisfies the stage precondition table, and violation is a HALT.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0969
+  statement: binariesByOrigin sums to binaryCount, and violation warns.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-14]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0970
+  statement: Every BoundTerm has a reason and no Physical bound is soft, and violation is a HALT.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-15]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0971
+  statement: FillProbView emits only BoundTerms and has no priced term, and violation is a HALT.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-012
+  anchors: [INV-V-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0972
+  statement: No term references a provenance flow attributing energy to a path or to a named installation, and violation is a HALT.
+  owner: 03-contracts/C2-valuation-to-planner.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-V-17]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0973
+  statement: "Prices do not cross C2: the Planner sees coefficients on variables rather than a price series, which is what stops it re-deriving economics."
+  owner: 03-contracts/C2-valuation-to-planner.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0974
+  statement: Scenario arrays do not cross C2, and scenario structure reaches the Planner only through CouplingConstraint rows with a scenarioScope and through terms already aggregated by Valuation.
+  owner: 03-contracts/C2-valuation-to-planner.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0975
+  statement: Delegates and expression trees do not cross C2.
+  owner: 03-contracts/C2-valuation-to-planner.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0976
+  statement: "Nothing from Belief crosses C2 unpriced: if the Planner needs it, a view must own it and price or bound it."
+  owner: 03-contracts/C2-valuation-to-planner.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+
+# ---- 03-contracts-c.tsv ----
+# ---- 03-contracts/C3 and C4 ----
+- id: CLM-0977
+  statement: C3 carries the ExecutionIntent payload at version 1.0 from L3 to L4.
+  owner: 03-contracts/C3-planner-to-execution.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0978
+  statement: Execution is the pre-existing market simulator, treated as an external system.
+  owner: 03-contracts/C3-planner-to-execution.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0979
+  statement: C3 is deliberately thin and carries intent only.
+  owner: 03-contracts/C3-planner-to-execution.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0980
+  statement: The C3 envelope adds planId, the gate the submission targets, an optional supersedes naming the previous planId whose open orders it replaces, and the degradation mode.
+  owner: 03-contracts/C3-planner-to-execution.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0981
+  statement: The degradation mode is echoed on C3 so Execution can refuse speculative flow in SAFE.
+  owner: 03-contracts/C3-planner-to-execution.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0982
+  statement: An order intent carries one row per order with a stable intentId that survives replaces.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0983
+  statement: The market field is one of Da, IdContinuous, IdAuction, AfrrCapacity or AfrrEnergy.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0984
+  statement: productId comes from the market calendar.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: regulatory
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0985
+  statement: The side field is in the market frame, where sell means discharge.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0986
+  statement: limitPrice is tick-aligned and already rounded per the C0 rounding rule.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0987
+  statement: volume is lot-aligned and strictly positive.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0988
+  statement: validity is one of Ioc, Fok, GtdUntil(SlotId) or GtcUntilGate.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0989
+  statement: An order intent's tag is one of Arbitrage, PeakShave, ReserveHedge, Rebalance or CommitmentCover.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0990
+  statement: shadowValue is the Planner's indifference price, carried for audit only, and Execution must ignore it.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-X-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0991
+  statement: urgency is carried for audit only.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0992
+  statement: shadowValue and urgency cross the seam for settlement attribution rather than for execution, letting L5 answer whether the quoting policy traded through indifference without a private side channel between the Planner and the quoting policy.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0993
+  statement: Execution does not read shadowValue or urgency, enforced by the adapter interface exposing a projection that omits them.
+  owner: 03-contracts/C3-planner-to-execution.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-X-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0994
+  statement: DA requires a monotone schedule rather than a point order.
+  owner: 03-contracts/C3-planner-to-execution.md §3
+  class: regulatory
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0995
+  statement: A DA bid curve carries price-ordered curvePoints and its slot.
+  owner: 03-contracts/C3-planner-to-execution.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0996
+  statement: DA curve monotonicity is asserted rather than declared.
+  owner: 03-contracts/C3-planner-to-execution.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0997
+  statement: Quantity must be non-increasing in price for a buy curve and non-decreasing for a sell curve.
+  owner: 03-contracts/C3-planner-to-execution.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0998
+  statement: A non-monotone DA curve indicates a Planner formulation error, most often a missing coupling constraint, and is a HALT because such a curve is both rejected by the exchange and diagnostic of a deeper problem.
+  owner: 03-contracts/C3-planner-to-execution.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0999
+  statement: The dispatch setpoint interface is fixed at C3 even though the physical controller is downstream of the Planner and out of scope.
+  owner: 03-contracts/C3-planner-to-execution.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1000
+  statement: pSetpoint is in the battery frame over the near horizon H_near.
+  owner: 03-contracts/C3-planner-to-execution.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1001
+  statement: socCorridorLower and socCorridorUpper are the band the controller must stay in to keep commitments feasible.
+  owner: 03-contracts/C3-planner-to-execution.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1002
+  statement: reserveObligationUp and reserveObligationDn are the confirmed awards the controller must be able to serve.
+  owner: 03-contracts/C3-planner-to-execution.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1003
+  statement: H_near is short, typically the next few slots.
+  owner: 03-contracts/C3-planner-to-execution.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1004
+  statement: "The corridor rather than the setpoint is the binding instruction: the controller may deviate from the setpoint to follow an activation signal but never out of the corridor."
+  owner: 03-contracts/C3-planner-to-execution.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1005
+  statement: Every intent is physically deliverable given SOC, power and POI limits under the planned trajectory, and violation is a HALT.
+  owner: 03-contracts/C3-planner-to-execution.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1006
+  statement: Confirmed commitments in L0 are covered by the plan, and violation is a HALT.
+  owner: 03-contracts/C3-planner-to-execution.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-006
+  anchors: [INV-P-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1007
+  statement: No two intents exist for the same product and slot on the same side without a replacesIntentId chain, and violation is a HALT.
+  owner: 03-contracts/C3-planner-to-execution.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1008
+  statement: Prices are tick-aligned and volumes lot-aligned, and violation is a HALT.
+  owner: 03-contracts/C3-planner-to-execution.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1009
+  statement: In SAFE mode only CommitmentCover and cancel intents are present, and violation is a HALT.
+  owner: 03-contracts/C3-planner-to-execution.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [INV-P-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1010
+  statement: Total planned discharge over any window respects energy availability including the reserve corridor, and violation is a HALT.
+  owner: 03-contracts/C3-planner-to-execution.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [INV-P-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1011
+  statement: No sell intent is priced below shadowValue and no buy intent above it, and violation warns and blocks the intent.
+  owner: 03-contracts/C3-planner-to-execution.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1012
+  statement: The shadow-value price guard is a warning rather than a halt because covering a commitment at a loss is sometimes correct, but such intents must carry the CommitmentCover tag and an untagged violation is blocked.
+  owner: 03-contracts/C3-planner-to-execution.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1013
+  statement: "No reason for an order crosses C3: Execution is strategy-independent and the tag is for settlement attribution only, not routing."
+  owner: 03-contracts/C3-planner-to-execution.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1014
+  statement: No Belief, valuation or scenario data crosses C3.
+  owner: 03-contracts/C3-planner-to-execution.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1015
+  statement: "No expectation about fills crosses C3: the Planner's fill beliefs stay upstream and C3 is an instruction, not a forecast."
+  owner: 03-contracts/C3-planner-to-execution.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1016
+  statement: C4 carries the ExecutionOutcome payload at version 1.0 from L4 to L5.
+  owner: 03-contracts/C4-execution-to-settlement.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1017
+  statement: Settlement can reconstruct the truth from the C4 payload plus metered reality alone, having no access to what the Planner intended, so ex-post accounting cannot be contaminated by ex-ante belief.
+  owner: 03-contracts/C4-execution-to-settlement.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1018
+  statement: The C4 envelope adds settlementPeriod, isFinal versus provisional, and revisionOf for restatements, because meter data and imbalance prices arrive late and get corrected.
+  owner: 03-contracts/C4-execution-to-settlement.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1019
+  statement: Provisional and final settlement data are both first-class.
+  owner: 03-contracts/C4-execution-to-settlement.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1020
+  statement: The engine cannot wait for final data to keep operating and must not treat provisional data as final.
+  owner: 03-contracts/C4-execution-to-settlement.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1021
+  statement: Every settlement artefact declares whether it is provisional or final, and a restatement is a new artefact referencing the old one, never an in-place edit.
+  owner: 03-contracts/C4-execution-to-settlement.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1022
+  statement: intentId on a fill links back to C3 and is the only backward reference permitted, and it is an identifier rather than data.
+  owner: 03-contracts/C4-execution-to-settlement.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1023
+  statement: A fill carries the executed price and the executed volume.
+  owner: 03-contracts/C4-execution-to-settlement.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1024
+  statement: Fees are explicit on a fill and never netted into the price.
+  owner: 03-contracts/C4-execution-to-settlement.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1025
+  statement: An unfilled order carries a disposition of Expired, Cancelled, Rejected or PartiallyFilled, a rejectReason populated for Rejected, and the residual volume that did not trade.
+  owner: 03-contracts/C4-execution-to-settlement.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1026
+  statement: Unfilled orders are as important as fills, because without them the four-bucket error decomposition cannot separate being wrong about value from being unable to get the trade.
+  owner: 03-contracts/C4-execution-to-settlement.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1027
+  statement: awardedUp and awardedDn are per block and are the binding obligation.
+  owner: 03-contracts/C4-execution-to-settlement.md §4
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1028
+  statement: clearingPriceUp and clearingPriceDn are per block in EUR/MW/h.
+  owner: 03-contracts/C4-execution-to-settlement.md §4
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1029
+  statement: activatedEnergyUp and activatedEnergyDn are realised per slot in kWh, with activation prices per slot in EUR/MWh.
+  owner: 03-contracts/C4-execution-to-settlement.md §4
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1030
+  statement: deliveryShortfall is per slot, and a non-zero value triggers the reserve delivery invariant.
+  owner: 03-contracts/C4-execution-to-settlement.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-S-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1031
+  statement: meteredPoiImport and meteredPoiExport are the billing-relevant series.
+  owner: 03-contracts/C4-execution-to-settlement.md §5
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1032
+  statement: meteredLoad and meteredPv are sub-metered where available.
+  owner: 03-contracts/C4-execution-to-settlement.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1033
+  statement: batteryChargeEnergy and batteryDischargeEnergy are measured at the battery terminal.
+  owner: 03-contracts/C4-execution-to-settlement.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1034
+  statement: socMeasured is the end-of-slot state of charge.
+  owner: 03-contracts/C4-execution-to-settlement.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1035
+  statement: Provisional meter data is routine.
+  owner: 03-contracts/C4-execution-to-settlement.md §5
+  class: empirical
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [y]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1036
+  statement: imbalanceVolume is signed per slot, and the imbalance price is often final only weeks later.
+  owner: 03-contracts/C4-execution-to-settlement.md §6
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1037
+  statement: Every fillId references an intentId submitted in this run, and violation is a HALT for a phantom fill.
+  owner: 03-contracts/C4-execution-to-settlement.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1038
+  statement: Filled volume is at most the intended volume per intent across all fills, and violation is a HALT.
+  owner: 03-contracts/C4-execution-to-settlement.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1039
+  statement: The energy balance poiImport − poiExport = load − pv + chargeEnergy − dischargeEnergy holds within meter tolerance, warning if provisional and halting if final.
+  owner: 03-contracts/C4-execution-to-settlement.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1040
+  statement: deliveryShortfall equals zero, and violation alerts and halts because a reserve delivery failure is a prequalification risk.
+  owner: 03-contracts/C4-execution-to-settlement.md §7
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-S-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1041
+  statement: socMeasured is consistent with charge and discharge energy and η within tolerance, and violation warns because drift indicates an η or SOH model error.
+  owner: 03-contracts/C4-execution-to-settlement.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1042
+  statement: Every reserve award has a corresponding entry in the commitment ledger by end of tick, and violation is a HALT.
+  owner: 03-contracts/C4-execution-to-settlement.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-X-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1043
+  statement: Persistent divergence between modelled and measured SOC is the earliest available signal that the efficiency or degradation model has drifted, and it is cheap to monitor.
+  owner: 03-contracts/C4-execution-to-settlement.md §7
+  class: empirical
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1044
+  statement: The SOC consistency check feeds the model-error bucket in L5.
+  owner: 03-contracts/C4-execution-to-settlement.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1045
+  statement: No Planner reasoning crosses C4; only intentId as an opaque key.
+  owner: 03-contracts/C4-execution-to-settlement.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1046
+  statement: No Valuation output crosses C4.
+  owner: 03-contracts/C4-execution-to-settlement.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1047
+  statement: No belief or forecast crosses C4, because Settlement recomputes truth from realised data and if it needed a forecast it would be doing valuation rather than settlement.
+  owner: 03-contracts/C4-execution-to-settlement.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+
+# ---- 03-contracts-d.tsv ----
+# ---- 03-contracts/C5 ----
+- id: CLM-1048
+  statement: C5 carries the StateUpdate payload at version 1.0 from L5 to L0 and is the only backwards edge in the system.
+  owner: 03-contracts/C5-settlement-to-state.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1049
+  statement: C5 is written at the end of a tick and read at the top of the next, so everything in it is by construction at least one tick old when used.
+  owner: 03-contracts/C5-settlement-to-state.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1050
+  statement: The one-tick lag on C5 is explicit and priceable rather than hidden.
+  owner: 03-contracts/C5-settlement-to-state.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1051
+  statement: The C5 envelope adds isFinal, revisionOf, and effectiveFrom, the slot from which the state applies.
+  owner: 03-contracts/C5-settlement-to-state.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1052
+  statement: realisedPeak is carried per regime and is the epigraph floor for the next tick.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1053
+  statement: realisedPeakSlot records when the realised peak occurred and is diagnostically important.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1054
+  statement: periodStart and periodEnd are the accounting period bounds per regime, derived from the local calendar.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1055
+  statement: peakIsProvisional is true per regime while meter data is unfinal.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1056
+  statement: unsettledGapFrom is the earliest slot not yet settled, per regime.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1057
+  statement: headroomToPeakKw is the distance from realisedPeak to the level at which a new peak would be set, and is the continuous analogue of qualificationMarginHours.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1058
+  statement: peakCritical is true when headroomToPeakKw is inside the configured margin, or the horizon contains a slot whose CVaR peak belief exceeds realisedPeak.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1059
+  statement: peakCritical forces tier escalation and the protective bound.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-010, ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1060
+  statement: peakCritical is written by Settlement and read by L2's PeakView and L3's escalation policy.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1061
+  statement: peakCritical and qualCritical are both computed by Settlement and never by the Planner, so the escalation trigger cannot be influenced by the thing it is meant to guard.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1062
+  statement: unsettledGapFrom is what makes the lag safe.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1063
+  statement: The Planner knows the realised peak is authoritative only up to unsettledGapFrom and treats the gap conservatively, using its own modelled POI trajectory as a provisional peak contribution rather than assuming the gap contained nothing.
+  owner: 03-contracts/C5-settlement-to-state.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1064
+  statement: annualEnergyKwh is accumulated in the qualification year.
+  owner: 03-contracts/C5-settlement-to-state.md §3
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1065
+  statement: annualPeakKw is the denominator of full-load hours.
+  owner: 03-contracts/C5-settlement-to-state.md §3
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1066
+  statement: fullLoadHours is annualEnergy divided by annualPeak.
+  owner: 03-contracts/C5-settlement-to-state.md §3
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1067
+  statement: hlzfPeakKw is the peak within HLZF windows only.
+  owner: 03-contracts/C5-settlement-to-state.md §3
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1068
+  statement: qualificationStatus is one of Qualified, AtRisk, Lost or NotApplicable, per applicable §19(2) path.
+  owner: 03-contracts/C5-settlement-to-state.md §3
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1069
+  statement: qualificationMarginHours is the distance to the threshold and drives qualCritical.
+  owner: 03-contracts/C5-settlement-to-state.md §3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1070
+  statement: projectedYearEndFlh is a forward projection from the slow loop.
+  owner: 03-contracts/C5-settlement-to-state.md §3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1071
+  statement: qualCritical is true within the configured margin and forces tier escalation and the protective bound.
+  owner: 03-contracts/C5-settlement-to-state.md §3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-010, ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1072
+  statement: The margin is carried and not just the status, because a binary qualified flag tells the engine nothing until the moment it is too late, whereas the margin lets the value function price the approach to the cliff continuously.
+  owner: 03-contracts/C5-settlement-to-state.md §3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-007, ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1073
+  statement: The delineation state carries month-to-date accumulators of the Abgrenzungsoption machinery, computed by Settlement Phase A from Z1 and Z2 alone.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1074
+  statement: Seven accumulators are carried and no others, because everything from (10) to (33) is a closed-form function of them.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1075
+  statement: mtdGridImport is (3), the gesamter Netzbezug, defaulting to zero.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1076
+  statement: mtdStorageCharge is (5), the Verbrauch im Stromspeicher, defaulting to zero.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1077
+  statement: mtdStorageDischarge is (6), the Erzeugung im Stromspeicher, defaulting to zero.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1078
+  statement: mtdSimultaneousGridCharge is (9), the sum of MIN[Z1NB¼; Z2V¼], defaulting to zero.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1079
+  statement: mtdStorageExport is (11), the sum of MIN[Z1NE¼; Z2E¼], defaulting to zero.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1080
+  statement: mtdDirectFeedInAwPos is (26), direct feed-in in AW>0 hours only, defaulting to zero.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1081
+  statement: mtdStorageExportAwPos is (29), storage feed-in in AW>0 hours only, defaulting to zero.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1082
+  statement: The derived delineation quantities are published for readability and for the escalation triggers, are recomputable from the seven accumulators, and are carried so that four layers do not each re-derive them.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1083
+  statement: pvShare is (10)/(5), the PV share of charging, and sets the route split.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1084
+  statement: awPositiveShare is (30), a ratio, so a late-month AW=0 export dilutes the whole month's (28).
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1085
+  statement: saldierungsfaehig is (16), the grey route.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1086
+  statement: foerderfaehig is (32), the green route.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1087
+  statement: umlagebelasteterNetzbezug is (21), the base of EnfgLevies.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-009, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1088
+  statement: fremdtank is (12) and is expected to be zero.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1089
+  statement: monthStart and monthEnd are Europe/Berlin civil-calendar bounds derived via CivilCalendar.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1090
+  statement: slotsToMonthEnd is a coordinate of V_del, and the accumulators reset at monthEnd.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1091
+  statement: throughputBoundMet is true when charge throughput exceeds η_d·E_usable/(1−η_rt) so that (12) = 0 is arithmetically assured, and its conservative default is not assured.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1092
+  statement: delineationIsProvisional is true while the month's meter data is unfinal.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1093
+  statement: The delineation accumulators reset to zero at monthEnd and SOC does not.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1094
+  statement: "The month-boundary discontinuity is in value and not in physics: the same kWh in the same battery is worth a different amount either side of the boundary because the aggregates its route ran through have vanished."
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1095
+  statement: slotsToMonthEnd is what lets V_del price the approach to the month boundary continuously, and it is the delineation counterpart of qualificationMarginHours.
+  owner: 03-contracts/C5-settlement-to-state.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1096
+  statement: A commitment ledger entry carries an entryId, a kind of SpotPosition, ReserveAward or OpenOrder, and a status of Pending, Confirmed, Settled or Cancelled.
+  owner: 03-contracts/C5-settlement-to-state.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1097
+  statement: The Pending versus Confirmed distinction in the commitment ledger is load-bearing.
+  owner: 03-contracts/C5-settlement-to-state.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1098
+  statement: signedVolume in the commitment ledger is in the market frame.
+  owner: 03-contracts/C5-settlement-to-state.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1099
+  statement: For reserve awards the feasibilityRequirement carries the SOC corridor that must be maintained.
+  owner: 03-contracts/C5-settlement-to-state.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1100
+  statement: A Confirmed reserve award's feasibilityRequirement becomes a hard constraint in every degradation mode.
+  owner: 03-contracts/C5-settlement-to-state.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1101
+  statement: Pending ledger entries are exposure rather than obligation, and the Planner treats them probabilistically.
+  owner: 03-contracts/C5-settlement-to-state.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1102
+  statement: Realised P&L is decomposed into the same EconomicEffect enumeration used by Valuation, so planned and realised value are comparable term by term.
+  owner: 03-contracts/C5-settlement-to-state.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1103
+  statement: plannedByEffect records what Valuation expected.
+  owner: 03-contracts/C5-settlement-to-state.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1104
+  statement: unexplained is a mandatory bucket carrying the effect-level residual, the realised cash not attributable to any EconomicEffect.
+  owner: 03-contracts/C5-settlement-to-state.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1105
+  statement: unexplainedRatio is alerted above a threshold.
+  owner: 03-contracts/C5-settlement-to-state.md §5
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1106
+  statement: The unexplained bucket is not optional and must not be allowed to be silently absorbed elsewhere.
+  owner: 03-contracts/C5-settlement-to-state.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1107
+  statement: A rising unexplained ratio is the single best early warning that a term definition has drifted between Valuation and Settlement.
+  owner: 03-contracts/C5-settlement-to-state.md §5
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1108
+  statement: unexplained in §5 is the residual of the cash decomposition and unexplainedError in §6 is the residual of the error decomposition; they are never netted against one another and each has its own invariant.
+  owner: 03-contracts/C5-settlement-to-state.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-02, INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1109
+  statement: The error decomposition is the mechanism that makes the system improvable rather than merely operable.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1110
+  statement: The gap between planned value and realised value splits into four attributable buckets.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1111
+  statement: optimalityGap is the value given up because the tier actually used was not Tier 1, and its fix lives in L3.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1112
+  statement: forecastError is the value lost because the world differed from the belief the plan was built on, and its fix lives in L1 and the scenario model.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1113
+  statement: modelError is the value lost because the valuation was wrong given the belief, and its fix lives in L2.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1114
+  statement: executionSlippage is the value lost between intent and fill, and its fix lives in the quoting policy.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1115
+  statement: The decomposition telescopes from the Tier-1 reference value and not from the value of the plan that was actually used.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1116
+  statement: Ĵ₁ is the Tier-1 objective on the tick's beliefs and is the anchor of the decomposition.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1117
+  statement: Ĵ is the used-tier objective on the same beliefs, A is the used plan re-scored on realised outturn, and R is the realised value from settled cash.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1118
+  statement: optimalityGap = Ĵ₁ − Ĵ.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1119
+  statement: forecastError = Ĵ − A.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1120
+  statement: modelError plus executionSlippage plus unexplainedError equals A − R.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1121
+  statement: A suboptimal tier lowers the planned value and the realised value, so it nets out of planned minus realised entirely.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1122
+  statement: Anchoring at Ĵ would leave optimalityGap with nowhere to live and would silently attribute optimiser weakness to forecast error.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1123
+  statement: planned in INV-S-03 means Ĵ₁.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1124
+  statement: When Tier 1 was the tier used, Ĵ₁ = Ĵ and the two anchors coincide.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1125
+  statement: plannedByEffect remains the used-tier value because that is what the cash decomposition must reconcile against, and both anchors are recorded.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1126
+  statement: Each error bucket is a counterfactual re-run, possible only because every layer is a pure function of a recorded input.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1127
+  statement: optimalityGap is computed by re-solving the tick at Tier 1 on the recorded C2 payload and taking the difference of objective values.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1128
+  statement: forecastError is computed by re-scoring the plan that was actually submitted against realised outturn, holding the plan fixed, which is the telescoping form.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1129
+  statement: Re-planning on realised data measures the value of perfect foresight, which is recorded separately as valueOfForesight and is also the perfect-foresight upper bound.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1130
+  statement: "The telescoping forecast error and the value of perfect foresight must not be conflated: one is a link in the chain and the other is a bound."
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1131
+  statement: modelError is computed by valuing the actual trajectory using Valuation's own term definitions and comparing with Settlement's independent accounting of the same trajectory.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1132
+  statement: A non-zero modelError means Valuation and Settlement disagree about what a MWh was worth, which is a definition drift.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1133
+  statement: executionSlippage is computed by valuing the fills at intent prices versus executed prices.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1134
+  statement: ActivationRisk and the CVaR weighting are objective penalties and not cashflows.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1135
+  statement: Realised value can never contain risk penalties, so comparing a risk-loaded planned value against a risk-free realised one books the risk premium as a loss every single day.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1136
+  statement: Both sides of the error decomposition use the risk-free objective.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1137
+  statement: PlanResult reports gross risk-free and net risk-loaded values, and only the gross figure enters the error decomposition chain.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1138
+  statement: The four error buckets plus unexplainedError sum to Ĵ₁ − R within tolerance.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1139
+  statement: The four-way error split is what turns a statement about losing money last week into a statement about the load forecast degrading on Tuesdays, which is actionable.
+  owner: 03-contracts/C5-settlement-to-state.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1140
+  statement: degradationMode is computed centrally and written in C5.
+  owner: 03-contracts/C5-settlement-to-state.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1141
+  statement: modeTransitions carries the full audit trail of (SlotId, from, to, cause) for the period.
+  owner: 03-contracts/C5-settlement-to-state.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1142
+  statement: ticksByMode lets P&L be conditioned on operating mode.
+  owner: 03-contracts/C5-settlement-to-state.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1143
+  statement: seriesQualitySummary feeds data-source SLAs.
+  owner: 03-contracts/C5-settlement-to-state.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1144
+  statement: vSocStale is true beyond the value function's validityHorizon.
+  owner: 03-contracts/C5-settlement-to-state.md §8
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1145
+  statement: stateDriftSignal measures how far the current state is from where V was fitted.
+  owner: 03-contracts/C5-settlement-to-state.md §8
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1146
+  statement: refreshRequested indicates the slow loop should re-run.
+  owner: 03-contracts/C5-settlement-to-state.md §8
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1147
+  statement: stateDriftSignal allows the slow loop to be event-driven rather than purely periodic, because a large peak event or a qualification status change invalidates V faster than the calendar does.
+  owner: 03-contracts/C5-settlement-to-state.md §8
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1148
+  statement: realisedPeak is non-decreasing within an accounting period and resets exactly at the local-calendar boundary, and violation is a HALT.
+  owner: 03-contracts/C5-settlement-to-state.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-S-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1149
+  statement: realisedByEffect sums, with unexplained, to total realised P&L, and violation is a HALT.
+  owner: 03-contracts/C5-settlement-to-state.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1150
+  statement: The four error buckets sum to planned minus realised within tolerance, and violation warns.
+  owner: 03-contracts/C5-settlement-to-state.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1151
+  statement: There is no reserve delivery shortfall, mirroring C4, and violation alerts and halts.
+  owner: 03-contracts/C5-settlement-to-state.md §9
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-S-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1152
+  statement: Every Confirmed commitment has a feasibilityRequirement where the product requires one, and violation is a HALT.
+  owner: 03-contracts/C5-settlement-to-state.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-S-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1153
+  statement: fullLoadHours equals annualEnergyKwh divided by annualPeakKw within tolerance, and violation is a HALT.
+  owner: 03-contracts/C5-settlement-to-state.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-S-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1154
+  statement: unexplainedRatio is below threshold, and violation warns, escalating to alert.
+  owner: 03-contracts/C5-settlement-to-state.md §9
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1155
+  statement: State is never written for a slot earlier than effectiveFrom of the previous update, except as an explicit revisionOf, and violation is a HALT.
+  owner: 03-contracts/C5-settlement-to-state.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-S-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+
+# ---- 03-contracts-e.tsv ----
+# ---- 03-contracts/C6 ----
+- id: CLM-1156
+  statement: C6 carries the StateSnapshot payload at version 1.0 from L0 to L1, L2 and L3, and is the read side of L0.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1157
+  statement: C6 is the contract the state store was asserted to be, with a field table, a version and invariants like every other seam.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1158
+  statement: C6 is numbered separately from C5 rather than folded into it because it has a different direction, a different set of consumers and a different failure policy.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1159
+  statement: The StateSnapshot is taken once, immutably, at the top of every tick, and every layer that needs state reads that one object.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1160
+  statement: No layer consults L0 directly mid-tick, which is what makes the no-read-of-a-same-tick-write audit mechanically decidable.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006, T3]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1161
+  statement: "StateUpdate and StateSnapshot are deliberately not the same type: the snapshot is a coherent read view of the whole store at an instant, and the update is a delta produced by one component at the end of a tick."
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1162
+  statement: snapshotAt is the tick at which the snapshot was taken.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1163
+  statement: stateAsOf is the latest tick whose StateUpdate is included and is always strictly less than snapshotAt.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1164
+  statement: lagSlots equals snapshotAt minus stateAsOf and is the explicit feedback lag.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1165
+  statement: isColdStart is true on the first tick after a restart, before reconciliation completes.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1166
+  statement: lagSlots is a first-class field rather than an implementation detail, and consumers are expected to reason about it.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1167
+  statement: A Planner that knows the peak state is three slots stale treats the gap conservatively rather than assuming it was empty.
+  owner: 03-contracts/C6-state-to-layers.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1168
+  statement: The C6 peak state block mirrors C5 §2 and is read by PeakView in L2 and by the escalation policy in L3.
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1169
+  statement: realisedPeak on C6 is the EpigraphTerm floor.
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1170
+  statement: peakIsProvisional defaults to true.
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1171
+  statement: The peak is authoritative only up to unsettledGapFrom.
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1172
+  statement: The conservative default for headroomToPeakKw is zero, meaning no headroom.
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1173
+  statement: The conservative default for peakCritical is true, meaning treat the state as critical.
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1174
+  statement: The unsettled gap is not optional to handle.
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1175
+  statement: Between unsettledGapFrom and snapshotAt no settled meter data exists.
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1176
+  statement: The Planner must substitute its own modelled POI trajectory over the unsettled window as a provisional peak contribution.
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1177
+  statement: effectiveFloor is the maximum of realisedPeak and the maximum modelled POI import over the slots in [unsettledGapFrom, snapshotAt).
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1178
+  statement: Assuming the unsettled gap contained nothing is the single most likely way to set a new monthly peak by accident, because the gap is exactly the window in which the engine was most recently active.
+  owner: 03-contracts/C6-state-to-layers.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1179
+  statement: The C6 qualification state block mirrors C5 §3 and is read by TariffView and PeakView in L2 and by the slow loop.
+  owner: 03-contracts/C6-state-to-layers.md §3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1180
+  statement: fullLoadHours is a declared exception to the dimensionless rule, carrying the declared unit h.
+  owner: 03-contracts/C6-state-to-layers.md §3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1181
+  statement: The conservative default for qualificationStatus is AtRisk.
+  owner: 03-contracts/C6-state-to-layers.md §3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1182
+  statement: The conservative default for qualificationMarginHours is zero, meaning no margin.
+  owner: 03-contracts/C6-state-to-layers.md §3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1183
+  statement: The conservative default for qualCritical is true.
+  owner: 03-contracts/C6-state-to-layers.md §3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1184
+  statement: "Every conservative default in the qualification block biases toward protecting the qualification, because the asymmetry is extreme: the downside of an unnecessary protective bound is a day's foregone spread while the downside of losing a §19(2) reduction is a year of network-charge relief."
+  owner: 03-contracts/C6-state-to-layers.md §3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1185
+  statement: The C6 delineation state block mirrors C5 §3.1 and is read by DelineationView in L2 and by L3, which carries the accumulators forward as MILP variables over the horizon.
+  owner: 03-contracts/C6-state-to-layers.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1186
+  statement: The seven accumulators cross C6 unchanged from C5 §3.1, defaulting to zero.
+  owner: 03-contracts/C6-state-to-layers.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1187
+  statement: The conservative defaults for pvShare and awPositiveShare are zero, meaning no PV attribution and no AW>0 share.
+  owner: 03-contracts/C6-state-to-layers.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-014, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1188
+  statement: A false throughputBoundMet forces the Planner to carry (12) explicitly rather than assume it away.
+  owner: 03-contracts/C6-state-to-layers.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1189
+  statement: "The delineation conservative defaults bias toward understating delineation value: a zero awPositiveShare prices the green route at nothing, and throughputBoundMet = false costs binaries rather than correctness."
+  owner: 03-contracts/C6-state-to-layers.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1190
+  statement: The failure mode worth avoiding is an engine that charges from the grid on the strength of a route it turns out not to have.
+  owner: 03-contracts/C6-state-to-layers.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1191
+  statement: DelineationView reads the C6 delineation block and the MW_month belief and publishes the seven λ_j, and it reads no other view's output.
+  owner: 03-contracts/C6-state-to-layers.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1192
+  statement: The commitment ledger read view mirrors C5 §4 and is read by L3.
+  owner: 03-contracts/C6-state-to-layers.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1193
+  statement: Ledger entries are ordered by (slot, entryId) for determinism.
+  owner: 03-contracts/C6-state-to-layers.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1194
+  statement: confirmedReserveUp and confirmedReserveDn are denormalised per block for the Planner's hard constraints.
+  owner: 03-contracts/C6-state-to-layers.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1195
+  statement: confirmedSpotPosition is denormalised, signed, and in the market frame.
+  owner: 03-contracts/C6-state-to-layers.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1196
+  statement: pendingExposure is signed and probabilistic rather than an obligation.
+  owner: 03-contracts/C6-state-to-layers.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1197
+  statement: requiredSocCorridor is the union of all confirmed feasibilityRequirements.
+  owner: 03-contracts/C6-state-to-layers.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1198
+  statement: A false ledgerConsistent triggers SAFE mode.
+  owner: 03-contracts/C6-state-to-layers.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1199
+  statement: The denormalised ledger views exist because the Planner needs them on every solve, and recomputing them from entries per tick is both wasteful and a chance to disagree.
+  owner: 03-contracts/C6-state-to-layers.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1200
+  statement: requiredSocCorridor is the single most safety-critical field in C6.
+  owner: 03-contracts/C6-state-to-layers.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1201
+  statement: requiredSocCorridor is a hard constraint in every degradation mode including SAFE, and a plan that violates it never reaches C3.
+  owner: 03-contracts/C6-state-to-layers.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [INV-P-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1202
+  statement: The value function is read from C6 by OppCostView in L2, which republishes it across C2 §4.
+  owner: 03-contracts/C6-state-to-layers.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1203
+  statement: isStale is true when snapshotAt minus producedAt exceeds validityHorizon.
+  owner: 03-contracts/C6-state-to-layers.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1204
+  statement: contextDrift is the distance from the state at which V was fitted.
+  owner: 03-contracts/C6-state-to-layers.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-1205
+  statement: Value function staleness is never silent.
+  owner: 03-contracts/C6-state-to-layers.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1206
+  statement: If the value function is stale the mode escalates to at least DEFENSIVE and stalenessPenalty shrinks V's slopes toward zero.
+  owner: 03-contracts/C6-state-to-layers.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1207
+  statement: Shrinking V's slopes toward zero makes the Planner progressively indifferent to terminal SOC rather than confidently wrong about it.
+  owner: 03-contracts/C6-state-to-layers.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1208
+  statement: T6 includes a stale-artefact audit asserting the engine refuses a value function beyond its validity horizon rather than using it quietly.
+  owner: 03-contracts/C6-state-to-layers.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014, T6]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1209
+  statement: degradationMode on C6 is the mode in force entering the tick.
+  owner: 03-contracts/C6-state-to-layers.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1210
+  statement: modeEnteredAt is carried for hysteresis accounting.
+  owner: 03-contracts/C6-state-to-layers.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1211
+  statement: consecutiveBadTicks and consecutiveGoodTicks are the hysteresis counters.
+  owner: 03-contracts/C6-state-to-layers.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1212
+  statement: seriesQualityState carries the last known QualityStamp per series.
+  owner: 03-contracts/C6-state-to-layers.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1213
+  statement: The mode in the snapshot is a floor and not a verdict.
+  owner: 03-contracts/C6-state-to-layers.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1214
+  statement: L1 may raise the degradation mode within the tick from its own same-tick inputs but may never lower it.
+  owner: 03-contracts/C6-state-to-layers.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1215
+  statement: A critical series missing now escalates now and does not wait a tick.
+  owner: 03-contracts/C6-state-to-layers.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1216
+  statement: De-escalation of the degradation mode is central and hysteretic.
+  owner: 03-contracts/C6-state-to-layers.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1217
+  statement: Raising a floor from a component's own inputs is not a read of another component's same-tick write, so in-tick escalation does not violate ADR-006.
+  owner: 03-contracts/C6-state-to-layers.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-006, ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1218
+  statement: artefactVersions maps each ArtefactKind — scenario generator, value function, fill model, tier-3 surface, market calendar, tzdata — to a content hash.
+  owner: 03-contracts/C6-state-to-layers.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1219
+  statement: artefactVersions is carried so that every downstream artefact can record which model versions produced it and so a backtest can be re-run with the versions actually in force.
+  owner: 03-contracts/C6-state-to-layers.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1220
+  statement: Denormalised ledger views reconcile with entries, and violation is a HALT.
+  owner: 03-contracts/C6-state-to-layers.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1221
+  statement: stateAsOf is strictly less than snapshotAt and lagSlots is consistent with both, and violation is a HALT because a zero lag means a same-tick read.
+  owner: 03-contracts/C6-state-to-layers.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1222
+  statement: The snapshot is immutable for the duration of the tick and no consumer holds a mutable reference, enforced structurally and audited in T3.
+  owner: 03-contracts/C6-state-to-layers.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-13]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1223
+  statement: Every C6 field marked Null = no is present, or the default is applied and recorded, and otherwise the engine escalates.
+  owner: 03-contracts/C6-state-to-layers.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [INV-G-14]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1224
+  statement: requiredSocCorridor is non-empty wherever confirmedReserveUp or confirmedReserveDn is non-zero, and violation is a HALT.
+  owner: 03-contracts/C6-state-to-layers.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-15]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1225
+  statement: On isColdStart no speculative intent is emitted until reconciliation completes, and violation is a HALT.
+  owner: 03-contracts/C6-state-to-layers.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [INV-G-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1226
+  statement: The lag invariant is the mechanical enforcement of ADR-006, because a lag of zero would mean some component read state written in the same tick, which is precisely the cycle the architecture exists to exclude.
+  owner: 03-contracts/C6-state-to-layers.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1227
+  statement: No belief or forecast crosses C6, because those come from L1 via C1.
+  owner: 03-contracts/C6-state-to-layers.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1228
+  statement: "No valuation output crosses C6: L0 stores V as an artefact and does not store prices."
+  owner: 03-contracts/C6-state-to-layers.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1229
+  statement: No raw settlement detail crosses C6; only the aggregated state the next tick needs.
+  owner: 03-contracts/C6-state-to-layers.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-1230
+  statement: No mutable references to the store cross C6, because the snapshot is a value.
+  owner: 03-contracts/C6-state-to-layers.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-13]
+  evidence: unlabelled
+  tn: null
+  band: null
