@@ -26085,3 +26085,4663 @@
   evidence: unlabelled
   tn: null
   band: null
+
+# ---- 04-compliance-d.tsv ----
+# ---- 04-compliance/T3 ----
+- id: CLM-2591
+  statement: Two runs with the same manifest must produce byte-identical outputs, and this is tested rather than asserted.
+  owner: 04-compliance/T3-determinism-and-replay.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2592
+  statement: Reproducibility means the same manifest gives byte-identical artefacts on the same machine, on a different machine, and after an unrelated refactor.
+  owner: 04-compliance/T3-determinism-and-replay.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2593
+  statement: Localisation means that when artefacts differ the Merkle chain names the first upstream artefact that diverged.
+  owner: 04-compliance/T3-determinism-and-replay.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2594
+  statement: Isolation means every recorded seam is a sufficient input for replaying its consumer with no ambient state.
+  owner: 04-compliance/T3-determinism-and-replay.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2595
+  statement: Acyclicity means that within a tick no component reads a value written later in the same tick.
+  owner: 04-compliance/T3-determinism-and-replay.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2596
+  statement: A measured optimality gap between two runs is noise if the runs are not reproducible.
+  owner: 04-compliance/T3-determinism-and-replay.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2597
+  statement: A lookahead audit that asserts the result did not change proves nothing if the result never repeats anyway.
+  owner: 04-compliance/T3-determinism-and-replay.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2598
+  statement: A run is defined by its manifest, nothing outside the manifest may influence output, and anything that does is a defect.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2599
+  statement: The manifest records the engine's git commit hash plus a dirty-tree flag, and a dirty-tree run's artefacts are marked non-reproducible and cannot be promoted to a golden baseline.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2600
+  statement: The manifest records the hash of the fully-resolved configuration after all layering and overrides, because layered config is where works-on-my-machine lives.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2601
+  statement: The manifest records the MarketCalendar hash covering gates, product blocks, holidays, tick and lot sizes and HLZF tables per DSO per year.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2602
+  statement: The manifest records the pinned IANA tzdata release, because civil time is versioned data.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-T-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2603
+  statement: "The manifest records a hash per model artefact: scenario generator, ensemble reduction, value function, fill model, activation model, Tier-3 surface and price-impact curves."
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2604
+  statement: The manifest records the data snapshot as an asOf range and the ingestion watermark, because two runs a day apart see different revisions of the same series unless the watermark is pinned.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-13]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2605
+  statement: The manifest records the solver backend name and version, because the backend is pluggable and the choice is part of the run.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: cheap
+  br_source: ADR-001
+  anchors: [ADR-001]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2606
+  statement: "The manifest records solver determinism settings: seed, thread count, deterministic work limit, MIP gap tolerance, presolve and cut settings."
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2607
+  statement: The manifest records the declared lexicographic tie-break rule for degenerate optima, without which degenerate alternates flap.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2608
+  statement: The manifest records runMode as Reproducibility or Production, which are explicitly different manifests.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2609
+  statement: manifestId is the hash of every manifest field and is carried in every payload.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2610
+  statement: An artefact whose manifestId does not match the run that claims to have produced it is a HALT.
+  owner: 04-compliance/T3-determinism-and-replay.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2611
+  statement: Every artefact the run loaded is named in the manifest, and no unlisted environment variable, file or service was read.
+  owner: 04-compliance/T3-determinism-and-replay.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2612
+  statement: "The sandbox report is produced by the same instrumentation as the acyclicity audit: the run executes with file, network and clock access mediated and every access recorded."
+  owner: 04-compliance/T3-determinism-and-replay.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2613
+  statement: An undeclared read is a manifest defect.
+  owner: 04-compliance/T3-determinism-and-replay.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2614
+  statement: The per-tick golden record is the tuple of manifestId, tickId and the content hashes of the BeliefSnapshot, ValuationBundle, PlanResult, ExecutionIntent, ExecutionOutcome, SettlementResult and StateUpdate.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2615
+  statement: "The per-run golden record is the hash of the ordered sequence of golden tick rows plus scalar summaries: total objective, total realised P&L, the four error buckets, tier usage counts, mode-transition counts and solve-time percentiles."
+  owner: 04-compliance/T3-determinism-and-replay.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2616
+  statement: The scalar summaries are not the gate; the hashes are, and the scalars exist so a reviewer approving a baseline change can see what moved rather than merely that something did.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2617
+  statement: The smoke golden scope is one tick on one canonical C1 fixture, run pre-commit within five seconds.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.2
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2618
+  statement: The canonical window golden scope is seven days containing one DST transition, one negative-price episode, one peak-critical day, one high aFRR clearing block and one degraded-feed day, run on every PR within eight minutes.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2619
+  statement: The full history golden scope is the whole backtest corpus, run nightly and pre-release within three hours.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2620
+  statement: Because each contract is a serialisable value with no object references, each layer is replayed alone against a recorded seam.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2621
+  statement: Replaying L2 alone against recorded C1 and StateSnapshot streams and matching the C2 hash proves valuation is a function of belief and state with no Belief store, no network and no clock present.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2622
+  statement: Replaying L3 alone against recorded C2 and StateSnapshot streams and matching the C3 and PlanResult hashes proves the plan is a function of the primitives and that the Planner never re-derives economics.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-V-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2623
+  statement: Replaying L5 alone against recorded C3 and C4 streams and matching the C5 hash proves Settlement reconstructs truth from outcome alone, uncontaminated by ex-ante belief.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2624
+  statement: Replaying L1 alone against a cold-tier snapshot and an asOf sequence and matching the C1 hash proves Belief is a pure read and that no-lookahead holds through the whole read path.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2625
+  statement: Each per-layer replay runs in a stripped host where the Belief store is not constructed, the network stack is unavailable and the clock API throws.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2626
+  statement: A layer that needs the Belief store, the network or the clock fails immediately and loudly rather than passing by accident because the ambient service happened to be there.
+  owner: 04-compliance/T3-determinism-and-replay.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2627
+  statement: The content hash and input hashes across a tick form a DAG and across a run a chain.
+  owner: 04-compliance/T3-determinism-and-replay.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2628
+  statement: Every artefact's recomputed hash matches its carried contentHash, its inputHashes is non-empty, every input hash resolves to an artefact in the run, and its manifestId matches the run's.
+  owner: 04-compliance/T3-determinism-and-replay.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2629
+  statement: The run's artefact edges are a subset of the declared edges — C1 through C5 plus L0 read and write only — and the edge set is acyclic.
+  owner: 04-compliance/T3-determinism-and-replay.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2630
+  statement: The only backwards edge is from the SettlementResult of one tick to the StateSnapshot of the next.
+  owner: 04-compliance/T3-determinism-and-replay.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2631
+  statement: An artefact whose inputHashes names something the architecture says it cannot depend on is a coupling violation caught by data, before anyone has to read the code.
+  owner: 04-compliance/T3-determinism-and-replay.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2632
+  statement: Divergence localisation walks the ticks in order and the artefacts in topological order, reporting the first artefact whose inputs all agree but whose own hash differs.
+  owner: 04-compliance/T3-determinism-and-replay.md §4.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2633
+  statement: Two runs with different manifestIds are not a divergence but a different run.
+  owner: 04-compliance/T3-determinism-and-replay.md §4.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2634
+  statement: Everything downstream of the first divergence is a consequence rather than a cause.
+  owner: 04-compliance/T3-determinism-and-replay.md §4.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2635
+  statement: The field-level diff is part of the tooling rather than an afterthought, because reporting that a bundle differs is not actionable while reporting the specific term, field and value change is.
+  owner: 04-compliance/T3-determinism-and-replay.md §4.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2636
+  statement: The solver is the single largest source of non-determinism and its settings are part of the manifest rather than of the environment.
+  owner: 04-compliance/T3-determinism-and-replay.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2637
+  statement: The reproducibility configuration runs single-threaded while the production configuration runs multi-threaded with the thread count recorded.
+  owner: 04-compliance/T3-determinism-and-replay.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2638
+  statement: The reproducibility configuration expresses its time limit in deterministic work units where the backend supports it, while the production configuration may use wall clock and the manifest records that it does.
+  owner: 04-compliance/T3-determinism-and-replay.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2639
+  statement: Presolve, cuts and heuristics are fixed and explicit in both configurations and never set to auto.
+  owner: 04-compliance/T3-determinism-and-replay.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2640
+  statement: Numerical focus and scaling are fixed in both configurations.
+  owner: 04-compliance/T3-determinism-and-replay.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2641
+  statement: Solving the same model twice under the reproducibility configuration gives byte-identical solutions.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2642
+  statement: The reproducibility time limit is in deterministic work units unless the backend declares no support and the run mode is Production.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2643
+  statement: A backend that cannot be deterministic under parallelism runs single-threaded in the reproducibility configuration.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2644
+  statement: No RNG is constructed in L1 through L5 at runtime, enforced by an analyzer rule, and scenario draws are loaded from an artefact with a recorded seed.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2645
+  statement: No output-affecting path iterates an unordered collection, enforced by an analyzer over the tick-loop assemblies.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2646
+  statement: Parallel reductions use a fixed partitioning scheme so summation order is stable regardless of thread scheduling, asserted bit-identical across 1, 2, 4 and 8 threads.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-D-18]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2647
+  statement: Clock APIs including DateTime.Now, DateTime.UtcNow, Stopwatch used for control flow and Environment.TickCount are banned in the L1 through L5 assemblies.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2648
+  statement: The clock analyzer has its own test suite with a fixture that must produce the diagnostic and a fixture that must not.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2649
+  statement: No contract field is populated from a construction-time timestamp, and time enters only as tickId or SlotId and asOf supplied by the driver.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2650
+  statement: "Timing instrumentation is permitted and explicitly carved out: solve-time measurement writes to a side channel excluded from contentHash."
+  owner: 04-compliance/T3-determinism-and-replay.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2651
+  statement: The timing carve-out is narrow and is itself tested, because a timing value that leaks into a hashed field fails the golden comparison immediately, which is the desired outcome.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2652
+  statement: Production runs with more threads and therefore a different manifest, and this is recorded rather than pretended away.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2653
+  statement: Production artefacts are compared against production-manifest goldens rather than against reproducibility-manifest goldens.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2654
+  statement: The reproducibility manifest is the one that gates merges, because it is the only one where a hash difference is unambiguous.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2655
+  statement: The measured throughput loss of the reproducibility configuration is reported in T5, so the cost of determinism is a number rather than an argument.
+  owner: 04-compliance/T3-determinism-and-replay.md §5.3
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013, T5]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2656
+  statement: The tick's acyclicity is verified mechanically rather than by reading code.
+  owner: 04-compliance/T3-determinism-and-replay.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2657
+  statement: During an instrumented replay every L0 access and every seam access is recorded as tickId, layer, key, direction and sequence.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2658
+  statement: L0 is accessed through a single instrumented facade in the audit build, so there is no path that escapes recording.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2659
+  statement: A layer that obtains state by a route other than the instrumented facade produces no record, which is why the audit also asserts that each layer's recorded reads account for the inputs its output depends on.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2660
+  statement: The acyclicity audit asserts no read of a same-tick write.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2661
+  statement: The acyclicity audit asserts L0 is read only in the read phase and written only in the write phase, and that the phases do not interleave.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2662
+  statement: The acyclicity audit asserts only L5 and L3's pending ledger entries write L0 within a tick.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2663
+  statement: The acyclicity audit asserts seam order is strictly forward from C1 through C5.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2664
+  statement: The acyclicity audit asserts no layer reads a downstream layer's output within the tick.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2665
+  statement: The acyclicity audit asserts the state read at the top of the tick is the state written at the end of the previous tick and nothing else.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2666
+  statement: "The previous-tick state assertion catches the subtle version of the bug: not a same-tick read but a stale-by-two-ticks read caused by a caching layer that did not invalidate."
+  owner: 04-compliance/T3-determinism-and-replay.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2667
+  statement: The lag is supposed to be exactly one tick, explicit and priceable, and a lag of two is a different, unpriced system.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2668
+  statement: Read-set sufficiency perturbs an input a layer did not record reading and asserts the output does not move, then perturbs one it did record and expects the output to move.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2669
+  statement: A recorded read that never matters is dead weight and is reported as a warning.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2670
+  statement: A layer whose output changes when an unrecorded input is perturbed is reading something through a path the audit cannot see — a static, a cached singleton, an ambient service — which is precisely the hidden state that destroys the compliance architecture.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2671
+  statement: The acyclicity audit runs nightly on the canonical window in an instrumented build.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2672
+  statement: The acyclicity audit is not run in CI because the instrumentation cost is roughly three to five times, and is not run in production at all.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.4
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2673
+  statement: An acyclicity audit failure is a merge blocker for the following day and pages the platform owner, because an acyclicity violation invalidates every per-layer replay taken since the last clean audit.
+  owner: 04-compliance/T3-determinism-and-replay.md §6.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2674
+  statement: Hashes-only recording writes golden tick rows and the scalar summaries for every bulk backtest, every CI run and every production tick, retained permanently because a golden tick row is tens of bytes.
+  owner: 04-compliance/T3-determinism-and-replay.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2675
+  statement: Full-seam recording writes every C1 through C5 payload plus PlanResult and StateSnapshot in canonical binary for designated audit days, retained 24 months or until the manifest they belong to is retired.
+  owner: 04-compliance/T3-determinism-and-replay.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2676
+  statement: Full seams plus solver logs and any irreducible infeasible subsystem are recorded on demand for incident investigation, retained 90 days.
+  owner: 04-compliance/T3-determinism-and-replay.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2677
+  statement: The designated-audit-day trigger list is configuration versioned with the calendar.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2678
+  statement: A day in the canonical CI window is a designated audit day, because it holds the fixtures the whole suite depends on.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2679
+  statement: A DST transition day is a designated audit day.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-02, INV-T-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2680
+  statement: An accounting period boundary day is a designated audit day, for the peak reset behaviour.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-S-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2681
+  statement: A peak-critical or qualification-critical day is a designated audit day, because those are the days where the largest downside lives.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2682
+  statement: A negative-price episode day is a designated audit day, because that is where the simultaneity invariant becomes non-redundant.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2683
+  statement: A day the engine spent in DEFENSIVE, SAFE or HALT is a designated audit day, because degradation behaviour is only auditable if it was recorded.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2684
+  statement: A day with a reserve activation above a threshold is a designated audit day, for commitment feasibility under stress.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2685
+  statement: A day with an unexplained ratio above threshold is a designated audit day, because those are the days that need forensics.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2686
+  statement: One in N ordinary days is sampled deterministically by hash so the corpus is not composed only of exciting days.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2687
+  statement: A fixture corpus made entirely of interesting days trains the suite on the tail and lets an ordinary-day regression through.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2688
+  statement: A recorded seam becomes a permanent test fixture when it is referenced by a test, at which point it is copied into the versioned fixture corpus with its manifest and stops being subject to the retention policy.
+  owner: 04-compliance/T3-determinism-and-replay.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2689
+  statement: "Fixtures are content-addressed like any other artefact, so a fixture cannot be edited in place: an updated fixture is a new artefact and the test that references it changes in the same commit."
+  owner: 04-compliance/T3-determinism-and-replay.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2690
+  statement: A golden hash change is either intentional or a regression, and the workflow decides which in a fixed order.
+  owner: 04-compliance/T3-determinism-and-replay.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2691
+  statement: If the manifest differs, the change is not a regression but a different run, and the changed field is identified before classification.
+  owner: 04-compliance/T3-determinism-and-replay.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2692
+  statement: tzdata and calendar changes land as manifest differences regularly and are legitimate, but they still require a reviewed re-baseline.
+  owner: 04-compliance/T3-determinism-and-replay.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-T-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2693
+  statement: Step two localises the divergence to the first artefact whose inputs agree and whose own hash differs, with a field-level diff.
+  owner: 04-compliance/T3-determinism-and-replay.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2694
+  statement: If replaying the identified layer alone against the recorded input seam reproduces the divergence, the layer changed.
+  owner: 04-compliance/T3-determinism-and-replay.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2695
+  statement: If the single-layer replay does not reproduce the divergence, it is environmental — threads, iteration order, a floating-point reduction, or an undeclared input — and is re-run under the reproducibility manifest and the sandbox report to find the undeclared read.
+  owner: 04-compliance/T3-determinism-and-replay.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2696
+  statement: The unit of bisection is the single-layer replay rather than the whole backtest, and because it runs in seconds a 200-commit range is about eight replays.
+  owner: 04-compliance/T3-determinism-and-replay.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2697
+  statement: An intentional golden change updates the baseline, and the PR must state which artefact moved, the field-level diff, the scalar summary delta, and why the new value is correct, reviewed by both the layer owner and the platform owner.
+  owner: 04-compliance/T3-determinism-and-replay.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2698
+  statement: A regression is reverted or fixed and the shrunk case becomes a T0 or T2 regression fixture in the same commit.
+  owner: 04-compliance/T3-determinism-and-replay.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2699
+  statement: An environmental divergence is fixed as a determinism defect and never re-baselined around, because a baseline that absorbs non-determinism destroys the ability to detect the next small regression.
+  owner: 04-compliance/T3-determinism-and-replay.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2700
+  statement: A baseline update is a separate commit from the change that caused it, referenced by it, because mixing them makes the history unreadable.
+  owner: 04-compliance/T3-determinism-and-replay.md §8.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2701
+  statement: The baseline commit message records the manifest field that changed and the scalar delta, and "updated goldens" is not an acceptable message.
+  owner: 04-compliance/T3-determinism-and-replay.md §8.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2702
+  statement: Baselines are never updated on a dirty tree.
+  owner: 04-compliance/T3-determinism-and-replay.md §8.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2703
+  statement: More than one baseline update per release is a signal rather than a routine, and the release checklist counts them.
+  owner: 04-compliance/T3-determinism-and-replay.md §8.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2704
+  statement: Tolerance-based golden comparison is not allowed, because approximate reproducibility removes the ability to detect small regressions; comparison is on hashes.
+  owner: 04-compliance/T3-determinism-and-replay.md §8.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2705
+  statement: Excluding a noisy field from the hash is not allowed, because if a field is non-deterministic the non-determinism is the bug.
+  owner: 04-compliance/T3-determinism-and-replay.md §8.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2706
+  statement: The only hash exclusion is the declared timing side-channel, and adding to that list is an ADR-level decision.
+  owner: 04-compliance/T3-determinism-and-replay.md §8.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2707
+  statement: Re-baselining to make CI green before a release is not allowed, because the release gate requires the golden state to be explained rather than merely accepted.
+  owner: 04-compliance/T3-determinism-and-replay.md §8.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+
+# ---- 04-compliance-e.tsv ----
+# ---- 04-compliance/T4 ----
+- id: CLM-2708
+  statement: The fill model is FillProbView's underlying probability-of-fill surface and the derived reliable-volume bounds that cross C1, and it is a prediction about an external system.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2709
+  statement: The quoting policy is the mapping from target, shadow value, urgency, fill curve and microstructure state to a limit-order ladder, and it is a policy whose quality is measured rather than a function whose correctness is asserted.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2710
+  statement: Neither the fill model nor the quoting policy has an invariant saying it must be true; both have a measured distance to reality and a band outside which that distance is a release blocker.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2711
+  statement: T4 is the only level whose output is a report rather than a pass/fail on a predicate, but the band is a gate and the gate is enforced.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2712
+  statement: The fill model's job is to predict the simulator's behaviour and its accuracy target is defined by that rather than by the real market in the abstract.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2713
+  statement: Predicting the simulator is a much narrower and more tractable problem than a general limit-order-book model, which is precisely why the fill-fidelity decision can remain deferred.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2714
+  statement: Whatever is calibrated against the simulator inherits the simulator's biases, and when the engine is pointed at a real venue the fill model must be recalibrated with the gap becoming a named risk.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2715
+  statement: Every T4 report carries a banner naming the calibration target simulator version, the simulator's version is part of the run manifest, and a calibration report that does not name its target is void.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2716
+  statement: A fill model artefact is stamped with the simulator version it was fitted against, and loading a fill model whose target version does not match the configured Execution adapter is a HALT at startup rather than a warning.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2717
+  statement: Measured accuracy against the simulator is not evidence of accuracy against a venue, and no document, dashboard or release note may present it as such.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2718
+  statement: The go-live gate requires a recalibration plan and a shadow period precisely because the simulator-measured accuracy number does not transfer.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2719
+  statement: Everything downstream that consumes fill quality — the executionSlippage bucket, the reliable-volume bounds and the quoting policy's capture ratio — inherits the simulator caveat and carries it in its own reporting.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2720
+  statement: When the simulator changes the fill model is re-verified before the release that consumes the new simulator rather than after.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §1.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2721
+  statement: The characterisation run is a designed grid sweep rather than a backtest of the strategy, so the calibration is not confounded by the strategy's own order placement which concentrates orders in a narrow region and leaves the rest of the surface unmeasured.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2722
+  statement: The price-band factor sweeps distance from the reference price in ticks or spread units from −3σ to +3σ relative to the intraday reference, signed by side.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2723
+  statement: The product factor covers each intraday product traded — quarter-hour, hour and block — per liquidity class.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2724
+  statement: The time-to-gate factor sweeps seven bands from more than eight hours down to under fifteen minutes.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2725
+  statement: Buy and sell are measured separately because the asymmetry is real and must not be averaged away.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2726
+  statement: The volume-bucket factor is small, typical and large relative to the product's observed depth, and the regime factor is ordinary, high-volatility, negative-price and high-imbalance.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2727
+  statement: Every cell must have a minimum observation count before it is reported, and cells below it are reported as insufficient data and are not interpolated over.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2728
+  statement: An interpolated cell that later turns out to be systematically wrong is indistinguishable from a measured one, which is the failure the no-interpolation rule prevents.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2729
+  statement: The characterisation run is a manifest-pinned run, so a calibration can be reproduced exactly and a re-calibration can be diffed against its predecessor.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2730
+  statement: Per-cell bias is realised minus predicted fill rate and must lie within plus or minus 0.05 for cells with at least 200 observations.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2731
+  statement: Aggregate bias is the volume-weighted mean bias across cells and must lie within plus or minus 0.02.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2732
+  statement: The Brier score is the mean squared error of the predicted fill probability and must not regress by more than 10 per cent against the previous calibration.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2733
+  statement: Log loss is reported under the same regression rule as the Brier score.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2734
+  statement: Fill rate is non-decreasing as the limit price becomes more aggressive within a cell family, and a violation with at least 200 observations on both sides blocks release.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2735
+  statement: Fill rate is non-decreasing as time-to-gate grows, all else equal, under the same treatment as price monotonicity.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2736
+  statement: The monotonicity relations are metamorphic relations on the fill model itself and are the cheapest defence against a mis-specified surface.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2737
+  statement: A fill model that predicts a lower fill probability for a more aggressive price has a sign error somewhere, and no amount of aggregate Brier score will reveal it.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2738
+  statement: A reliability diagram bins orders by predicted fill probability into deciles per product and time-to-gate band and plots realised frequency against predicted probability.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2739
+  statement: The reliability report carries the expected calibration error, the maximum calibration error, and the slope and intercept of the fitted reliability line.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2740
+  statement: Points on the diagonal mean the model is calibrated and no action is needed.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2741
+  statement: A reliability slope below one, with the curve flatter than the diagonal, means the model is over-confident and over-predicts extremes in both directions, and the fix is isotonic or Platt recalibration on a holdout rather than a global shrink of the surface.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2742
+  statement: A systematic offset above the diagonal means the model under-predicts fill and the Planner is leaving executable volume on the table via over-tight reliable-volume bounds, and the bias is conservative and therefore safe to ship pending the fix.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2743
+  statement: A systematic offset below the diagonal means the model over-predicts fill and the Planner is planning on volume it will not get, and this blocks release because it produces plans that are infeasible in practice.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2744
+  statement: A high maximum calibration error in one time-to-gate band only means the urgency dimension is mis-specified, and the check is whether the quoting policy's urgency input is on the same scale.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2745
+  statement: "The asymmetry between the two offset directions is deliberate and mirrors the degradation philosophy: a conservative error costs revenue and is visible while an optimistic error costs feasibility and is not."
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2746
+  statement: The same calibration machinery applies to the aFRR activation model, because the activation beliefs drive the SOC chance constraint and a mis-calibrated activation belief produces exactly the delivery shortfall treated as a prequalification risk.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-005
+  anchors: [INV-S-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2747
+  statement: Realised activation fraction versus predicted, by block, direction and regime, must have aggregate bias within plus or minus 0.03.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.4
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2748
+  statement: The activation reliability diagram carries the same asymmetry, with under-predicting activation the unsafe direction.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2749
+  statement: The realised frequency of SOC leaving the band must be at most the configured ε over the holdout, and a realised frequency above ε means the chance constraint is not delivering its stated confidence and blocks release.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.4
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2750
+  statement: The correlation between activation and price regime that the joint ensemble exists to preserve must be present in the realised data too, or the ensemble is mis-specified.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.4
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2751
+  statement: The chance-constraint calibration row is the one most often skipped and the one that matters, because ε is a promise about how often SOC feasibility is allowed to fail and an uncalibrated activation model makes that promise vacuous.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2752
+  statement: Calibration decays as the simulator, the products or the market regime change.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.5
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2753
+  statement: A rolling 20-day aggregate bias above 0.03 in magnitude warns, and above 0.05 alerts and raises a calibration ticket.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.5
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2754
+  statement: A rolling 20-day expected calibration error per product above 1.5 times its value at last calibration alerts.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.5
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2755
+  statement: A Page–Hinkley or CUSUM change point on the per-order calibration residual alerts continuously and names the day the drift started.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.5
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2756
+  statement: A previously-populated cell that is now insufficient data warns, because the strategy has stopped exploring a region and the surface is going stale there.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2757
+  statement: A simulator version hash differing from the fill model's stamped target is a HALT at startup.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2758
+  statement: Any new monotonicity violation with at least 200 observations alerts on the nightly run.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.5
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2759
+  statement: Drift alerts route to the calibration owner rather than to the on-call engineer, a calibration ticket has a due date measured in days, and a HALT does not.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2760
+  statement: Calibration drift is recorded in the settlement artefact so P&L can be conditioned on it, because a quarter in which the fill model drifted for three weeks should be attributable to that rather than to strategy.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2761
+  statement: The quoting policy is the component separated from the Planner precisely so its contribution to P&L is separately measurable.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2762
+  statement: The region between the prevailing market and the shadow value is the space the quoting policy is free to work in, and its job is to capture as much of it as fill probability allows.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2763
+  statement: For a sell fill the available spread is the reference market price minus the shadow value and the captured amount is the fill price minus the shadow value.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2764
+  statement: For a buy fill the available spread is the shadow value minus the reference market price and the captured amount is the shadow value minus the fill price.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2765
+  statement: The capture ratio is the volume-weighted sum of captured over the volume-weighted sum of available.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2766
+  statement: CommitmentCover legitimately captures poorly because it is buying certainty, and must not drag the headline capture ratio.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2767
+  statement: Capture should fall monotonically as urgency rises, and if it does not then urgency is not wired into the ladder.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.1
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2768
+  statement: Unfilled opportunity cost is the sum over unfilled intents of volume times available spread.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2769
+  statement: Capture ratio measured only on fills is the classic trap, because a policy that quotes at the shadow value captures zero per cent and fills nothing while a policy that quotes at the market captures one hundred per cent of nothing, so both must be in the same report.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2770
+  statement: The frontier view plotting capture ratio against fill rate per policy configuration is the useful one, and configurations are compared on the frontier rather than on either axis alone.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2771
+  statement: A fill that occurs precisely because the market was about to move against you is worth less than its price suggests, and adverse selection is the difference.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2772
+  statement: Adverse selection is the single most common way an execution policy that looks good on capture ratio loses money.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2773
+  statement: The markout of a fill at horizon Δ is the signed difference between the reference price at Δ after the fill and the fill price times volume, positive when the market moved in our favour.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2774
+  statement: Markout horizons are one minute, five minutes, fifteen minutes and to the gate.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2775
+  statement: A consistently negative markout means the policy is being picked off.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2776
+  statement: A markout decay curve that worsens monotonically with horizon indicates information-driven adverse selection, while one that recovers indicates transient impact, which is a different and less alarming problem.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2777
+  statement: Aggressive fills that crossed the spread should show near-zero markout by construction, and a negative markout on aggressive fills means the reference price itself is stale.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2778
+  statement: Capture net of adverse selection, in EUR, is the number that matters, because a policy with a high capture ratio and worse adverse selection is destroying value.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2779
+  statement: A quoting policy change ships only if capture net of adverse selection improves, or is neutral with a stated reason.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2780
+  statement: T4 asserts that the adverse-selection measurement and the executionSlippage bucket are consistent over the same period within tolerance.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2781
+  statement: A divergence between adverse selection and executionSlippage means one of the two definitions has drifted, and that divergence is exactly what the unexplained ratio starts registering months later.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2782
+  statement: The ex-ante trade-through check runs over every emitted intent every tick in production and in backtest, blocking an untagged violation and recording the magnitude.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2783
+  statement: The ex-post trade-through check runs over every fill from C4 reconciled against the recorded intent, recording the value destroyed as the price gap times volume.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2784
+  statement: The aggregate trade-through report carries the trade-through rate, the tagged rate, the untagged blocked count as the complement, the value destroyed in EUR, and cuts by tag, urgency decile and product.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2785
+  statement: An untagged trade-through that reached C3 is a stop-ship, because the enforcement point is broken rather than the policy.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2786
+  statement: A tagged CommitmentCover trade-through warns and is counted, is expected in small numbers, and a rising rate means commitments are being taken that the engine cannot cover economically — a reserve-sizing question rather than a quoting question.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2787
+  statement: Value destroyed above the configured budget over a period alerts and prompts review of the shadow value extraction itself, because a systematically wrong dual is a Planner defect surfacing as an execution symptom.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2788
+  statement: Trade-through concentrated in the top urgency decile warns, because the policy is panicking near the gate and the urgency mapping is too aggressive.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2789
+  statement: A high trade-through rate is more often a signal that the shadow value is being extracted incorrectly — an approximated dual rather than the real one — than that the quoting policy is misbehaving.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2790
+  statement: The shadow value on the position accounting constraint must be finite and its sign must be consistent with the position's direction.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2791
+  statement: Scaling all prices by k greater than zero scales the shadow value by k.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2792
+  statement: Both A/B arms consume the identical recorded PlanResult stream so the Planner is genuinely held fixed, which is only possible because PlanResult is recorded.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2793
+  statement: Both A/B arms use the same simulator version and manifest, because otherwise the comparison measures the simulator.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2794
+  statement: The A/B comparison is paired per tick and per product on the same instance, because a paired test has far more power than two independent backtests.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2795
+  statement: The A/B primary metric is capture net of adverse selection in EUR, volume-weighted.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2796
+  statement: The A/B guardrail metrics are trade-through rate, unfilled opportunity cost and CommitmentCover fill rate, because a policy that improves capture by failing to cover commitments has not improved.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2797
+  statement: The A/B result is reported with the simulator banner because it is a statement about the simulator.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §3.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2798
+  statement: Fill-rate calibration by price band determines whether the fill-probability BoundTerm is a scalar volume cap or a per-price-band cap, and the C2 contract shape does not change either way.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2799
+  statement: A conservative fill-rate bias is tightened toward truth while an optimistic bias is corrected immediately.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2800
+  statement: An under-confident activation model widens ε until recalibrated.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2801
+  statement: The reliability diagram slope feeds an isotonic recalibration layer on the fill model artefact, versioned and content-hashed like any other artefact.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2802
+  statement: Adverse selection by urgency feeds the quoting policy's urgency mapping.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2803
+  statement: Trade-through concentration feeds shadow-value extraction in the Planner.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2804
+  statement: Every drift alert feeds the mode transitions and the settlement record so P&L can be conditioned on the calibration state of the period.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2805
+  statement: A recalibrated fill model is a new artefact with a new hash, which makes it a new manifest, which makes every golden hash downstream of it change.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2806
+  statement: A recalibration is a deliberate behaviour change and should be visible as one, and the baseline update carries the calibration report as its justification.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2807
+  statement: One T4 report is produced per nightly run and one per release, both archived with the manifest.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2808
+  statement: The T4 report carries the manifest id, the calibration target simulator version, the window, and the order and fill counts.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2809
+  statement: The T4 report's fill model section carries aggregate bias against its band, the Brier score against the previous value, expected calibration error by product, monotonicity violations, insufficient cells, and the attached reliability diagrams per product and time-to-gate band.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2810
+  statement: The T4 report's activation model section carries aggregate bias against its band and the realised SOC-band exit frequency against epsilon.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2811
+  statement: The T4 report's quoting policy section carries the capture ratio by tag, urgency and time-to-gate, unfilled opportunity cost, adverse selection at each markout horizon, capture net of adverse selection as the primary metric, the trade-through rates, and the value destroyed.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2812
+  statement: The T4 report's drift section carries the Page–Hinkley change point, the rolling 20-day bias, and the open calibration tickets.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2813
+  statement: The T4 report closes with the caveat that every number in it is measured against the simulator and does not transfer to a live venue without recalibration.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2814
+  statement: A release proceeds when every pass/fail line passes, the primary quoting metric has not regressed, and any warning has an owner and a date.
+  owner: 04-compliance/T4-calibration-and-execution-quality.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+
+# ---- 04-compliance-f.tsv ----
+# ---- 04-compliance/T5 ----
+- id: CLM-2815
+  statement: No tier ships without its gap measured against Tier 1, and T5 is the procedure that produces that measurement and the release gate that enforces it.
+  owner: 04-compliance/T5-gap-and-performance.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2816
+  statement: Tier 1 must exist even though it may never run in production, because without an oracle there is no gap and without a gap there is no engineering, only hope.
+  owner: 04-compliance/T5-gap-and-performance.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2817
+  statement: The Tier-k-to-Tier-1 gap answers how much the fast path costs, and the fix lives in the tier itself.
+  owner: 04-compliance/T5-gap-and-performance.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2818
+  statement: The Tier-1-to-perfect-foresight distance answers whether the optimiser is weak versus the world being uncertain, and the fix lives in either the scenario model or the Planner.
+  owner: 04-compliance/T5-gap-and-performance.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-005, ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2819
+  statement: Solve time and objective as functions of scenario count and breakpoint count answer whether the configured knobs sit at the right point on the accuracy/speed curve.
+  owner: 04-compliance/T5-gap-and-performance.md §1
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-005
+  anchors: [ADR-005, ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2820
+  statement: Tier 1 is the joint stochastic MILP with reserve capacities as decision variables alongside spot dispatch and the coupling constraints explicit.
+  owner: 04-compliance/T5-gap-and-performance.md §2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2821
+  statement: Tier 1 is the accuracy reference, does not need to be fast, and runs offline on every backtest day regardless of which tier ships.
+  owner: 04-compliance/T5-gap-and-performance.md §2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2822
+  statement: The oracle run requires Tier 1 to reach Optimal or GapLimited status with a MIP gap at or below the oracle gap tolerance, defaulting to 1e-4.
+  owner: 04-compliance/T5-gap-and-performance.md §2.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2823
+  statement: The oracle records the objective, trajectory, reserve volumes, MIP gap, solve time and status per tick.
+  owner: 04-compliance/T5-gap-and-performance.md §2.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2824
+  statement: Every tier is solved on the identical recorded C2 bundle and StateSnapshot, because anything else measures input differences rather than tier differences.
+  owner: 04-compliance/T5-gap-and-performance.md §2.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2825
+  statement: The oracle budget is generous but bounded and recorded, because an oracle that timed out at a 3 per cent gap is not an oracle and the recorded MIP gap is part of the gap arithmetic.
+  owner: 04-compliance/T5-gap-and-performance.md §2.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2826
+  statement: Rounding to tick and lot sizes happens only at C3, because rounding earlier corrupts the optimality-gap measurement, and it is this measurement that the rounding rule protects.
+  owner: 04-compliance/T5-gap-and-performance.md §2.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2827
+  statement: The oracle runs under the reproducibility manifest, because a non-reproducible oracle makes every gap unfalsifiable.
+  owner: 04-compliance/T5-gap-and-performance.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2828
+  statement: Ticks where Tier 1 fails to reach the oracle gap tolerance are reported separately and never dropped, because silently dropping the hard instances biases every reported gap downward and the hard instances are the ones that matter.
+  owner: 04-compliance/T5-gap-and-performance.md §2.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2829
+  statement: The absolute gap is the oracle objective minus the tier objective, in EUR.
+  owner: 04-compliance/T5-gap-and-performance.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2830
+  statement: The relative gap is the absolute gap divided by the larger of the oracle objective's magnitude and a configured EUR floor.
+  owner: 04-compliance/T5-gap-and-performance.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2831
+  statement: Without a denominator floor, a tick whose oracle objective is near zero produces an unbounded relative gap and poisons every percentile.
+  owner: 04-compliance/T5-gap-and-performance.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2832
+  statement: The absolute gap in EUR is the one that gates, because a 40 per cent relative gap on a EUR 3 tick is noise while a 2 per cent relative gap on a peak-critical day is not.
+  owner: 04-compliance/T5-gap-and-performance.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2833
+  statement: A negative gap — the tier beating the oracle — is possible only through an oracle gap tolerance or a defect, and is reported as a finding rather than truncated to zero.
+  owner: 04-compliance/T5-gap-and-performance.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2834
+  statement: The gap is reported as p50, p90, p99 and worst case, never as a mean, because the tail is where a fast heuristic destroys value.
+  owner: 04-compliance/T5-gap-and-performance.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2835
+  statement: "The gap distribution of a heuristic is sharply right-skewed: near zero on the many days when nothing is binding and large on the few days when reserve, peak and spot compete for the same headroom."
+  owner: 04-compliance/T5-gap-and-performance.md §3.1
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2836
+  statement: "A mean gap is dominated by the uninteresting mass: ninety ordinary days at EUR 0.40 and ten critical days at EUR 300 give a mean of EUR 30.36, which describes no actual day and hides the EUR 300."
+  owner: 04-compliance/T5-gap-and-performance.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2837
+  statement: A mean gap is not robust, because one oracle timeout, one negative gap or one outlier day moves it, while percentiles do not move.
+  owner: 04-compliance/T5-gap-and-performance.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2838
+  statement: A mean gap answers the wrong question, because what is needed is the cost on the day it goes wrong.
+  owner: 04-compliance/T5-gap-and-performance.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2839
+  statement: A heuristic that is fine on average and terrible on the ten days that matter is worse than not having the tier at all, because it has been trusted.
+  owner: 04-compliance/T5-gap-and-performance.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2840
+  statement: The gap report carries p50, p90, p99 and worst in EUR and per cent, the count of ticks in the tail above a configured EUR threshold, the cumulative gap over the corpus, and the negative-gap count.
+  owner: 04-compliance/T5-gap-and-performance.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2841
+  statement: The cumulative gap over the corpus is the only meaningful aggregate, because it is a sum and not an average.
+  owner: 04-compliance/T5-gap-and-performance.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2842
+  statement: The worst case is always named with its day, tick, regime and what was binding, plus a link to the recorded seam.
+  owner: 04-compliance/T5-gap-and-performance.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2843
+  statement: An unnamed worst case is a number nobody can act on, while a named one is a fixture and usually a bug report.
+  owner: 04-compliance/T5-gap-and-performance.md §3.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2844
+  statement: The gap regimes are declared, derived from recorded data rather than from the tier's own output, and every one is reported with the full percentile set.
+  owner: 04-compliance/T5-gap-and-performance.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2845
+  statement: High-spread days are those whose intraday max-minus-min of the ensemble-mean day-ahead price exceeds the corpus 90th percentile, and are separated because the arbitrage term is large there and a mis-priced headroom transfer costs most.
+  owner: 04-compliance/T5-gap-and-performance.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2846
+  statement: Peak-critical days are those with peakCritical set or the modelled POI trajectory within a configured margin of the realised peak, and are separated because a heuristic that trades a peak breach for a spread is catastrophic there and invisible on average.
+  owner: 04-compliance/T5-gap-and-performance.md §3.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2847
+  statement: High reserve price days are those whose block-mean aFRR capacity price exceeds the corpus 90th percentile, and are separated because the reservation price matters most there and Tier 3's learned surface is most likely out of distribution.
+  owner: 04-compliance/T5-gap-and-performance.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2848
+  statement: Qualification-critical days are those with qualCritical set, and are separated because losing a year of network-charge reduction for a day's spread is the single largest downside event in the business case.
+  owner: 04-compliance/T5-gap-and-performance.md §3.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2849
+  statement: Negative-price episodes are days with any slot whose ensemble-mean day-ahead price is below zero, and are separated because the simultaneity invariant becomes non-redundant there and the LP relaxation can misbehave.
+  owner: 04-compliance/T5-gap-and-performance.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2850
+  statement: High activation days are those whose realised activation fraction exceeds the 90th percentile, and are separated for commitment feasibility under stress.
+  owner: 04-compliance/T5-gap-and-performance.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2851
+  statement: DST transition days are taken from the calendar and are separated because calendar-driven formulation errors surface as a gap.
+  owner: 04-compliance/T5-gap-and-performance.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2852
+  statement: Degraded-mode days are any ticks not in NORMAL, and are separated because a gap under a widened risk profile is a different measurement.
+  owner: 04-compliance/T5-gap-and-performance.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2853
+  statement: A tier passes only if it passes per regime rather than merely in aggregate.
+  owner: 04-compliance/T5-gap-and-performance.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2854
+  statement: Because ICoOptimizer escalates at runtime, the shipped gap is not Tier 3's gap but the gap of the escalation policy.
+  owner: 04-compliance/T5-gap-and-performance.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2855
+  statement: The pure Tier 3 gap with escalation disabled measures the learned surface itself.
+  owner: 04-compliance/T5-gap-and-performance.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2856
+  statement: The Tier 2 gap on every tick measures the escalation target's quality.
+  owner: 04-compliance/T5-gap-and-performance.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2857
+  statement: The shipped gap under the escalation policy as configured is the number that gates the release.
+  owner: 04-compliance/T5-gap-and-performance.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2858
+  statement: The escalation rate is reported by trigger and by regime.
+  owner: 04-compliance/T5-gap-and-performance.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2859
+  statement: A configuration that escalates on 60 per cent of ticks is a Tier 2 deployment with extra steps and its latency budget should be assessed as such.
+  owner: 04-compliance/T5-gap-and-performance.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010, ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2860
+  statement: The true gap lies within the measured gap plus or minus the oracle's own absolute MIP gap, and the gap is reported with that oracle-gap band attached.
+  owner: 04-compliance/T5-gap-and-performance.md §3.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2861
+  statement: The oracle's own MIP gap must be much smaller than the median tier gap, or the oracle cannot resolve the quantity being measured.
+  owner: 04-compliance/T5-gap-and-performance.md §3.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2862
+  statement: If the oracle's own MIP gap is comparable to the tier gap being measured the measurement is not meaningful and the report says so rather than printing a number, and the remedy is tightening the oracle tolerance or shrinking the instance.
+  owner: 04-compliance/T5-gap-and-performance.md §3.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2863
+  statement: T5 asserts that the gap it measures and the settlement optimalityGap bucket agree over the same period within tolerance, and a divergence means the counterfactual re-run and the oracle run are not using the same inputs.
+  owner: 04-compliance/T5-gap-and-performance.md §3.5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2864
+  statement: The perfect-foresight bound solves the same day with the realised path known as a single deterministic scenario, all other inputs identical.
+  owner: 04-compliance/T5-gap-and-performance.md §4.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2865
+  statement: "The perfect-foresight run keeps the same feasible set: physical bounds, POI envelope, commitments and regulatory constraints are identical, because perfect foresight removes uncertainty rather than physics."
+  owner: 04-compliance/T5-gap-and-performance.md §4.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2866
+  statement: A perfect-foresight run that also relaxes a bound measures nothing.
+  owner: 04-compliance/T5-gap-and-performance.md §4.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2867
+  statement: "The perfect-foresight run keeps the same market mechanics: gate structure and non-anticipativity across market stages remain, so it knows the future but the DA gate still closes before the intraday window."
+  owner: 04-compliance/T5-gap-and-performance.md §4.1
+  class: regulatory
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2868
+  statement: Removing the market staging from the perfect-foresight run turns the bound into a fantasy and inflates the reported uncertainty cost.
+  owner: 04-compliance/T5-gap-and-performance.md §4.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2869
+  statement: Confirmed commitments still bind in the perfect-foresight run, because the ledger is history rather than a decision.
+  owner: 04-compliance/T5-gap-and-performance.md §4.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2870
+  statement: Perfect foresight is a bound and not a target, and no configuration change should ever be justified by closing the gap to it.
+  owner: 04-compliance/T5-gap-and-performance.md §4.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2871
+  statement: The distance from Tier 1 to perfect foresight is the irreducible loss under the current information set, whose fix lives in Belief, the scenario model and the data sources.
+  owner: 04-compliance/T5-gap-and-performance.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2872
+  statement: The distance from the shipped tier to Tier 1 is reducible by better optimisation, whose fix lives in the tier ladder.
+  owner: 04-compliance/T5-gap-and-performance.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2873
+  statement: A large Tier1-to-PF distance with a small tier-to-Tier-1 gap means the optimiser is close to the best achievable under uncertainty and the loss is informational, so optimisation work has almost no headroom.
+  owner: 04-compliance/T5-gap-and-performance.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-005, ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2874
+  statement: A small Tier1-to-PF distance with a large tier-to-Tier-1 gap means the problem is nearly deterministic and the heuristic is leaving money on the table, so the escalation thresholds or the learned surface need work.
+  owner: 04-compliance/T5-gap-and-performance.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2875
+  statement: Both distances large means two independent problems that must be addressed separately rather than letting one hide behind the other.
+  owner: 04-compliance/T5-gap-and-performance.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2876
+  statement: Both distances small means the system is near its ceiling on this corpus and the search should be for a missing lever.
+  owner: 04-compliance/T5-gap-and-performance.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2877
+  statement: Self-consumption is not a missing lever, because it is priced through the delineation accumulators, and a plan that over-consumes behind the meter shows up as a λ_11 misprice rather than as a missing view.
+  owner: 04-compliance/T5-gap-and-performance.md §4.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2878
+  statement: Without the headroom decomposition a team spends quarters improving an optimiser whose remaining gap is entirely forecast uncertainty, or tuning forecasts to close a gap that is pure heuristic loss.
+  owner: 04-compliance/T5-gap-and-performance.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2879
+  statement: The perfect-foresight bound costs one extra Tier 1 solve per day and it settles the argument.
+  owner: 04-compliance/T5-gap-and-performance.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2880
+  statement: The perfect-foresight distance is reported with the same percentile discipline as the gap — p50, p90, p99 and worst, per regime — and the headroom split ratio is reported per regime.
+  owner: 04-compliance/T5-gap-and-performance.md §4.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2881
+  statement: Tier 2's Lagrangian decomposition gives, at any iteration, a bound on the true optimum, so the gap to the best primal solution is a number that can be reported rather than a hope.
+  owner: 04-compliance/T5-gap-and-performance.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2882
+  statement: Unlike the Tier-1 gap, the Tier 2 certificate is available per solve, at runtime, in production, with no oracle present.
+  owner: 04-compliance/T5-gap-and-performance.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2883
+  statement: A Tier 2 result carries the feasible primal objective, the Lagrangian dual bound, the certified gap and relative gap, the iteration count, the exit reason and the reservation prices.
+  owner: 04-compliance/T5-gap-and-performance.md §5.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2884
+  statement: A Tier 2 exit reason is one of Converged, IterationCap, TimeCap or NumericalTrouble.
+  owner: 04-compliance/T5-gap-and-performance.md §5.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2885
+  statement: Every Tier 2 solve asserts the certified gap is non-negative within tolerance, the primal is feasible on every exit path including TimeCap, the dual bound is finite, and the reservation prices are finite and non-negative.
+  owner: 04-compliance/T5-gap-and-performance.md §5.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2886
+  statement: A non-converged Tier 2 exit reason is recorded in PlanResult and in the settlement record.
+  owner: 04-compliance/T5-gap-and-performance.md §5.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2887
+  statement: A dual bound that dips below the primal is a broken relaxation — a coupling constraint relaxed with the wrong sign, or a subproblem solved to the wrong sense — and it invalidates every bound the tier has ever reported, so it is a HALT.
+  owner: 04-compliance/T5-gap-and-performance.md §5.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2888
+  statement: The certified relative gap distribution is reported as p50, p90, p99 and worst per regime, gated on p99 within the configured band.
+  owner: 04-compliance/T5-gap-and-performance.md §5.3
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2889
+  statement: The Tier 2 exit-reason mix is reported and a rising NumericalTrouble rate blocks release.
+  owner: 04-compliance/T5-gap-and-performance.md §5.3
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2890
+  statement: The distribution of iterations to converge, and its dependence on instance size, feeds the latency evidence for the deferred latency budget.
+  owner: 04-compliance/T5-gap-and-performance.md §5.3
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2891
+  statement: On the oracle corpus the certified gap must dominate the measured Tier-1-minus-Tier-2 gap within tolerance, because a certificate that under-states the true gap is worse than no certificate.
+  owner: 04-compliance/T5-gap-and-performance.md §5.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2892
+  statement: The reservation prices are compared against the spot opportunity cost they are supposed to equal and reviewed by a human, because they are diagnostically valuable precisely for being human-checkable.
+  owner: 04-compliance/T5-gap-and-performance.md §5.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2893
+  statement: Tier 2's central claim is that the reservation price is provably consistent with spot opportunity cost rather than a heuristic weighting.
+  owner: 04-compliance/T5-gap-and-performance.md §5.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2894
+  statement: A reservation price of EUR 400/MW/h on a flat, low-price day contradicts the consistency claim and points at the subgradient step-size rule or a mis-scaled coupling row.
+  owner: 04-compliance/T5-gap-and-performance.md §5.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2895
+  statement: The scenario-count sweep covers S in 1, 4, 8, 16, 32, 64, 128 and 256, recording objective, solve time, row and column counts, binary count and MIP gap per tier.
+  owner: 04-compliance/T5-gap-and-performance.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2896
+  statement: The breakpoint sweep covers 2, 4, 8, 16, 32 and 64 breakpoints per curve, recording objective, solve time, binary count and approximation error against the finest grid.
+  owner: 04-compliance/T5-gap-and-performance.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2897
+  statement: The reference values are the objective at S = 256 and at the finest breakpoint grid.
+  owner: 04-compliance/T5-gap-and-performance.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2898
+  statement: The objective-versus-S curve shows where the accuracy curve flattens, and scenario count is a first-class tuning parameter with a measurable cost/quality curve.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2899
+  statement: The solve-time-versus-S curve reports p50 and p99 per tier and is the cost side of the scenario-count trade.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2900
+  statement: The reduction fidelity curve reports the marginal-mean error and a Wasserstein distance to the full ensemble against S, distinguishing more-scenarios-help from the reduction being bad at small S.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2901
+  statement: The objective-versus-breakpoint-count curve reports objective and approximation error, because breakpoint count is a tuning knob with a measurable accuracy/speed trade-off.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2902
+  statement: The solve-time-versus-breakpoint-count curve reports p50, p99 and binary count, which is where the cost of a General-curvature PWL becomes visible.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2903
+  statement: The solve-time-versus-binary-count scatter is coloured by the per-term binary attribution and is the attribution instrument plotted.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-14]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2904
+  statement: The solve-time-versus-row-and-column-count scatter detects super-linear blow-up before it reaches production.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2905
+  statement: The determinism-cost curve compares reproducibility and production configuration solve times, making the cost of determinism a number rather than an argument.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2906
+  statement: The configured scenario count and breakpoint count must sit at a declared point on the curve, with the declaration recorded in the configuration next to the value.
+  owner: 04-compliance/T5-gap-and-performance.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2907
+  statement: A configuration value with no T5 citation next to it is a guess, and the release checklist flags it.
+  owner: 04-compliance/T5-gap-and-performance.md §6.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2908
+  statement: T5 is a release gate rather than a merge gate, and runs pre-release overnight on a holdout corpus that is not the corpus any tier was tuned on.
+  owner: 04-compliance/T5-gap-and-performance.md §7
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2909
+  statement: The gate requires the Tier 1 oracle run to have completed over the whole holdout corpus, with the count and identity of ticks failing the oracle tolerance reported rather than dropped.
+  owner: 04-compliance/T5-gap-and-performance.md §7.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2910
+  statement: The gate requires every tier that can run in production to have its gap measured, including tiers reachable only by escalation.
+  owner: 04-compliance/T5-gap-and-performance.md §7.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2911
+  statement: The gate requires the shipped gap reported as p50, p90, p99 and worst, in EUR and per cent, per regime.
+  owner: 04-compliance/T5-gap-and-performance.md §7.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2912
+  statement: The gate requires per-regime p99 within the configured band and the worst case named with its recorded seam.
+  owner: 04-compliance/T5-gap-and-performance.md §7.1
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2913
+  statement: The gate assesses peak-critical and qualification-critical regimes against their own tighter band, because a heuristic that is fine on average and terrible on the ten days that matter does not ship.
+  owner: 04-compliance/T5-gap-and-performance.md §7.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2914
+  statement: The gate requires the perfect-foresight bound computed with the Tier1-to-PF distance and the headroom split reported per regime.
+  owner: 04-compliance/T5-gap-and-performance.md §7.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2915
+  statement: The gate requires Tier 2 dual-bound certification with no invalid bound anywhere in the corpus, every exit path returning a feasible primal, and the exit-reason mix within band.
+  owner: 04-compliance/T5-gap-and-performance.md §7.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2916
+  statement: The gate requires the scaling curves regenerated and the configured values cited against the current curves.
+  owner: 04-compliance/T5-gap-and-performance.md §7.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2917
+  statement: The gate requires solve-time p99 per tier and per gate type recorded, feeding the deferred latency budget decision.
+  owner: 04-compliance/T5-gap-and-performance.md §7.1
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2918
+  statement: The gate requires no configuration value in the shipped config to lack a T5 citation.
+  owner: 04-compliance/T5-gap-and-performance.md §7.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2919
+  statement: A tier whose gap exceeds its band in any regime does not ship as the production path, though it may still ship as an escalation target if its gap is acceptable there.
+  owner: 04-compliance/T5-gap-and-performance.md §7.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2920
+  statement: If the oracle could not resolve the gap the measurement is void, and the remedy is to tighten the oracle or reduce the instance rather than ship on an unresolved gap.
+  owner: 04-compliance/T5-gap-and-performance.md §7.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2921
+  statement: An invalid Tier 2 dual bound is a stop-ship, because the bound is the product.
+  owner: 04-compliance/T5-gap-and-performance.md §7.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2922
+  statement: A regression against the previous release's gap distribution blocks release unless accompanied by a stated, accepted trade such as a latency improvement with a quantified gap cost.
+  owner: 04-compliance/T5-gap-and-performance.md §7.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2923
+  statement: If the scaling curves show the configured scenario count past the knee, the configuration is re-declared or the citation updated.
+  owner: 04-compliance/T5-gap-and-performance.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2924
+  statement: The gate does not require the gap to be small but requires it to be measured, named, conditioned and accepted.
+  owner: 04-compliance/T5-gap-and-performance.md §7.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2925
+  statement: A tier with a p99 gap of EUR 200 on peak-critical days may be perfectly acceptable if the latency it buys is necessary and the escalation policy covers those days, but that has to be a decision someone took with the number in front of them.
+  owner: 04-compliance/T5-gap-and-performance.md §7.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+
+# ---- 04-compliance-g.tsv ----
+# ---- 04-compliance/T6 ----
+- id: CLM-2926
+  statement: T0 through T5 test the engine against inputs it is supposed to handle, while T6 tests it against inputs designed to break a specific claim.
+  owner: 04-compliance/T6-adversarial-audit.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2927
+  statement: The claims T6 attacks are the ones that, if false, invalidate everything else.
+  owner: 04-compliance/T6-adversarial-audit.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2928
+  statement: The claim that the engine cannot use information it did not have is attacked by lookahead poisoning.
+  owner: 04-compliance/T6-adversarial-audit.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2929
+  statement: The claim that unknown configuration is rejected rather than ignored is attacked by config poisoning.
+  owner: 04-compliance/T6-adversarial-audit.md §1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2930
+  statement: The claim that a malformed payload is rejected cleanly and never partially read is attacked by contract fuzzing.
+  owner: 04-compliance/T6-adversarial-audit.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2931
+  statement: The claim that the commitment ledger is authoritative and tamper-evident is attacked by ledger tampering.
+  owner: 04-compliance/T6-adversarial-audit.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2932
+  statement: The claim that a stale artefact is refused rather than used silently is attacked by the stale-artefact audit.
+  owner: 04-compliance/T6-adversarial-audit.md §1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2933
+  statement: Each attacked claim is one the architecture makes in prose, and T6 is where the prose is turned into an executable attack.
+  owner: 04-compliance/T6-adversarial-audit.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2934
+  statement: The lookahead poisoning audit runs a backtest with all facts having knowledgeTime greater than t replaced by garbage and asserts bit-identical results, and if any component peeks the run diverges.
+  owner: 04-compliance/T6-adversarial-audit.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2935
+  statement: The lookahead poisoning audit is the single most decisive test in the specification.
+  owner: 04-compliance/T6-adversarial-audit.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2936
+  statement: The poisoned and reference runs must agree on the whole-run golden hash and on every per-tick golden record.
+  owner: 04-compliance/T6-adversarial-audit.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2937
+  statement: On a poisoning failure the Merkle chain names the first artefact that diverged, which names the layer that peeked.
+  owner: 04-compliance/T6-adversarial-audit.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2938
+  statement: The PoisonedStore wraps the Belief store and, for every read, replaces the value of any row whose knowledgeTime exceeds the tick's asOf before the row can reach anything.
+  owner: 04-compliance/T6-adversarial-audit.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2939
+  statement: The poison is applied at the storage layer below the asOf filter, so a correctly-implemented engine never observes it and a peeking one gets nothing usable.
+  owner: 04-compliance/T6-adversarial-audit.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2940
+  statement: The Garbage poison mode replaces future rows with deterministic pseudo-random values drawn from the series' own plausible range, seeded from the manifest, and catches a component that uses the future quantitatively.
+  owner: 04-compliance/T6-adversarial-audit.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2941
+  statement: The NaN poison mode replaces every numeric field of a future row with NaN and catches a component that reads the future at all, because NaN either changes the output or trips the no-NaN invariant, both of which are detections.
+  owner: 04-compliance/T6-adversarial-audit.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-G-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2942
+  statement: The NaN mode is the loudest and the first to run.
+  owner: 04-compliance/T6-adversarial-audit.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2943
+  statement: The Shuffled poison mode permutes the true future values across valid_time within the series, preserving every marginal moment and destroying every temporal alignment, and catches a component that uses only distributional properties of the future.
+  owner: 04-compliance/T6-adversarial-audit.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2944
+  statement: The Constant poison mode replaces future rows with a single fixed value, catching a component whose use of the future is masked by averaging, and serving as a control.
+  owner: 04-compliance/T6-adversarial-audit.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2945
+  statement: A run that is bit-identical under all four poison modes is strong evidence of no leak.
+  owner: 04-compliance/T6-adversarial-audit.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2946
+  statement: Shuffled is the mode most likely to find a real defect in a codebase that has already fixed the obvious leaks, because a future variance or future range used to size a bound is easy to introduce accidentally and impossible to see in review.
+  owner: 04-compliance/T6-adversarial-audit.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2947
+  statement: The lookahead audit is only meaningful because runs are deterministic, since otherwise a changed result proves nothing.
+  owner: 04-compliance/T6-adversarial-audit.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2948
+  statement: The lookahead audit is a null test whose assertion is that two runs are identical, and its entire inferential content lies in identity being achievable at all.
+  owner: 04-compliance/T6-adversarial-audit.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2949
+  statement: Without determinism, two runs would differ by some amount even with no poisoning, because of thread-scheduling-dependent floating-point reduction order, a wall-clock time limit, or hash-order iteration.
+  owner: 04-compliance/T6-adversarial-audit.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2950
+  statement: Without determinism the audit would have to ask whether the observed difference exceeds a noise floor, which requires estimating that floor, which requires many runs, turning a decisive test into a statistical one.
+  owner: 04-compliance/T6-adversarial-audit.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2951
+  statement: A component that peeks slightly, using the future to nudge a bound by 0.3 per cent, produces a difference smaller than the noise floor and is undetectable without determinism.
+  owner: 04-compliance/T6-adversarial-audit.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2952
+  statement: The failure mode the bitemporal store exists to prevent is a backtest that looks like alpha, which is precisely a small, systematic, hard-to-see improvement.
+  owner: 04-compliance/T6-adversarial-audit.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2953
+  statement: With determinism the assertion is hash equality and any leak of any size anywhere in the pipeline produces a hash difference the Merkle chain localises to a single artefact in a single tick.
+  owner: 04-compliance/T6-adversarial-audit.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2954
+  statement: Determinism turns the lookahead test from statistically inconclusive to decisive and self-diagnosing.
+  owner: 04-compliance/T6-adversarial-audit.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2955
+  statement: The cheap, decisive lookahead audit is purchased by the determinism discipline and is the largest single return that discipline pays.
+  owner: 04-compliance/T6-adversarial-audit.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2956
+  statement: "The poisoning scope covers every source of future information, not just prices: the day-ahead and intraday price series, the spread belief, the aFRR capacity and energy prices, activation, imbalance price, load, pv, meter data, settlement revisions, cleared day-ahead, reserve awards and fill outcomes."
+  owner: 04-compliance/T6-adversarial-audit.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2957
+  statement: The poisoning scope also covers every model artefact fitted on data after the tick.
+  owner: 04-compliance/T6-adversarial-audit.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2958
+  statement: The negative control injects a deliberate leak — reading load a day ahead to set the safety margin — and asserts the audit fails and the localisation names the expected artefact and tick.
+  owner: 04-compliance/T6-adversarial-audit.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2959
+  statement: The negative control runs in the same job, because an audit that has never been observed to fail is an audit nobody knows is wired up.
+  owner: 04-compliance/T6-adversarial-audit.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2960
+  statement: The lookahead audit is easy to break silently, because a PoisonedStore that is constructed but not installed passes perfectly.
+  owner: 04-compliance/T6-adversarial-audit.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2961
+  statement: The full audit says whether something peeked while the partial variant says what, by poisoning one series at a time and reporting which series' future values affect the run.
+  owner: 04-compliance/T6-adversarial-audit.md §2.5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2962
+  statement: The partial-poison variant costs one backtest per series, which is affordable on the canonical window, and is run on demand after a full-audit failure rather than nightly.
+  owner: 04-compliance/T6-adversarial-audit.md §2.5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2963
+  statement: The lookahead audit runs nightly on the canonical window in the NaN and Garbage modes, pre-release on full history in all four modes plus the negative control, and on full history in all four modes blocking after any change to L1 or the Belief store.
+  owner: 04-compliance/T6-adversarial-audit.md §2.6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2964
+  statement: A lookahead divergence is a stop-ship rather than a bug to be triaged.
+  owner: 04-compliance/T6-adversarial-audit.md §2.6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2965
+  statement: Every backtest result produced since the last clean lookahead audit is suspect, and the release does not proceed until the leak is found and the audit is clean on the full history.
+  owner: 04-compliance/T6-adversarial-audit.md §2.6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2966
+  statement: Each remaining T6 section defends a specific claim that other levels assume.
+  owner: 04-compliance/T6-adversarial-audit.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2967
+  statement: The closed tariff component list is enforced so that an unrecognised component is a configuration error rather than a silently ignored field.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2968
+  statement: Every numeric tariff threshold is configuration and never a constant.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2969
+  statement: "The configuration failure mode is specific and expensive: a typo'd key is silently dropped, the default applies, and the engine runs a configuration nobody intended while every test passes."
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2970
+  statement: Unknown configuration keys are rejected rather than ignored, and the error names the key and suggests the nearest valid key.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2971
+  statement: A valid configuration key with an out-of-range value is rejected at load rather than at use.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2972
+  statement: A valid configuration key with the wrong type is rejected and never coerced.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2973
+  statement: A tariff component outside the closed enumeration is rejected.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2974
+  statement: A required configuration key that is absent is rejected, with no silent default for anything that has no conservative default.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2975
+  statement: In layered configuration an override file with an unknown key fails the same way as the base.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2976
+  statement: The resolved configuration is what is hashed into the manifest, and two different layerings producing the same resolved config produce the same config hash.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2977
+  statement: If the manifest hashed the config files rather than the resolved result, two runs with different layering but identical effective settings would appear different, and a change that alters resolution without altering any file would appear identical.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2978
+  statement: Materially changing a regulatory threshold must change the run's golden hash, so a threshold that has silently become a hardcoded constant is detected.
+  owner: 04-compliance/T6-adversarial-audit.md §4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2979
+  statement: Consumer-side validation failure is a HALT because a contract violation means the producer is in an unknown state and nothing downstream can be trusted.
+  owner: 04-compliance/T6-adversarial-audit.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2980
+  statement: The dangerous outcome of a malformed payload is not a crash but a consumer that read the first eight fields, acted on them, and then rejected the ninth.
+  owner: 04-compliance/T6-adversarial-audit.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2981
+  statement: "Only two outcomes are permitted for a fuzzed payload: accepted, or rejected with an invariant id; never a crash, hang, partial accept or silent truncation."
+  owner: 04-compliance/T6-adversarial-audit.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2982
+  statement: "Rejection is atomic: the consumer state is unchanged, the invariant id is one of the declared families, the message names the field and the violated range, and nothing is emitted downstream."
+  owner: 04-compliance/T6-adversarial-audit.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2983
+  statement: Acceptance of a fuzzed payload implies all invariants hold on it.
+  owner: 04-compliance/T6-adversarial-audit.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2984
+  statement: Numeric mutations — NaN, positive and negative infinity, negative zero, denormals and the maximum double — must be rejected by the no-NaN or range invariants.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-01, INV-G-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2985
+  statement: A range mutation placed in the middle of an array is the mutation that catches a validator checking only the first element.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2986
+  statement: Length mutations — an array one element short, one long, or empty — must be rejected by the horizon-length invariants.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-06, INV-D-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2987
+  statement: A scenario-indexed array with a different scenario count must be rejected by the shared-axis invariants.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-G-07, INV-D-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2988
+  statement: Weights summing to one within only 1e-3, or a negative weight, must be rejected by the weights invariant.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2989
+  statement: An unknown major version, an unknown minor version, or a missing schemaVersion must be rejected by the version invariant.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2990
+  statement: A corrupted contentHash or an empty inputHashes must be rejected by the hashing invariant.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2991
+  statement: An absent non-nullable field must be rejected by the nullability invariants.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-09, INV-D-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2992
+  statement: An out-of-range EconomicEffect, VarSymbol, BoundReason or DegradationMode must be rejected by the symbol and bound-reason invariants.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-03, INV-V-15]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2993
+  statement: Structural mutations — a duplicate termId, a PwlTerm with non-increasing X, a mis-declared curvature, or a FillProbView term carrying a price — must be rejected by the curvature and fill-probability invariants.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-12, INV-V-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2994
+  statement: Encoding mutations — truncated binary, trailing bytes, deeply nested JSON, a 100 MB string field — must produce a clean rejection with bounded memory and no hang.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2995
+  statement: Adversarial encodings — duplicate JSON keys, integer overflow in a length prefix, a self-referential inputHashes — must produce a clean rejection.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2996
+  statement: Cross-field mutations — socMin above socMax, a round-trip efficiency above one, or a blockIndex not covering every slot — must be rejected by the corresponding belief invariants.
+  owner: 04-compliance/T6-adversarial-audit.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-01, INV-D-04, INV-D-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2997
+  statement: The fuzzer is structure-aware rather than byte-random, because random bytes are rejected by the deserialiser and test nothing above it.
+  owner: 04-compliance/T6-adversarial-audit.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2998
+  statement: The fuzzer mutates valid payloads at the field level, which is where the interesting failures are.
+  owner: 04-compliance/T6-adversarial-audit.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2999
+  statement: The fuzz seed corpus is the recorded seams of the designated audit days, so mutations start from realistic structure.
+  owner: 04-compliance/T6-adversarial-audit.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3000
+  statement: A payload that crashes rather than rejecting is minimised and added to the permanent conformance corpus in the same commit as the fix.
+  owner: 04-compliance/T6-adversarial-audit.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3001
+  statement: Each fuzz iteration runs under a memory and time cap, and a payload that causes unbounded allocation is a finding rather than a timeout to be raised.
+  owner: 04-compliance/T6-adversarial-audit.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3002
+  statement: The commitment ledger is the one piece of state where a corruption is both plausible, because it is written by two producers, and expensive, because an undetected loss of a confirmed award produces exactly the delivery shortfall treated as a prequalification risk.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-S-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3003
+  statement: Deleting a Confirmed reserve award that C4 reported must be detected by the award-coverage invariant and halt.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-X-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3004
+  statement: Flipping a Confirmed ledger entry to Cancelled must be detected by the award-coverage invariant and the award/ledger reconciliation, and halt.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-X-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3005
+  statement: Flipping a Pending ledger entry to Confirmed must be detected by reconciliation against C4, because no fill or award backs it, and halt.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-X-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3006
+  statement: Promoting a pending entry to confirmed is the dangerous direction, because the Planner would treat phantom exposure as a hard constraint and over-constrain itself, or worse, believe a position it does not hold.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3007
+  statement: Stripping the feasibilityRequirement from a Confirmed reserve award must halt, because without the corridor the Planner cannot see the obligation.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-S-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3008
+  statement: Widening a feasibilityRequirement corridor so the obligation looks easier must be caught by a cross-check against the product's sustain duration and the prequalification requirement, and halt.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3009
+  statement: Altering the signed volume on a settled ledger entry must be caught by the no-backward-write invariant and halt.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-S-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3010
+  statement: Altering the signed volume on a Confirmed ledger entry must be caught by reconciliation against C4 fills and halt.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3011
+  statement: Introducing a fill with no matching intent must be caught as a phantom fill and halt.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3012
+  statement: Duplicating a ledger entry must be rejected by idempotency on the entry id rather than double-counted.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3013
+  statement: Reordering ledger entries must leave the tick's output unchanged, because the ledger is keyed and ordered.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3014
+  statement: Replaying a stale ledger from a previous tick must be caught by the no-backward-write invariant and by the assertion that the tick's state snapshot hash equals the previous tick's state update hash, and halt.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-S-08, INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3015
+  statement: Corrupting the ledger's own content hash must be caught by the hashing invariant and halt.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3016
+  statement: On a ledger tampering detection the engine goes to HALT rather than continuing with a reduced obligation, an alert is raised, and operator acknowledgement is required.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3017
+  statement: The ledger's content hash is recorded in the StateSnapshot and a restart from that snapshot reproduces the identical ledger.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-18]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3018
+  statement: A tampering attack that survives a restart, because the ledger was rebuilt from a source other than the snapshot, breaks the claim that L0 is the entire state.
+  owner: 04-compliance/T6-adversarial-audit.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3019
+  statement: "The stale-artefact failure is the quietest in the system: a value function fitted three weeks ago on a different peak state still evaluates, still returns plausible euros, still produces a feasible plan, and prices the entire end of the horizon wrongly."
+  owner: 04-compliance/T6-adversarial-audit.md §7
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3020
+  statement: Within the validity horizon the mode stays NORMAL and the value function's slopes are unshrunk.
+  owner: 04-compliance/T6-adversarial-audit.md §7.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3021
+  statement: Beyond the validity horizon the mode is at least DEFENSIVE, the slopes are shrunk by the staleness penalty, the driver summary names the stale value function, the tier escalates, and a refresh is requested.
+  owner: 04-compliance/T6-adversarial-audit.md §7.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3022
+  statement: The validity boundary is not silently crossed and the transition at the horizon is observable in the artefact record.
+  owner: 04-compliance/T6-adversarial-audit.md §7.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3023
+  statement: The engine must never be beyond the validity horizon while in NORMAL mode with unshrunk slopes.
+  owner: 04-compliance/T6-adversarial-audit.md §7.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3024
+  statement: "The tempting stale-artefact implementation logs a warning and proceeds, which is the silent-imputation failure applied to a model artefact: the engine makes full-confidence decisions on a stale value function and the failure is invisible until Settlement."
+  owner: 04-compliance/T6-adversarial-audit.md §7.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3025
+  statement: Every artefact in the manifest declares a validity policy, and an artefact with no declared policy fails the audit by construction.
+  owner: 04-compliance/T6-adversarial-audit.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3026
+  statement: A scenario ensemble or reduction is stale by its generation asOf versus the tick asOf and by its horizon versus H_plan, and an ensemble not covering the horizon is Missing rather than truncated.
+  owner: 04-compliance/T6-adversarial-audit.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3027
+  statement: The fill model halts on a simulator version mismatch and alerts on age.
+  owner: 04-compliance/T6-adversarial-audit.md §7.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3028
+  statement: The activation model alerts on fit date and realised calibration drift and widens the chance level in response.
+  owner: 04-compliance/T6-adversarial-audit.md §7.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3029
+  statement: The Tier-3 surface is stale by fit date and by out-of-training-envelope detection on the current state, and the response is escalation to Tier 2, logged and visible in the settlement record.
+  owner: 04-compliance/T6-adversarial-audit.md §7.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3030
+  statement: The MarketCalendar is checked for coverage of the tick's slot and the whole accounting period, and a tick outside calendar coverage is a HALT because it cannot be priced.
+  owner: 04-compliance/T6-adversarial-audit.md §7.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3031
+  statement: tzdata must be present and matching the manifest, and is a HALT if absent or mismatched.
+  owner: 04-compliance/T6-adversarial-audit.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-T-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3032
+  statement: Peak and qualification state staleness is signalled by the unsettled gap and the provisional flag, and the response is to treat the gap conservatively using the engine's own modelled trajectory rather than assuming the gap contained nothing.
+  owner: 04-compliance/T6-adversarial-audit.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3033
+  statement: A model artefact fitted on data later than the backtest position is a lookahead leak the PoisonedStore cannot see, because the leak is baked into the artefact rather than read from the store.
+  owner: 04-compliance/T6-adversarial-audit.md §7.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3034
+  statement: Every model artefact's training data end must not exceed the run's first tick asOf, and for a rolling refit the artefact in force at a tick must have a training data end at or before that tick's asOf.
+  owner: 04-compliance/T6-adversarial-audit.md §7.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3035
+  statement: An artefact with no declared training data end cannot be used in a backtest, and every artefact declares one.
+  owner: 04-compliance/T6-adversarial-audit.md §7.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3036
+  statement: Artefact temporal hygiene is a separate audit from lookahead poisoning and is the one people forget.
+  owner: 04-compliance/T6-adversarial-audit.md §7.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3037
+  statement: A Tier-3 surface fitted on the whole history and then backtested over that same history will show an excellent gap and will not reproduce live.
+  owner: 04-compliance/T6-adversarial-audit.md §7.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3038
+  statement: The holdout discipline in the gap gate depends on the artefact temporal hygiene check being real.
+  owner: 04-compliance/T6-adversarial-audit.md §7.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010, T5]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3039
+  statement: Lookahead poisoning in the NaN and Garbage modes runs nightly on the canonical window and pre-release on full history, and failure is a stop-ship.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3040
+  statement: Lookahead poisoning in the Shuffled and Constant modes runs pre-release on full history, and failure is a stop-ship.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3041
+  statement: The negative control runs on every pre-release run, and its failure is a stop-ship because the audit is not wired up.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3042
+  statement: Partial-poison localisation runs on demand and on failure.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3043
+  statement: Config poisoning runs in full nightly and pre-release, and failure blocks release.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3044
+  statement: Contract fuzzing runs 10^5 iterations nightly and 10^7 pre-release, and any crash, hang or partial read blocks release.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3045
+  statement: Ledger tampering runs in full nightly and pre-release, and failure blocks release.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3046
+  statement: The stale-artefact audit runs in full nightly and pre-release, and failure blocks release.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3047
+  statement: Artefact temporal hygiene runs in full nightly and pre-release, and failure is a stop-ship of the same class as a lookahead leak.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3048
+  statement: A T6 report accompanies every release and records, for each audit, the corpus, the manifest, the number of iterations and the negative control's result.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3049
+  statement: An audit that passed without its negative control passing is reported as not run.
+  owner: 04-compliance/T6-adversarial-audit.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3050
+  statement: "A lookahead or temporal-hygiene failure invalidates history: every backtest result, every gap report and every calibration report produced since the last clean audit is suspect and is marked as such in the archive."
+  owner: 04-compliance/T6-adversarial-audit.md §8.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3051
+  statement: A lookahead failure is not proportionate-response territory, because a lookahead leak produces results that look like alpha so the results cannot be trusted merely because they look reasonable.
+  owner: 04-compliance/T6-adversarial-audit.md §8.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3052
+  statement: "A fuzzing crash is a HALT that did not happen: the consumer was supposed to reject and instead did something else, so it is treated as a contract defect, the validator is fixed, and the payload is added to the conformance corpus."
+  owner: 04-compliance/T6-adversarial-audit.md §8.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3053
+  statement: A ledger-tampering miss is a delivery risk, sitting upstream of the delivery shortfall invariant, which is a prequalification risk rather than an accounting item.
+  owner: 04-compliance/T6-adversarial-audit.md §8.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-S-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-3054
+  statement: A stale-artefact miss is a slow leak that costs money quietly and shows up months later as a rising unexplained ratio, by which point the attribution is gone.
+  owner: 04-compliance/T6-adversarial-audit.md §8.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [INV-S-07]
+  evidence: unlabelled
+  tn: null
+  band: null
