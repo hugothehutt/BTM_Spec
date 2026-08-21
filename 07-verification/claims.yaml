@@ -23589,3 +23589,2499 @@
   evidence: unlabelled
   tn: null
   band: null
+
+# ---- 04-compliance-c.tsv ----
+# ---- 04-compliance/T2 ----
+- id: CLM-2342
+  statement: A property test states something that must be true of a single output, generated over many inputs and shrunk to a minimal reproduction on failure.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2343
+  statement: A metamorphic test states something that must be true of the relationship between two outputs, asserting how the answer must change when the input changes in a known direction rather than what the answer is.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2344
+  statement: For almost every interesting input nobody knows the correct output, so there is no oracle for an optimiser.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2345
+  statement: Computing the expected plan by hand for a 192-slot stochastic MILP over eight correlated series is the problem the optimiser was solving, which is the classic oracle problem.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2346
+  statement: The oracle problem is why optimiser test suites so often degenerate into asserting only that a run completed and was feasible.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2347
+  statement: If aFRR capacity prices go up and nothing else changes, planned reserve cannot go down.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2348
+  statement: If the peak charge goes up, the planned peak cannot go up.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2349
+  statement: If the POI limit is tightened, the objective cannot improve.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2350
+  statement: If every price is multiplied by k greater than zero, every euro figure must be multiplied by exactly k and every kW bound must be unchanged.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2351
+  statement: Each metamorphic relation is a testable assertion over a pair of runs, requires no ground truth, and is generated automatically from any input in the corpus, so one input becomes dozens of tests.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2352
+  statement: A sign error on a revenue term leaves the plan perfectly feasible while losing money silently, and is caught by price monotonicity rather than by feasibility testing.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2353
+  statement: Unit mixing produces a feasible, plausible-looking plan wrong by a factor of 1000, and is caught by scale equivariance.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2354
+  statement: A missing coupling constraint makes the relaxed problem more feasible rather than less, and is caught by POI tightening monotonicity and DA curve monotonicity.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2355
+  statement: A double-counted effect leaves every constraint holding while inflating the objective, and is caught by duplicate-effect injection and zero-price invariance.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2356
+  statement: Ignoring the dependence structure of the ensemble leaves all marginals correct while the joint is wrong, and is caught by ensemble axis coherence.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2357
+  statement: A peak term over-weighted by a bad prorationFactor is feasible and conservative and looks like prudence, and is caught by peak price monotonicity and proration scaling.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-13]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2358
+  statement: "Metamorphic relations over a MILP can fail for reasons that are not bugs: degenerate optima, ties broken differently by the solver, and a non-zero MIP gap all produce legitimate small violations."
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1.1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2359
+  statement: The suite asserts on the objective and on aggregates first and on the argmin second, because objective scaling is exact while identity of the slots used is not.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1.1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2360
+  statement: Relation instances run at a MIP gap of zero where the instance is small enough and at the production gap only for scaling instances, a monotonicity assertion is compared against twice the gap tolerance, and the test records which regime it ran in.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1.1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2361
+  statement: The Planner declares a lexicographic tie-break rule, and with it fixed degenerate alternates stop flapping between runs.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2362
+  statement: When every PwlTerm is concave-maximise or convex-minimise the model is an LP and the relations hold exactly, so the generator has an LP-only mode used for the strict assertions.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2363
+  statement: A violation within tolerance is recorded rather than silently passed, and the suite reports the distribution of near-violations because a relation always within 1e-9 of failing is telling you something.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §1.1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2364
+  statement: For every series, validRange and asOf, a Get result contains no row with knowledgeTime greater than asOf and is identical to the result computed against a store from which all such rows have been physically deleted.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2365
+  statement: The physical-deletion clause asserts not merely that the filter works but that nothing else in the read path consults the excluded rows — no cache warm-up, no index statistic, no latest-value fast path.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2366
+  statement: To pass the structural no-lookahead property while peeking, a component would have to bypass the storage layer entirely, which the whole-run poisoning audit then catches.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [T6]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2367
+  statement: A deliberately-broken store with the asOf filter removed must fail the no-lookahead property, because an assertion nobody has seen fail is an assertion nobody knows is wired up.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2368
+  statement: A series revised n times is stored as n appended rows with the same valid_time and distinct knowledge_times, and asOf selects the latest row at or before the read time.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2369
+  statement: Replaying a tick at each historical asOf reproduces exactly what the engine saw then.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2370
+  statement: Before the first publication no rows are visible, the field is absent, quality is Missing, and the ladder reaches rung 5 or 6 rather than producing a silent zero.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2371
+  statement: A read between the original publication and the revision returns the original value and not the revision, which is the lookahead case.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2372
+  statement: A store that overwrites in place makes the wrong-versus-corrected distinction unrecoverable, and the loss is silent.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2373
+  statement: An ordinary Europe/Berlin civil day has 96 slots and is the baseline fixture.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2374
+  statement: The spring-forward day, the last Sunday in March, has 92 slots, no mapping ever returns the nonexistent local hour, and a per-civil-day span computed as 96 is short by four slots which the test catches at the accounting boundary.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-02, INV-T-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2375
+  statement: The autumn-back day, the last Sunday in October, has 100 slots, the repeated local hour appears as two distinct slot ranges distinguished only by UTC offset, and HLZF membership is evaluated for both occurrences independently.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2376
+  statement: Peak accounting resets at local midnight, which is a different UTC instant in winter and summer.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [INV-S-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2377
+  statement: Qualification-year accumulators reset with the accounting period rather than with the UTC year.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2378
+  statement: The slots of a civil day are contiguous and gap-free in SlotId, and their count is 92 exactly on spring-forward dates and 100 exactly on autumn-back dates.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2379
+  statement: A peak-accounting period that ends four slots early can miss the period's actual peak, which mis-prices the epigraph floor for the entire following period.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-T-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2380
+  statement: Scenario index s denotes the same coherent state of the world in every scenario-indexed series, and any consumer that ignores this destroys the dependence structure the entire cross-market case rests on.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2381
+  statement: Permuting the scenario axis of one series only preserves every marginal exactly and destroys the joint dependence, so a view that uses the dependence must react.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2382
+  statement: Permuting all series by the same permutation, weights included, changes nothing, because scenario labels carry no meaning of their own.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2383
+  statement: The single-series permutation assertion catches a view that has collapsed to marginals, and the all-series control catches a view that has become sensitive to scenario labelling, which would make the output depend on the reduction artefact's arbitrary ordering and break determinism.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2384
+  statement: PeakView must react to a single-series permutation because the CVaR of the per-scenario maximum POI power depends jointly on load, pv and dispatch.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2385
+  statement: AfrrEnergyView must react to a single-series permutation because activation value depends on activation co-moving with price.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2386
+  statement: ImbalanceRiskView must react to a single-series permutation because tail co-movement is the entire quantity.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2387
+  statement: IdOptionView must react to a single-series permutation because volume value depends on the price and liquidity joint.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2388
+  statement: TariffView need not react to a single-series permutation because its rates are deterministic per slot, and the exemption is declared.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2389
+  statement: FillProbView need not react to a single-series permutation because it carries volumes only and no scenario index.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2390
+  statement: An unexpected exemption from scenario sensitivity is a finding, and T2 fails a view listed as scenario-sensitive that does not react.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2391
+  statement: The quality ladder matrix covers every C1 field carrying a QualityStamp crossed with every quality value, asserting the fallback rung taken, the resulting global mode, and the risk-parameter response.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2392
+  statement: An Imputed socNow is not permitted because socNow is never defaulted, and a Missing socNow is a HALT via the SOC bound invariant.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [INV-D-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2393
+  statement: Degraded load quality gives DEGRADED mode with raised peakSafetyMarginKw and raised cvarLevel, Stale load gives DEGRADED with a larger margin, Imputed load defaults to a high quantile, and Missing load gives DEFENSIVE with the high default and criticalMissing populated.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2394
+  statement: Imputed pv defaults to zero, which protects the peak.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2395
+  statement: Degraded daPrice lowers positionScale and raises cvarWeight, and Missing daPrice is critical and gives DEFENSIVE.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2396
+  statement: A stale idSpreadBelief defaults wide, which suppresses trading.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2397
+  statement: A stale afrrCapPrice defaults to zero so the engine does not chase reserve revenue.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2398
+  statement: Degraded activation beliefs raise chanceLevel and Missing activation beliefs give DEFENSIVE.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2399
+  statement: A degraded isHlzf defaults to true, because conservative is inside the window.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2400
+  statement: A Missing peakPrice is a HALT because there is no safe default for a mandatory term.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [INV-V-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2401
+  statement: A value function beyond its validityHorizon has the stalenessPenalty shrink applied to its slopes, and a Missing one gives DEFENSIVE.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2402
+  statement: Each quality-matrix cell asserts the ladder stopped where it should and said so, that the mode matches the table, and that quality became a parameter recorded in driverSummary rather than a branch.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2403
+  statement: The key quality-matrix assertion is that the composition order and the set of term ids are identical to the base bundle, so only coefficients, bounds and risk parameters differ, because a branch would change the term set.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2404
+  statement: Each quality-matrix cell asserts the mandatory peak-charge term is present and the delivery obligation is unchanged, because those are never degraded away.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [INV-V-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2405
+  statement: If a degraded input causes a different set of terms to be emitted, a branch has appeared and the one-code-path-parameterised claim is false.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2406
+  statement: The hysteresis property asserts that N−1 bad ticks do not enter DEFENSIVE, the Nth does, M−1 good ticks do not leave, the Mth does, and alternating good and bad ticks never leave DEFENSIVE.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2407
+  statement: Same C1 payload and same config in gives byte-identical C2 out, including contentHash.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2408
+  statement: Valuation determinism holds across process boundaries and machine boundaries.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2409
+  statement: Shuffling the order of view evaluation must not change the bundle bytes, which is the cheapest way to prove views are independent.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2410
+  statement: A view's output fields are a subset of its PublishedSchema fields and a superset of its required fields, every term is one of the five shapes, and no field is a delegate, object reference, Belief cursor or scenario array.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2411
+  statement: A view's ClaimedEffects equals the distinct effects its terms actually carry.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2412
+  statement: A view that declares one effect but emits a term tagged with another will pass the ownership check for the wrong reason and eventually collide with the real owner.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2413
+  statement: Raising peakPrice raises the EpigraphTerm unit price and makes the priced value of a kW of peak reduction non-decreasing.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2414
+  statement: Raising afrrCapPrice across all scenarios makes the capacity value curve pointwise non-decreasing in offered MW.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2415
+  statement: Raising daPrice across all scenarios makes the LinearTerm coefficient on DA sell non-decreasing and on DA buy non-increasing, because the cost of buying rose.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2416
+  statement: Raising the volumetric charge makes the LinearTerm on POI import more negative.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.3
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2417
+  statement: Widening the imbalance price spread makes the CVaR PwlTerm pointwise non-decreasing in penalty.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2418
+  statement: A price change moves no bound, and a price change that leaks into a feasibility bound means a price is constraining physics.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2419
+  statement: A term whose price is zero contributes nothing to the objective and introduces no binaries, and the Planner's optimum is unchanged from disabling the view.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2420
+  statement: A zero-priced term that still contributes is either double-counting somewhere else or has a hardcoded constant in it.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2421
+  statement: A zero-priced term that still introduces binaries is a solve-time tax for nothing, and the binariesByOrigin attribution exists precisely so this is visible.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-14]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2422
+  statement: Scale equivariance is the single highest-value cheap test in the suite.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2423
+  statement: "Under multiplication of every price input by k, every EUR-denominated quantity scales by exactly k: every LinearTerm coefficient, every PwlTerm Y breakpoint, every EpigraphTerm unit price, the objective value, V's slopes, every plannedByEffect entry, and the shadow value on every position constraint."
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2424
+  statement: "Under price scaling every physical quantity is bit-identical: every BoundTerm bound, every PwlTerm X breakpoint, the epigraph floor, the SOC trajectory, the planned dispatch, the reserve volumes, and the peak level."
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2425
+  statement: Under price scaling the argmax is unchanged, because scaling a linear objective by a positive constant does not move the optimum.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2426
+  statement: A term wrong by a constant factor is still linear in price and so scales with k, which is why scale equivariance alone does not catch a missing unit conversion.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2427
+  statement: "Scale equivariance fires when a term does not scale by k: a fixed fee sourced from an unscaled field, a constant baked into a breakpoint, or a threshold in EUR compared against a quantity in kW."
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2428
+  statement: Scale equivariance separates the euro half of the model, homogeneous of degree 1 in prices, from the physical half, homogeneous of degree 0.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2429
+  statement: Any quantity that mixes the euro and physical halves — a bound that moved when a price changed, an X breakpoint that scaled, a price constant inside a feasibility check — is a unit-mixing bug, and scale equivariance finds all of them at once.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2430
+  statement: Scale equivariance also catches absolute epsilons in the wrong dimension, because a comparison against 1e-6 EUR applied to a kW quantity survives k = 1 and dies at k = 1e4.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2431
+  statement: Scale equivariance is run at extreme k deliberately, because k = 0.01 and k = 1e4 expose tolerance constants that are dimensionally wrong.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2432
+  statement: V's slopes are strictly decreasing, its X breakpoints are strictly increasing and span the SOC band, and concavity in SOC holds given each discrete qualification state.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.6
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [INV-V-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2433
+  statement: The capacity value curve is concave, declared Concave with sense Maximize, and introduces zero binaries.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2434
+  statement: Concavity is not aesthetic but is the reason the PWL is binary-free.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.6
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2435
+  statement: An accidentally non-concave V either makes the solve exponentially slower or, worse, gets silently declared Concave and solved as an incorrect relaxation.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.6
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [INV-V-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2436
+  statement: A term declared Concave with concave breakpoints is accepted with zero binaries.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2437
+  statement: A term declared Concave with convex breakpoints, or with S-shaped breakpoints, is a HALT naming the term.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2438
+  statement: A term declared General with concave breakpoints is accepted, SOS2 is built, and its binary attribution is positive.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2439
+  statement: A convex term with sense Maximize is accepted, requires SOS2, and is declared in the problem class hint.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2440
+  statement: A term declared Concave whose breakpoints have a tied slope from two collinear segments is accepted as a documented boundary case, with slopes non-increasing rather than strictly decreasing.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2441
+  statement: A two-point PWL is accepted as a degenerate LinearTerm in disguise.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2442
+  statement: A PWL with non-increasing X breakpoints is a HALT, because strictly increasing X is required.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2443
+  statement: The value function requires strictly decreasing slopes while a general PwlTerm declared Concave needs only non-increasing slopes to be LP-exact, the two thresholds are different on purpose, and the test pins both.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.7
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [INV-V-11, INV-V-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2444
+  statement: The composer rejects any bundle in which one (effect, variable, slot) triple is priced more than once, and does so loudly rather than netting the terms.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2445
+  statement: A double-count failure names the collision, because a HALT that does not say what collided is an outage rather than a diagnosis.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2446
+  statement: Energy priced twice — OppCostView marking a MWh as internal cost and a spot view marking it as market value on the same variable and slot — is a HALT, because arbitrage would otherwise appear free.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2447
+  statement: AfrrCapacityView reserving SOC headroom that IdOptionView also plans to use, both claiming the same base and slot, is a HALT.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2448
+  statement: NetworkPeakCharge and NetworkVolumetricCharge both on base PoiImport are accepted, because different effects on the same base is legal.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2449
+  statement: Degradation charged twice — OppCostView charging CycleDegradation per throughput while V was fitted on net-of-degradation cashflows so StoredEnergyContinuation embeds it — is a HALT and needs a dedicated fixture with a degradation-inclusive V artefact.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2450
+  statement: A test suite that rejects legitimate co-existence is a test suite the team will disable.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2451
+  statement: "An unclaimed effect is a warning priced at zero and logged, and both directions are asserted because the asymmetry is deliberate: silently missing revenue is safer than silently double-counting cost."
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2452
+  statement: Running the composer's stages out of order raises an exception rather than producing a wrong number.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2453
+  statement: Running Peak before Tariff violates stage 5's requirement that POI energy be marked and is a HALT naming the stage and the unmet precondition.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2454
+  statement: Running Peak before OppCost violates stage 5's requirement that battery energy be marked and is a HALT, and this is the double-count the ordering exists to prevent.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2455
+  statement: Running ReserveCoupling before OppCost violates stage 4's requirement that battery energy be marked and is a HALT.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2456
+  statement: Running Delineation before OppCost violates stage 3's requirement that battery energy be marked and is a HALT, because (21) is not knowable until battery energy is marked.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2457
+  statement: Running Validate first violates stage 6's requirement of all previous stages and is a HALT.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2458
+  statement: The declared stage order is accepted and the composition order is recorded in the bundle for audit.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2459
+  statement: Running the correct order with one stage omitted is a HALT if a mandatory term is now absent and otherwise a warning.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-04, INV-V-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2460
+  statement: Enumerating all stage permutations is the only way to be sure the precondition machinery rather than a hardcoded check on one case is doing the work, and with five stages the 120 permutations run in under a second.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2461
+  statement: The planned trajectory satisfies every physical constraint and satisfies confirmed commitments under every scenario in the ensemble, not the mean scenario and not a representative one.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2462
+  statement: "The chance constraint is a bound on the tail rather than an excuse: the weighted mass of scenarios leaving the SOC band is at most ε plus tolerance."
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2463
+  statement: Confirmed commitments are not subject to ε and are served in all scenarios with no exceptions.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-P-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2464
+  statement: A model that satisfies SOC bounds on the mean activation path and violates them on the 90th-percentile path is a delivery failure waiting for a windy Tuesday.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-S-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2465
+  statement: The distinction between the ε-tolerated chance constraint and the never-tolerated commitment constraint is the part implementations get wrong.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2466
+  statement: Injecting a confirmed award the current SOC cannot serve must give HALT with the commitment invariant code, nothing emitted on C3, and a diagnosis naming the block, the MW and the binding corridor.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2467
+  statement: The negative control asserts a servable award produces a plan that serves it in every scenario.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2468
+  statement: Commitment safety is run against every degradation mode including SAFE and HALT recovery, because commitment feasibility is one of the two things never degraded away.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2469
+  statement: Same C2 and same manifest gives byte-identical C3 and an identical contentHash.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2470
+  statement: Constraint build order must not change the objective, but byte-identity across row orders is not asserted because the solver's pivot sequence legitimately differs.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2471
+  statement: Thread count must not change the emitted C3 in the reproducibility configuration, which is single-threaded in CI.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2472
+  statement: Over-asserting determinism produces a flaky test that gets deleted, so asserting the objective and the emitted intent while leaving the internal pivot path free is the line that holds.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2473
+  statement: The DA curve produced by parametric re-solve is monotone, with quantity non-increasing in price for a buy curve and non-decreasing for a sell curve.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2474
+  statement: Injecting a missing coupling constraint must make the DA curve build raise the monotonicity violation.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2475
+  statement: A non-monotone DA curve is almost always a missing coupling constraint, because without the headroom or corridor coupling the parametric re-solve is free to jump between disconnected optima as the candidate price sweeps.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2476
+  statement: Sorting the DA curve to make the exchange accept it would submit a schedule the model never endorsed and destroy the diagnostic.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2477
+  statement: When the solve completes within budget with gap at or below tolerance, the normal path records the tier used and the MIP gap.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2478
+  statement: When the budget is exhausted with a feasible incumbent within acceptable gap, rung 1 uses the incumbent and records a non-zero MIP gap and the budget-exhausted flag.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2479
+  statement: When the incumbent is infeasible or the gap too wide, rung 2 projects the previous tick's plan forward, re-checks it for feasibility, and only then uses it.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2480
+  statement: When rung 2's projected plan is infeasible under current state, rung 3 applies the DEFENSIVE baseline with commitments honoured, peak protected and no new speculative exposure.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2481
+  statement: When the DEFENSIVE baseline is itself infeasible, rung 4 is HALT with the irreducible infeasible subsystem reported.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2482
+  statement: Using rung 2 or 3 on N consecutive ticks escalates the mode and the escalation appears in the settlement record.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2483
+  statement: Peak protection and commitment service are asserted present at every fallback rung.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2484
+  statement: Reusing yesterday's plan without re-checking it against today's confirmed commitments is exactly how a stale plan under-delivers a reserve award.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [INV-P-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2485
+  statement: Feasibility restoration relaxes nothing of a later class while an earlier class still has slack available.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-008
+  anchors: [INV-V-15]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2486
+  statement: Feasibility restoration never relaxes a Physical or Regulatory bound, and never relaxes a confirmed-commitment row.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-008
+  anchors: [INV-V-15]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2487
+  statement: Relaxation is by explicit slack at a declared penalty rather than by deleting a constraint, so the model's row count is unchanged and every slack's penalty is declared and value recorded.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2488
+  statement: If the model is still infeasible with only Physical, Regulatory and commitment rows left, the result is HALT with a non-empty irreducible infeasible subsystem naming only those rows.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2489
+  statement: The adversarial restoration case constructs a bundle where relaxing a Physical bound would restore feasibility cheaply while relaxing Risk bounds would not restore it at all, and asserts HALT instead.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-008
+  anchors: [INV-V-15]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2490
+  statement: The tempting restoration implementation — minimise total penalty over all slacks — is wrong, and it is wrong in a way that only shows up when the world has genuinely moved outside what the asset can deliver, which is the worst possible moment to discover it.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2491
+  statement: Raising afrrCapPrice for a block by a positive delta makes planned reserve for that block non-decreasing, catching a sign error on capacity revenue, headroom coupling with the wrong sense, or a reserve term being ignored entirely.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2492
+  statement: Shifting all energy price beliefs by a uniform positive additive delta, with tariff, peak and reserve prices held fixed, makes planned net export energy over the horizon non-decreasing, catching sign frame confusion and a charge/discharge asymmetry with the wrong sign.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2493
+  statement: Raising peakPrice for a regime makes the planned peak for that regime non-increasing and the objective non-increasing, catching an epigraph built with the wrong sense, prorationFactor applied to the wrong side, or an ignored peak floor.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2494
+  statement: Tightening the POI import or export limit makes the objective non-increasing, catching a missing POI envelope constraint, a bound applied to the wrong frame, or a soft bound where a hard one was specified.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2495
+  statement: The price-level relation asserts net export rather than gross discharge, because a uniform additive price rise adds delta times net exported energy to the objective so the incentive to be net short weakly increases while gross discharge can legally fall if the plan also charges less.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2496
+  statement: Asserting gross discharge would produce a test that fails for correct reasons, gets weakened, and stops catching anything.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2497
+  statement: "The POI tightening relation is the relaxation-monotonicity relation: shrinking the feasible set cannot improve a maximisation."
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2498
+  statement: If the objective is unchanged when the POI limit is halved, the POI envelope is not binding anywhere, which is either a fixture problem or a missing constraint, so the test also asserts that some tightening in the sweep does move the objective.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2499
+  statement: A day where reserve and peak compete for the same headroom is the interesting one, and the generator is biased to produce them.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2500
+  statement: Adding a redundant constraint that copies an existing binding row leaves the objective exactly unchanged.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2501
+  statement: Adding a BoundTerm strictly looser than an existing one leaves the objective exactly unchanged.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2502
+  statement: Increasing socMax makes the objective non-decreasing.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2503
+  statement: Increasing pMaxDischarge makes the objective non-decreasing.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2504
+  statement: Widening cvarLevel or lowering positionScale makes the objective non-increasing and the plan weakly more conservative.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2505
+  statement: Increasing the delivery obligation on a block makes the objective non-increasing and tightens the corridor.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2506
+  statement: Setting stalenessPenalty more aggressively shrinks V's slopes and moves terminal SOC toward the myopic optimum.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2507
+  statement: Refining the PWL breakpoint grid to a superset of existing breakpoints changes the objective by at most the declared approximation bound, monotonically toward the Tier-1 value.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2508
+  statement: On instances small enough for Tier 1 to solve exactly, Tier 2's dual bound is a valid upper bound on Tier 1's objective and Tier 2's primal does not exceed it.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2509
+  statement: Tier 3's objective does not exceed Tier 1's objective within tolerance.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2510
+  statement: All three tiers return feasible solutions, including on every exit path.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2511
+  statement: Every Tier 2 exit path — converged, iteration cap, time cap and numerical trouble — returns a feasible primal with a valid dual bound.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2512
+  statement: The recorded tier gaps feed T5, and T2 asserts only the structural relations of bound validity and feasibility on every exit path, because whether the gap is acceptable is a release question rather than a merge question.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010, T5]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2513
+  statement: With positive prices and round-trip efficiency below one and the binary off, no simultaneity appears and the monitor stays silent, which is the common case the omission is justified by.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2514
+  statement: With negative energy prices for a block of slots and the binary off, simultaneity may appear, and if it does the monitor alerts, the tick is flagged, and the plan is still emitted.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2515
+  statement: With the binary enabled by config, no simultaneity appears and the objective does not exceed the binary-off objective, because the binary restricts.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2516
+  statement: Under an aFRR down-activation obligation forcing import while discharge is committed, the monitor may or may not fire but the trajectory is recorded either way.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2517
+  statement: The simultaneity monitor fires exactly when the returned trajectory contains simultaneous charge and discharge above tolerance.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2518
+  statement: Enabling the simultaneity binary can only restrict, so an objective that improves when the binary is turned on means the relaxation and the restriction are not the same model.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2519
+  statement: The POI bridge evaluated on realised data holds per slot, halting on a final artefact and warning while provisional.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2520
+  statement: Per-slot SOC consistency against the efficiency-adjusted charge and discharge is asserted at warn severity.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2521
+  statement: The cumulative SOC drift over the settlement period is asserted against a period drift threshold at alert severity, and it is the rolling form that actually catches efficiency drift.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2522
+  statement: The per-slot energy check catches meter and sign errors while the cumulative check catches a slow divergence between modelled and measured SOC, feeding the modelError bucket before the money shows up in P&L.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2523
+  statement: Auxiliary load folded into η instead of modelled as a LoadKw component shows up in the SOC check as a one-sided drift.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2524
+  statement: With the battery discharging into site load and no grid flow, battery power is positive, POI power is about zero, and import and export are both about zero.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2525
+  statement: With the battery charging from the grid at night, battery power is negative, POI power is positive import, and import equals load plus charge.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2526
+  statement: With PV exporting and the battery idle, battery power is zero, POI power is negative export, and export equals PV minus load.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2527
+  statement: With PV exporting while the battery charges, POI power flips sign at the crossover and the balance holds through the sign change.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2528
+  statement: Applying the same restatement twice changes nothing, so the second restatement's content hash equals the first's.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-S-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2529
+  statement: After a restatement the provisional artefact still exists and is unchanged.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-S-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2530
+  statement: Two independent restatements of disjoint slots commute.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-S-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2531
+  statement: A backward state write with no explicit revisionOf raises the ordering violation.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-S-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2532
+  statement: Peak state after a restatement is recomputed from scratch over the corrected series rather than patched, and remains monotone within the period.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-S-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2533
+  statement: A restatement that lowers the metered peak must lower realisedPeak, and that is compatible with realisedPeak being non-decreasing within a period only if the restated artefact is a fresh computation rather than an incremental max against a stale value.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-S-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2534
+  statement: The incremental peak implementation is the obvious one and it is wrong, which is why the test pins it.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-S-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2535
+  statement: Feeding the planned trajectory back as the realised outcome, with realised prices equal to the beliefs the plan was built on and fills equal to intents, must make every one of the four error buckets exactly zero.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2536
+  statement: The zero-gap test also asserts unexplained is zero and that realisedByEffect matches plannedByEffect term by term.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2537
+  statement: "Any non-zero bucket in the zero-gap test is a definitional disagreement between L2 and L5 about what a term means: a fee netted into a price on one side and not the other, a proration applied twice, or an effect assigned to a different bucket."
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2538
+  statement: Definitional disagreements are invisible in production because they hide inside genuine forecast error, and they are exactly what makes the unexplained ratio creep upward over months.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2539
+  statement: The zero-gap test finds definitional disagreements on day one, deterministically, with no market data at all.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2540
+  statement: Perturbing realised prices away from belief makes forecastError non-zero and all other buckets zero.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2541
+  statement: Valuing the same trajectory with a different term definition makes modelError non-zero and all other buckets zero.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2542
+  statement: Re-running the tick at Tier 1 and comparing makes optimalityGap non-zero and all other buckets zero.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2543
+  statement: Making fill prices differ from limit prices makes executionSlippage non-zero and all other buckets zero.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-012
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2544
+  statement: Two perturbations at once make both buckets non-zero additively within tolerance while unexplained stays about zero, which asserts the decomposition is locally additive.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2545
+  statement: Local additivity of the decomposition is what makes the four-way split actionable rather than decorative.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2546
+  statement: realisedByEffect plus unexplained sums to total realised P&L.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2547
+  statement: The effect enumeration used by Settlement is the same one Valuation used, and every effect claimed in the bundle appears in realisedByEffect.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2548
+  statement: Injecting an unattributable cashflow must put exactly that amount in unexplained rather than spreading it across buckets, must raise the unexplained ratio above zero, and must warn if it crosses the threshold.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2549
+  statement: A settlement implementation that distributes an unattributable cashflow pro rata across the known effects passes every sum check and destroys the diagnostic value of the whole decomposition.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2550
+  statement: Fees are accounted separately from execution price in realisedByEffect.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-S-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2551
+  statement: The route split identity holds over generated months and, being algebraic, a failure is always an implementation defect and never a data artefact.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-17]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2552
+  statement: The relief multiplier identity catches a mis-derived (17) or (18), which are otherwise invisible because both routes still look plausible.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-17]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2553
+  statement: Generating months with charge throughput above the bound must give (12) = 0 and throughputBoundMet, and generating an idle month below the bound must make the invariant fire rather than the Planner silently assuming it away.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2554
+  statement: The co-location identity fixture is the cheapest exact test in the suite.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2555
+  statement: The A5 collapse fixture asserts the per-plant collapse exactly for a common EEG vintage and asserts the collapse is refused for a mixed estate with one ungeförderte plant.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2556
+  statement: Raising the premium must make planned PV charging non-decreasing, because PV charging is what raises (15) and converts grey to green.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2557
+  statement: Raising the EnFG rate in a slack regime must not decrease planned grid charging, and in a saturated regime must not change the plan at all since the marginal relief is zero there.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2558
+  statement: Adding a storage export in an AW=0 quarter-hour late in the month must make (30) fall and (31) fall with it.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2559
+  statement: The dilution relation is the one term in the system where a late action lowers the value of earlier ones, and a test that does not exercise it will not notice when the ratio is implemented as a per-slot quantity.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2560
+  statement: The split zero-gap test asserts residual modelError is zero and linearizationGap is within its declared budget.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2561
+  statement: A linearizationGap of zero is as suspicious as one above budget, because it means the linearisation is not being exercised.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2562
+  statement: The accumulator reset is asserted to the exact slot of the Europe/Berlin month boundary with a DST-containing month as a permanent fixture, because an off-by-one-slot reset moves value between two months and is otherwise silent.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2563
+  statement: Every payload round-trips through binary and JSON to a structurally equal payload with an identical contentHash, and re-serialising the round-tripped payload reproduces the same bytes.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2564
+  statement: Deserialising the binary and JSON forms of the same payload yields equal results.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2565
+  statement: Money and SOC fields round-trip exactly, with no float32 used for EUR.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2566
+  statement: Byte-stability of the canonical serialised form is what makes contentHash meaningful and therefore what makes the Merkle chain work.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2567
+  statement: A serialiser that emits map entries in hash order breaks determinism, and the round-trip property is where that surfaces.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2568
+  statement: An unknown major schema version is rejected cleanly with no partial read and no consumer state change.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2569
+  statement: A known minor version bump with a new optional field is accepted and the declared default applied.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2570
+  statement: A unit change under an unchanged major version fails the build.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2571
+  statement: The producer-side and consumer-side validators reach the same verdict and report the same violated invariant ids on every payload.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2572
+  statement: On a failing verdict the producer-side action is to enter the producing layer's ladder while the consumer-side action is HALT.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2573
+  statement: Both validators are enabled in every environment and no configuration key exists to disable them.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2574
+  statement: A producer/consumer validator disagreement is itself a failure and is a common one, because the two drift when someone adds a range check on one side only.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2575
+  statement: Generating both validators from the same field table makes the agreement property hold by construction, and the test proves the generation was not bypassed.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2576
+  statement: Replaying each layer against its recorded seam reproduces the downstream artefact's content hash exactly.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2577
+  statement: A recorded seam must be sufficient, so layer replay runs with the Belief store absent, the network absent and the clock absent.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2578
+  statement: Seam-recording fidelity is the property that makes every other per-layer test possible, and it is asserted rather than assumed.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2579
+  statement: Property tests are only as good as their inputs, so the generators are specified, versioned artefacts.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2580
+  statement: BeliefGen produces C1 payloads satisfying every global and belief invariant by construction.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2581
+  statement: EnsembleGen produces joint ensembles with a controllable correlation structure where correlation is a parameter, so tests can sweep from independent to perfectly coupled.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-05, INV-D-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2582
+  statement: BundleGen produces C2 payloads satisfying the valuation invariants, with an LP-only mode for the exact metamorphic relations.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2583
+  statement: LedgerGen produces commitment ledgers with mixed pending and confirmed entries and both servable and unservable awards.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2584
+  statement: CalendarGen produces calendar windows biased toward DST days, month boundaries, year boundaries and HLZF edges.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2585
+  statement: QualityGen produces quality stamp assignments covering the full quality matrix plus random mixtures.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2586
+  statement: RegimeGen produces single and composed tariff regime combinations across the regime id set.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2587
+  statement: Shrinking is mandatory, because a property failure reporting a 192-slot, 64-scenario counterexample is not actionable.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2588
+  statement: Every generator declares a shrink strategy that reduces horizon, scenario count, term count and magnitude while preserving the failure, and the shrunk case is written into the fixture corpus as a permanent T0 regression test.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2589
+  statement: "Uniform random inputs almost never produce an interesting instance: they do not produce negative prices, peak-critical days, binding POI limits, or an activation that collides with a peak."
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2590
+  statement: The generators are explicitly biased toward the adversarial region and the bias parameters are part of the versioned generator artefact, so a change in coverage is visible as an artefact change.
+  owner: 04-compliance/T2-property-and-metamorphic-tests.md §7
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
