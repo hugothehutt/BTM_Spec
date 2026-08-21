@@ -25,7 +25,20 @@ plan. Implementation happens in the engine repository against these documents.
 | Layer designs L0–L5 | Normative for structure, indicative for algorithm choice |
 | Compliance architecture | Normative |
 | Implementation plan | Advisory |
+| Verification protocol | Normative |
 | `RECONCILIATION.md` | Cross-consistency findings: 20 resolved, 11 open |
+
+**Status vocabulary.** Three values, defined in `07-verification/PROTOCOL.md` §9.3:
+
+| Status | Meaning |
+|---|---|
+| **Normative** | Binding as written. |
+| **Advisory** | Guidance; may be departed from with reason. |
+| **Holed** | Binding except where a hole marker stands. A refuted section has been deleted and nothing may assume a replacement. Carries the count of open holes. |
+
+A part with a hole in it is neither normative nor absent, which is why the third
+value exists. Holes are greppable (`> [!HOLE]`), each names an open ticket, and
+no document may cite a holed section without carrying a marker itself.
 
 Three decisions are deliberately **deferred** and tracked in `01-adr/ADR-015`:
 the MILP solver (Gurobi intended), the per-tick latency budget, and intraday
@@ -85,6 +98,8 @@ one-tick lag.
 03-contracts/    the six seams — the frozen surface (C0 conventions, C1-C6)
 04-compliance/   invariants, property tests, replay, gap instrumentation (T0-T6)
 05-implementation/ workstreams, sequencing, agent playbook
+06-theory/       technical notes (TN-NN) — the derivations behind the claims
+07-verification/ how a claim earns trust: protocol, claim register, harness
 stubs/           C# interface stubs — signatures only, no bodies
 RECONCILIATION.md  cross-consistency findings and open decisions
 ```
