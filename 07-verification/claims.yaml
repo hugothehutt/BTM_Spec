@@ -8051,9 +8051,1919 @@
   tn: null
   band: null
 
+# ---- 02-layers-a.tsv ----
+# ---- 02-layers/L0 ----
+- id: CLM-0797
+  statement: L0 holds everything that must survive a tick and nothing else.
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0798
+  statement: L0 is the only backwards path in the system, is always read at a lag of at least one tick, and is the component whose existence makes the within-tick dependency graph acyclic.
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0799
+  statement: L0's input is StateUpdate committed once at the end of a tick, plus the ValueFunctionArtefact from the slow loop.
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0800
+  statement: L0's output is StateSnapshot, taken once at the top of a tick and read by L1, L2, L3 and L5.
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0801
+  statement: L0 is stateful by definition and the only mutable component, with mutation confined to a single commit point per tick.
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0802
+  statement: "Three dependencies break the intended one-directional pipeline: λ_SOC is a dual of the Planner's own problem, peak_to_go and the §19(2) qualification state depend on realised history, and the commitment ledger is Execution output feeding a later Planner run."
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0803
+  statement: "The within-tick graph is a DAG: every arrow points right and the single backwards edge is not traversed until the tick has ended."
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0804
+  statement: The within-tick DAG is what makes each seam independently recordable, replayable and property-testable, and is the foundation of the compliance architecture.
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0805
+  statement: "The DAG is mechanically verifiable: T3 instruments every read and write during a replay and asserts no read of a same-tick write."
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-11, T3]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0806
+  statement: L0 holds V(SOC, peakState, qualState) as a concave PWL curve, and the Planner obtains λ_SOC as its subgradient at the optimum and reports it for diagnostics.
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0807
+  statement: A global mutable service, a fixed-point iteration within a tick, and Valuation calling the Planner each produce a system where two components can legitimately read different answers to the same question during the same tick, at which point nothing is reproducible and no seam test means anything.
+  owner: 02-layers/L0-state-value-store.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0808
+  statement: L0 holds six items, and its field tables mirror C5 exactly, introducing no field C5 does not carry.
+  owner: 02-layers/L0-state-value-store.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0809
+  statement: Peak state is carried per regime and not per site, because a site under AtypicalHlzf and a volumetric charge has two peak accumulators over different slot sets and different period bounds.
+  owner: 02-layers/L0-state-value-store.md §2.1
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0810
+  statement: The qualification margin, not just the status, is what the value function conditions on, because a binary flag tells the engine nothing until it is too late.
+  owner: 02-layers/L0-state-value-store.md §2.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0811
+  statement: Confirmed ledger entries are hard constraints and Pending entries are probabilistic exposure that the Planner models as a scenario-dependent position.
+  owner: 02-layers/L0-state-value-store.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0812
+  statement: The Pending/Confirmed distinction is what lets the continuous intraday loop re-optimise without either double-selling or ignoring live exposure.
+  owner: 02-layers/L0-state-value-store.md §2.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0813
+  statement: The value function is the one L0 section that does not arrive through C5.
+  owner: 02-layers/L0-state-value-store.md §2.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0814
+  statement: A ValueFunctionArtefact carries specHash, fittedAt, validityHorizon, method, conditioning, curves and diagnostics.
+  owner: 02-layers/L0-state-value-store.md §2.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0815
+  statement: The value function method is one of RollingHorizonDE, Sddp or BackwardRecursion.
+  owner: 02-layers/L0-state-value-store.md §2.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0816
+  statement: The value function conditioning is over peakBuckets, qualStates and calendarBuckets.
+  owner: 02-layers/L0-state-value-store.md §2.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0817
+  statement: Breakpoints are pairs (e_i, v_i) for i = 0..n with strictly decreasing slopes.
+  owner: 02-layers/L0-state-value-store.md §2.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [INV-V-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0818
+  statement: L0 stores the value function artefact's identity and the loaded curves, not a model object.
+  owner: 02-layers/L0-state-value-store.md §2.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0819
+  statement: The value curve is a table of breakpoints and evaluating it is a PWL lookup.
+  owner: 02-layers/L0-state-value-store.md §2.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-001
+  anchors: [ADR-001]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0820
+  statement: L0 also carries vSocStale, stateDriftSignal and refreshRequested from C5 §8, consumed by the slow loop trigger logic.
+  owner: 02-layers/L0-state-value-store.md §2.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0821
+  statement: "L0 holds the manifest identities of every artefact the run is entitled to read: scenario generator, reduced ensemble, fill model, activation model, value function, market calendar and tzdata."
+  owner: 02-layers/L0-state-value-store.md §2.6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0822
+  statement: L0 holds artefact identities only, and the bytes live in the Belief cold tier addressed by hash.
+  owner: 02-layers/L0-state-value-store.md §2.6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0823
+  statement: "L0 holds no beliefs: forecasts, prices, ensembles and quality values live in L1, and L0 holds only the summary quality state that must survive a tick."
+  owner: 02-layers/L0-state-value-store.md §2.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0824
+  statement: "L0 holds no plans: PlanResult is recorded for diagnostics and settlement but is not state, and the only Planner output that survives a tick is a ledger entry."
+  owner: 02-layers/L0-state-value-store.md §2.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0825
+  statement: L0 holds no artefact contents, only identities.
+  owner: 02-layers/L0-state-value-store.md §2.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0826
+  statement: L0 holds no wall-clock time.
+  owner: 02-layers/L0-state-value-store.md §2.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0827
+  statement: "L0 holds no derived caches: anything recomputable is recomputed, so that a restored snapshot is unambiguously equal to the one persisted."
+  owner: 02-layers/L0-state-value-store.md §2.7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0828
+  statement: There is exactly one writer of L0 — the tick driver's Commit — and the StateUpdate it commits is assembled from two sources.
+  owner: 02-layers/L0-state-value-store.md §2.8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0829
+  statement: "L5 owns the settled and confirmed sections: fills, awards, activations, meter reality, P&L attribution and error decomposition."
+  owner: 02-layers/L0-state-value-store.md §2.8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0830
+  statement: The driver reconciles submitted intent against Execution's dispositions to produce the Pending and OpenOrder delta.
+  owner: 02-layers/L0-state-value-store.md §2.8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0831
+  statement: Because C4 carries no Planner reasoning, L5 cannot see a still-live order, but the driver can because it holds both payloads.
+  owner: 02-layers/L0-state-value-store.md §2.8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0832
+  statement: The two-contributor, one-payload, one-atomic-commit arrangement preserves C4 §8 and ADR-006 simultaneously and keeps one-backwards-edge literally true.
+  owner: 02-layers/L0-state-value-store.md §2.8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0833
+  statement: "The tick is: snapshot L0, snapshot L1, evaluate L2, solve L3, execute L4, settle L5 combined with the driver ledger delta, then commit to L0 against the expected generation."
+  owner: 02-layers/L0-state-value-store.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0834
+  statement: Snapshot and Commit are the only interactions with L0, and everything between them operates on the snapshot value.
+  owner: 02-layers/L0-state-value-store.md §3.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0835
+  statement: "L0.Snapshot() is the only read API: there is no L0.Get(field), no property accessor and no injected store reference."
+  owner: 02-layers/L0-state-value-store.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0836
+  statement: A component holds a StateSnapshot value and does not hold L0.
+  owner: 02-layers/L0-state-value-store.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0837
+  statement: StateSnapshot is an immutable record and nothing in it aliases a live structure.
+  owner: 02-layers/L0-state-value-store.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-13]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0838
+  statement: The ledger is copied into the snapshot, at a cost of O(open orders + awarded blocks), which is tens of entries.
+  owner: 02-layers/L0-state-value-store.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0839
+  statement: The value function is referenced by hash into an immutable, content-addressed curve cache which cannot change under the reader.
+  owner: 02-layers/L0-state-value-store.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0840
+  statement: StateSnapshot carries a contentHash and appears in the inputHashes of every payload produced during the tick, which puts the state version into the Merkle chain.
+  owner: 02-layers/L0-state-value-store.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-14]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0841
+  statement: StateSnapshot carries generation and asOfGeneration so a consumer can state the lag it is working with, which is what makes the lag priceable rather than hidden.
+  owner: 02-layers/L0-state-value-store.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0842
+  statement: "The snapshot-only read API is the same structural move as ADR-004's missing asOf overload: to read a same-tick write a developer would have to add a getter to L0, a visible change to that component."
+  owner: 02-layers/L0-state-value-store.md §3.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-004, ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0843
+  statement: There is one commit per tick, and Commit takes the expected generation and fails if it does not match.
+  owner: 02-layers/L0-state-value-store.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0844
+  statement: A generation mismatch on Commit means two ticks overlapped, which is a driver defect and goes to HALT.
+  owner: 02-layers/L0-state-value-store.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0845
+  statement: "Commit is atomic: the update is applied to all sections or to none, and no partially-updated intermediate state is visible to any reader."
+  owner: 02-layers/L0-state-value-store.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0846
+  statement: "Commit is validating: C5's invariants plus C0's universal set are checked on receipt, and consumer-side validation failure is a HALT."
+  owner: 02-layers/L0-state-value-store.md §3.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-S-01, INV-S-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0847
+  statement: "No-same-tick-read is enforced by three mechanisms of increasing strength: the type system, a reflection test, and the T3 acyclicity audit."
+  owner: 02-layers/L0-state-value-store.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0848
+  statement: The type system catches the accidental case at compile time at no cost, because StateSnapshot is a value with no back-reference and L0 exposes no getter.
+  owner: 02-layers/L0-state-value-store.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0849
+  statement: A reflection test over L0's public surface asserts no read method other than Snapshot(), catching someone adding a convenience accessor later.
+  owner: 02-layers/L0-state-value-store.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0850
+  statement: The T3 acyclicity audit instruments every read and write during a replay as (tickId, component, section, direction) and asserts no read of a section written in the same tickId, catching the deliberate or indirect case including via a shared helper.
+  owner: 02-layers/L0-state-value-store.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-11, T3]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0851
+  statement: The audit's own overhead must not change results, so the audit day is run with and without instrumentation and artefact hashes are compared.
+  owner: 02-layers/L0-state-value-store.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0852
+  statement: "A fourth independent check falls out of the Merkle chain for free: every payload's inputHashes must contain the tick's StateSnapshot.contentHash, so a same-tick read would have to reference a generation hash that did not exist when the payload was sealed."
+  owner: 02-layers/L0-state-value-store.md §3.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-14]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0853
+  statement: L0 is the entire engine state, because everything else is either pure, a read over immutable data, or external.
+  owner: 02-layers/L0-state-value-store.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0854
+  statement: An engine restart loads a StateSnapshot and continues.
+  owner: 02-layers/L0-state-value-store.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0855
+  statement: L0 persistence is content-addressed with an append-only journal supplying order.
+  owner: 02-layers/L0-state-value-store.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0856
+  statement: A journal record carries tickId, generation, parentSnapshotHash, updateHash, snapshotHash, six section hashes and a record checksum.
+  owner: 02-layers/L0-state-value-store.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0857
+  statement: L0 sections are hashed and stored independently, and a snapshot is the ordered list of its section hashes.
+  owner: 02-layers/L0-state-value-store.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0858
+  statement: Peak state and the value function change rarely while the ledger and the quality summary churn every tick.
+  owner: 02-layers/L0-state-value-store.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0859
+  statement: Structural sharing means a typical commit writes one or two small blobs and one journal record rather than a full state image.
+  owner: 02-layers/L0-state-value-store.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0860
+  statement: Restart hydrates L0 by fetching sections by hash.
+  owner: 02-layers/L0-state-value-store.md §4.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0861
+  statement: Restart scans the journal backwards to the last record with a valid checksum, verifies every referenced section blob resolves and rehashes correctly, hydrates the snapshot at generation g, reconciles against Execution, and resumes at tickId + 1.
+  owner: 02-layers/L0-state-value-store.md §4.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0862
+  statement: Any section blob mismatch on restart is a HALT for an unreadable state store.
+  owner: 02-layers/L0-state-value-store.md §4.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0863
+  statement: On restart L1's cursor is repositioned from asOf and the hot window refilled from warm and cold, and nothing else needs restoring because L2, L3 and L5 are pure.
+  owner: 02-layers/L0-state-value-store.md §4.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0864
+  statement: A restored snapshot is field-identical to the one persisted and its recomputed content hash matches.
+  owner: 02-layers/L0-state-value-store.md §4.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-18]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0865
+  statement: The journal record is the commit point and is written after the section blobs are durable.
+  owner: 02-layers/L0-state-value-store.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0866
+  statement: A crash during steps 1 to 6 of the tick leaves generation g unchanged and the tick replays.
+  owner: 02-layers/L0-state-value-store.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0867
+  statement: A crash after section blobs but before the journal record leaves generation g plus orphan blobs, which are unreferenced garbage collected by hash sweep, and the tick replays.
+  owner: 02-layers/L0-state-value-store.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0868
+  statement: A crash during the journal append leaves a torn tail, which is truncated at the last valid checksum, and the tick replays.
+  owner: 02-layers/L0-state-value-store.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0869
+  statement: A crash after the journal record leaves generation g+1 committed and the engine resumes at tickId + 1.
+  owner: 02-layers/L0-state-value-store.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0870
+  statement: Blobs are written to a temporary name, fsynced, then renamed, and the journal is appended with a per-record checksum and fsynced.
+  owner: 02-layers/L0-state-value-store.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0871
+  statement: A tick that does not reach Commit leaves L0 byte-identical at the previous generation.
+  owner: 02-layers/L0-state-value-store.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-13]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0872
+  statement: Because a replayed tick begins from the identical StateSnapshot and identical recorded belief inputs, and because L2, L3 and L5 are pure and the solver deterministic, the replayed tick produces byte-identical outputs to the one that was lost.
+  owner: 02-layers/L0-state-value-store.md §4.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0873
+  statement: L0 is the entire engine state but not the entire world state, and the venue is the authority on what was submitted.
+  owner: 02-layers/L0-state-value-store.md §4.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0874
+  statement: A crash between order submission and commit leaves orders live at Execution that the restored ledger does not know about, and replaying the tick blindly would re-submit them.
+  owner: 02-layers/L0-state-value-store.md §4.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0875
+  statement: "Restart performs a reconciliation pass before the first tick: query Execution for live and recently-terminal orders and awards, diff against the restored ledger, insert every unmatched acknowledged order or award via a synthetic StateUpdate tagged Reconciliation, and commit it as generation g+1 so the replayed tick becomes g+2."
+  owner: 02-layers/L0-state-value-store.md §4.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0876
+  statement: The reconciliation update is a first-class, recorded artefact and not a repair script.
+  owner: 02-layers/L0-state-value-store.md §4.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0877
+  statement: Because reconciliation is a recorded artefact, the every-award-has-a-ledger-entry invariant is checkable across a restart boundary rather than vacuously true because the award was forgotten.
+  owner: 02-layers/L0-state-value-store.md §4.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-X-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0878
+  statement: "The slow loop is not a layer and is not in the tick path: it runs on C_slow, reads L0 plus cold-tier artefacts, and writes exactly one thing, a versioned ValueFunctionArtefact whose identity is committed to L0."
+  owner: 02-layers/L0-state-value-store.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0879
+  statement: The slow loop never blocks a tick.
+  owner: 02-layers/L0-state-value-store.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0880
+  statement: If the slow loop has not run, the Planner uses the last valid V with a staleness penalty.
+  owner: 02-layers/L0-state-value-store.md §5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0881
+  statement: The periodic slow-loop trigger fires daily at a configured local time, after the day's ensemble artefact is published, and is a staleness trigger.
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0882
+  statement: The validity-expiry trigger fires when asOf minus fittedAt exceeds validityHorizon and is a staleness trigger.
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0883
+  statement: The state-drift trigger fires when stateDriftSignal is above a configured threshold and is a staleness trigger.
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0884
+  statement: The explicit-request trigger fires when Settlement sets refreshRequested and is a staleness trigger.
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0885
+  statement: The accounting-rollover trigger fires when periodEnd is crossed and realisedPeak resets, and is an invalidation trigger.
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0886
+  statement: The qualification-transition trigger fires on a qualificationStatus change or when qualCritical is set, and is an invalidation trigger.
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0887
+  statement: The regime-change trigger fires when a regime becomes active or inactive, and is an invalidation trigger.
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0888
+  statement: The staleness versus invalidation distinction is load-bearing and is easy to collapse by accident.
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0889
+  statement: "A stale curve is an out-of-date approximation of the right curve: it attracts stalenessPenalty shrinkage of its slopes and the engine carries on."
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0890
+  statement: "An invalidated curve is the wrong curve: one fitted under Qualified says nothing useful about an AtRisk world, and one fitted against last month's realisedPeak prices a floor that no longer exists."
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0891
+  statement: Invalidation forces DEFENSIVE until a refit lands, because shrinking the slopes of a curve conditioned on the wrong state does not make it less wrong.
+  owner: 02-layers/L0-state-value-store.md §5.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [INV-G-19]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0892
+  statement: The slow-loop horizon must be long enough to see the end of the accounting period, otherwise the truncation the value function exists to price is present inside the value function itself.
+  owner: 02-layers/L0-state-value-store.md §5.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0893
+  statement: H_slow is at least the maximum over active regimes of (periodEnd − t) plus a tail margin.
+  owner: 02-layers/L0-state-value-store.md §5.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0894
+  statement: For AnnualLeistungspreis and IntensiveUse the slow-loop horizon is up to a year of quarter-hours, about 35,000 slots.
+  owner: 02-layers/L0-state-value-store.md §5.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0895
+  statement: The annual horizon is why the slow loop cannot simply run the Planner's formulation at a longer horizon and why it needs a state-space method of its own.
+  owner: 02-layers/L0-state-value-store.md §5.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0896
+  statement: "The slow loop uses coarsened time: 15-minute resolution in the near field and hourly or 4-hourly in the far field, with the coarsening schedule part of the FeatureSpecHash."
+  owner: 02-layers/L0-state-value-store.md §5.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0897
+  statement: The slow loop uses a longer-horizon, lower-resolution ensemble generated by the same joint model as the tick-loop ensemble, so the dependence structure is consistent between what V was fitted against and what the Planner optimises against.
+  owner: 02-layers/L0-state-value-store.md §5.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0898
+  statement: Assembling the slow-loop ensemble from marginals would reintroduce exactly the bias ADR-005 exists to prevent, at the horizon where it matters most.
+  owner: 02-layers/L0-state-value-store.md §5.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0899
+  statement: V is fitted conditional on the discrete state and is concave in SOC given that state.
+  owner: 02-layers/L0-state-value-store.md §5.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0900
+  statement: Concavity is enforced by projecting the fit onto the concave hull and validated at the contract boundary by strictly decreasing slopes.
+  owner: 02-layers/L0-state-value-store.md §5.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [INV-V-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0901
+  statement: Because V is concave and enters as a maximisation term, the PWL needs no binaries and the LP relaxation is exact, which is the property that makes it affordable in the tick.
+  owner: 02-layers/L0-state-value-store.md §5.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0902
+  statement: Genuine non-concavity from the §19(2) qualification cliff is represented as a separate discrete dimension of the conditioning with a concave curve inside each cell, not smoothed away.
+  owner: 02-layers/L0-state-value-store.md §5.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0903
+  statement: If a fit is non-concave and the projection loses material value, that is a signal that a conditioning dimension is missing rather than that the projection needs loosening.
+  owner: 02-layers/L0-state-value-store.md §5.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0904
+  statement: Every reachable cell of the conditioning table must have a curve or a declared fallback cell.
+  owner: 02-layers/L0-state-value-store.md §5.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0905
+  statement: An unreachable-in-training but reachable-in-operation cell is exactly where the engine will be when something unusual happens.
+  owner: 02-layers/L0-state-value-store.md §5.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0906
+  statement: There is no settled answer on the value function method, and pretending otherwise would be the wrong kind of confidence.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0907
+  statement: The rolling-horizon deterministic equivalent solves the multi-stage problem over the reduced ensemble as one deterministic-equivalent LP or MILP, parametrically in initial SOC, with V(e) the optimal value as a function of that SOC.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0908
+  statement: The rolling-horizon deterministic equivalent reuses the Planner's own formulation and backend so there is no second physics model to keep in sync, is concave by construction in the LP case, and is the fastest route to something trustworthy.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0909
+  statement: The rolling-horizon deterministic equivalent has perfect foresight within a scenario, ignoring non-anticipativity beyond whatever stage structure is imposed, so it is systematically optimistic rather than merely noisy.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0910
+  statement: The rolling-horizon deterministic equivalent's size grows as S × H_slow, which bites hardest at exactly the annual horizon that matters.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0911
+  statement: SDDP-style approximate dynamic programming samples scenario paths on forward passes and adds supporting hyperplanes to a concave outer approximation of the value-to-go on backward passes.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0912
+  statement: SDDP handles multi-stage non-anticipativity correctly, its cut set is itself a concave PWL so no separate fitting or hull projection is needed, it scales in horizon rather than scenario count, and it provides a convergence bound so whether V is converged is answerable.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0913
+  statement: SDDP requires stagewise independence, which price processes violate, so it needs an explicit Markov lattice over a low-dimensional exogenous state, and that lattice is itself a modelling decision.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0914
+  statement: The discrete qualification state multiplies SDDP's problem count, and SDDP has the highest implementation and tuning cost of the three methods.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0915
+  statement: Backward recursion discretises (SOC, peakState, qualState) and recurses backwards over the coarsened slot grid taking weighted expectations over the ensemble at each step.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0916
+  statement: Backward recursion is conceptually simple and exactly correct on its own discretisation, handles the discrete cliff and any non-concavity natively, and produces the entire conditioning table in one sweep.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0917
+  statement: Backward recursion suffers the curse of dimensionality, and because peakState is a running max it is a path variable that must be discretised too.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0918
+  statement: Coarse peak buckets misprice precisely the threshold region that dominates the BTM business case.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0919
+  statement: Backward recursion is tractable only with aggressive coarsening and its coarsening error is hard to bound.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0920
+  statement: The recommended sequencing is to start with the rolling-horizon deterministic equivalent, run backward recursion on a coarse grid as an independent cross-check that the cliff is priced at all, and treat SDDP as the target once the state space and conditioning dimensions have stopped moving.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0921
+  statement: Disagreement between the deterministic equivalent and backward recursion around the qualification threshold is the signal that matters.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0922
+  statement: Whatever method is running, the deterministic-equivalent version remains as a reference oracle for small instances.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0923
+  statement: Method choice, grid resolution and scenario count are recorded in diagnostics and in the FeatureSpecHash, so a change of method is a change of artefact and shows up in the Merkle chain rather than as an unexplained shift in behaviour.
+  owner: 02-layers/L0-state-value-store.md §5.4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0924
+  statement: A better V improves every downstream decision — every tick, every gate, every market — because it is the only thing pricing everything beyond H_plan.
+  owner: 02-layers/L0-state-value-store.md §5.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0925
+  statement: A better V costs nothing additional in the tick loop, because the Planner's expense is a function of the number of breakpoints and not of how well those breakpoints were fitted.
+  owner: 02-layers/L0-state-value-store.md §5.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0926
+  statement: A curve fitted by a month of SDDP work and a curve fitted by a crude heuristic cost the solver the same.
+  owner: 02-layers/L0-state-value-store.md §5.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0927
+  statement: The asymmetry of unbounded upside in fit quality against zero marginal runtime cost is rare, and it is why the slow loop deserves disproportionate research attention relative to its share of the codebase.
+  owner: 02-layers/L0-state-value-store.md §5.5
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0928
+  statement: The measurement of V's quality is whether a better V produces better realised P&L, evaluated through C5's attribution rather than through the fit's own objective.
+  owner: 02-layers/L0-state-value-store.md §5.5
+  class: empirical
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0929
+  statement: realisedPeak is a max over the settled prefix only.
+  owner: 02-layers/L0-state-value-store.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0930
+  statement: The unsettled gap exists because meter data is published with a lag — provisional telemetry in minutes to hours, final metered values in days — and market settlement is later still.
+  owner: 02-layers/L0-state-value-store.md §6
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0931
+  statement: peakIsProvisional and unsettledGapFrom are the two fields that make the unsettled gap visible rather than implicit.
+  owner: 02-layers/L0-state-value-store.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0932
+  statement: The Planner uses its own modelled POI trajectory over the gap as a provisional peak contribution.
+  owner: 02-layers/L0-state-value-store.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0933
+  statement: The epigraph floor is zPeak ≥ max(realisedPeak, max over τ in [unsettledGapFrom, t) of p̂_poi[τ]).
+  owner: 02-layers/L0-state-value-store.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0934
+  statement: p̂_poi is the engine's own trajectory over the gap, telemetered where telemetry exists and modelled from the plan and the load and PV beliefs where it does not.
+  owner: 02-layers/L0-state-value-store.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0935
+  statement: The gap is the most recent window, so it is disproportionately likely to contain a peak the engine just caused.
+  owner: 02-layers/L0-state-value-store.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0936
+  statement: Where the gap trajectory is itself uncertain it receives the same CVaR treatment as the forward peak and picks up riskProfile.peakSafetyMarginKw.
+  owner: 02-layers/L0-state-value-store.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0937
+  statement: "The gap asymmetry is deliberate: overstating the provisional peak costs a little optimisation freedom while understating it can cost an entire period's demand charge."
+  owner: 02-layers/L0-state-value-store.md §6.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0938
+  statement: realisedPeak, the settled quantity, is required to be non-decreasing within a period.
+  owner: 02-layers/L0-state-value-store.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-S-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0939
+  statement: The Planner's provisional working peak is a different quantity from realisedPeak and may legitimately exceed the peak that eventually settles, because the modelled gap contribution is deliberately biased high.
+  owner: 02-layers/L0-state-value-store.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-G-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0940
+  statement: provisionalPeak is always at least realisedPeak, and provisionalPeak is not required to be at most the eventual settled peak.
+  owner: 02-layers/L0-state-value-store.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-G-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0941
+  statement: When settlement arrives, unsettledGapFrom advances, realisedPeak may step up, and the modelled gap contribution is discarded rather than blended.
+  owner: 02-layers/L0-state-value-store.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0942
+  statement: The peak step on settlement arrival is a stateDriftSignal contribution, which is the correct response because the fitted V was conditioned on the old peak state.
+  owner: 02-layers/L0-state-value-store.md §6.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0943
+  statement: unsettledGapFrom is non-decreasing and never exceeds the current slot.
+  owner: 02-layers/L0-state-value-store.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-17]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0944
+  statement: Gap length is a first-class quality signal, and a gap that stops advancing means the meter feed is dead.
+  owner: 02-layers/L0-state-value-store.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0945
+  statement: Beyond a configured maxGapSlots the peak floor is almost entirely modelled rather than measured, which escalates the degradation mode.
+  owner: 02-layers/L0-state-value-store.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0946
+  statement: Peak protection cannot be protected against a quantity nobody is measuring.
+  owner: 02-layers/L0-state-value-store.md §6.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0947
+  statement: isFinal and peakIsProvisional are not the same axis.
+  owner: 02-layers/L0-state-value-store.md §7.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0948
+  statement: A provisional peak comes from telemetry and preliminary meter reads and becomes final when the settled meter series arrives for those slots.
+  owner: 02-layers/L0-state-value-store.md §7.1
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0949
+  statement: A provisional imbalance comes from the preliminary imbalance price and becomes final at reBAP final publication, often weeks later.
+  owner: 02-layers/L0-state-value-store.md §7.1
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0950
+  statement: A provisional award is acknowledged but unsettled and becomes final at the market settlement statement.
+  owner: 02-layers/L0-state-value-store.md §7.1
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0951
+  statement: The provisional/final flag is carried into every downstream artefact so that a P&L number can always be qualified.
+  owner: 02-layers/L0-state-value-store.md §7.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0952
+  statement: A restatement is a StateUpdate with revisionOf set, and L0 does not overwrite.
+  owner: 02-layers/L0-state-value-store.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-G-15]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0953
+  statement: "The L0 journal is append-only exactly as the Belief cold tier is: the current state is the fold of the journal, and a restatement appends a new entry carrying the corrected sections at a new generation."
+  owner: 02-layers/L0-state-value-store.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-G-15]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0954
+  statement: A restatement takes effect at the generation where it arrived, not retroactively, so a replay from a manifest sees the restatement exactly when the engine saw it.
+  owner: 02-layers/L0-state-value-store.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0955
+  statement: Append-only journalling is the L0 analogue of ADR-004's bitemporality and is the reason the journal is append-only rather than a mutable row per field.
+  owner: 02-layers/L0-state-value-store.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0956
+  statement: A restatement is a distinct cause from a forecast error and must not be absorbed into the forecastError bucket.
+  owner: 02-layers/L0-state-value-store.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0957
+  statement: A restatement that lands after an accounting period has closed is booked to the period it belongs to and flagged, never smeared into the current one.
+  owner: 02-layers/L0-state-value-store.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0958
+  statement: A restatement never triggers a re-plan of past ticks; it contributes to stateDriftSignal and, if material, triggers a slow-loop refit.
+  owner: 02-layers/L0-state-value-store.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0959
+  statement: Past decisions were correct given what was known, and that does not stop being true because the data improved.
+  owner: 02-layers/L0-state-value-store.md §7.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0960
+  statement: State machine tests enumerate the permitted transitions of each discrete state and assert the forbidden ones throw rather than being absorbed.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [T2]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0961
+  statement: "qualificationStatus is directional within a qualification year: Qualified to AtRisk to Lost is reachable and Lost to Qualified inside the same year is not."
+  owner: 02-layers/L0-state-value-store.md §8
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0962
+  statement: "peakIsProvisional is a one-way latch per slot range: provisional to final, never back."
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0963
+  statement: The permitted ledger status transitions are Pending to Confirmed to Settled, and Pending to Cancelled, and nothing else.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0964
+  statement: Restart-mid-tick replay determinism is tested by fault-injecting a process kill at each of the seven lifecycle steps, restarting, replaying, and asserting the resulting generation-g+1 snapshot hash equals the crash-free run's.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0965
+  statement: The kill between blob write and journal append is a named fixture asserting orphan blobs are collected and the tick replays cleanly.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0966
+  statement: The kill after L4 submission but before commit is a named fixture asserting the reconciliation pass reconstructs the ledger exactly and the replayed tick does not double-submit.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0967
+  statement: Commit protocol tests assert that Commit with a stale expected generation fails, that two overlapping ticks cannot both commit, that a partially-applied update is not observable, and that a reflection test finds no read method other than Snapshot().
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0968
+  statement: The acyclicity audit meta-test asserts that enabling the read/write recorder does not change any artefact hash.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0969
+  statement: The realisedPeak reset slot must equal CivilCalendar.LocalMidnight(periodStart) expressed as a SlotId, not UTC midnight and not a fixed offset from the previous reset.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [INV-S-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0970
+  statement: Both Europe/Berlin DST transition days are fixtures for the L0 tests.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [INV-T-01, INV-T-02, INV-T-03, INV-T-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0971
+  statement: The March and October month boundaries reset at local midnight despite the UTC offset change.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0972
+  statement: The accounting period containing the spring-forward day is 92 slots shorter than a naive 96-times-days computation and the period containing the autumn day 100 slots longer.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0973
+  statement: The annual accounting boundary behaves identically to the monthly one under DST.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0974
+  statement: For AtypicalHlzf the HLZF slot subset is recomputed from the calendar table for the new period rather than being carried across.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0975
+  statement: A settlement arrival that raises realisedPeak above the previously modelled gap contribution is handled without an assertion failure.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-G-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0976
+  statement: A stalled unsettled gap beyond maxGapSlots escalates the mode.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0977
+  statement: Value function tests assert concavity of every curve, conditioning coverage of every reachable cell, that staleness produces vSocStale and the stalenessPenalty path rather than a failure, that invalidation forces DEFENSIVE and not merely a penalty, and that a refit arriving mid-run changes the artefact identity in L0 and appears in the Merkle chain.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [INV-G-19, INV-V-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0978
+  statement: Durability tests assert that a torn blob write, a torn journal tail, and a section-hash mismatch on load each produce the declared outcome, with HALT for the last.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0979
+  statement: A snapshot restored from shared sections is field-identical to the in-memory original.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-18]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0980
+  statement: Round-tripping a full year of journal reproduces the final snapshot hash.
+  owner: 02-layers/L0-state-value-store.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0981
+  statement: No component reads an L0 section written during the same tickId, and violation is a HALT audited by T3.
+  owner: 02-layers/L0-state-value-store.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0982
+  statement: There is exactly one Commit per tickId, succeeding only against the expected generation, and violation is a HALT.
+  owner: 02-layers/L0-state-value-store.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-G-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0983
+  statement: Every payload produced within a tick carries that tick's StateSnapshot.contentHash in inputHashes, and violation is a HALT.
+  owner: 02-layers/L0-state-value-store.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-14]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0984
+  statement: The L0 journal is append-only and current state is the fold of the journal, never an in-place edit, and violation is a HALT.
+  owner: 02-layers/L0-state-value-store.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-G-15]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0985
+  statement: The Planner's provisional peak floor is at least realisedPeak and is not required to be at most the eventual settled peak, and violation of the lower side is a HALT.
+  owner: 02-layers/L0-state-value-store.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-G-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0986
+  statement: A change to V's discrete conditioning state invalidates V, forcing mode at least DEFENSIVE until refit, rather than marking it stale, and violation escalates.
+  owner: 02-layers/L0-state-value-store.md §9
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [INV-G-19]
+  evidence: unlabelled
+  tn: null
+  band: null
+
 # ---- 03-contracts-a.tsv ----
 # ---- 03-contracts/C0 and C1 ----
-- id: CLM-0797
+- id: CLM-0987
   statement: "A contract is the complete, closed description of what crosses a seam: if it is not in the field table, it does not cross."
   owner: 03-contracts/C0-contract-conventions.md §1
   class: analytic
@@ -8063,7 +9973,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0798
+- id: CLM-0988
   statement: There is no additional-context parameter, no object and no dictionary of extras in any contract.
   owner: 03-contracts/C0-contract-conventions.md §1
   class: analytic
@@ -8073,7 +9983,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0799
+- id: CLM-0989
   statement: "A contract is a value: immutable record types and readonly structs, with no references to mutable state, no handles into another layer's storage and no delegates."
   owner: 03-contracts/C0-contract-conventions.md §1
   class: analytic
@@ -8083,7 +9993,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0800
+- id: CLM-0990
   statement: A contract is serialisable and round-trips to a stable binary and a stable JSON form.
   owner: 03-contracts/C0-contract-conventions.md §1
   class: analytic
@@ -8093,7 +10003,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0801
+- id: CLM-0991
   statement: Serialisability is what makes seam recording and per-layer golden tests possible.
   owner: 03-contracts/C0-contract-conventions.md §1
   class: analytic
@@ -8103,7 +10013,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0802
+- id: CLM-0992
   statement: Every payload carries schemaVersion, and a consumer rejects a version it does not understand rather than guessing.
   owner: 03-contracts/C0-contract-conventions.md §1
   class: analytic
@@ -8113,7 +10023,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0803
+- id: CLM-0993
   statement: Every payload carries contentHash of itself and inputHashes of the payloads that produced it, forming the Merkle chain.
   owner: 03-contracts/C0-contract-conventions.md §1
   class: analytic
@@ -8123,7 +10033,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0804
+- id: CLM-0994
   statement: Every contract documents its fields in a table with the columns Field, Type, Unit, Card., Range, Null, Default, MaxStale and Notes.
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
@@ -8133,7 +10043,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0805
+- id: CLM-0995
   statement: The Type column names the typed quantity and not a primitive.
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
@@ -8143,7 +10053,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0806
+- id: CLM-0996
   statement: The Unit column is explicit even when implied by the type.
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
@@ -8153,7 +10063,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0807
+- id: CLM-0997
   statement: Cardinality is one of 1, [H] per slot, [S,H] per scenario and slot, [B] per block, or 0..1 optional.
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
@@ -8163,7 +10073,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0808
+- id: CLM-0998
   statement: A value outside the declared Range is a contract failure.
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
@@ -8173,7 +10083,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0809
+- id: CLM-0999
   statement: The Default column carries the conservative default, or an em dash if none exists.
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
@@ -8183,7 +10093,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0810
+- id: CLM-1000
   statement: MaxStale is the maximum age before quality degrades, expressed in SlotSpan.
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
@@ -8193,7 +10103,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0811
+- id: CLM-1001
   statement: A field with Null = yes must have either a Default or a documented escalation, and a nullable field with no defined behaviour on absence is an incomplete contract.
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
@@ -8203,7 +10113,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0812
+- id: CLM-1002
   statement: The universal invariants are applied at every seam by a shared validator invoked on both sides.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8213,7 +10123,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0813
+- id: CLM-1003
   statement: No numeric field contains NaN or infinity.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8223,7 +10133,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0814
+- id: CLM-1004
   statement: Every numeric field has a declared unit in its field table; dimensioned quantities use a typed quantity while dimensionless fields may be double or int but must be declared with an em dash in the Unit column and range-constrained, and a dimensioned field typed as a bare double is a violation.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8233,7 +10143,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0815
+- id: CLM-1005
   statement: schemaVersion is recognised by the consumer.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8243,7 +10153,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0816
+- id: CLM-1006
   statement: contentHash matches the payload, and inputHashes are present and non-empty.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8253,7 +10163,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0817
+- id: CLM-1007
   statement: No payload contains a wall-clock timestamp taken at construction.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8263,7 +10173,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0818
+- id: CLM-1008
   statement: All slot-indexed arrays have the length declared by horizon.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8273,7 +10183,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0819
+- id: CLM-1009
   statement: All scenario-indexed arrays share the scenario axis length and ordering.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8283,7 +10193,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0820
+- id: CLM-1010
   statement: asOf is non-decreasing across successive payloads on the same seam.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8293,7 +10203,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0821
+- id: CLM-1011
   statement: Every field marked Null = no is present.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8303,7 +10213,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0822
+- id: CLM-1012
   statement: Declared ranges hold for every element, not merely the first.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8313,7 +10223,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0823
+- id: CLM-1013
   statement: Validation is on by default in every environment, including production.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
@@ -8323,7 +10233,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0824
+- id: CLM-1014
   statement: Validation costs a few microseconds against a solve measured in milliseconds.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: empirical
@@ -8333,7 +10243,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0825
+- id: CLM-1015
   statement: "Each seam is validated twice: the producer validates before emitting and the consumer validates on receipt."
   owner: 03-contracts/C0-contract-conventions.md §4
   class: analytic
@@ -8343,7 +10253,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0826
+- id: CLM-1016
   statement: A producer-side validation failure enters the producing layer's degradation ladder.
   owner: 03-contracts/C0-contract-conventions.md §4
   class: analytic
@@ -8353,7 +10263,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0827
+- id: CLM-1017
   statement: A consumer-side validation failure goes to HALT, because a contract violation means the producer is in an unknown state and nothing downstream can be trusted.
   owner: 03-contracts/C0-contract-conventions.md §4
   class: analytic
@@ -8363,7 +10273,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0828
+- id: CLM-1018
   statement: An additive change — a new optional field with a default — is a minor version bump and old consumers keep working.
   owner: 03-contracts/C0-contract-conventions.md §5
   class: analytic
@@ -8373,7 +10283,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0829
+- id: CLM-1019
   statement: Removing a field, changing a type, changing a unit, changing a semantic or tightening a range is a major version bump, and the consumer must be updated in the same commit.
   owner: 03-contracts/C0-contract-conventions.md §5
   class: analytic
@@ -8383,7 +10293,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0830
+- id: CLM-1020
   statement: Unit changes are always major, even when the type is unchanged, because a field silently moving from EUR/MWh to EUR/kWh is the archetypal catastrophic change.
   owner: 03-contracts/C0-contract-conventions.md §5
   class: analytic
@@ -8393,7 +10303,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0831
+- id: CLM-1021
   statement: A contract change requires the doc, the version and the conformance tests in one commit.
   owner: 03-contracts/C0-contract-conventions.md §5
   class: analytic
@@ -8403,7 +10313,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0832
+- id: CLM-1022
   statement: Fields subject to data quality carry a parallel quality channel rather than embedding quality in the value.
   owner: 03-contracts/C0-contract-conventions.md §6
   class: analytic
@@ -8413,7 +10323,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0833
+- id: CLM-1023
   statement: A QualityStamp carries provenance, quality, knowledgeTime, sourceId and maxStaleBreached.
   owner: 03-contracts/C0-contract-conventions.md §6
   class: analytic
@@ -8423,7 +10333,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0834
+- id: CLM-1024
   statement: A QualityStamp is carried per series where quality is uniform across the array and per element where it is not, such as a forecast with a measured prefix and a forecast suffix.
   owner: 03-contracts/C0-contract-conventions.md §6
   class: analytic
@@ -8433,7 +10343,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0835
+- id: CLM-1025
   statement: Consumers map quality to risk parameters and never to branches.
   owner: 03-contracts/C0-contract-conventions.md §6
   class: analytic
@@ -8443,7 +10353,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0836
+- id: CLM-1026
   statement: Every payload carries tickId as (SlotId, clock, sequence), which identifies the tick uniquely.
   owner: 03-contracts/C0-contract-conventions.md §7
   class: analytic
@@ -8453,7 +10363,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0837
+- id: CLM-1027
   statement: Every payload carries asOf, the knowledge-time boundary for every fact inside it.
   owner: 03-contracts/C0-contract-conventions.md §7
   class: analytic
@@ -8463,7 +10373,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0838
+- id: CLM-1028
   statement: Every payload carries horizon as a SlotSpan, assetId for the battery, poiId for the connection point, and manifestId as the run manifest hash.
   owner: 03-contracts/C0-contract-conventions.md §7
   class: analytic
@@ -8473,7 +10383,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0839
+- id: CLM-1029
   statement: Multi-asset is not in scope for v1, but assetId and poiId are present in every contract from the start so that adding a second asset is not a schema break.
   owner: 03-contracts/C0-contract-conventions.md §7
   class: analytic
@@ -8483,7 +10393,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0840
+- id: CLM-1030
   statement: C1 carries the BeliefSnapshot payload at version 1.0 from L1 to L2.
   owner: 03-contracts/C1-belief-to-valuation.md §1
   class: analytic
@@ -8493,7 +10403,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0841
+- id: CLM-1031
   statement: C1 carries everything Valuation may know about the world, as of a knowledge-time boundary, over the hot window, and nothing else reaches Valuation.
   owner: 03-contracts/C1-belief-to-valuation.md §1
   class: analytic
@@ -8503,7 +10413,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0842
+- id: CLM-1032
   statement: Valuation has no access to the Belief store, to the network, or to a clock.
   owner: 03-contracts/C1-belief-to-valuation.md §1
   class: analytic
@@ -8513,7 +10423,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0843
+- id: CLM-1033
   statement: The C1 envelope adds scenarioCount, the shared scenario axis length S; scenarioWeights, non-negative and summing to 1; slotStart, the first slot of the window; and slotCount, equal to H_hot.
   owner: 03-contracts/C1-belief-to-valuation.md §1
   class: analytic
@@ -8523,7 +10433,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0844
+- id: CLM-1034
   statement: socNow is measured, and if telemetry is lost the engine escalates rather than defaulting.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
@@ -8533,7 +10443,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0845
+- id: CLM-1035
   statement: The operating band socMin to socMax includes warranty derates.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
@@ -8543,7 +10453,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0846
+- id: CLM-1036
   statement: pMaxDischarge and pMaxCharge are per-slot and may derate on temperature or state of health.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
@@ -8553,7 +10463,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0847
+- id: CLM-1037
   statement: sohFraction is informational, and derates flow through pMax* and socMax rather than through it.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
@@ -8563,7 +10473,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0848
+- id: CLM-1038
   statement: poiImportLimit and poiExportLimit are the contractual and physical POI envelope, per slot.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
@@ -8573,7 +10483,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0849
+- id: CLM-1039
   statement: auxLoad is explicit per slot and not folded into η, and its conservative default is the site maximum.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
@@ -8583,7 +10493,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0850
+- id: CLM-1040
   statement: The conservative default for load is a high quantile, because a high load protects the peak.
   owner: 03-contracts/C1-belief-to-valuation.md §3
   class: analytic
@@ -8593,7 +10503,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0851
+- id: CLM-1041
   statement: The conservative default for pv is zero, because zero PV protects the peak.
   owner: 03-contracts/C1-belief-to-valuation.md §3
   class: analytic
@@ -8603,7 +10513,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0852
+- id: CLM-1042
   statement: loadQuality and pvQuality are per-element QualityStamps, carrying a measured prefix and a forecast suffix.
   owner: 03-contracts/C1-belief-to-valuation.md §3
   class: analytic
@@ -8613,7 +10523,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0853
+- id: CLM-1043
   statement: daPrice is scenario- and slot-indexed in EUR/MWh with range [-9999, 9999], and negative prices are legal and material.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: regulatory
@@ -8623,7 +10533,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0854
+- id: CLM-1044
   statement: daCleared is present only post-gate and null pre-gate.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: analytic
@@ -8633,7 +10543,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0855
+- id: CLM-1045
   statement: idSpreadBelief is a half-spread belief whose wide default suppresses trading.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: analytic
@@ -8643,7 +10553,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0856
+- id: CLM-1046
   statement: afrrCapPrice is per product block with a zero default, so the engine does not chase reserve revenue on invented prices.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: analytic
@@ -8653,7 +10563,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0857
+- id: CLM-1047
   statement: activationUp and activationDn are fractions of committed MW in [0,1] and are scenario-consistent with prices.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: analytic
@@ -8663,7 +10573,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0858
+- id: CLM-1048
   statement: imbalancePrice is a reBAP-type belief.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: regulatory
@@ -8673,7 +10583,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0859
+- id: CLM-1049
   statement: Every scenario-indexed array shares the axis, so index s denotes the same state of the world in load, pv, daPrice, activationUp and all others.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: analytic
@@ -8683,7 +10593,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0860
+- id: CLM-1050
   statement: Violation of the shared scenario axis is a hard failure and not a warning.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: analytic
@@ -8693,7 +10603,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0861
+- id: CLM-1051
   statement: idReliableVolumeBuy and idReliableVolumeSell are the volumes that may be counted on, defaulting to zero.
   owner: 03-contracts/C1-belief-to-valuation.md §5
   class: analytic
@@ -8703,7 +10613,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0862
+- id: CLM-1052
   statement: idVolumeByPriceBand is an optional refinement pending the fill-fidelity decision.
   owner: 03-contracts/C1-belief-to-valuation.md §5
   class: analytic
@@ -8713,7 +10623,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0863
+- id: CLM-1053
   statement: The liquidity beliefs are volumes only, with no price field, which is the C1-side enforcement of the rule that fill probability constrains the Planner but never prices for it.
   owner: 03-contracts/C1-belief-to-valuation.md §5
   class: analytic
@@ -8723,7 +10633,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0864
+- id: CLM-1054
   statement: Prices for quoting reach the quoting policy by a different route, outside C2.
   owner: 03-contracts/C1-belief-to-valuation.md §5
   class: analytic
@@ -8733,7 +10643,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0865
+- id: CLM-1055
   statement: activeRegimes is a non-empty list of TariffRegimeIds taken from the calendar.
   owner: 03-contracts/C1-belief-to-valuation.md §6
   class: analytic
@@ -8743,7 +10653,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0866
+- id: CLM-1056
   statement: peakPrice is carried per regime in EUR/kW/period and is non-negative.
   owner: 03-contracts/C1-belief-to-valuation.md §6
   class: regulatory
@@ -8753,7 +10663,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0867
+- id: CLM-1057
   statement: leviesAndTaxes is a closed enumerated list of the non-reducible components, summed.
   owner: 03-contracts/C1-belief-to-valuation.md §6
   class: regulatory
@@ -8763,7 +10673,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0868
+- id: CLM-1058
   statement: enfgLevies is the reducible EnFG components summed, charged on (21) and never on metered import.
   owner: 03-contracts/C1-belief-to-valuation.md §6
   class: regulatory
@@ -8773,7 +10683,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0869
+- id: CLM-1059
   statement: isHlzf comes from the DSO HLZF table and its conservative default is true, inside the window.
   owner: 03-contracts/C1-belief-to-valuation.md §6
   class: analytic
@@ -8783,7 +10693,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0870
+- id: CLM-1060
   statement: awPositive and anzulegenderWert are derived in L1 §4.2.1 and not ingested.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: analytic
@@ -8793,7 +10703,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0871
+- id: CLM-1061
   statement: awPositive carries (24)¼, is a realised parameter within the settled day-ahead horizon and scenario-indexed beyond it, and its conservative default of false forfeits the premium.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: analytic
@@ -8803,7 +10713,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0872
+- id: CLM-1062
   statement: anzulegenderWert is AW, static per plant and EEG vintage.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: regulatory
@@ -8813,7 +10723,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0873
+- id: CLM-1063
   statement: zuordnungsFaktor is ZF, power-weighted, and sums to 1 across plants.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: regulatory
@@ -8823,7 +10733,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0874
+- id: CLM-1064
   statement: marktwertMonth is MW_month, derived per scenario from national spot and national solar generation on the shared axis, and never an independent series.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: analytic
@@ -8833,7 +10743,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0875
+- id: CLM-1065
   statement: commonEegVintage is true only when every plant shares a § 51 or § 51b threshold, which is what makes the AW forfeit simultaneous and collapses A5 to A1, and false forbids the collapse.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: regulatory
@@ -8843,7 +10753,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0876
+- id: CLM-1066
   statement: The premium is MAX[anzulegenderWert − marktwertMonth; 0], which is convex in marktwertMonth.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: analytic
@@ -8853,7 +10763,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0877
+- id: CLM-1067
   statement: marktwertMonth crosses as [S] rather than as a scalar because a point forecast understates the premium, most severely when AW and MW_month are close.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: analytic
@@ -8863,7 +10773,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0878
+- id: CLM-1068
   statement: blockIndex maps each slot to its aFRR product block.
   owner: 03-contracts/C1-belief-to-valuation.md §7
   class: analytic
@@ -8873,7 +10783,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0879
+- id: CLM-1069
   statement: blockSlots carries the aFRR block lengths and comes from the calendar.
   owner: 03-contracts/C1-belief-to-valuation.md §7
   class: regulatory
@@ -8883,7 +10793,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0880
+- id: CLM-1070
   statement: sustainDuration is the prequalification requirement D.
   owner: 03-contracts/C1-belief-to-valuation.md §7
   class: regulatory
@@ -8893,7 +10803,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0881
+- id: CLM-1071
   statement: minBidMw and bidStepMw are the aFRR product granularity and are strictly positive.
   owner: 03-contracts/C1-belief-to-valuation.md §7
   class: regulatory
@@ -8903,7 +10813,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0882
+- id: CLM-1072
   statement: symmetricProduct declares whether up and down reserve must be equal.
   owner: 03-contracts/C1-belief-to-valuation.md §7
   class: regulatory
@@ -8913,7 +10823,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0883
+- id: CLM-1073
   statement: seriesQuality carries one QualityStamp per series and is the basis of the risk multiplier.
   owner: 03-contracts/C1-belief-to-valuation.md §8
   class: analytic
@@ -8923,7 +10833,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0884
+- id: CLM-1074
   statement: degradationMode is read from L0 and echoed in C1 so Valuation need not consult L0 separately.
   owner: 03-contracts/C1-belief-to-valuation.md §8
   class: analytic
@@ -8933,7 +10843,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0885
+- id: CLM-1075
   statement: criticalMissing is empty in NORMAL, and a non-empty criticalMissing implies a mode of at least DEFENSIVE.
   owner: 03-contracts/C1-belief-to-valuation.md §8
   class: analytic
@@ -8943,7 +10853,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0886
+- id: CLM-1076
   statement: socMin ≤ socNow ≤ socMax, and violation is a HALT because telemetry or the model is wrong.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
@@ -8953,7 +10863,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0887
+- id: CLM-1077
   statement: No fact inside a BeliefSnapshot has knowledgeTime greater than asOf, and violation is a HALT for lookahead.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
@@ -8963,7 +10873,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0888
+- id: CLM-1078
   statement: Every [H] array in C1 has length slotCount, and violation is a HALT.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
@@ -8973,7 +10883,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0889
+- id: CLM-1079
   statement: blockIndex is non-decreasing and covers every slot exactly once, and violation is a HALT.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
@@ -8983,7 +10893,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0890
+- id: CLM-1080
   statement: scenarioWeights are non-negative and sum to 1 within 1e-9, and violation is a HALT.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
@@ -8993,7 +10903,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0891
+- id: CLM-1081
   statement: Reduced-ensemble marginal means match the full ensemble within tolerance, and violation warns and sets DEGRADED.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
@@ -9004,7 +10914,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-0892
+- id: CLM-1082
   statement: pMaxCharge and pMaxDischarge are non-negative and finite for every slot, and violation is a HALT.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
@@ -9014,7 +10924,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0893
+- id: CLM-1083
   statement: etaCharge · etaDischarge ≤ 1, and violation is a HALT.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
@@ -9024,7 +10934,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0894
+- id: CLM-1084
   statement: Every C1 field marked Null = no is present or is listed in criticalMissing, and otherwise the engine escalates per the ladder.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
@@ -9034,7 +10944,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0895
+- id: CLM-1085
   statement: No handle, cursor or reference into the Belief store crosses C1.
   owner: 03-contracts/C1-belief-to-valuation.md §10
   class: analytic
@@ -9044,7 +10954,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0896
+- id: CLM-1086
   statement: No raw order-book data crosses C1; only the derived volume beliefs do.
   owner: 03-contracts/C1-belief-to-valuation.md §10
   class: analytic
@@ -9054,7 +10964,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0897
+- id: CLM-1087
   statement: No Planner or Settlement output crosses C1, because that arrives via L0 at a lag.
   owner: 03-contracts/C1-belief-to-valuation.md §10
   class: analytic
@@ -9064,7 +10974,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0898
+- id: CLM-1088
   statement: No wall-clock time crosses C1.
   owner: 03-contracts/C1-belief-to-valuation.md §10
   class: analytic
@@ -9074,7 +10984,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0899
+- id: CLM-1089
   statement: No model objects cross C1; only their evaluated outputs and their version hashes do.
   owner: 03-contracts/C1-belief-to-valuation.md §10
   class: analytic
@@ -9087,7 +10997,7 @@
 
 # ---- 03-contracts-b.tsv ----
 # ---- 03-contracts/C2 ----
-- id: CLM-0900
+- id: CLM-1090
   statement: C2 carries the ValuationBundle payload at version 1.0 from L2 to L3 and is the load-bearing seam.
   owner: 03-contracts/C2-valuation-to-planner.md §1
   class: analytic
@@ -9097,7 +11007,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0901
+- id: CLM-1091
   statement: Everything the Planner knows about economics arrives through C2, expressed in the closed algebra of five shapes.
   owner: 03-contracts/C2-valuation-to-planner.md §1
   class: analytic
@@ -9107,7 +11017,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0902
+- id: CLM-1092
   statement: The Planner has no access to Belief, to prices, or to scenario arrays.
   owner: 03-contracts/C2-valuation-to-planner.md §1
   class: analytic
@@ -9117,7 +11027,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0903
+- id: CLM-1093
   statement: compositionOrder records the stages actually applied, in order, for audit.
   owner: 03-contracts/C2-valuation-to-planner.md §1
   class: analytic
@@ -9127,7 +11037,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0904
+- id: CLM-1094
   statement: effectCoverage records which view owned which effect this tick.
   owner: 03-contracts/C2-valuation-to-planner.md §1
   class: analytic
@@ -9137,7 +11047,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0905
+- id: CLM-1095
   statement: unclaimedEffects are priced at zero, and an empty unclaimedEffects is the expected case.
   owner: 03-contracts/C2-valuation-to-planner.md §1
   class: analytic
@@ -9147,7 +11057,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0906
+- id: CLM-1096
   statement: "Terms refer to decision variables by a closed enumeration: the Planner owns the variables and Valuation may only name them."
   owner: 03-contracts/C2-valuation-to-planner.md §2
   class: analytic
@@ -9157,7 +11067,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0907
+- id: CLM-1097
   statement: The decision variable vocabulary is pCharge, pDischarge, soc, socTerminal, pPoi, zPeak, vDaBuy, vDaSell, vIdBuy, vIdSell, rUp, rDn, eAfrrUp, eAfrrDn, eImbalance, q and aDel.
   owner: 03-contracts/C2-valuation-to-planner.md §2
   class: analytic
@@ -9167,7 +11077,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0908
+- id: CLM-1098
   statement: pCharge and pDischarge are in the battery frame, pPoi and zPeak in the POI frame.
   owner: 03-contracts/C2-valuation-to-planner.md §2
   class: analytic
@@ -9177,7 +11087,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0909
+- id: CLM-1099
   statement: aDel spans the accumulators j in {(3),(5),(6),(9),(11),(26),(29)}.
   owner: 03-contracts/C2-valuation-to-planner.md §2
   class: analytic
@@ -9187,7 +11097,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0910
+- id: CLM-1100
   statement: Like zPeak, aDel is not a free decision because the Planner's state equations pin it, but a term must be able to name it because DelineationView prices it at λ_j = ∂V_del/∂A_j.
   owner: 03-contracts/C2-valuation-to-planner.md §2
   class: analytic
@@ -9197,7 +11107,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0911
+- id: CLM-1101
   statement: "The C2 vocabulary is meter-shaped only: no symbol attributes energy to a path or to a named installation."
   owner: 03-contracts/C2-valuation-to-planner.md §2
   class: analytic
@@ -9207,7 +11117,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0912
+- id: CLM-1102
   statement: The delineation's per-slot variables Z1NB, Z1NE, Z2V, Z2E and the MIN selectors are Planner-internal and deliberately absent from C2, because no lever may carry a delineation coefficient.
   owner: 03-contracts/C2-valuation-to-planner.md §2
   class: analytic
@@ -9217,7 +11127,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0913
+- id: CLM-1103
   statement: Adding a symbol to the decision variable vocabulary is a major version bump.
   owner: 03-contracts/C2-valuation-to-planner.md §2
   class: analytic
@@ -9227,7 +11137,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0914
+- id: CLM-1104
   statement: Every term carries a common header of termId, originView, effect, base, slots, mandatory and confidence.
   owner: 03-contracts/C2-valuation-to-planner.md §3
   class: analytic
@@ -9237,7 +11147,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0915
+- id: CLM-1105
   statement: termId is stable and unique within the bundle.
   owner: 03-contracts/C2-valuation-to-planner.md §3
   class: analytic
@@ -9247,7 +11157,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0916
+- id: CLM-1106
   statement: The effect field is from the closed enumeration and is the basis of the exclusivity check.
   owner: 03-contracts/C2-valuation-to-planner.md §3
   class: analytic
@@ -9257,7 +11167,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0917
+- id: CLM-1107
   statement: The base field is one of PoiImport, BatteryThroughput, MarketVolume, TerminalSoc, ReserveCapacity or Delineation.
   owner: 03-contracts/C2-valuation-to-planner.md §3
   class: analytic
@@ -9267,7 +11177,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0918
+- id: CLM-1108
   statement: If mandatory is true, dropping the term invalidates the plan, and peak protection is mandatory.
   owner: 03-contracts/C2-valuation-to-planner.md §3
   class: analytic
@@ -9277,7 +11187,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0919
+- id: CLM-1109
   statement: The confidence field is propagated from input quality, feeds riskProfile, and never drives a branch.
   owner: 03-contracts/C2-valuation-to-planner.md §3
   class: analytic
@@ -9287,7 +11197,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0920
+- id: CLM-1110
   statement: A LinearTerm carries a variable from the vocabulary, a per-slot coefficient in EUR per variable unit, and a sense of Maximize or Minimize.
   owner: 03-contracts/C2-valuation-to-planner.md §3.1
   class: analytic
@@ -9297,7 +11207,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0921
+- id: CLM-1111
   statement: A PwlTerm carries the abscissa variable, strictly increasing breakpointsX in variable units, breakpointsY in EUR, a curvature, a sense, and an extrapolation of Clamp or Forbid.
   owner: 03-contracts/C2-valuation-to-planner.md §3.2
   class: analytic
@@ -9307,7 +11217,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0922
+- id: CLM-1112
   statement: A PwlTerm's curvature is verified against the breakpoints and not trusted.
   owner: 03-contracts/C2-valuation-to-planner.md §3.2
   class: analytic
@@ -9317,7 +11227,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0923
+- id: CLM-1113
   statement: An extrapolation of Forbid adds bounds at the end breakpoints.
   owner: 03-contracts/C2-valuation-to-planner.md §3.2
   class: analytic
@@ -9327,7 +11237,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0924
+- id: CLM-1114
   statement: The combinations (Concave, Maximize) and (Convex, Minimize) require no binaries and are LP-exact.
   owner: 03-contracts/C2-valuation-to-planner.md §3.2
   class: analytic
@@ -9337,7 +11247,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0925
+- id: CLM-1115
   statement: Any other curvature-sense combination, and any General curvature, requires SOS2 or binaries.
   owner: 03-contracts/C2-valuation-to-planner.md §3.2
   class: analytic
@@ -9347,7 +11257,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0926
+- id: CLM-1116
   statement: The bundle must declare the binary count in problemClassHint so a solve-time regression is attributable to a specific economic modelling choice.
   owner: 03-contracts/C2-valuation-to-planner.md §3.2
   class: analytic
@@ -9357,7 +11267,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0927
+- id: CLM-1117
   statement: An EpigraphTerm carries epigraphVar, dominates, overSlots, floor, unitPrice and prorationFactor.
   owner: 03-contracts/C2-valuation-to-planner.md §3.3
   class: analytic
@@ -9367,7 +11277,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0928
+- id: CLM-1118
   statement: The overSlots subset is how HLZF is expressed.
   owner: 03-contracts/C2-valuation-to-planner.md §3.3
   class: analytic
@@ -9377,7 +11287,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0929
+- id: CLM-1119
   statement: The epigraph floor is the realised peak so far, taken from L0.
   owner: 03-contracts/C2-valuation-to-planner.md §3.3
   class: analytic
@@ -9387,7 +11297,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0930
+- id: CLM-1120
   statement: prorationFactor is the fraction of the accounting period inside this horizon.
   owner: 03-contracts/C2-valuation-to-planner.md §3.3
   class: analytic
@@ -9397,7 +11307,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0931
+- id: CLM-1121
   statement: Because the horizon is shorter than the accounting period, the full period charge must not be applied to a partial window.
   owner: 03-contracts/C2-valuation-to-planner.md §3.3
   class: analytic
@@ -9407,7 +11317,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0932
+- id: CLM-1122
   statement: The remaining accounting-period value is carried by V.
   owner: 03-contracts/C2-valuation-to-planner.md §3.3
   class: analytic
@@ -9417,7 +11327,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0933
+- id: CLM-1123
   statement: Mis-setting prorationFactor is a classic overweighting of peak.
   owner: 03-contracts/C2-valuation-to-planner.md §3.3
   class: analytic
@@ -9427,7 +11337,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0934
+- id: CLM-1124
   statement: A BoundTerm carries a target variable or linear expression, per-slot lower and upper bounds either of which may be null for a one-sided bound, a reason, and an optional softPenalty where null means a hard bound.
   owner: 03-contracts/C2-valuation-to-planner.md §3.4
   class: analytic
@@ -9437,7 +11347,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0935
+- id: CLM-1125
   statement: A BoundTerm's reason is one of Physical, Contractual, Liquidity, Risk or Regulatory.
   owner: 03-contracts/C2-valuation-to-planner.md §3.4
   class: analytic
@@ -9447,7 +11357,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0936
+- id: CLM-1126
   statement: "Feasibility restoration relaxes bounds in a declared order: Risk first, then Liquidity, and never Physical or Regulatory."
   owner: 03-contracts/C2-valuation-to-planner.md §3.4
   class: analytic
@@ -9457,7 +11367,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0937
+- id: CLM-1127
   statement: Without the reason tag an infeasible model can only be relaxed blindly.
   owner: 03-contracts/C2-valuation-to-planner.md §3.4
   class: analytic
@@ -9467,7 +11377,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0938
+- id: CLM-1128
   statement: A CouplingConstraint carries a kind from the closed set ReserveCorridor, ReservePowerHeadroom, Commitment, ChanceConstraint or Custom, its rows as linear rows per slot or per block, a scenarioScope, and a declared introducesBinaries count.
   owner: 03-contracts/C2-valuation-to-planner.md §3.5
   class: analytic
@@ -9477,7 +11387,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0939
+- id: CLM-1129
   statement: A CouplingConstraint's declared introducesBinaries is checked against what is built.
   owner: 03-contracts/C2-valuation-to-planner.md §3.5
   class: analytic
@@ -9487,7 +11397,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0940
+- id: CLM-1130
   statement: The value function is carried separately from the term list because it is structurally distinctive and its staleness is handled specially.
   owner: 03-contracts/C2-valuation-to-planner.md §4
   class: analytic
@@ -9497,7 +11407,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0941
+- id: CLM-1131
   statement: vSocBreakpointsX is strictly increasing and spans [socMin, socMax].
   owner: 03-contracts/C2-valuation-to-planner.md §4
   class: analytic
@@ -9507,7 +11417,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0942
+- id: CLM-1132
   statement: vSocSlopes is strictly decreasing, which is concavity, and this is asserted.
   owner: 03-contracts/C2-valuation-to-planner.md §4
   class: analytic
@@ -9517,7 +11427,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0943
+- id: CLM-1133
   statement: The value function is conditioned on (peakState, qualState, calendarContext).
   owner: 03-contracts/C2-valuation-to-planner.md §4
   class: analytic
@@ -9527,7 +11437,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0944
+- id: CLM-1134
   statement: The value function carries producedAt, the slot when the slow loop produced it, and a validityHorizon beyond which a staleness penalty applies.
   owner: 03-contracts/C2-valuation-to-planner.md §4
   class: analytic
@@ -9537,7 +11447,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0945
+- id: CLM-1135
   statement: stalenessPenalty is a shrink factor in [0,1] applied when the value function is stale.
   owner: 03-contracts/C2-valuation-to-planner.md §4
   class: analytic
@@ -9548,7 +11458,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-0946
+- id: CLM-1136
   statement: The value function carries an artefactHash for the Merkle chain.
   owner: 03-contracts/C2-valuation-to-planner.md §4
   class: analytic
@@ -9558,7 +11468,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0947
+- id: CLM-1137
   statement: rUpMax and rDnMax are the per-block reserve envelope from prequalification and asset limits.
   owner: 03-contracts/C2-valuation-to-planner.md §5
   class: regulatory
@@ -9568,7 +11478,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0948
+- id: CLM-1138
   statement: capacityValueCurveUp and capacityValueCurveDn are per-block PwlTerms, concave in offered MW, carrying the expected value of the bid curve.
   owner: 03-contracts/C2-valuation-to-planner.md §5
   class: analytic
@@ -9578,7 +11488,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0949
+- id: CLM-1139
   statement: deliveryObligation carries already-confirmed awards from L0 as a hard commitment.
   owner: 03-contracts/C2-valuation-to-planner.md §5
   class: analytic
@@ -9588,7 +11498,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0950
+- id: CLM-1140
   statement: deliveryObligation is separated from the offer decision because confirmed awards are physical obligations that survive every degradation mode, whereas offers are decisions.
   owner: 03-contracts/C2-valuation-to-planner.md §5
   class: analytic
@@ -9598,7 +11508,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0951
+- id: CLM-1141
   statement: The risk profile is how input quality reaches the optimisation without becoming control flow.
   owner: 03-contracts/C2-valuation-to-planner.md §6
   class: analytic
@@ -9608,7 +11518,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0952
+- id: CLM-1142
   statement: cvarLevel is widened when quality degrades.
   owner: 03-contracts/C2-valuation-to-planner.md §6
   class: analytic
@@ -9619,7 +11529,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-0953
+- id: CLM-1143
   statement: cvarWeight is the weight on the CVaR term against expectation.
   owner: 03-contracts/C2-valuation-to-planner.md §6
   class: analytic
@@ -9629,7 +11539,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0954
+- id: CLM-1144
   statement: chanceLevel is the ε for SOC feasibility chance constraints.
   owner: 03-contracts/C2-valuation-to-planner.md §6
   class: analytic
@@ -9639,7 +11549,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0955
+- id: CLM-1145
   statement: positionScale is a multiplier in [0,1] on speculative position bounds.
   owner: 03-contracts/C2-valuation-to-planner.md §6
   class: analytic
@@ -9649,7 +11559,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0956
+- id: CLM-1146
   statement: peakSafetyMarginKw is added to the epigraph floor under degraded load quality.
   owner: 03-contracts/C2-valuation-to-planner.md §6
   class: analytic
@@ -9660,7 +11570,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-0957
+- id: CLM-1147
   statement: driverSummary records which quality issues moved which parameter, for the audit trail.
   owner: 03-contracts/C2-valuation-to-planner.md §6
   class: analytic
@@ -9670,7 +11580,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0958
+- id: CLM-1148
   statement: The problem class hint is computed by the composer from the terms present, before the solver sees anything.
   owner: 03-contracts/C2-valuation-to-planner.md §7
   class: analytic
@@ -9680,7 +11590,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0959
+- id: CLM-1149
   statement: isLinearProgram is true when no term introduces a binary.
   owner: 03-contracts/C2-valuation-to-planner.md §7
   class: analytic
@@ -9690,7 +11600,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0960
+- id: CLM-1150
   statement: binariesByOrigin attributes the binary count to the term that caused it.
   owner: 03-contracts/C2-valuation-to-planner.md §7
   class: analytic
@@ -9700,7 +11610,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0961
+- id: CLM-1151
   statement: The problem class hint is the instrument that keeps solve time explainable, and when a solve slows down binariesByOrigin names the term responsible.
   owner: 03-contracts/C2-valuation-to-planner.md §7
   class: analytic
@@ -9710,7 +11620,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0962
+- id: CLM-1152
   statement: No (effect, variable, slot) triple is priced by more than one term, and violation is a HALT for double counting.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9720,7 +11630,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0963
+- id: CLM-1153
   statement: Every term's originView is the owner of its effect in the ownership matrix, and violation is a HALT.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9730,7 +11640,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0964
+- id: CLM-1154
   statement: Every term references only symbols in the C2 vocabulary, and violation is a HALT.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9740,7 +11650,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0965
+- id: CLM-1155
   statement: Every mandatory term is present, and violation is a HALT.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9750,7 +11660,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0966
+- id: CLM-1156
   statement: unclaimedEffects are logged, and if any is in the critical set the engine escalates.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9760,7 +11670,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0967
+- id: CLM-1157
   statement: No scenario array and no Belief handle appears anywhere in the bundle, and violation is a HALT.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9770,7 +11680,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0968
+- id: CLM-1158
   statement: compositionOrder satisfies the stage precondition table, and violation is a HALT.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9780,7 +11690,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0969
+- id: CLM-1159
   statement: binariesByOrigin sums to binaryCount, and violation warns.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9790,7 +11700,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0970
+- id: CLM-1160
   statement: Every BoundTerm has a reason and no Physical bound is soft, and violation is a HALT.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9800,7 +11710,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0971
+- id: CLM-1161
   statement: FillProbView emits only BoundTerms and has no priced term, and violation is a HALT.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9810,7 +11720,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0972
+- id: CLM-1162
   statement: No term references a provenance flow attributing energy to a path or to a named installation, and violation is a HALT.
   owner: 03-contracts/C2-valuation-to-planner.md §8
   class: analytic
@@ -9820,7 +11730,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0973
+- id: CLM-1163
   statement: "Prices do not cross C2: the Planner sees coefficients on variables rather than a price series, which is what stops it re-deriving economics."
   owner: 03-contracts/C2-valuation-to-planner.md §9
   class: analytic
@@ -9830,7 +11740,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0974
+- id: CLM-1164
   statement: Scenario arrays do not cross C2, and scenario structure reaches the Planner only through CouplingConstraint rows with a scenarioScope and through terms already aggregated by Valuation.
   owner: 03-contracts/C2-valuation-to-planner.md §9
   class: analytic
@@ -9840,7 +11750,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0975
+- id: CLM-1165
   statement: Delegates and expression trees do not cross C2.
   owner: 03-contracts/C2-valuation-to-planner.md §9
   class: analytic
@@ -9850,7 +11760,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0976
+- id: CLM-1166
   statement: "Nothing from Belief crosses C2 unpriced: if the Planner needs it, a view must own it and price or bound it."
   owner: 03-contracts/C2-valuation-to-planner.md §9
   class: analytic
@@ -9863,7 +11773,7 @@
 
 # ---- 03-contracts-c.tsv ----
 # ---- 03-contracts/C3 and C4 ----
-- id: CLM-0977
+- id: CLM-1167
   statement: C3 carries the ExecutionIntent payload at version 1.0 from L3 to L4.
   owner: 03-contracts/C3-planner-to-execution.md §1
   class: analytic
@@ -9873,7 +11783,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0978
+- id: CLM-1168
   statement: Execution is the pre-existing market simulator, treated as an external system.
   owner: 03-contracts/C3-planner-to-execution.md §1
   class: analytic
@@ -9883,7 +11793,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0979
+- id: CLM-1169
   statement: C3 is deliberately thin and carries intent only.
   owner: 03-contracts/C3-planner-to-execution.md §1
   class: analytic
@@ -9893,7 +11803,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0980
+- id: CLM-1170
   statement: The C3 envelope adds planId, the gate the submission targets, an optional supersedes naming the previous planId whose open orders it replaces, and the degradation mode.
   owner: 03-contracts/C3-planner-to-execution.md §1
   class: analytic
@@ -9903,7 +11813,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0981
+- id: CLM-1171
   statement: The degradation mode is echoed on C3 so Execution can refuse speculative flow in SAFE.
   owner: 03-contracts/C3-planner-to-execution.md §1
   class: analytic
@@ -9913,7 +11823,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0982
+- id: CLM-1172
   statement: An order intent carries one row per order with a stable intentId that survives replaces.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -9923,7 +11833,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0983
+- id: CLM-1173
   statement: The market field is one of Da, IdContinuous, IdAuction, AfrrCapacity or AfrrEnergy.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -9933,7 +11843,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0984
+- id: CLM-1174
   statement: productId comes from the market calendar.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: regulatory
@@ -9943,7 +11853,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0985
+- id: CLM-1175
   statement: The side field is in the market frame, where sell means discharge.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -9953,7 +11863,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0986
+- id: CLM-1176
   statement: limitPrice is tick-aligned and already rounded per the C0 rounding rule.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -9963,7 +11873,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0987
+- id: CLM-1177
   statement: volume is lot-aligned and strictly positive.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -9973,7 +11883,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0988
+- id: CLM-1178
   statement: validity is one of Ioc, Fok, GtdUntil(SlotId) or GtcUntilGate.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -9983,7 +11893,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0989
+- id: CLM-1179
   statement: An order intent's tag is one of Arbitrage, PeakShave, ReserveHedge, Rebalance or CommitmentCover.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -9993,7 +11903,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0990
+- id: CLM-1180
   statement: shadowValue is the Planner's indifference price, carried for audit only, and Execution must ignore it.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -10003,7 +11913,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0991
+- id: CLM-1181
   statement: urgency is carried for audit only.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -10013,7 +11923,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0992
+- id: CLM-1182
   statement: shadowValue and urgency cross the seam for settlement attribution rather than for execution, letting L5 answer whether the quoting policy traded through indifference without a private side channel between the Planner and the quoting policy.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -10023,7 +11933,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0993
+- id: CLM-1183
   statement: Execution does not read shadowValue or urgency, enforced by the adapter interface exposing a projection that omits them.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
@@ -10033,7 +11943,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0994
+- id: CLM-1184
   statement: DA requires a monotone schedule rather than a point order.
   owner: 03-contracts/C3-planner-to-execution.md §3
   class: regulatory
@@ -10043,7 +11953,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0995
+- id: CLM-1185
   statement: A DA bid curve carries price-ordered curvePoints and its slot.
   owner: 03-contracts/C3-planner-to-execution.md §3
   class: analytic
@@ -10053,7 +11963,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0996
+- id: CLM-1186
   statement: DA curve monotonicity is asserted rather than declared.
   owner: 03-contracts/C3-planner-to-execution.md §3
   class: analytic
@@ -10063,7 +11973,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0997
+- id: CLM-1187
   statement: Quantity must be non-increasing in price for a buy curve and non-decreasing for a sell curve.
   owner: 03-contracts/C3-planner-to-execution.md §3
   class: analytic
@@ -10073,7 +11983,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0998
+- id: CLM-1188
   statement: A non-monotone DA curve indicates a Planner formulation error, most often a missing coupling constraint, and is a HALT because such a curve is both rejected by the exchange and diagnostic of a deeper problem.
   owner: 03-contracts/C3-planner-to-execution.md §3
   class: analytic
@@ -10083,7 +11993,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0999
+- id: CLM-1189
   statement: The dispatch setpoint interface is fixed at C3 even though the physical controller is downstream of the Planner and out of scope.
   owner: 03-contracts/C3-planner-to-execution.md §4
   class: analytic
@@ -10093,7 +12003,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1000
+- id: CLM-1190
   statement: pSetpoint is in the battery frame over the near horizon H_near.
   owner: 03-contracts/C3-planner-to-execution.md §4
   class: analytic
@@ -10103,7 +12013,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1001
+- id: CLM-1191
   statement: socCorridorLower and socCorridorUpper are the band the controller must stay in to keep commitments feasible.
   owner: 03-contracts/C3-planner-to-execution.md §4
   class: analytic
@@ -10113,7 +12023,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1002
+- id: CLM-1192
   statement: reserveObligationUp and reserveObligationDn are the confirmed awards the controller must be able to serve.
   owner: 03-contracts/C3-planner-to-execution.md §4
   class: analytic
@@ -10123,7 +12033,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1003
+- id: CLM-1193
   statement: H_near is short, typically the next few slots.
   owner: 03-contracts/C3-planner-to-execution.md §4
   class: analytic
@@ -10134,7 +12044,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1004
+- id: CLM-1194
   statement: "The corridor rather than the setpoint is the binding instruction: the controller may deviate from the setpoint to follow an activation signal but never out of the corridor."
   owner: 03-contracts/C3-planner-to-execution.md §4
   class: analytic
@@ -10144,7 +12054,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1005
+- id: CLM-1195
   statement: Every intent is physically deliverable given SOC, power and POI limits under the planned trajectory, and violation is a HALT.
   owner: 03-contracts/C3-planner-to-execution.md §5
   class: analytic
@@ -10154,7 +12064,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1006
+- id: CLM-1196
   statement: Confirmed commitments in L0 are covered by the plan, and violation is a HALT.
   owner: 03-contracts/C3-planner-to-execution.md §5
   class: analytic
@@ -10164,7 +12074,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1007
+- id: CLM-1197
   statement: No two intents exist for the same product and slot on the same side without a replacesIntentId chain, and violation is a HALT.
   owner: 03-contracts/C3-planner-to-execution.md §5
   class: analytic
@@ -10174,7 +12084,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1008
+- id: CLM-1198
   statement: Prices are tick-aligned and volumes lot-aligned, and violation is a HALT.
   owner: 03-contracts/C3-planner-to-execution.md §5
   class: analytic
@@ -10184,7 +12094,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1009
+- id: CLM-1199
   statement: In SAFE mode only CommitmentCover and cancel intents are present, and violation is a HALT.
   owner: 03-contracts/C3-planner-to-execution.md §5
   class: analytic
@@ -10194,7 +12104,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1010
+- id: CLM-1200
   statement: Total planned discharge over any window respects energy availability including the reserve corridor, and violation is a HALT.
   owner: 03-contracts/C3-planner-to-execution.md §5
   class: analytic
@@ -10204,7 +12114,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1011
+- id: CLM-1201
   statement: No sell intent is priced below shadowValue and no buy intent above it, and violation warns and blocks the intent.
   owner: 03-contracts/C3-planner-to-execution.md §5
   class: analytic
@@ -10214,7 +12124,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1012
+- id: CLM-1202
   statement: The shadow-value price guard is a warning rather than a halt because covering a commitment at a loss is sometimes correct, but such intents must carry the CommitmentCover tag and an untagged violation is blocked.
   owner: 03-contracts/C3-planner-to-execution.md §5
   class: analytic
@@ -10224,7 +12134,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1013
+- id: CLM-1203
   statement: "No reason for an order crosses C3: Execution is strategy-independent and the tag is for settlement attribution only, not routing."
   owner: 03-contracts/C3-planner-to-execution.md §6
   class: analytic
@@ -10234,7 +12144,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1014
+- id: CLM-1204
   statement: No Belief, valuation or scenario data crosses C3.
   owner: 03-contracts/C3-planner-to-execution.md §6
   class: analytic
@@ -10244,7 +12154,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1015
+- id: CLM-1205
   statement: "No expectation about fills crosses C3: the Planner's fill beliefs stay upstream and C3 is an instruction, not a forecast."
   owner: 03-contracts/C3-planner-to-execution.md §6
   class: analytic
@@ -10254,7 +12164,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1016
+- id: CLM-1206
   statement: C4 carries the ExecutionOutcome payload at version 1.0 from L4 to L5.
   owner: 03-contracts/C4-execution-to-settlement.md §1
   class: analytic
@@ -10264,7 +12174,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1017
+- id: CLM-1207
   statement: Settlement can reconstruct the truth from the C4 payload plus metered reality alone, having no access to what the Planner intended, so ex-post accounting cannot be contaminated by ex-ante belief.
   owner: 03-contracts/C4-execution-to-settlement.md §1
   class: analytic
@@ -10274,7 +12184,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1018
+- id: CLM-1208
   statement: The C4 envelope adds settlementPeriod, isFinal versus provisional, and revisionOf for restatements, because meter data and imbalance prices arrive late and get corrected.
   owner: 03-contracts/C4-execution-to-settlement.md §1
   class: analytic
@@ -10284,7 +12194,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1019
+- id: CLM-1209
   statement: Provisional and final settlement data are both first-class.
   owner: 03-contracts/C4-execution-to-settlement.md §1
   class: analytic
@@ -10294,7 +12204,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1020
+- id: CLM-1210
   statement: The engine cannot wait for final data to keep operating and must not treat provisional data as final.
   owner: 03-contracts/C4-execution-to-settlement.md §1
   class: analytic
@@ -10304,7 +12214,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1021
+- id: CLM-1211
   statement: Every settlement artefact declares whether it is provisional or final, and a restatement is a new artefact referencing the old one, never an in-place edit.
   owner: 03-contracts/C4-execution-to-settlement.md §1
   class: analytic
@@ -10314,7 +12224,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1022
+- id: CLM-1212
   statement: intentId on a fill links back to C3 and is the only backward reference permitted, and it is an identifier rather than data.
   owner: 03-contracts/C4-execution-to-settlement.md §2
   class: analytic
@@ -10324,7 +12234,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1023
+- id: CLM-1213
   statement: A fill carries the executed price and the executed volume.
   owner: 03-contracts/C4-execution-to-settlement.md §2
   class: analytic
@@ -10334,7 +12244,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1024
+- id: CLM-1214
   statement: Fees are explicit on a fill and never netted into the price.
   owner: 03-contracts/C4-execution-to-settlement.md §2
   class: analytic
@@ -10344,7 +12254,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1025
+- id: CLM-1215
   statement: An unfilled order carries a disposition of Expired, Cancelled, Rejected or PartiallyFilled, a rejectReason populated for Rejected, and the residual volume that did not trade.
   owner: 03-contracts/C4-execution-to-settlement.md §3
   class: analytic
@@ -10354,7 +12264,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1026
+- id: CLM-1216
   statement: Unfilled orders are as important as fills, because without them the four-bucket error decomposition cannot separate being wrong about value from being unable to get the trade.
   owner: 03-contracts/C4-execution-to-settlement.md §3
   class: analytic
@@ -10364,7 +12274,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1027
+- id: CLM-1217
   statement: awardedUp and awardedDn are per block and are the binding obligation.
   owner: 03-contracts/C4-execution-to-settlement.md §4
   class: regulatory
@@ -10374,7 +12284,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1028
+- id: CLM-1218
   statement: clearingPriceUp and clearingPriceDn are per block in EUR/MW/h.
   owner: 03-contracts/C4-execution-to-settlement.md §4
   class: regulatory
@@ -10384,7 +12294,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1029
+- id: CLM-1219
   statement: activatedEnergyUp and activatedEnergyDn are realised per slot in kWh, with activation prices per slot in EUR/MWh.
   owner: 03-contracts/C4-execution-to-settlement.md §4
   class: regulatory
@@ -10394,7 +12304,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1030
+- id: CLM-1220
   statement: deliveryShortfall is per slot, and a non-zero value triggers the reserve delivery invariant.
   owner: 03-contracts/C4-execution-to-settlement.md §4
   class: analytic
@@ -10404,7 +12314,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1031
+- id: CLM-1221
   statement: meteredPoiImport and meteredPoiExport are the billing-relevant series.
   owner: 03-contracts/C4-execution-to-settlement.md §5
   class: regulatory
@@ -10414,7 +12324,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1032
+- id: CLM-1222
   statement: meteredLoad and meteredPv are sub-metered where available.
   owner: 03-contracts/C4-execution-to-settlement.md §5
   class: analytic
@@ -10424,7 +12334,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1033
+- id: CLM-1223
   statement: batteryChargeEnergy and batteryDischargeEnergy are measured at the battery terminal.
   owner: 03-contracts/C4-execution-to-settlement.md §5
   class: analytic
@@ -10434,7 +12344,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1034
+- id: CLM-1224
   statement: socMeasured is the end-of-slot state of charge.
   owner: 03-contracts/C4-execution-to-settlement.md §5
   class: analytic
@@ -10444,7 +12354,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1035
+- id: CLM-1225
   statement: Provisional meter data is routine.
   owner: 03-contracts/C4-execution-to-settlement.md §5
   class: empirical
@@ -10454,7 +12364,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1036
+- id: CLM-1226
   statement: imbalanceVolume is signed per slot, and the imbalance price is often final only weeks later.
   owner: 03-contracts/C4-execution-to-settlement.md §6
   class: regulatory
@@ -10464,7 +12374,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1037
+- id: CLM-1227
   statement: Every fillId references an intentId submitted in this run, and violation is a HALT for a phantom fill.
   owner: 03-contracts/C4-execution-to-settlement.md §7
   class: analytic
@@ -10474,7 +12384,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1038
+- id: CLM-1228
   statement: Filled volume is at most the intended volume per intent across all fills, and violation is a HALT.
   owner: 03-contracts/C4-execution-to-settlement.md §7
   class: analytic
@@ -10484,7 +12394,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1039
+- id: CLM-1229
   statement: The energy balance poiImport − poiExport = load − pv + chargeEnergy − dischargeEnergy holds within meter tolerance, warning if provisional and halting if final.
   owner: 03-contracts/C4-execution-to-settlement.md §7
   class: analytic
@@ -10495,7 +12405,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1040
+- id: CLM-1230
   statement: deliveryShortfall equals zero, and violation alerts and halts because a reserve delivery failure is a prequalification risk.
   owner: 03-contracts/C4-execution-to-settlement.md §7
   class: regulatory
@@ -10505,7 +12415,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1041
+- id: CLM-1231
   statement: socMeasured is consistent with charge and discharge energy and η within tolerance, and violation warns because drift indicates an η or SOH model error.
   owner: 03-contracts/C4-execution-to-settlement.md §7
   class: analytic
@@ -10516,7 +12426,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1042
+- id: CLM-1232
   statement: Every reserve award has a corresponding entry in the commitment ledger by end of tick, and violation is a HALT.
   owner: 03-contracts/C4-execution-to-settlement.md §7
   class: analytic
@@ -10526,7 +12436,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1043
+- id: CLM-1233
   statement: Persistent divergence between modelled and measured SOC is the earliest available signal that the efficiency or degradation model has drifted, and it is cheap to monitor.
   owner: 03-contracts/C4-execution-to-settlement.md §7
   class: empirical
@@ -10537,7 +12447,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1044
+- id: CLM-1234
   statement: The SOC consistency check feeds the model-error bucket in L5.
   owner: 03-contracts/C4-execution-to-settlement.md §7
   class: analytic
@@ -10547,7 +12457,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1045
+- id: CLM-1235
   statement: No Planner reasoning crosses C4; only intentId as an opaque key.
   owner: 03-contracts/C4-execution-to-settlement.md §8
   class: analytic
@@ -10557,7 +12467,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1046
+- id: CLM-1236
   statement: No Valuation output crosses C4.
   owner: 03-contracts/C4-execution-to-settlement.md §8
   class: analytic
@@ -10567,7 +12477,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1047
+- id: CLM-1237
   statement: No belief or forecast crosses C4, because Settlement recomputes truth from realised data and if it needed a forecast it would be doing valuation rather than settlement.
   owner: 03-contracts/C4-execution-to-settlement.md §8
   class: analytic
@@ -10580,7 +12490,7 @@
 
 # ---- 03-contracts-d.tsv ----
 # ---- 03-contracts/C5 ----
-- id: CLM-1048
+- id: CLM-1238
   statement: C5 carries the StateUpdate payload at version 1.0 from L5 to L0 and is the only backwards edge in the system.
   owner: 03-contracts/C5-settlement-to-state.md §1
   class: analytic
@@ -10590,7 +12500,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1049
+- id: CLM-1239
   statement: C5 is written at the end of a tick and read at the top of the next, so everything in it is by construction at least one tick old when used.
   owner: 03-contracts/C5-settlement-to-state.md §1
   class: analytic
@@ -10600,7 +12510,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1050
+- id: CLM-1240
   statement: The one-tick lag on C5 is explicit and priceable rather than hidden.
   owner: 03-contracts/C5-settlement-to-state.md §1
   class: analytic
@@ -10610,7 +12520,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1051
+- id: CLM-1241
   statement: The C5 envelope adds isFinal, revisionOf, and effectiveFrom, the slot from which the state applies.
   owner: 03-contracts/C5-settlement-to-state.md §1
   class: analytic
@@ -10620,7 +12530,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1052
+- id: CLM-1242
   statement: realisedPeak is carried per regime and is the epigraph floor for the next tick.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10630,7 +12540,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1053
+- id: CLM-1243
   statement: realisedPeakSlot records when the realised peak occurred and is diagnostically important.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10640,7 +12550,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1054
+- id: CLM-1244
   statement: periodStart and periodEnd are the accounting period bounds per regime, derived from the local calendar.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: regulatory
@@ -10650,7 +12560,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1055
+- id: CLM-1245
   statement: peakIsProvisional is true per regime while meter data is unfinal.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10660,7 +12570,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1056
+- id: CLM-1246
   statement: unsettledGapFrom is the earliest slot not yet settled, per regime.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10670,7 +12580,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1057
+- id: CLM-1247
   statement: headroomToPeakKw is the distance from realisedPeak to the level at which a new peak would be set, and is the continuous analogue of qualificationMarginHours.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10680,7 +12590,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1058
+- id: CLM-1248
   statement: peakCritical is true when headroomToPeakKw is inside the configured margin, or the horizon contains a slot whose CVaR peak belief exceeds realisedPeak.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10690,7 +12600,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1059
+- id: CLM-1249
   statement: peakCritical forces tier escalation and the protective bound.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10700,7 +12610,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1060
+- id: CLM-1250
   statement: peakCritical is written by Settlement and read by L2's PeakView and L3's escalation policy.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10710,7 +12620,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1061
+- id: CLM-1251
   statement: peakCritical and qualCritical are both computed by Settlement and never by the Planner, so the escalation trigger cannot be influenced by the thing it is meant to guard.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10720,7 +12630,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1062
+- id: CLM-1252
   statement: unsettledGapFrom is what makes the lag safe.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10730,7 +12640,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1063
+- id: CLM-1253
   statement: The Planner knows the realised peak is authoritative only up to unsettledGapFrom and treats the gap conservatively, using its own modelled POI trajectory as a provisional peak contribution rather than assuming the gap contained nothing.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
@@ -10740,7 +12650,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1064
+- id: CLM-1254
   statement: annualEnergyKwh is accumulated in the qualification year.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: regulatory
@@ -10750,7 +12660,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1065
+- id: CLM-1255
   statement: annualPeakKw is the denominator of full-load hours.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: regulatory
@@ -10760,7 +12670,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1066
+- id: CLM-1256
   statement: fullLoadHours is annualEnergy divided by annualPeak.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: regulatory
@@ -10770,7 +12680,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1067
+- id: CLM-1257
   statement: hlzfPeakKw is the peak within HLZF windows only.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: regulatory
@@ -10780,7 +12690,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1068
+- id: CLM-1258
   statement: qualificationStatus is one of Qualified, AtRisk, Lost or NotApplicable, per applicable §19(2) path.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: regulatory
@@ -10790,7 +12700,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1069
+- id: CLM-1259
   statement: qualificationMarginHours is the distance to the threshold and drives qualCritical.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: analytic
@@ -10800,7 +12710,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1070
+- id: CLM-1260
   statement: projectedYearEndFlh is a forward projection from the slow loop.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: analytic
@@ -10810,7 +12720,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1071
+- id: CLM-1261
   statement: qualCritical is true within the configured margin and forces tier escalation and the protective bound.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: analytic
@@ -10820,7 +12730,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1072
+- id: CLM-1262
   statement: The margin is carried and not just the status, because a binary qualified flag tells the engine nothing until the moment it is too late, whereas the margin lets the value function price the approach to the cliff continuously.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: analytic
@@ -10830,7 +12740,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1073
+- id: CLM-1263
   statement: The delineation state carries month-to-date accumulators of the Abgrenzungsoption machinery, computed by Settlement Phase A from Z1 and Z2 alone.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10840,7 +12750,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1074
+- id: CLM-1264
   statement: Seven accumulators are carried and no others, because everything from (10) to (33) is a closed-form function of them.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10850,7 +12760,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1075
+- id: CLM-1265
   statement: mtdGridImport is (3), the gesamter Netzbezug, defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10860,7 +12770,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1076
+- id: CLM-1266
   statement: mtdStorageCharge is (5), the Verbrauch im Stromspeicher, defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10870,7 +12780,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1077
+- id: CLM-1267
   statement: mtdStorageDischarge is (6), the Erzeugung im Stromspeicher, defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10880,7 +12790,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1078
+- id: CLM-1268
   statement: mtdSimultaneousGridCharge is (9), the sum of MIN[Z1NB¼; Z2V¼], defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10890,7 +12800,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1079
+- id: CLM-1269
   statement: mtdStorageExport is (11), the sum of MIN[Z1NE¼; Z2E¼], defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10900,7 +12810,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1080
+- id: CLM-1270
   statement: mtdDirectFeedInAwPos is (26), direct feed-in in AW>0 hours only, defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10910,7 +12820,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1081
+- id: CLM-1271
   statement: mtdStorageExportAwPos is (29), storage feed-in in AW>0 hours only, defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10920,7 +12830,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1082
+- id: CLM-1272
   statement: The derived delineation quantities are published for readability and for the escalation triggers, are recomputable from the seven accumulators, and are carried so that four layers do not each re-derive them.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10930,7 +12840,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1083
+- id: CLM-1273
   statement: pvShare is (10)/(5), the PV share of charging, and sets the route split.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10940,7 +12850,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1084
+- id: CLM-1274
   statement: awPositiveShare is (30), a ratio, so a late-month AW=0 export dilutes the whole month's (28).
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10950,7 +12860,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1085
+- id: CLM-1275
   statement: saldierungsfaehig is (16), the grey route.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10960,7 +12870,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1086
+- id: CLM-1276
   statement: foerderfaehig is (32), the green route.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10970,7 +12880,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1087
+- id: CLM-1277
   statement: umlagebelasteterNetzbezug is (21), the base of EnfgLevies.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10980,7 +12890,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1088
+- id: CLM-1278
   statement: fremdtank is (12) and is expected to be zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -10990,7 +12900,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1089
+- id: CLM-1279
   statement: monthStart and monthEnd are Europe/Berlin civil-calendar bounds derived via CivilCalendar.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -11000,7 +12910,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1090
+- id: CLM-1280
   statement: slotsToMonthEnd is a coordinate of V_del, and the accumulators reset at monthEnd.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -11010,7 +12920,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1091
+- id: CLM-1281
   statement: throughputBoundMet is true when charge throughput exceeds η_d·E_usable/(1−η_rt) so that (12) = 0 is arithmetically assured, and its conservative default is not assured.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -11020,7 +12930,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1092
+- id: CLM-1282
   statement: delineationIsProvisional is true while the month's meter data is unfinal.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -11030,7 +12940,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1093
+- id: CLM-1283
   statement: The delineation accumulators reset to zero at monthEnd and SOC does not.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -11040,7 +12950,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1094
+- id: CLM-1284
   statement: "The month-boundary discontinuity is in value and not in physics: the same kWh in the same battery is worth a different amount either side of the boundary because the aggregates its route ran through have vanished."
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -11050,7 +12960,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1095
+- id: CLM-1285
   statement: slotsToMonthEnd is what lets V_del price the approach to the month boundary continuously, and it is the delineation counterpart of qualificationMarginHours.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
@@ -11060,7 +12970,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1096
+- id: CLM-1286
   statement: A commitment ledger entry carries an entryId, a kind of SpotPosition, ReserveAward or OpenOrder, and a status of Pending, Confirmed, Settled or Cancelled.
   owner: 03-contracts/C5-settlement-to-state.md §4
   class: analytic
@@ -11070,7 +12980,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1097
+- id: CLM-1287
   statement: The Pending versus Confirmed distinction in the commitment ledger is load-bearing.
   owner: 03-contracts/C5-settlement-to-state.md §4
   class: analytic
@@ -11080,7 +12990,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1098
+- id: CLM-1288
   statement: signedVolume in the commitment ledger is in the market frame.
   owner: 03-contracts/C5-settlement-to-state.md §4
   class: analytic
@@ -11090,7 +13000,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1099
+- id: CLM-1289
   statement: For reserve awards the feasibilityRequirement carries the SOC corridor that must be maintained.
   owner: 03-contracts/C5-settlement-to-state.md §4
   class: analytic
@@ -11100,7 +13010,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1100
+- id: CLM-1290
   statement: A Confirmed reserve award's feasibilityRequirement becomes a hard constraint in every degradation mode.
   owner: 03-contracts/C5-settlement-to-state.md §4
   class: analytic
@@ -11110,7 +13020,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1101
+- id: CLM-1291
   statement: Pending ledger entries are exposure rather than obligation, and the Planner treats them probabilistically.
   owner: 03-contracts/C5-settlement-to-state.md §4
   class: analytic
@@ -11120,7 +13030,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1102
+- id: CLM-1292
   statement: Realised P&L is decomposed into the same EconomicEffect enumeration used by Valuation, so planned and realised value are comparable term by term.
   owner: 03-contracts/C5-settlement-to-state.md §5
   class: analytic
@@ -11130,7 +13040,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1103
+- id: CLM-1293
   statement: plannedByEffect records what Valuation expected.
   owner: 03-contracts/C5-settlement-to-state.md §5
   class: analytic
@@ -11140,7 +13050,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1104
+- id: CLM-1294
   statement: unexplained is a mandatory bucket carrying the effect-level residual, the realised cash not attributable to any EconomicEffect.
   owner: 03-contracts/C5-settlement-to-state.md §5
   class: analytic
@@ -11150,7 +13060,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1105
+- id: CLM-1295
   statement: unexplainedRatio is alerted above a threshold.
   owner: 03-contracts/C5-settlement-to-state.md §5
   class: empirical
@@ -11161,7 +13071,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1106
+- id: CLM-1296
   statement: The unexplained bucket is not optional and must not be allowed to be silently absorbed elsewhere.
   owner: 03-contracts/C5-settlement-to-state.md §5
   class: analytic
@@ -11171,7 +13081,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1107
+- id: CLM-1297
   statement: A rising unexplained ratio is the single best early warning that a term definition has drifted between Valuation and Settlement.
   owner: 03-contracts/C5-settlement-to-state.md §5
   class: empirical
@@ -11182,7 +13092,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1108
+- id: CLM-1298
   statement: unexplained in §5 is the residual of the cash decomposition and unexplainedError in §6 is the residual of the error decomposition; they are never netted against one another and each has its own invariant.
   owner: 03-contracts/C5-settlement-to-state.md §5
   class: analytic
@@ -11192,7 +13102,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1109
+- id: CLM-1299
   statement: The error decomposition is the mechanism that makes the system improvable rather than merely operable.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11202,7 +13112,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1110
+- id: CLM-1300
   statement: The gap between planned value and realised value splits into four attributable buckets.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11212,7 +13122,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1111
+- id: CLM-1301
   statement: optimalityGap is the value given up because the tier actually used was not Tier 1, and its fix lives in L3.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11222,7 +13132,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1112
+- id: CLM-1302
   statement: forecastError is the value lost because the world differed from the belief the plan was built on, and its fix lives in L1 and the scenario model.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11232,7 +13142,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1113
+- id: CLM-1303
   statement: modelError is the value lost because the valuation was wrong given the belief, and its fix lives in L2.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11242,7 +13152,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1114
+- id: CLM-1304
   statement: executionSlippage is the value lost between intent and fill, and its fix lives in the quoting policy.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11252,7 +13162,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1115
+- id: CLM-1305
   statement: The decomposition telescopes from the Tier-1 reference value and not from the value of the plan that was actually used.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11262,7 +13172,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1116
+- id: CLM-1306
   statement: Ĵ₁ is the Tier-1 objective on the tick's beliefs and is the anchor of the decomposition.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11272,7 +13182,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1117
+- id: CLM-1307
   statement: Ĵ is the used-tier objective on the same beliefs, A is the used plan re-scored on realised outturn, and R is the realised value from settled cash.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11282,7 +13192,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1118
+- id: CLM-1308
   statement: optimalityGap = Ĵ₁ − Ĵ.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11292,7 +13202,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1119
+- id: CLM-1309
   statement: forecastError = Ĵ − A.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11302,7 +13212,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1120
+- id: CLM-1310
   statement: modelError plus executionSlippage plus unexplainedError equals A − R.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11312,7 +13222,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1121
+- id: CLM-1311
   statement: A suboptimal tier lowers the planned value and the realised value, so it nets out of planned minus realised entirely.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11322,7 +13232,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1122
+- id: CLM-1312
   statement: Anchoring at Ĵ would leave optimalityGap with nowhere to live and would silently attribute optimiser weakness to forecast error.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11332,7 +13242,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1123
+- id: CLM-1313
   statement: planned in INV-S-03 means Ĵ₁.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11342,7 +13252,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1124
+- id: CLM-1314
   statement: When Tier 1 was the tier used, Ĵ₁ = Ĵ and the two anchors coincide.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11352,7 +13262,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1125
+- id: CLM-1315
   statement: plannedByEffect remains the used-tier value because that is what the cash decomposition must reconcile against, and both anchors are recorded.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11362,7 +13272,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1126
+- id: CLM-1316
   statement: Each error bucket is a counterfactual re-run, possible only because every layer is a pure function of a recorded input.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11372,7 +13282,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1127
+- id: CLM-1317
   statement: optimalityGap is computed by re-solving the tick at Tier 1 on the recorded C2 payload and taking the difference of objective values.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11382,7 +13292,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1128
+- id: CLM-1318
   statement: forecastError is computed by re-scoring the plan that was actually submitted against realised outturn, holding the plan fixed, which is the telescoping form.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11392,7 +13302,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1129
+- id: CLM-1319
   statement: Re-planning on realised data measures the value of perfect foresight, which is recorded separately as valueOfForesight and is also the perfect-foresight upper bound.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11402,7 +13312,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1130
+- id: CLM-1320
   statement: "The telescoping forecast error and the value of perfect foresight must not be conflated: one is a link in the chain and the other is a bound."
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11412,7 +13322,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1131
+- id: CLM-1321
   statement: modelError is computed by valuing the actual trajectory using Valuation's own term definitions and comparing with Settlement's independent accounting of the same trajectory.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11422,7 +13332,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1132
+- id: CLM-1322
   statement: A non-zero modelError means Valuation and Settlement disagree about what a MWh was worth, which is a definition drift.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11432,7 +13342,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1133
+- id: CLM-1323
   statement: executionSlippage is computed by valuing the fills at intent prices versus executed prices.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11442,7 +13352,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1134
+- id: CLM-1324
   statement: ActivationRisk and the CVaR weighting are objective penalties and not cashflows.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11452,7 +13362,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1135
+- id: CLM-1325
   statement: Realised value can never contain risk penalties, so comparing a risk-loaded planned value against a risk-free realised one books the risk premium as a loss every single day.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11462,7 +13372,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1136
+- id: CLM-1326
   statement: Both sides of the error decomposition use the risk-free objective.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11472,7 +13382,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1137
+- id: CLM-1327
   statement: PlanResult reports gross risk-free and net risk-loaded values, and only the gross figure enters the error decomposition chain.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11482,7 +13392,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1138
+- id: CLM-1328
   statement: The four error buckets plus unexplainedError sum to Ĵ₁ − R within tolerance.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11493,7 +13403,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1139
+- id: CLM-1329
   statement: The four-way error split is what turns a statement about losing money last week into a statement about the load forecast degrading on Tuesdays, which is actionable.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
@@ -11503,7 +13413,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1140
+- id: CLM-1330
   statement: degradationMode is computed centrally and written in C5.
   owner: 03-contracts/C5-settlement-to-state.md §7
   class: analytic
@@ -11513,7 +13423,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1141
+- id: CLM-1331
   statement: modeTransitions carries the full audit trail of (SlotId, from, to, cause) for the period.
   owner: 03-contracts/C5-settlement-to-state.md §7
   class: analytic
@@ -11523,7 +13433,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1142
+- id: CLM-1332
   statement: ticksByMode lets P&L be conditioned on operating mode.
   owner: 03-contracts/C5-settlement-to-state.md §7
   class: analytic
@@ -11533,7 +13443,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1143
+- id: CLM-1333
   statement: seriesQualitySummary feeds data-source SLAs.
   owner: 03-contracts/C5-settlement-to-state.md §7
   class: analytic
@@ -11543,7 +13453,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1144
+- id: CLM-1334
   statement: vSocStale is true beyond the value function's validityHorizon.
   owner: 03-contracts/C5-settlement-to-state.md §8
   class: analytic
@@ -11553,7 +13463,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1145
+- id: CLM-1335
   statement: stateDriftSignal measures how far the current state is from where V was fitted.
   owner: 03-contracts/C5-settlement-to-state.md §8
   class: analytic
@@ -11564,7 +13474,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1146
+- id: CLM-1336
   statement: refreshRequested indicates the slow loop should re-run.
   owner: 03-contracts/C5-settlement-to-state.md §8
   class: analytic
@@ -11574,7 +13484,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1147
+- id: CLM-1337
   statement: stateDriftSignal allows the slow loop to be event-driven rather than purely periodic, because a large peak event or a qualification status change invalidates V faster than the calendar does.
   owner: 03-contracts/C5-settlement-to-state.md §8
   class: analytic
@@ -11584,7 +13494,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1148
+- id: CLM-1338
   statement: realisedPeak is non-decreasing within an accounting period and resets exactly at the local-calendar boundary, and violation is a HALT.
   owner: 03-contracts/C5-settlement-to-state.md §9
   class: analytic
@@ -11594,7 +13504,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1149
+- id: CLM-1339
   statement: realisedByEffect sums, with unexplained, to total realised P&L, and violation is a HALT.
   owner: 03-contracts/C5-settlement-to-state.md §9
   class: analytic
@@ -11604,7 +13514,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1150
+- id: CLM-1340
   statement: The four error buckets sum to planned minus realised within tolerance, and violation warns.
   owner: 03-contracts/C5-settlement-to-state.md §9
   class: analytic
@@ -11615,7 +13525,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1151
+- id: CLM-1341
   statement: There is no reserve delivery shortfall, mirroring C4, and violation alerts and halts.
   owner: 03-contracts/C5-settlement-to-state.md §9
   class: regulatory
@@ -11625,7 +13535,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1152
+- id: CLM-1342
   statement: Every Confirmed commitment has a feasibilityRequirement where the product requires one, and violation is a HALT.
   owner: 03-contracts/C5-settlement-to-state.md §9
   class: analytic
@@ -11635,7 +13545,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1153
+- id: CLM-1343
   statement: fullLoadHours equals annualEnergyKwh divided by annualPeakKw within tolerance, and violation is a HALT.
   owner: 03-contracts/C5-settlement-to-state.md §9
   class: analytic
@@ -11646,7 +13556,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1154
+- id: CLM-1344
   statement: unexplainedRatio is below threshold, and violation warns, escalating to alert.
   owner: 03-contracts/C5-settlement-to-state.md §9
   class: empirical
@@ -11657,7 +13567,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1155
+- id: CLM-1345
   statement: State is never written for a slot earlier than effectiveFrom of the previous update, except as an explicit revisionOf, and violation is a HALT.
   owner: 03-contracts/C5-settlement-to-state.md §9
   class: analytic
@@ -11670,7 +13580,7 @@
 
 # ---- 03-contracts-e.tsv ----
 # ---- 03-contracts/C6 ----
-- id: CLM-1156
+- id: CLM-1346
   statement: C6 carries the StateSnapshot payload at version 1.0 from L0 to L1, L2 and L3, and is the read side of L0.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11680,7 +13590,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1157
+- id: CLM-1347
   statement: C6 is the contract the state store was asserted to be, with a field table, a version and invariants like every other seam.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11690,7 +13600,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1158
+- id: CLM-1348
   statement: C6 is numbered separately from C5 rather than folded into it because it has a different direction, a different set of consumers and a different failure policy.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11700,7 +13610,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1159
+- id: CLM-1349
   statement: The StateSnapshot is taken once, immutably, at the top of every tick, and every layer that needs state reads that one object.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11710,7 +13620,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1160
+- id: CLM-1350
   statement: No layer consults L0 directly mid-tick, which is what makes the no-read-of-a-same-tick-write audit mechanically decidable.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11720,7 +13630,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1161
+- id: CLM-1351
   statement: "StateUpdate and StateSnapshot are deliberately not the same type: the snapshot is a coherent read view of the whole store at an instant, and the update is a delta produced by one component at the end of a tick."
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11730,7 +13640,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1162
+- id: CLM-1352
   statement: snapshotAt is the tick at which the snapshot was taken.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11740,7 +13650,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1163
+- id: CLM-1353
   statement: stateAsOf is the latest tick whose StateUpdate is included and is always strictly less than snapshotAt.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11750,7 +13660,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1164
+- id: CLM-1354
   statement: lagSlots equals snapshotAt minus stateAsOf and is the explicit feedback lag.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11760,7 +13670,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1165
+- id: CLM-1355
   statement: isColdStart is true on the first tick after a restart, before reconciliation completes.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11770,7 +13680,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1166
+- id: CLM-1356
   statement: lagSlots is a first-class field rather than an implementation detail, and consumers are expected to reason about it.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11780,7 +13690,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1167
+- id: CLM-1357
   statement: A Planner that knows the peak state is three slots stale treats the gap conservatively rather than assuming it was empty.
   owner: 03-contracts/C6-state-to-layers.md §1
   class: analytic
@@ -11790,7 +13700,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1168
+- id: CLM-1358
   statement: The C6 peak state block mirrors C5 §2 and is read by PeakView in L2 and by the escalation policy in L3.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11800,7 +13710,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1169
+- id: CLM-1359
   statement: realisedPeak on C6 is the EpigraphTerm floor.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11810,7 +13720,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1170
+- id: CLM-1360
   statement: peakIsProvisional defaults to true.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11820,7 +13730,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1171
+- id: CLM-1361
   statement: The peak is authoritative only up to unsettledGapFrom.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11830,7 +13740,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1172
+- id: CLM-1362
   statement: The conservative default for headroomToPeakKw is zero, meaning no headroom.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11840,7 +13750,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1173
+- id: CLM-1363
   statement: The conservative default for peakCritical is true, meaning treat the state as critical.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11850,7 +13760,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1174
+- id: CLM-1364
   statement: The unsettled gap is not optional to handle.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11860,7 +13770,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1175
+- id: CLM-1365
   statement: Between unsettledGapFrom and snapshotAt no settled meter data exists.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11870,7 +13780,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1176
+- id: CLM-1366
   statement: The Planner must substitute its own modelled POI trajectory over the unsettled window as a provisional peak contribution.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11880,7 +13790,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1177
+- id: CLM-1367
   statement: effectiveFloor is the maximum of realisedPeak and the maximum modelled POI import over the slots in [unsettledGapFrom, snapshotAt).
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11890,7 +13800,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1178
+- id: CLM-1368
   statement: Assuming the unsettled gap contained nothing is the single most likely way to set a new monthly peak by accident, because the gap is exactly the window in which the engine was most recently active.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
@@ -11900,7 +13810,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1179
+- id: CLM-1369
   statement: The C6 qualification state block mirrors C5 §3 and is read by TariffView and PeakView in L2 and by the slow loop.
   owner: 03-contracts/C6-state-to-layers.md §3
   class: analytic
@@ -11910,7 +13820,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1180
+- id: CLM-1370
   statement: fullLoadHours is a declared exception to the dimensionless rule, carrying the declared unit h.
   owner: 03-contracts/C6-state-to-layers.md §3
   class: analytic
@@ -11920,7 +13830,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1181
+- id: CLM-1371
   statement: The conservative default for qualificationStatus is AtRisk.
   owner: 03-contracts/C6-state-to-layers.md §3
   class: analytic
@@ -11930,7 +13840,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1182
+- id: CLM-1372
   statement: The conservative default for qualificationMarginHours is zero, meaning no margin.
   owner: 03-contracts/C6-state-to-layers.md §3
   class: analytic
@@ -11940,7 +13850,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1183
+- id: CLM-1373
   statement: The conservative default for qualCritical is true.
   owner: 03-contracts/C6-state-to-layers.md §3
   class: analytic
@@ -11950,7 +13860,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1184
+- id: CLM-1374
   statement: "Every conservative default in the qualification block biases toward protecting the qualification, because the asymmetry is extreme: the downside of an unnecessary protective bound is a day's foregone spread while the downside of losing a §19(2) reduction is a year of network-charge relief."
   owner: 03-contracts/C6-state-to-layers.md §3
   class: analytic
@@ -11960,7 +13870,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1185
+- id: CLM-1375
   statement: The C6 delineation state block mirrors C5 §3.1 and is read by DelineationView in L2 and by L3, which carries the accumulators forward as MILP variables over the horizon.
   owner: 03-contracts/C6-state-to-layers.md §3.1
   class: analytic
@@ -11970,7 +13880,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1186
+- id: CLM-1376
   statement: The seven accumulators cross C6 unchanged from C5 §3.1, defaulting to zero.
   owner: 03-contracts/C6-state-to-layers.md §3.1
   class: analytic
@@ -11980,7 +13890,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1187
+- id: CLM-1377
   statement: The conservative defaults for pvShare and awPositiveShare are zero, meaning no PV attribution and no AW>0 share.
   owner: 03-contracts/C6-state-to-layers.md §3.1
   class: analytic
@@ -11990,7 +13900,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1188
+- id: CLM-1378
   statement: A false throughputBoundMet forces the Planner to carry (12) explicitly rather than assume it away.
   owner: 03-contracts/C6-state-to-layers.md §3.1
   class: analytic
@@ -12000,7 +13910,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1189
+- id: CLM-1379
   statement: "The delineation conservative defaults bias toward understating delineation value: a zero awPositiveShare prices the green route at nothing, and throughputBoundMet = false costs binaries rather than correctness."
   owner: 03-contracts/C6-state-to-layers.md §3.1
   class: analytic
@@ -12010,7 +13920,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1190
+- id: CLM-1380
   statement: The failure mode worth avoiding is an engine that charges from the grid on the strength of a route it turns out not to have.
   owner: 03-contracts/C6-state-to-layers.md §3.1
   class: analytic
@@ -12020,7 +13930,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1191
+- id: CLM-1381
   statement: DelineationView reads the C6 delineation block and the MW_month belief and publishes the seven λ_j, and it reads no other view's output.
   owner: 03-contracts/C6-state-to-layers.md §3.1
   class: analytic
@@ -12030,7 +13940,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1192
+- id: CLM-1382
   statement: The commitment ledger read view mirrors C5 §4 and is read by L3.
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
@@ -12040,7 +13950,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1193
+- id: CLM-1383
   statement: Ledger entries are ordered by (slot, entryId) for determinism.
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
@@ -12050,7 +13960,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1194
+- id: CLM-1384
   statement: confirmedReserveUp and confirmedReserveDn are denormalised per block for the Planner's hard constraints.
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
@@ -12060,7 +13970,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1195
+- id: CLM-1385
   statement: confirmedSpotPosition is denormalised, signed, and in the market frame.
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
@@ -12070,7 +13980,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1196
+- id: CLM-1386
   statement: pendingExposure is signed and probabilistic rather than an obligation.
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
@@ -12080,7 +13990,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1197
+- id: CLM-1387
   statement: requiredSocCorridor is the union of all confirmed feasibilityRequirements.
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
@@ -12090,7 +14000,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1198
+- id: CLM-1388
   statement: A false ledgerConsistent triggers SAFE mode.
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
@@ -12100,7 +14010,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1199
+- id: CLM-1389
   statement: The denormalised ledger views exist because the Planner needs them on every solve, and recomputing them from entries per tick is both wasteful and a chance to disagree.
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
@@ -12110,7 +14020,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1200
+- id: CLM-1390
   statement: requiredSocCorridor is the single most safety-critical field in C6.
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
@@ -12120,7 +14030,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1201
+- id: CLM-1391
   statement: requiredSocCorridor is a hard constraint in every degradation mode including SAFE, and a plan that violates it never reaches C3.
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
@@ -12130,7 +14040,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1202
+- id: CLM-1392
   statement: The value function is read from C6 by OppCostView in L2, which republishes it across C2 §4.
   owner: 03-contracts/C6-state-to-layers.md §5
   class: analytic
@@ -12140,7 +14050,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1203
+- id: CLM-1393
   statement: isStale is true when snapshotAt minus producedAt exceeds validityHorizon.
   owner: 03-contracts/C6-state-to-layers.md §5
   class: analytic
@@ -12150,7 +14060,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1204
+- id: CLM-1394
   statement: contextDrift is the distance from the state at which V was fitted.
   owner: 03-contracts/C6-state-to-layers.md §5
   class: analytic
@@ -12161,7 +14071,7 @@
   tn: null
   band: null
   vague: true
-- id: CLM-1205
+- id: CLM-1395
   statement: Value function staleness is never silent.
   owner: 03-contracts/C6-state-to-layers.md §5
   class: analytic
@@ -12171,7 +14081,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1206
+- id: CLM-1396
   statement: If the value function is stale the mode escalates to at least DEFENSIVE and stalenessPenalty shrinks V's slopes toward zero.
   owner: 03-contracts/C6-state-to-layers.md §5
   class: analytic
@@ -12181,7 +14091,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1207
+- id: CLM-1397
   statement: Shrinking V's slopes toward zero makes the Planner progressively indifferent to terminal SOC rather than confidently wrong about it.
   owner: 03-contracts/C6-state-to-layers.md §5
   class: analytic
@@ -12191,7 +14101,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1208
+- id: CLM-1398
   statement: T6 includes a stale-artefact audit asserting the engine refuses a value function beyond its validity horizon rather than using it quietly.
   owner: 03-contracts/C6-state-to-layers.md §5
   class: analytic
@@ -12201,7 +14111,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1209
+- id: CLM-1399
   statement: degradationMode on C6 is the mode in force entering the tick.
   owner: 03-contracts/C6-state-to-layers.md §6
   class: analytic
@@ -12211,7 +14121,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1210
+- id: CLM-1400
   statement: modeEnteredAt is carried for hysteresis accounting.
   owner: 03-contracts/C6-state-to-layers.md §6
   class: analytic
@@ -12221,7 +14131,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1211
+- id: CLM-1401
   statement: consecutiveBadTicks and consecutiveGoodTicks are the hysteresis counters.
   owner: 03-contracts/C6-state-to-layers.md §6
   class: analytic
@@ -12231,7 +14141,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1212
+- id: CLM-1402
   statement: seriesQualityState carries the last known QualityStamp per series.
   owner: 03-contracts/C6-state-to-layers.md §6
   class: analytic
@@ -12241,7 +14151,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1213
+- id: CLM-1403
   statement: The mode in the snapshot is a floor and not a verdict.
   owner: 03-contracts/C6-state-to-layers.md §6
   class: analytic
@@ -12251,7 +14161,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1214
+- id: CLM-1404
   statement: L1 may raise the degradation mode within the tick from its own same-tick inputs but may never lower it.
   owner: 03-contracts/C6-state-to-layers.md §6
   class: analytic
@@ -12261,7 +14171,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1215
+- id: CLM-1405
   statement: A critical series missing now escalates now and does not wait a tick.
   owner: 03-contracts/C6-state-to-layers.md §6
   class: analytic
@@ -12271,7 +14181,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1216
+- id: CLM-1406
   statement: De-escalation of the degradation mode is central and hysteretic.
   owner: 03-contracts/C6-state-to-layers.md §6
   class: analytic
@@ -12281,7 +14191,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1217
+- id: CLM-1407
   statement: Raising a floor from a component's own inputs is not a read of another component's same-tick write, so in-tick escalation does not violate ADR-006.
   owner: 03-contracts/C6-state-to-layers.md §6
   class: analytic
@@ -12291,7 +14201,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1218
+- id: CLM-1408
   statement: artefactVersions maps each ArtefactKind — scenario generator, value function, fill model, tier-3 surface, market calendar, tzdata — to a content hash.
   owner: 03-contracts/C6-state-to-layers.md §7
   class: analytic
@@ -12301,7 +14211,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1219
+- id: CLM-1409
   statement: artefactVersions is carried so that every downstream artefact can record which model versions produced it and so a backtest can be re-run with the versions actually in force.
   owner: 03-contracts/C6-state-to-layers.md §7
   class: analytic
@@ -12311,7 +14221,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1220
+- id: CLM-1410
   statement: Denormalised ledger views reconcile with entries, and violation is a HALT.
   owner: 03-contracts/C6-state-to-layers.md §8
   class: analytic
@@ -12321,7 +14231,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1221
+- id: CLM-1411
   statement: stateAsOf is strictly less than snapshotAt and lagSlots is consistent with both, and violation is a HALT because a zero lag means a same-tick read.
   owner: 03-contracts/C6-state-to-layers.md §8
   class: analytic
@@ -12331,7 +14241,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1222
+- id: CLM-1412
   statement: The snapshot is immutable for the duration of the tick and no consumer holds a mutable reference, enforced structurally and audited in T3.
   owner: 03-contracts/C6-state-to-layers.md §8
   class: analytic
@@ -12341,7 +14251,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1223
+- id: CLM-1413
   statement: Every C6 field marked Null = no is present, or the default is applied and recorded, and otherwise the engine escalates.
   owner: 03-contracts/C6-state-to-layers.md §8
   class: analytic
@@ -12351,7 +14261,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1224
+- id: CLM-1414
   statement: requiredSocCorridor is non-empty wherever confirmedReserveUp or confirmedReserveDn is non-zero, and violation is a HALT.
   owner: 03-contracts/C6-state-to-layers.md §8
   class: analytic
@@ -12361,7 +14271,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1225
+- id: CLM-1415
   statement: On isColdStart no speculative intent is emitted until reconciliation completes, and violation is a HALT.
   owner: 03-contracts/C6-state-to-layers.md §8
   class: analytic
@@ -12371,7 +14281,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1226
+- id: CLM-1416
   statement: The lag invariant is the mechanical enforcement of ADR-006, because a lag of zero would mean some component read state written in the same tick, which is precisely the cycle the architecture exists to exclude.
   owner: 03-contracts/C6-state-to-layers.md §8
   class: analytic
@@ -12381,7 +14291,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1227
+- id: CLM-1417
   statement: No belief or forecast crosses C6, because those come from L1 via C1.
   owner: 03-contracts/C6-state-to-layers.md §9
   class: analytic
@@ -12391,7 +14301,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1228
+- id: CLM-1418
   statement: "No valuation output crosses C6: L0 stores V as an artefact and does not store prices."
   owner: 03-contracts/C6-state-to-layers.md §9
   class: analytic
@@ -12401,7 +14311,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1229
+- id: CLM-1419
   statement: No raw settlement detail crosses C6; only the aggregated state the next tick needs.
   owner: 03-contracts/C6-state-to-layers.md §9
   class: analytic
@@ -12411,7 +14321,7 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-1230
+- id: CLM-1420
   statement: No mutable references to the store cross C6, because the snapshot is a value.
   owner: 03-contracts/C6-state-to-layers.md §9
   class: analytic
