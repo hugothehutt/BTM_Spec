@@ -18,6 +18,15 @@ Reduced ensemble: scenarios `s = 1…S`, weights `w_s ≥ 0`, `Σ_s w_s = 1` (AD
 `INV-D-06`). `P_w` is the induced discrete measure — **atomic and non-uniform**;
 every result below is stated for that measure, never for a uniform sample.
 
+**Two indices, two arguments — and only the arguments carry curvature.** `s` (scenario)
+and `t` (slot) are *indices*: they are what expressions are summed or maximised over,
+and they are eliminated in the process. `x` is the **decision vector** of the solve —
+`p_c[t]`, `p_d[t]`, `rUp[b]`, `rDn[b]`, `soc[t]`, `vDaBuy`, `vDaSell`, `q[t]`, the
+accumulators `A_j` and the epigraph variables; the spec has no single symbol for it and
+this note supplies one. `ω` is the state of the world drawn from the ensemble. Every
+convexity claim below is with respect to `x` or to `ω`, **never** with respect to `s` or
+`t`. The shape of a trajectory over `t` is unconstrained and irrelevant.
+
 `L : Ω_S → ℝ` is a **loss in EUR**: positive is bad, `L = −(contribution to the
 objective)`. For `α ∈ (0,1)`:
 
@@ -370,12 +379,29 @@ that is what the LP representation needs. §6a concerns convexity in the **uncer
 `ω`**, per decision — that is what Jensen needs. Both hold here, for the same underlying
 reason, but neither implies the other.
 
-The load-bearing premise is one level below the max. `L3`:60 gives the POI bridge
-`p_poi[s,t] = load[s,t] − pv[s,t] − p_batt[t]`; for fixed `s` the first two are
-parameters and `p_batt = p_d − p_c` is a difference of decision variables, so
-**`p_poi[s,t]` is affine in `x`**. A pointwise max is convexity-*preserving*, not
-convexity-*creating*: it is the affineness of the constituents, not the `max`, that
-makes `M(x, ω) = max_t p_poi(x, ω, t)` convex. The chain is then
+The load-bearing premise is one level below the max. `L3`:60 gives the POI bridge; with
+`p_batt = p_d − p_c` substituted, for a fixed scenario `s`
+
+```
+p_poi(x, s, t)  =  (load[s,t] − pv[s,t])  −  p_d[t]  +  p_c[t]
+                   └──  constant  ──┘        └──  decisions  ──┘
+```
+
+so for **each** `t` this is a *separate affine function of `x`* — constant term
+`load − pv`, coefficient `−1` on `p_d[t]`, `+1` on `p_c[t]`, zero elsewhere. `M` is the
+pointwise max of `|overSlots|` such functions, hence convex in `x`.
+
+**The trajectory's shape over `t` is not a premise.** A profile rising `1 → 5 → 6`, or
+falling, or sawtooth, is equally admissible: those are the values the several affine
+functions take at *one* point `x`, and they carry no information about how `M` varies
+with `x`. The minimal illustration is `f(x) = max(2x, −x+3, 7)`, whose constituents read
+`0, 3, 7` at `x = 0` and `10, −2, 7` at `x = 5` — convex in `x` in both cases. This is
+also exactly why the max is representable as linear rows `z ≥ f_t(x)`, one per `t`: no
+assumption over the index is required, which is what makes the elimination free.
+
+A pointwise max is convexity-*preserving*, not convexity-*creating*: it is the
+affineness of the constituents in `x`, not the `max` over `t`, that does the work. The
+chain is then
 
 ```
 affine  →  max over t  →  max with the constant floor  →  × (peakPrice·proration ≥ 0)
