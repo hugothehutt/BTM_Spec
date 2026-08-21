@@ -36,12 +36,32 @@ functionals carry `cvarLevel` and they do not share a sign:
 | Functional | Underlying quantity | Bad tail | Required form |
 |---|---|---|---|
 | Imbalance / activation | a cost | upper | `CVaR_α(imb + act)` |
-| Peak | `max_t p_poi[s,t]`, a cost driver | upper | `CVaR_α(max_t p_poi)` |
+| Peak | `max_t p_poi[s,t]`, a cost driver | upper | `CVaR_α(peakPrice · proration · max_t p_poi)` |
 | Delineation | `V_del`, a **benefit** | **lower** | `CVaR_α(−V_del)` |
 
 A single `cvarLevel` applied without a stated orientation reads as `CVaR_α(V_del)`
 on the third row, which takes the tail of the *best* months. This is a sign defect,
 not a tuning question, and it is invisible to every current invariant.
+
+**Why the spec's kW-denominated notation is nonetheless sound.** `L2`:61-66 writes the
+peak risk term over `max_t p_poi[s,t]` — a quantity in kW, apparently in breach of the
+EUR-only rule. It is not, and the reason is an axiom: `CVaR_α` is **positively
+homogeneous**, so for any deterministic `c ≥ 0`, `c · CVaR_α(X) = CVaR_α(c · X)`. With
+`peakPrice` and `prorationFactor` deterministic and non-negative, taking the tail in kW
+and pricing outside is *identical* to taking the tail of the EUR loss. The two forms are
+the same number.
+
+The pass-through is what fixes `peakPrice` as a **scalar deterministic input**. It fails
+if the rate is scenario-dependent (an uncertain tariff), and it fails if the rate is
+non-linear in the level (§1a). Both cases force the EUR form, where the tail must be
+taken after pricing.
+
+Two things the identity does **not** buy. It moves a scalar in and out of *one* `CVaR`;
+it does not merge the peak tail with the imbalance or delineation tails, which remain
+§4's sum-of-CVaRs. And since `L3`:109 grants `cvarWeight` to the imbalance term alone,
+under a scalar rate **`peakPrice` is the peak term's only risk weight** — an error in it
+is not merely a mispriced kW, it is a shift in risk aversion, on the same lever `L2`:69
+already warns about.
 
 ---
 
@@ -192,6 +212,13 @@ form is fixed — but it is used, and unstated. The composer sums CVaR-flavoured
 from `ImbalanceRiskView`, `PeakView` and `DelineationView`. What makes that sum
 meaningful at all is §4's inequality, which *is* subadditivity. Without coherence the
 sum is an arbitrary aggregation of three numbers.
+
+**Positive homogeneity is used implicitly too, and more often.** Every time the spec
+takes a tail in physical units and prices it outside — `L2`:61-66's peak term is the
+live case — it is invoking `c · CVaR_α(X) = CVaR_α(c · X)`. That step is legal only for
+a deterministic non-negative `c` (§0). It is the axiom that lets `peakPrice` stay a
+scalar input outside the risk functional, and the one that fails first if the tariff is
+ever made uncertain or non-linear.
 
 Additional property the spec relies on without naming it: **CVaR preserves convexity
 in the decision variables.** If `L(·, ω)` is convex for every `ω`, `CVaR_α(L(x))` is
@@ -543,7 +570,15 @@ diversification gap Σ_k ρ(L_k) − ρ(Σ_k L_k) on realised data     empirical
 peak reduction error ≤ W₁(P,P_w)/(1−α)                           analytic
 rolling-policy vs claimed-objective CVaR gap                     empirical, band TBD  (§3c(c))
 P(AW > MW_month) ∈ (0,1) per accumulator per month               empirical, band TBD
+peakPrice is a deterministic scalar, set pre-backtest             assumed-declared
+peakPrice doubles as the peak term's risk weight (L3:109)         analytic
 ```
+
+`peakPrice` is registered **`assumed-declared`**, not `derived`: it is an educated guess
+fixed before the backtest, and it is the input the positive-homogeneity pass-through
+depends on. Per the protocol's fifth mechanism the consequence is pre-committed — if the
+backtest's peak-charge attribution lands outside its band, the guess is what changed, and
+the analytic claims above are untouched by that.
 
 ---
 
