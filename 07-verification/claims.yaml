@@ -21295,3 +21295,2297 @@
   evidence: unlabelled
   tn: null
   band: null
+
+# ---- 04-compliance-a.tsv ----
+# ---- 04-compliance/T0 ----
+- id: CLM-2114
+  statement: L1, L2, L3 and L5 are pure functions of their declared contract inputs.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2115
+  statement: Every seam payload is an immutable, serialisable, content-addressed value.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2116
+  statement: Every run is reproducible from a manifest.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2117
+  statement: "Every seam can be recorded: a run writes C1 through C5 payloads to disk, and a recorded seam is a test fixture rather than a log line."
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2118
+  statement: "Every layer can be replayed in isolation: Valuation against a recorded C1 stream with no Belief store, no network and no clock; the Planner against a recorded C2 stream with no Valuation present; Settlement against a recorded C4 stream with no knowledge of what was intended."
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2119
+  statement: Every comparison is exact, because two runs of the same manifest produce byte-identical artefacts, so whether a change altered behaviour is a hash comparison rather than a judgement call.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2120
+  statement: Removing recordability, isolated replay or exactness degrades every level above T1 into smoke tests.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2121
+  statement: Hidden state in L2 or L3 breaks isolated replay.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2122
+  statement: A wall-clock read or an unordered iteration breaks exactness of comparison.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2123
+  statement: A contract carrying an object reference breaks seam recordability.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2124
+  statement: Purity, no-clock-read and no-object-reference are hard failures rather than style rules because the compliance architecture rests on them.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2125
+  statement: Replaying a recorded C1 stream against L2 alone proves valuation is a function of belief.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2126
+  statement: Replaying a recorded C2 stream against L3 alone proves the plan is a function of primitives.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2127
+  statement: Replaying recorded C3 and C4 streams against L5 alone proves settlement is a function of outcome.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2128
+  statement: Replaying C1 through C5 plus the manifest over the whole tick proves the golden hash and the Merkle chain.
+  owner: 04-compliance/T0-test-architecture.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013, T3]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2129
+  statement: T0 answers whether a view or component computes what its own spec says, on its own.
+  owner: 04-compliance/T0-test-architecture.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2130
+  statement: T1 answers whether what crosses a seam satisfies the contract in schema, units, ranges, no-NaN and version, and whether two solver backends agree.
+  owner: 04-compliance/T0-test-architecture.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2131
+  statement: T2 answers whether the layer obeys the relations that must hold for every input, including inputs nobody wrote a fixture for.
+  owner: 04-compliance/T0-test-architecture.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2132
+  statement: T3 answers whether the run is reproducible, the artefact chain intact, and the tick acyclic.
+  owner: 04-compliance/T0-test-architecture.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2133
+  statement: T4 answers whether the fitted fill, activation and quoting models match observed reality.
+  owner: 04-compliance/T0-test-architecture.md §2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2134
+  statement: T5 answers how much value the shipped tier gives up against the oracle and at what solve cost.
+  owner: 04-compliance/T0-test-architecture.md §2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2135
+  statement: T6 answers whether the engine can be made to peek, to accept garbage, or to use an expired artefact.
+  owner: 04-compliance/T0-test-architecture.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2136
+  statement: The seven levels are ordered by what they need in place rather than by importance.
+  owner: 04-compliance/T0-test-architecture.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2137
+  statement: T2 requires T1, because a payload that fails schema cannot be property-tested meaningfully.
+  owner: 04-compliance/T0-test-architecture.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2138
+  statement: T5 and T6 both require T3, because without determinism a measured difference proves nothing.
+  owner: 04-compliance/T0-test-architecture.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2139
+  statement: T0's scope is one view, one composer stage, one calendar function or one term shape, with no I/O and no solver, budgeted at 60 seconds for the whole suite, blocking a commit on failure, owned by the layer owner.
+  owner: 04-compliance/T0-test-architecture.md §3
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [y]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2140
+  statement: T1's scope is each seam payload C1 to C5 plus the StateSnapshot, the MarketCalendar artefact, and backend agreement on one model, budgeted at 3 minutes, blocking a merge, owned by the contracts owner.
+  owner: 04-compliance/T0-test-architecture.md §3
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [y]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2141
+  statement: T2's scope is per layer and per seam with generated inputs and bounded shrinking, budgeted at 15 minutes in CI with an extended nightly corpus, blocking a merge, owned by the layer owner.
+  owner: 04-compliance/T0-test-architecture.md §3
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [y]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2142
+  statement: T3's scope is the whole tick then the whole run, with golden hashes over a canonical 7-day window in CI and full history nightly, budgeted at 8 minutes in CI and 3 hours nightly, blocking a merge on an unexplained hash change and paging the on-call on nightly failure, owned by the platform owner.
+  owner: 04-compliance/T0-test-architecture.md §3
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [y]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2143
+  statement: T4's scope is the fill model, activation model and quoting policy against the simulator, run nightly within 2 hours, raising an alert and a calibration ticket and blocking a release if drift exceeds the published band, owned by the quant and calibration owner.
+  owner: 04-compliance/T0-test-architecture.md §3
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2144
+  statement: T5's scope is Tiers 1, 2 and 3 on a holdout backtest plus scaling curves in S and in breakpoint count, run overnight per release, blocking a release, owned by the optimisation owner.
+  owner: 04-compliance/T0-test-architecture.md §3
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2145
+  statement: T6's scope is the whole run under adversarial mutation — poisoned future facts, poisoned config, fuzzed payloads, tampered ledger, expired artefacts — run reduced nightly and full per release, blocking a release, with a lookahead divergence a stop-ship, owned by the risk and audit owner.
+  owner: 04-compliance/T0-test-architecture.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2146
+  statement: The runtime budgets are targets for the CI configuration, which is the deterministic single-threaded solver configuration.
+  owner: 04-compliance/T0-test-architecture.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2147
+  statement: Production runs with more threads and a different manifest, and its throughput is not a test budget.
+  owner: 04-compliance/T0-test-architecture.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2148
+  statement: The pre-commit hook runs T0 and T1 in full, a fast fixed-seed subset of T2, and a one-tick golden smoke of T3.
+  owner: 04-compliance/T0-test-architecture.md §4
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2149
+  statement: Pull request CI runs T0 and T1 in full, T2 in full with a fixed seed, and a 7-day golden window of T3.
+  owner: 04-compliance/T0-test-architecture.md §4
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2150
+  statement: The nightly run covers T0 and T1 in full, an extended rotating-seed T2 corpus, full-history T3 with the acyclicity audit, full T4, T5 scaling curves only, and reduced T6.
+  owner: 04-compliance/T0-test-architecture.md §4
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2151
+  statement: The pre-release run covers T0 through T3 in full, T4 in full with drift review, and T5 and T6 in full.
+  owner: 04-compliance/T0-test-architecture.md §4
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2152
+  statement: The post-deploy canary runs full T1 because production validation is always on, a live hash of the production manifest for T3, live drift monitors for T4, and live gap telemetry for T5.
+  owner: 04-compliance/T0-test-architecture.md §4
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2153
+  statement: The pre-commit and PR runs use a fixed seed so a failure is reproducible by the author on the first attempt.
+  owner: 04-compliance/T0-test-architecture.md §4
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2154
+  statement: The nightly run rotates the seed and, on failure, writes the failing seed and the shrunk counterexample into the corpus as a permanent regression fixture.
+  owner: 04-compliance/T0-test-architecture.md §4
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2155
+  statement: A property test that found a bug once becomes a unit test forever.
+  owner: 04-compliance/T0-test-architecture.md §4
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2156
+  statement: Merging requires T0 green, with no exceptions and no per-PR waivers.
+  owner: 04-compliance/T0-test-architecture.md §5.1
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2157
+  statement: Merging requires T1 green for every seam, and a contract change additionally requires the version bump, the layer-design update and the conformance-test update in the same commit.
+  owner: 04-compliance/T0-test-architecture.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2158
+  statement: Merging requires T2 green.
+  owner: 04-compliance/T0-test-architecture.md §5.1
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2159
+  statement: Merging requires T3 golden hashes over the canonical window either unchanged or changed with a declared, reviewed baseline update naming the artefact that moved and the reason.
+  owner: 04-compliance/T0-test-architecture.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2160
+  statement: An undeclared hash change is a merge blocker even when the new numbers look better.
+  owner: 04-compliance/T0-test-architecture.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2161
+  statement: "No new invariant severity downgrade may merge: lowering an invariant from HALT to warn is an architecture change and needs an ADR rather than a PR."
+  owner: 04-compliance/T0-test-architecture.md §5.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2162
+  statement: Releasing requires a T4 calibration report showing realised-versus-predicted fill rate by price band, product and time-to-gate within the published tolerance band, with reliability diagrams reviewed.
+  owner: 04-compliance/T0-test-architecture.md §5.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2163
+  statement: Releasing requires a T5 gap report for every tier that can run in production, since no tier ships without its gap measured against Tier 1.
+  owner: 04-compliance/T0-test-architecture.md §5.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2164
+  statement: The T5 gap report carries p50, p90, p99 and worst case, conditioned on regime, plus the Tier-1-to-perfect-foresight distance.
+  owner: 04-compliance/T0-test-architecture.md §5.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2165
+  statement: Releasing requires T5 scaling curves of objective and solve time versus scenario count and versus PWL breakpoint count, so the configured values are evidenced.
+  owner: 04-compliance/T0-test-architecture.md §5.2
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-005
+  anchors: [ADR-005, ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2166
+  statement: Releasing requires the full T6 adversarial suite green, including the lookahead poisoning audit at bit-identity.
+  owner: 04-compliance/T0-test-architecture.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2167
+  statement: "Releasing requires the manifest pinned: code revision, config, MarketCalendar artefact, tzdata version, every model artefact, solver identity and determinism settings."
+  owner: 04-compliance/T0-test-architecture.md §5.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2168
+  statement: Going live requires a shadow period in which the engine runs against live data emitting intent that is recorded and not submitted, for a declared number of trading days.
+  owner: 04-compliance/T0-test-architecture.md §5.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2169
+  statement: T4 measures capture ratio and adverse selection over the shadow period.
+  owner: 04-compliance/T0-test-architecture.md §5.3
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2170
+  statement: Going live requires the reserve delivery shortfall invariant exercised in the simulator under the worst activation scenario in the ensemble, asserting HALT rather than under-delivery.
+  owner: 04-compliance/T0-test-architecture.md §5.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-S-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2171
+  statement: Going live requires a degradation drill forcing each of the five modes and confirming the transition, the hysteresis, the logged cause, and that peak protection and commitment feasibility survive every mode.
+  owner: 04-compliance/T0-test-architecture.md §5.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2172
+  statement: Going live requires an acknowledged operator runbook for HALT, because HALT requires human acknowledgement to resume and an unrehearsed first HALT is an outage.
+  owner: 04-compliance/T0-test-architecture.md §5.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2173
+  statement: Going live requires a recalibration plan for the fill model, because a simulator-calibrated model inherits the simulator's biases and the venue gap is a named risk from day one.
+  owner: 04-compliance/T0-test-architecture.md §5.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-015
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2174
+  statement: "Validation stays on in production: the universal invariants are checked by the shared validator on both sides of every seam in every environment."
+  owner: 04-compliance/T0-test-architecture.md §5.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2175
+  statement: The cost of production validation is microseconds against a solve measured in milliseconds, and there is no flag that disables it.
+  owner: 04-compliance/T0-test-architecture.md §5.4
+  class: empirical
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [y]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2176
+  statement: "A skipped test is a failing test: a skip requires a linked ticket and an expiry date, and an expired skip fails the build."
+  owner: 04-compliance/T0-test-architecture.md §5.4
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2177
+  statement: Every HALT-severity invariant has at least one test that provokes it.
+  owner: 04-compliance/T0-test-architecture.md §5.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2178
+  statement: An invariant nobody has ever seen fire is an invariant nobody knows is wired up.
+  owner: 04-compliance/T0-test-architecture.md §5.4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2179
+  statement: T0's scope is a single pure function exercised through its own interface, with no solver, no file system and no recorded seam.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2180
+  statement: For each valuation view T0 asserts that Evaluate's output validates against the view's own PublishedSchema, that ClaimedEffects matches what the terms actually carry, and hand-computed values on a four-slot fixture.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2181
+  statement: For each composer stage T0 asserts the preconditions and postconditions of the stage table hold in isolation.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2182
+  statement: The curvature checker is tested on concave, convex, general and pathological breakpoint sets including ties and a two-point curve.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2183
+  statement: The epigraph builder is tested for the dominance constraints, the floor, the correct overSlots subset and the correct prorationFactor application.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-13]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2184
+  statement: The CivilCalendar is tested on the SlotId mapping to local date, local time and HLZF window on ordinary days and both DST days, and on 92, 96 and 100-slot civil days.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2185
+  statement: Typed quantities are tested for frame and unit conversions, and that illegal conversions do not compile, with compile-fail tests part of the suite.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2186
+  statement: The POI bridge is tested in isolation, both signs, with aux load present.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2187
+  statement: The SOC dynamics kernel is tested for one-way efficiency on each direction, split charge and discharge, and no free round trip.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2188
+  statement: Each of the five term shapes round-trips to binary and to JSON.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2189
+  statement: The fallback ladder is tested so that each rung is selected for the right input and the stopping rung is recorded.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2190
+  statement: T0 deliberately does not test interactions, and a unit test needing two views is a T2 property test on the composer.
+  owner: 04-compliance/T0-test-architecture.md §6
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2191
+  statement: The fixture corpus has three kinds of input, all versioned and content-addressed like any other artefact.
+  owner: 04-compliance/T0-test-architecture.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2192
+  statement: Hand-built micro-fixtures are written by hand over 4 to 16 slots with values computable on paper, used by T0 and as the minimal reproduction after T2 shrinking.
+  owner: 04-compliance/T0-test-architecture.md §7
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2193
+  statement: Recorded seams are captured from designated audit days of a real backtest and used by T1, T2 and T3 per-layer replay.
+  owner: 04-compliance/T0-test-architecture.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2194
+  statement: Generated inputs come from property-test generators constrained to produce contract-valid payloads and are used by T2 and T6 fuzzing.
+  owner: 04-compliance/T0-test-architecture.md §7
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2195
+  statement: Generators are written to satisfy the contract by construction, so a generator that emits NaN is testing T1 rather than T2 and the two must not be conflated.
+  owner: 04-compliance/T0-test-architecture.md §7
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2196
+  statement: Deliberately invalid payloads are a T6 concern where the assertion is clean rejection rather than correct computation.
+  owner: 04-compliance/T0-test-architecture.md §7
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2197
+  statement: The canonical window for CI golden hashes is a fixed 7-day period containing one DST transition, one negative-price episode, one peak-critical day, one high aFRR clearing price block, and one day with a degraded input feed.
+  owner: 04-compliance/T0-test-architecture.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2198
+  statement: The canonical window is a versioned artefact and changing it is a reviewed baseline update.
+  owner: 04-compliance/T0-test-architecture.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2199
+  statement: "T1 documents the consolidated invariant register: every INV-*, its severity, where it is checked, and which level tests it."
+  owner: 04-compliance/T0-test-architecture.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2200
+  statement: T2 documents the property and metamorphic suite by layer and by seam.
+  owner: 04-compliance/T0-test-architecture.md §8
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2201
+  statement: T3 documents golden replay, the run manifest, the Merkle chain, the acyclicity audit and the bisect workflow.
+  owner: 04-compliance/T0-test-architecture.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2202
+  statement: T4 documents fill model calibration, quoting policy evaluation and drift alerting.
+  owner: 04-compliance/T0-test-architecture.md §8
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2203
+  statement: T5 documents optimality gap instrumentation and scaling curves.
+  owner: 04-compliance/T0-test-architecture.md §8
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2204
+  statement: T6 documents lookahead poisoning, config poisoning, contract fuzzing, ledger tampering and stale artefacts.
+  owner: 04-compliance/T0-test-architecture.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2205
+  statement: "The compliance architecture is not a test of the simulator: L4 is external and fixed, and T4 measures how well the engine's model of the simulator matches it rather than asserting that the simulator is realistic."
+  owner: 04-compliance/T0-test-architecture.md §9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2206
+  statement: "The compliance architecture is not a forecasting benchmark: forecast skill is an offline concern, T2 asserts that Belief serves what it was given at the right knowledge time rather than that the forecast was good, and forecast error is measured ex post in the forecastError bucket."
+  owner: 04-compliance/T0-test-architecture.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2207
+  statement: No amount of property testing tells you how much money the Tier 3 heuristic costs; only T5 does.
+  owner: 04-compliance/T0-test-architecture.md §9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2208
+  statement: "Line coverage is reported and not gated, and the gate is the invariant register: every HALT invariant provoked by at least one test, every seam replayed, and every tier's gap measured."
+  owner: 04-compliance/T0-test-architecture.md §9
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+
+# ---- 04-compliance-b.tsv ----
+# ---- 04-compliance/T1 ----
+- id: CLM-2209
+  statement: T1 is the single authoritative list of every invariant defined anywhere in the specification, with its severity, check site and test level.
+  owner: 04-compliance/T1-invariants.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2210
+  statement: Where an ADR, a layer design or a contract states an invariant, the statement in T1 is the normative one and the source is cited.
+  owner: 04-compliance/T1-invariants.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2211
+  statement: Where a document references an invariant ID without fully stating it, the full statement is written in T1 and marked consolidated.
+  owner: 04-compliance/T1-invariants.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2212
+  statement: "An invariant is a predicate over data that must hold at a named point in the pipeline: it is a runtime check that tests exercise rather than a test itself."
+  owner: 04-compliance/T1-invariants.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2213
+  statement: The tests prove the invariant check is wired up and that the system does not violate it on inputs nobody thought of.
+  owner: 04-compliance/T1-invariants.md §1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2214
+  statement: There are three severities and nothing between them.
+  owner: 04-compliance/T1-invariants.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2215
+  statement: "HALT means the producing layer is in an unknown state and nothing downstream can be trusted: submit nothing, cancel speculative orders, alert, and require operator acknowledgement to resume."
+  owner: 04-compliance/T1-invariants.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2216
+  statement: On HALT the tick's artefacts are still recorded, because the state at the moment of failure is the evidence.
+  owner: 04-compliance/T1-invariants.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2217
+  statement: "alert means the engine can continue safely but something is wrong that a human must look at within the operating day: continue, page the on-call, and record in the settlement artefact so P&L can be conditioned on it."
+  owner: 04-compliance/T1-invariants.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2218
+  statement: "warn means a tolerance was exceeded or a soft expectation missed and is diagnostic rather than operational: continue, count it, and expose the rate as a monitored series."
+  owner: 04-compliance/T1-invariants.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2219
+  statement: A rising warn rate is itself an alert condition.
+  owner: 04-compliance/T1-invariants.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2220
+  statement: Escalate-per-ladder means the ADR-014 degradation ladder selects the fallback rung and the mode is recomputed centrally, the resulting mode may be anything from DEGRADED to HALT, and the register records the floor severity as alert.
+  owner: 04-compliance/T1-invariants.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [INV-D-10, INV-V-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2221
+  statement: Structural means the invariant is enforced by the type system or an analyzer rule and cannot be violated at runtime.
+  owner: 04-compliance/T1-invariants.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-012
+  anchors: [INV-X-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2222
+  statement: A structural invariant still carries a test — a compile-fail test or an analyzer test — because cannot-happen is a claim about the build, and builds change.
+  owner: 04-compliance/T1-invariants.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2223
+  statement: The compound actions of the reduced-ensemble and shadow-value invariants are recorded as the severity plus the additional action in the statement.
+  owner: 04-compliance/T1-invariants.md §1.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-D-07, INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2224
+  statement: Validation is on by default in every environment, including production, and this is restated in T1 because it is the rule most likely to be eroded by a latency conversation.
+  owner: 04-compliance/T1-invariants.md §1.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2225
+  statement: "Every seam is validated twice: the producer validates before emitting with its own context available to diagnose its own bug, and the consumer validates on receipt, defending against a producer it does not control."
+  owner: 04-compliance/T1-invariants.md §1.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2226
+  statement: Producer-side validation failure enters the producing layer's degradation ladder and consumer-side failure is HALT unconditionally, because a contract violation means the upstream layer's state is unknown.
+  owner: 04-compliance/T1-invariants.md §1.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2227
+  statement: There is no configuration flag that disables validation, and adding one is an ADR-level decision rather than a tuning decision.
+  owner: 04-compliance/T1-invariants.md §1.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2228
+  statement: The temptation to disable validation in production is precisely the temptation to stop noticing corruption.
+  owner: 04-compliance/T1-invariants.md §1.2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2229
+  statement: All comparisons reference the single constants file and tolerances are never re-typed at a call site.
+  owner: 04-compliance/T1-invariants.md §1.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2230
+  statement: The money tolerance is 1e-6 EUR absolute.
+  owner: 04-compliance/T1-invariants.md §1.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2231
+  statement: The power tolerance is 1e-6 kW absolute.
+  owner: 04-compliance/T1-invariants.md §1.3
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2232
+  statement: The scenario weight tolerance is 1e-9 on the sum.
+  owner: 04-compliance/T1-invariants.md §1.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2233
+  statement: The meter energy balance tolerance is the meter tolerance per meterQuality, declared per site.
+  owner: 04-compliance/T1-invariants.md §1.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2234
+  statement: The objective agreement tolerance between backends is relative 1e-6 or the MIP gap tolerance, whichever is larger.
+  owner: 04-compliance/T1-invariants.md §1.3
+  class: analytic
+  blast_radius: cheap
+  br_source: ADR-001
+  anchors: [ADR-001]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2235
+  statement: No numeric field in any payload is NaN or plus or minus infinity, and missing is expressed by the quality channel rather than by a sentinel value; checked by the shared validator on both sides of every seam at HALT severity.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2236
+  statement: Every numeric field carries a declared unit and a typed quantity and no bare double crosses a seam; checked at serialisation and deserialisation at HALT severity.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [INV-G-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2237
+  statement: schemaVersion is recognised by the consumer, and an unrecognised version is rejected rather than guessed at or partially read; checked by the consumer before any field is read at HALT severity.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2238
+  statement: contentHash recomputed over the payload matches the carried value and inputHashes is present and non-empty; checked by the producer at seal and the consumer at receipt at HALT severity.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2239
+  statement: No layer reads the system clock, and time enters the pipeline only as tickId or SlotId and asOf, supplied by the driver.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2240
+  statement: No payload contains a wall-clock timestamp taken at construction and no code path in L1, L2, L3 or L5 calls a wall-clock API.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2241
+  statement: "The no-clock rule is enforced at two points: a Roslyn analyzer rule banning clock APIs in the layer assemblies, and a payload check that no timestamp field was populated at construction time."
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2242
+  statement: Every slot-indexed array has exactly the length declared by horizon or slotCount; checked by the shared validator at HALT severity.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2243
+  statement: Every scenario-indexed array shares the scenario axis length and ordering, so index s means the same thing in every array in the payload; checked by the shared validator at HALT severity.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-G-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2244
+  statement: asOf is non-decreasing across successive payloads on the same seam within a run; checked by the seam recorder or consumer across ticks at HALT severity.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-G-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2245
+  statement: Every field marked Null = no in the contract's field table is present; checked by the shared validator at HALT severity.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2246
+  statement: Declared ranges hold for every element of an array rather than merely the first; checked by the shared validator at HALT severity.
+  owner: 04-compliance/T1-invariants.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2247
+  statement: socMin ≤ socNow ≤ socMax; checked at the C1 producer and consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2248
+  statement: No fact inside a BeliefSnapshot has knowledgeTime greater than asOf, enforced structurally because the only read API takes asOf and the filter is applied inside the storage layer against an index rather than by the caller; checked on the Belief store read path and re-asserted at C1 at HALT severity.
+  owner: 04-compliance/T1-invariants.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2249
+  statement: Every [H] array has length slotCount; checked by the C1 validator at HALT severity.
+  owner: 04-compliance/T1-invariants.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2250
+  statement: blockIndex is non-decreasing and covers every slot in the window exactly once, and blockSlots sums to slotCount; checked by the C1 validator at HALT severity.
+  owner: 04-compliance/T1-invariants.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [INV-D-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2251
+  statement: All scenario-indexed arrays share the scenario axis so index s denotes the same coherent state of the world in load, pv, daPrice, activationUp, imbalancePrice and every other scenario-indexed series, and indexing one series by s and another by s' is a defect; checked by the C1 validator and enforced by construction in the ensemble artefact at HALT severity.
+  owner: 04-compliance/T1-invariants.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2252
+  statement: scenarioWeights are non-negative and sum to 1 within 1e-9; checked by the C1 validator at HALT severity.
+  owner: 04-compliance/T1-invariants.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2253
+  statement: The reduced ensemble preserves each marginal's mean against the full ensemble within tolerance; checked offline at reduction-artefact build and re-checked at C1, at warn severity with the mode moving to DEGRADED.
+  owner: 04-compliance/T1-invariants.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [INV-D-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2254
+  statement: pMaxCharge and pMaxDischarge are non-negative and finite for every slot; checked by the C1 validator at HALT severity.
+  owner: 04-compliance/T1-invariants.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2255
+  statement: etaCharge times etaDischarge is at most 1, because round-trip efficiency above unity is a physical impossibility and usually a sign that a loss was placed twice or with the wrong sign; checked by the C1 validator at HALT severity.
+  owner: 04-compliance/T1-invariants.md §3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-D-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2256
+  statement: Every field marked Null = no is present or appears in criticalMissing, and a missing field that is neither present nor declared missing is a broken ingestion path; checked by the C1 validator at alert severity then escalating per the ladder.
+  owner: 04-compliance/T1-invariants.md §3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [INV-D-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2257
+  statement: No (effect, decision variable, slot) triple is priced by more than one term, per the term ownership matrix; checked by the composer's ownership check at HALT severity for a double count.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2258
+  statement: Every term's originView is the declared owner of its effect in the ownership matrix; checked by the composer's ownership check at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2259
+  statement: Every term references only decision-variable symbols from the closed C2 vocabulary; checked by the composer then the C2 consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2260
+  statement: Every term marked mandatory is present in the bundle, and peak protection and confirmed-commitment terms are mandatory in every degradation mode; checked by the composer at stage 6 at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [INV-V-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2261
+  statement: unclaimedEffects is logged, an unclaimed effect is priced at zero and the omission recorded, and if the effect is in the configured critical set the engine escalates; checked by the composer's coverage check at warn severity, or alert plus escalate if critical.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2262
+  statement: No scenario array and no Belief handle, cursor, delegate or object appears anywhere in the bundle, and scenario structure reaches the Planner only through CouplingConstraint.scenarioScope and through terms already aggregated by Valuation; checked at the C2 producer and consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2263
+  statement: compositionOrder satisfies the stage precondition table with each stage's requirements established by an earlier stage, and the table is the single source for the order because restating it would let the two drift; checked by the composer before each stage runs at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [INV-V-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2264
+  statement: INV-V-08 is reserved, not allocated, and must not be reused.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-V-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2265
+  statement: INV-V-09 is reserved, not allocated, and must not be reused.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-V-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2266
+  statement: INV-V-10 is reserved, not allocated, and must not be reused.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-V-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2267
+  statement: vSocSlopes are strictly decreasing so V is concave in SOC, and concavity is what makes the PWL binary-free under maximisation; checked at value-function artefact build and at the C2 producer and consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [INV-V-11]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2268
+  statement: Every PwlTerm's declared curvature is verified against its breakpoints, and a term declaring Concave with a non-concave breakpoint set is a contract violation rather than a silently-wrong relaxation because binary count and therefore solve time depend on the declaration being true; checked by the composer's curvature verification at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-12]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2269
+  statement: prorationFactor lies in [0,1] and is consistent with the CivilCalendar, equalling the fraction of the accounting period covered by the planning horizon, and mis-setting it is the classic route to a pathologically peak-averse engine; checked by the composer and the C2 consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-13]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2270
+  statement: binariesByOrigin sums to binaryCount and binaryCount matches the binaries the Planner actually builds; checked by the composer then the L3 model build at warn severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-14]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2271
+  statement: Every BoundTerm carries a reason and no bound with reason Physical or Regulatory is soft, because feasibility restoration depends on this tagging; checked by the composer and the C2 consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-15]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2272
+  statement: FillProbView emits only BoundTerm and carries no priced term, because fill probability constrains the Planner and never prices for it; checked by the composer and the view schema check at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2273
+  statement: No term, bound or coupling row references a provenance flow attributing energy to a path or to a named installation, because the delineation is arithmetic on four metered scalars per quarter-hour and grants no attribution freedom while a routing variable invents one and books value settlement will not pay; checked at the composer and the C2 producer and consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-V-17]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2274
+  statement: The symbol invariant catches the symbol while the provenance invariant catches the intent and names it in the alert.
+  owner: 04-compliance/T1-invariants.md §4
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-V-03, INV-V-17]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2275
+  statement: Every emitted intent is physically deliverable under the planned trajectory given SOC bounds, per-slot power bounds and the POI envelope; checked in L3 before emitting C3 and re-checked by the C3 consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2276
+  statement: Every Confirmed commitment in the ledger is covered by the plan, with the required SOC corridor and delivery obligation satisfied as hard constraints in every degradation mode, and a plan that cannot honour a confirmed award never reaches C3; checked in L3 per solve before emit at HALT severity.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-P-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2277
+  statement: No two intents target the same product, slot and side without a replacesIntentId chain linking them; checked at the C3 producer and consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2278
+  statement: Limit prices are tick-aligned and volumes lot-aligned, rounded exactly once at the C3 boundary, because rounding earlier corrupts the optimality-gap measurement; checked at the C3 producer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2279
+  statement: In SAFE mode the intent set contains only CommitmentCover intents and cancels; checked at the C3 producer and consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [INV-P-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2280
+  statement: Total planned discharge over any window respects energy availability including the reserve corridor, so the plan cannot sell the same kWh into spot and hold it as reserve headroom; checked post-solve in L3 and at the C3 producer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [INV-P-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2281
+  statement: "No solution contains simultaneous charge and discharge above tolerance: for every slot, not both charge and discharge exceed 1e-6 kW."
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2282
+  statement: With round-trip efficiency below one and non-negative energy prices the no-simultaneity property is automatic, so the complementarity binary is omitted by default and enabled by configuration flag.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2283
+  statement: The no-simultaneity property is not automatic under negative prices, an aFRR activation obligation, or a peak-driven incentive to import, where burning energy can be profitable and the LP relaxation will exploit it.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2284
+  statement: When the simultaneity binary is disabled the no-simultaneity property is a post-solve monitor over the returned trajectory, and a violation means the omission was not safe for that instance and the tick is flagged; monitored on every solve at alert severity.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2285
+  statement: INV-P-08 is reserved, not allocated, and must not be reused.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-P-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2286
+  statement: Every DA bid curve is monotone with quantity non-increasing in price for a buy curve and non-decreasing for a sell curve, asserted and never sorted into compliance, because a non-monotone curve is rejected by the exchange and is diagnostic of a formulation error, most often a missing coupling constraint; checked in L3 after the parametric re-solve and at the C3 producer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2287
+  statement: No sell intent is priced below its shadowValue and no buy intent above it, so the quoting policy never trades through the Planner's own indifference price; a legitimate exception exists for covering a commitment at a loss but such an intent must carry the CommitmentCover tag and an untagged violation is blocked; checked at the quoting policy output before C3 seal and re-checked ex post by L5 at warn severity with the intent blocked.
+  owner: 04-compliance/T1-invariants.md §5
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2288
+  statement: Every fillId references an intentId that was submitted in this run, and a fill with no matching intent is a phantom fill meaning the adapter or the ledger has lost identity; checked at the C4 consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2289
+  statement: Filled volume summed across all fills for an intent does not exceed the intended volume; checked at the C4 consumer at HALT severity.
+  owner: 04-compliance/T1-invariants.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2290
+  statement: Energy balance holds within meter tolerance per slot as the POI bridge evaluated on realised data; checked in L5 per slot at warn severity while provisional and HALT when final.
+  owner: 04-compliance/T1-invariants.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2291
+  statement: Execution does not consume shadowValue or urgency, which cross C3 for settlement attribution only, enforced structurally because the adapter interface exposes a projection of ExecutionIntent that omits both fields so Execution cannot read them even by accident; HALT if the projection is bypassed.
+  owner: 04-compliance/T1-invariants.md §6
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-X-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2292
+  statement: socMeasured is consistent with batteryChargeEnergy, batteryDischargeEnergy and the declared efficiencies within tolerance, and persistent divergence is the earliest available signal that the efficiency or SOH model has drifted and feeds the modelError bucket; checked in L5 per slot and as a rolling statistic at warn severity escalating to alert on persistent drift.
+  owner: 04-compliance/T1-invariants.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-X-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2293
+  statement: Every reserve award in C4 has a corresponding Confirmed entry in the commitment ledger by the end of the tick; checked in L5 at the C5 write at HALT severity.
+  owner: 04-compliance/T1-invariants.md §6
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-X-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2294
+  statement: realisedPeak is non-decreasing within an accounting period and resets exactly at the local-calendar period boundary, which is a local-midnight boundary and therefore not a fixed UTC offset across the year; checked in L5 at the C5 write and in L0 on read at HALT severity.
+  owner: 04-compliance/T1-invariants.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-011
+  anchors: [INV-S-01, INV-T-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2295
+  statement: realisedByEffect together with unexplained sums to total realised P&L, and the unexplained bucket is mandatory and must never be absorbed silently into another effect; checked in L5 at HALT severity.
+  owner: 04-compliance/T1-invariants.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2296
+  statement: The four error buckets — forecastError, modelError, optimalityGap and executionSlippage — sum to planned minus realised within tolerance, and the residual is unexplained; checked in L5 after the counterfactual re-runs at warn severity.
+  owner: 04-compliance/T1-invariants.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2297
+  statement: deliveryShortfall is zero for every slot, because a reserve delivery failure is a prequalification risk rather than an accounting item, and it is mirrored at C4 because it must be caught the moment the outcome arrives rather than only at the state write; checked in L5 on C4 receipt and again at the C5 write at alert and HALT severity.
+  owner: 04-compliance/T1-invariants.md §7
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-S-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2298
+  statement: Every Confirmed commitment carries a feasibilityRequirement where the product requires one, because a confirmed reserve award with no SOC corridor is an obligation the Planner cannot see; checked in L5 at the C5 write and in L3 on ledger read at HALT severity.
+  owner: 04-compliance/T1-invariants.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [INV-S-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2299
+  statement: fullLoadHours equals annualEnergyKwh divided by annualPeakKw within tolerance, and because battery operation moves both numerator and denominator a stale or inconsistent pair silently mis-states qualification; checked in L5 at the C5 write at HALT severity.
+  owner: 04-compliance/T1-invariants.md §7
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [INV-S-06]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2300
+  statement: unexplainedRatio is below the configured threshold, and a rising ratio is the single best early warning that a term definition has drifted between Valuation and Settlement; checked in L5 per settlement period at warn severity escalating to alert.
+  owner: 04-compliance/T1-invariants.md §7
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-009
+  anchors: [INV-S-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-2301
+  statement: State is never written for a slot earlier than the previous update's effectiveFrom except as an explicit revisionOf, and restatements are new artefacts referencing the old one rather than in-place edits; checked on the L0 write path at HALT severity.
+  owner: 04-compliance/T1-invariants.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [INV-S-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2302
+  statement: While monthly charge throughput exceeds η_d·E_usable/(1−η_rt), Fremdtankstrom (12) is zero; the Planner may assume it while Settlement computes it regardless and publishes throughputBoundMet, and a violated month is a booked cost and a fired invariant rather than a silent divergence; checked in L5 §5.1 and at the L3 model build at warn severity escalating to alert.
+  owner: 04-compliance/T1-invariants.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-16]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2303
+  statement: The delineation identities hold within meter tolerance and both are algebraic consequences of the published formulas so a failure is always an implementation defect; checked in L5 §5.1 Phase A at HALT severity.
+  owner: 04-compliance/T1-invariants.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-17]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2304
+  statement: The seven delineation accumulators are derived from Z1 and Z2 and the settled price series alone, with no belief, forecast, planned quantity or Valuation output entering them; checked in L5 Phase A before sealing at HALT severity.
+  owner: 04-compliance/T1-invariants.md §7
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-18]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2305
+  statement: The conventions document names the time-and-calendar invariant family and defers the statements to the T1 register, where they are written in full.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2306
+  statement: The CivilCalendar service is the only component permitted to map SlotId to local date, local time and tariff window, and no other component performs a timezone conversion, constructs a local time, or derives an HLZF membership.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2307
+  statement: The calendar monopoly is enforced by an analyzer rule banning timezone APIs outside the calendar assembly and by the absence of any local-time field in any contract, with a build failure at the analyzer.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2308
+  statement: No computation assumes a fixed number of slots per civil day, because a civil day has 92, 96 or 100 quarter-hour slots depending on DST transitions.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2309
+  statement: Every per-civil-day span, accounting-period boundary and HLZF window is derived from the calendar rather than from arithmetic on 96, and any code that assumes 96 is wrong twice a year.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2310
+  statement: The fixed-slot-count invariant is checked by requiring every calendar-derived span to be obtained through CivilCalendar and by asserting boundary spans against the calendar in the validator, at HALT severity.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2311
+  statement: Local-time ambiguity is resolved structurally and never heuristically.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2312
+  statement: On the autumn transition the repeated local hour is distinguished only by UTC offset and the calendar returns both occurrences distinctly, and on the spring transition the nonexistent local hour is never produced by any mapping.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2313
+  statement: Every calendar-dependent test includes both DST transition days as fixtures, and the canonical golden window contains one of them.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2314
+  statement: The IANA tzdata version and the MarketCalendar artefact hash are pinned and recorded in the run manifest and are replayed with the backtest, so a backtest of 2024 uses the 2024 calendar and the tzdata release in force rather than today's.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-T-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2315
+  statement: tzdata is itself versioned data and a change to it is a manifest change that forces a reviewed golden re-baseline; HALT if absent or unpinned.
+  owner: 04-compliance/T1-invariants.md §8
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-T-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2316
+  statement: One invariant is stated in ADR-002 without an ID, and it is allocated in T1 and flagged as new so the source ADR can be annotated on its next edit.
+  owner: 04-compliance/T1-invariants.md §8.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2317
+  statement: "The MarketCalendar artefact is internally conformant: gate times are strictly monotone within a product and a day, product blocks do not overlap, every delivery slot in the artefact's coverage is covered by exactly one product block, tick and lot sizes are positive, and the HLZF table covers the whole accounting year for every DSO in scope; checked at artefact build and again at load at HALT severity."
+  owner: 04-compliance/T1-invariants.md §8.1
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2318
+  statement: The invariant register is the what and T1 is the level that proves the checks are wired up and that the payloads satisfy them.
+  owner: 04-compliance/T1-invariants.md §9
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2319
+  statement: The per-seam conformance suite runs for C1, C2, C3, C4, C5 and StateSnapshot against both hand-built fixtures and recorded seams.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2320
+  statement: The schema check asserts the payload's field set equals the contract's field table exactly, with extra fields failing and missing non-nullable fields failing.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2321
+  statement: The types-and-units check asserts every field is the declared typed quantity with the declared unit.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [INV-G-02]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2322
+  statement: The cardinality check asserts the declared cardinality and array lengths against horizon and scenarioCount.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-06, INV-G-07]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2323
+  statement: The range check is elementwise over every element, and a range test that checks only the first array element is the bug that invariant exists for.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2324
+  statement: The no-NaN check is elementwise across every numeric array.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-01]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2325
+  statement: The nullability check asserts every nullable field has a declared default or a documented escalation.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2326
+  statement: The hashing check asserts contentHash recomputes and inputHashes is present and non-empty.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-04]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2327
+  statement: The versioning check asserts a known version is accepted, an unknown major version is rejected cleanly, and an additive minor version is accepted by an older consumer with the default applied.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-G-03]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2328
+  statement: The round-trip check asserts binary and JSON round-trip to an identical payload and an identical contentHash.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2329
+  statement: The double-validation check asserts the producer-side and consumer-side validators reach the same verdict on every fixture, and a disagreement is itself a failure.
+  owner: 04-compliance/T1-invariants.md §9.1
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2330
+  statement: A unit change is always a major version bump, and T1 asserts this mechanically by comparing the current contract's unit annotations against the previous released version's, failing the build on any changed unit under an unchanged major version.
+  owner: 04-compliance/T1-invariants.md §9.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2331
+  statement: A field silently moving from EUR/MWh to EUR/kWh is the archetypal catastrophic change and it is cheap to make impossible.
+  owner: 04-compliance/T1-invariants.md §9.2
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2332
+  statement: The backend objective agreement check asserts the same MilpModel solved by two backends agrees on objective value within relative 1e-6 or the MIP gap tolerance, whichever is larger.
+  owner: 04-compliance/T1-invariants.md §9.3
+  class: analytic
+  blast_radius: cheap
+  br_source: ADR-001
+  anchors: [ADR-001]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2333
+  statement: The backend feasibility agreement check asserts both backends classify the model identically as optimal, infeasible, unbounded, or gap-limited.
+  owner: 04-compliance/T1-invariants.md §9.3
+  class: analytic
+  blast_radius: cheap
+  br_source: ADR-001
+  anchors: [ADR-001]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2334
+  statement: The shape support check asserts every term shape, including each curvature and sense combination and each coupling kind, is translated by every backend, with a declared failure for anything unsupported rather than a silent relaxation.
+  owner: 04-compliance/T1-invariants.md §9.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2335
+  statement: The binary count check asserts the binaries actually built match problemClassHint.binaryCount on every backend.
+  owner: 04-compliance/T1-invariants.md §9.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [INV-V-14]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2336
+  statement: The LP-relaxation backend is present and exercised, because it is required regardless for the Tier-2 bound.
+  owner: 04-compliance/T1-invariants.md §9.3
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2337
+  statement: Each backend's determinism configuration is expressible and recorded in the manifest, and a backend that cannot be made deterministic under parallelism is exercised single-threaded in the reproducibility configuration.
+  owner: 04-compliance/T1-invariants.md §9.3
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2338
+  statement: The calendar artefact conformance check runs at artefact build and at load on every calendar version in the backtest corpus, including versions that span a regulatory change, because a backtest across a rule change must see the rules that applied at the time.
+  owner: 04-compliance/T1-invariants.md §9.4
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [INV-T-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2339
+  statement: INV-V-08, INV-V-09, INV-V-10 and INV-P-08 are not allocated by any document in the specification and are recorded as reserved rather than recycled.
+  owner: 04-compliance/T1-invariants.md §10
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-V-08, INV-V-09, INV-V-10, INV-P-08]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2340
+  statement: Reusing an ID that once appeared in a review comment, a commit message or an alert history is a reliable way to make an incident timeline unreadable.
+  owner: 04-compliance/T1-invariants.md §10
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-2341
+  statement: A new Valuation or Planner invariant takes the next free number above the highest allocated in its family, and the reserved IDs stay empty permanently.
+  owner: 04-compliance/T1-invariants.md §10
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [INV-V-17, INV-P-11]
+  evidence: unlabelled
+  tn: null
+  band: null
