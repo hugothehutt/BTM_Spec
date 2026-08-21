@@ -364,10 +364,39 @@ without decomposing them makes both invisible.
 
 ### 5a. Representability — CONFIRMED
 
-`M(x, ω) = max_t p_poi(x, ω, t)` is a max of affine functions, hence convex in `x` for
-each `ω`. `CVaR_α` is convex and non-decreasing, so `CVaR_α(M(x, ·))` is convex in `x`.
-Composed with §1's RU block it is **exactly LP-representable, no binaries**. Cost per
-tariff regime:
+**Convex in what.** Two arguments are in play and they must not be conflated. This
+section and §1a concern convexity in the **decision variables `x`**, per scenario —
+that is what the LP representation needs. §6a concerns convexity in the **uncertainty
+`ω`**, per decision — that is what Jensen needs. Both hold here, for the same underlying
+reason, but neither implies the other.
+
+The load-bearing premise is one level below the max. `L3`:60 gives the POI bridge
+`p_poi[s,t] = load[s,t] − pv[s,t] − p_batt[t]`; for fixed `s` the first two are
+parameters and `p_batt = p_d − p_c` is a difference of decision variables, so
+**`p_poi[s,t]` is affine in `x`**. A pointwise max is convexity-*preserving*, not
+convexity-*creating*: it is the affineness of the constituents, not the `max`, that
+makes `M(x, ω) = max_t p_poi(x, ω, t)` convex. The chain is then
+
+```
+affine  →  max over t  →  max with the constant floor  →  × (peakPrice·proration ≥ 0)
+        →  CVaR_α (convex AND non-decreasing)  →  Σ
+```
+
+where the non-decreasing property in the penultimate step is essential: composing two
+convex functions is not convex without it. Composed with §1's RU block the term is
+**exactly LP-representable and adds no binaries**.
+
+Two limits on that sentence. First, it says the term *adds* no binaries — the model
+still carries them elsewhere (`Z1NB·Z1NE = 0`, the `MIN` branch, the qualification
+state), so the programme is a MILP and the epigraph relaxation is exact **per fixed
+integer assignment**, not globally. A convex objective is not a convex problem.
+Second, the affineness premise is falsifiable: a decision entering `p_poi`
+multiplicatively with another decision would destroy it. None does today — activation
+enters as `a[s,t] · rUp` with `a[s,t]` a per-scenario **parameter**, hence linear in
+`rUp`, the same device as `(24)¼`. Making the activation fraction a decision would break
+convexity at the bridge and every step above it.
+
+Cost per tariff regime:
 
 ```
 S epigraph vars (z_s) + S RU vars (u_s) + 1 (ζ) ;  S·|overSlots| + S rows
