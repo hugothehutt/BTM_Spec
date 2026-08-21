@@ -5553,3 +5553,2500 @@
   evidence: unlabelled
   tn: null
   band: null
+
+# ---- 01-adr-d.tsv ----
+# ---- 01-adr/ADR-011 .. ADR-013 ----
+- id: CLM-0549
+  statement: Pricing the maximum POI import over the accounting period is correct for today's Leistungspreis and is about to stop being the only regime that matters.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Context
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0550
+  statement: Under §19(2) S.1 StromNEV, atypische Netznutzung, the charge is based on the peak within published Hochlastzeitfenster rather than the annual maximum.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Context
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0551
+  statement: HLZF windows are published per DSO per year.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Context
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0552
+  statement: Under §19(2) S.1 the optimisation target is a max over a subset of slots defined by a data table.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Context
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0553
+  statement: Under §19(2) S.2 StromNEV, stromintensive Netznutzung, qualification requires at least 7,000 full-load hours and more than 10 GWh annual consumption at the metering point, with tiered reductions.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Context
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0554
+  statement: Full-load hours are annual energy divided by annual peak power.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Context
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0555
+  statement: Battery operation moves both the numerator and the denominator of full-load hours and therefore moves §19(2) S.2 qualification directly.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Context
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0556
+  statement: "§19(2) S.2 qualification is a cliff: falling below 7,000 full-load hours loses the reduction for the entire year."
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Context
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0557
+  statement: A myopic optimiser that shaves a peak in December can raise full-load hours and gain, while one that discharges to capture a spread can lower annual consumption and lose far more than the spread.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Context
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0558
+  statement: The qualification cliff is a discrete state with a large terminal value and belongs in the value function rather than in the per-tick objective.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Context
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-007, ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0559
+  statement: ITariffRegime is a plug-in interface, and PeakView selects a regime from configuration and emits shapes accordingly.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0560
+  statement: The AnnualLeistungspreis regime emits an EpigraphTerm over all slots in the year, floored by the realised peak, and is today's baseline.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0561
+  statement: The MonthlyLeistungspreis regime emits an EpigraphTerm per calendar month.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0562
+  statement: The AtypicalHlzf regime emits an EpigraphTerm over HLZF slots only, taken from the calendar table.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-002, ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0563
+  statement: The IntensiveUse regime emits an EpigraphTerm plus a discrete qualification state.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0564
+  statement: Tariff regimes compose, and a site can be subject to more than one simultaneously, such as an HLZF-based charge and a volumetric charge.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0565
+  statement: Each regime emits terms tagged with its own EconomicEffect, so the composer's exclusivity check keeps them from overlapping.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-009, ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0566
+  statement: Qualification state is a state variable in L0 and a dimension of V.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-007, ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0567
+  statement: qualState carries accumulated annual energy, accumulated full-load hours, current HLZF exposure and a projected qualification probability.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0568
+  statement: The value function is fitted conditional on the discrete qualification state, which is how the cliff is represented without breaking concavity in SOC.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-007, ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0569
+  statement: Cliff protection is a hard guard and not only an economic term.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0570
+  statement: When projected qualification is within a configurable margin of a threshold, the engine raises a peakCritical or qualCritical flag.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0571
+  statement: The peakCritical or qualCritical flag forces escalation to a higher co-optimisation tier and applies a bound restricting actions that would worsen the projection.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-010, ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0572
+  statement: Losing a year of network-charge reduction for a day's spread is the single largest downside event in the BTM business case and must not be reachable through an approximation error.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Decision
+  class: empirical
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0573
+  statement: A regime change is a configuration date plus a new regime implementation, not a rewrite.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Consequences
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0574
+  statement: Backtests spanning a regime change are honest, because the regime is selected from the versioned calendar.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Consequences
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-002, ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0575
+  statement: All numeric tariff thresholds — 7,000 hours, 10 GWh, tier percentages, HLZF windows — are configuration sourced from the current published tables per DSO and per year, never constants.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Consequences
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0576
+  statement: Regulation in the area of individual network charges is actively moving.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Consequences
+  class: regulatory
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0577
+  statement: Hardcoding max over the month cannot express HLZF and silently mis-prices the qualification cliff.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Rejected
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0578
+  statement: Treating qualification as a post-hoc report guarantees the engine will eventually trade through a cliff for a small gain.
+  owner: 01-adr/ADR-011-tariff-regime-plugin.md §Rejected
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0579
+  statement: The execution engine already exists and is fixed, so the question the engine must answer at C3 is which limit orders, at what price and what volume, to submit.
+  owner: 01-adr/ADR-012-order-intent.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0580
+  statement: A MILP answers what net position is wanted in each slot, which is a different question from what limit orders to submit.
+  owner: 01-adr/ADR-012-order-intent.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0581
+  statement: Turning a target position into a limit price is a separate problem involving fill probability, urgency, adverse selection and the shape of the remaining trading window.
+  owner: 01-adr/ADR-012-order-intent.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0582
+  statement: Limit price is not naturally a MILP variable, because price is a control on a stochastic fill process rather than a physical quantity.
+  owner: 01-adr/ADR-012-order-intent.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0583
+  statement: Conflating position and quoting either gives the MILP price variables and non-convexities it cannot handle, or buries the quoting logic inside the optimiser where it cannot be tested or tuned.
+  owner: 01-adr/ADR-012-order-intent.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0584
+  statement: The Planner decides the target position per slot and per market, with a shadow value of position change — the marginal EUR/MWh at which the engine is indifferent.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0585
+  statement: The Planner emits an urgency signal derived from how much the objective degrades if the position is not reached.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0586
+  statement: The Quoting Policy maps target, shadow value, urgency, FillProbView and market microstructure state to a ladder of limit orders with price, volume, validity and replace/cancel behaviour.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0587
+  statement: The shadow value is the Planner's own indifference price, which gives the quoting policy an economically meaningful bound.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0588
+  statement: The quoting policy must never quote a price worse than the shadow value, because at that price the trade destroys value.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0589
+  statement: Everything between the current market and the shadow value is the region the quoting policy is free to work in, and its job is to capture as much of that spread as fill probability allows.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0590
+  statement: C3 carries intent and not routing.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0591
+  statement: An OrderIntent is (market, product, slot, side, limitPrice, volume, validity, replacesId, tag) and says nothing about venue mechanics.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0592
+  statement: The Execution adapter translates intent into whatever the simulator or a live venue requires.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0593
+  statement: To the Planner, fill probability crosses C2 as a BoundTerm limiting how much volume may be counted on, carrying no price.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-008, ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0594
+  statement: The fill-probability BoundTerm prevents the Planner from planning on volume it will not get.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0595
+  statement: To the quoting policy the full fill-probability curve P(fill | price, time-to-gate) is available, because that is precisely the trade-off it exists to make.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0596
+  statement: Because Execution is fixed, the fill model is calibrated against the simulator's actual behaviour and re-verified whenever the simulator changes.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0597
+  statement: T4 includes a quoting-policy backtest that measures realised fill rate against predicted fill rate by price band, and systematic divergence is a calibration failure that is reported rather than absorbed.
+  owner: 01-adr/ADR-012-order-intent.md §Decision
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012, T4]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0598
+  statement: The Planner stays a clean MILP over physical quantities, with no price variables and no fill-probability non-convexity inside the solver.
+  owner: 01-adr/ADR-012-order-intent.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0599
+  statement: The quoting policy can be replaced, A/B tested and tuned independently with the Planner held fixed, so its contribution to P&L is separately measurable as the execution slippage bucket in Settlement's four-way decomposition.
+  owner: 01-adr/ADR-012-order-intent.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0600
+  statement: The DA case requires a bid curve rather than a single quantity.
+  owner: 01-adr/ADR-012-order-intent.md §Consequences
+  class: regulatory
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0601
+  statement: The Planner produces the DA bid curve by parametric re-solve across a grid of DA clearing prices, yielding a monotone price-quantity schedule.
+  owner: 01-adr/ADR-012-order-intent.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0602
+  statement: Monotonicity of the DA bid curve is required by exchange rules and by economic sense, and is asserted.
+  owner: 01-adr/ADR-012-order-intent.md §Consequences
+  class: regulatory
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0603
+  statement: A non-monotone DA bid curve indicates a formulation error, most often a missing coupling constraint.
+  owner: 01-adr/ADR-012-order-intent.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [INV-P-09]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0604
+  statement: Splitting intent from quoting costs an extra component, and the shadow value must actually be extracted from the solve rather than approximated.
+  owner: 01-adr/ADR-012-order-intent.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0605
+  statement: Price as a MILP variable introduces the fill process into the solver and makes it non-convex and unstable.
+  owner: 01-adr/ADR-012-order-intent.md §Rejected
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0606
+  statement: A fixed offset from mid ignores the shadow value entirely and will trade through indifference under pressure.
+  owner: 01-adr/ADR-012-order-intent.md §Rejected
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0607
+  statement: Quoting inside Execution is rejected because Execution is strategy-independent by design and quoting is strategy.
+  owner: 01-adr/ADR-012-order-intent.md §Rejected
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0608
+  statement: The system's entire feedback loop depends on being able to re-run and compare.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Context
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0609
+  statement: A pipeline that produces slightly different answers on re-run cannot be improved, only argued about.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Context
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0610
+  statement: Non-determinism creeps in from solver thread counts and time limits, hash-order iteration, floating-point reduction order under parallelism, wall-clock reads, un-pinned model artefacts, un-pinned tzdata, and data revisions arriving between runs.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Context
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0611
+  statement: Every artefact is content-addressed and every run is reproducible from a manifest.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0612
+  statement: A run is defined by a manifest containing the hash of the code revision, the configuration, the market calendar artefact, the tzdata version, every model artefact, the data snapshot boundary, the solver identity and version, and the solver determinism settings.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0613
+  statement: Two runs with the same manifest must produce byte-identical outputs.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013, T3]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0614
+  statement: Byte-identity under an identical manifest is tested, not asserted.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013, T3]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0615
+  statement: The solver runs with a fixed seed, a fixed thread count, and a fixed time limit expressed in deterministic work units where the backend supports it, never in wall clock.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0616
+  statement: Where a backend cannot be made deterministic under parallelism, the reproducibility run uses single-threaded mode and the production run records its non-determinism explicitly.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0617
+  statement: No component reads the system clock, and time enters through the tick's SlotId and asOf, both supplied by the driver.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0618
+  statement: A clock read in a layer is a defect enforced by an analyzer rule.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [INV-G-05]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0619
+  statement: There is no runtime randomness, and scenario draws are artefacts generated offline with a recorded seed.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0620
+  statement: No code path that affects output iterates over an unordered collection, and ordered keys are used everywhere.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0621
+  statement: Parallel floating-point reductions use a fixed partitioning scheme so summation order is stable.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0622
+  statement: BeliefSnapshot, ValuationBundle, PlanResult, StateSnapshot and SettlementResult each carry a content hash of their own contents plus the hashes of their inputs.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0623
+  statement: The input-and-content hashing gives a Merkle chain over the whole tick.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0624
+  statement: If a downstream artefact differs between runs, the Merkle chain localises which upstream input diverged.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0625
+  statement: Because every contract is a serialisable value type, each seam can be recorded to disk during a run.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-008, ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0626
+  statement: "A recorded seam is a test fixture: Valuation can be replayed against a recorded C1 stream with no Belief store present, and the Planner against a recorded C2 stream with no Valuation present."
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0627
+  statement: Seam recording is what makes per-layer golden tests possible and is the reason the contracts carry no object references.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0628
+  statement: Regression testing is a hash comparison, so refactors are safe to attempt because they are cheap to verify.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0629
+  statement: Any behavioural change must be intentional and shows up as a diff in a named artefact, with the Merkle chain pointing at the cause.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0630
+  statement: The lookahead audit is only meaningful because runs are deterministic, since otherwise a changed result proves nothing.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013, T6]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0631
+  statement: Recorded seams for a long backtest are large, so the policy is to record seams on demand for designated audit days and to record only hashes for bulk runs.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0632
+  statement: Determinism costs real discipline, particularly around solver settings and parallelism.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0633
+  statement: A measured throughput loss is accepted in the reproducibility configuration, while production runs with more threads and records that it is a different manifest.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0634
+  statement: Approximate reproducibility removes the ability to detect small regressions, which are the ones that matter.
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0635
+  statement: "Timestamps as identifiers are not content-addressed: two different runs at the same time are indistinguishable and the same run twice is distinguishable, which is exactly backwards."
+  owner: 01-adr/ADR-013-determinism-and-replay.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+
+# ---- 01-adr-e.tsv ----
+# ---- 01-adr/ADR-014 .. ADR-016 ----
+- id: CLM-0636
+  statement: "Data goes missing: a forecast is late, a meter drops out, the value function has not been refreshed, the solver times out, the reserve price feed is stale."
+  owner: 01-adr/ADR-014-degradation-ladder.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0637
+  statement: Silent imputation makes the engine take full-confidence decisions on invented data, and the failure is invisible until Settlement.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0638
+  statement: Failing closed on anything halts the engine perpetually, because in practice something is always slightly stale, and the exceptions added in response leave no policy.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0639
+  statement: Handling degradation with if branches scattered across layers forms a state machine nobody designed and nobody can test.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0640
+  statement: Every value crossing C1 carries a value, a knowledgeTime, a provenance and a quality.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0641
+  statement: Provenance is one of Measured, Forecast, Revised, Imputed or Default.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0642
+  statement: Quality is one of Good, Degraded, Stale, Imputed or Missing.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0643
+  statement: Downstream layers do not branch on quality but map quality onto a risk multiplier that feeds the existing risk machinery.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0644
+  statement: A degraded price belief widens the CVaR confidence level and shrinks position bounds.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0645
+  statement: A stale value function attracts a staleness penalty on its terminal value.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0646
+  statement: An imputed load forecast widens the peak epigraph's safety margin.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0647
+  statement: Bad data takes the same code path with more conservative parameters rather than a different code path.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0648
+  statement: There is one code path to test, and the response to degradation is continuous and tunable rather than a cliff.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0649
+  statement: Global behaviour is a single mode computed centrally from the quality state and written to L0.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0650
+  statement: NORMAL mode triggers when all critical inputs are Good and runs the full strategy.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0651
+  statement: DEGRADED mode triggers when non-critical inputs are stale or imputed and runs the full strategy with widened risk and reduced position limits.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0652
+  statement: DEFENSIVE mode triggers when a critical input is stale, or the value function is beyond validity, or the solver hits the time limit repeatedly, and honours commitments and maintains peak protection with no new speculative exposure.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0653
+  statement: SAFE mode triggers when a critical input is missing or the commitment ledger is inconsistent, honours existing commitments only, cancels unfilled speculative orders, and holds SOC in a safe band.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0654
+  statement: HALT mode triggers when a physical constraint is violated, the state store is unreadable, or contract validation fails; it submits nothing, alerts, and requires operator acknowledgement to resume.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0655
+  statement: "Mode transitions are hysteretic: entering DEFENSIVE requires N consecutive bad ticks and leaving it requires M consecutive good ones, with M greater than N."
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0656
+  statement: Without hysteresis the engine flaps on a marginal feed, and the flapping is worse than either state.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0657
+  statement: Every mode transition is logged with its cause and is part of the settlement record, so a period of poor P&L can be attributed to degraded operation rather than to strategy.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0658
+  statement: Peak protection — the epigraph floor from realised peak and the qualification guard — applies in every mode including SAFE.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-011, ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0659
+  statement: Losing a year of network-charge reduction because a price feed was stale is not an acceptable outcome of any degradation path.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0660
+  statement: Awarded aFRR capacity is a physical obligation.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: regulatory
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0661
+  statement: In every mode the SOC corridor required to deliver confirmed commitments is a hard constraint, and if it cannot be met the engine goes to HALT and alerts rather than quietly under-delivering.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0662
+  statement: The fallback ladder for a single field is applied in order, stopping at the first success and recording where it stopped.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0663
+  statement: Rung 1 of the fallback ladder is the primary source, fresh.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0664
+  statement: Rung 2 of the fallback ladder is the primary source stale within maxStale, marked Stale.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0665
+  statement: Rung 3 of the fallback ladder is a secondary source, marked Degraded.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0666
+  statement: Rung 4 of the fallback ladder is model imputation by persistence, climatology or ensemble mean, marked Imputed.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0667
+  statement: Rung 5 of the fallback ladder is a conservative default, the value that biases toward inaction, marked Default.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0668
+  statement: Rung 6 of the fallback ladder is reached when no safe default exists, the field is Missing and the mode escalates.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0669
+  statement: The conservative default is chosen to be conservative for the decision it feeds, which is field-specific and declared in the contract's field table.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0670
+  statement: A missing load forecast defaults high for peak protection, and a missing reserve price defaults low so revenue is not chased on invented prices.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0671
+  statement: The degradation design is testable by injecting quality states rather than by simulating outages.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014, T2]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0672
+  statement: T2 includes a degradation matrix test covering every field crossed with every quality level, asserting the mode and the risk response.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014, T2]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0673
+  statement: Degradation is visible in the settlement record and separable in P&L attribution.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0674
+  statement: Every field needs a declared maxStale, a fallback chain and a conservative default.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0675
+  statement: A boolean isValid per field loses the gradation that makes a proportional response possible.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Rejected
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0676
+  statement: Per-layer local handling of degradation produces an emergent, untested state machine.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Rejected
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0677
+  statement: Failing closed on everything is unoperable and erodes into ad hoc exceptions.
+  owner: 01-adr/ADR-014-degradation-ladder.md §Rejected
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0678
+  statement: Three decisions are deferred on purpose, and nothing in the current design depends on any of them because every document references the abstraction rather than the choice.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0679
+  statement: The intended MILP solver is Gurobi, deferred until the Planner formulation is concrete.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0680
+  statement: "Before the solver decision can be taken, the exact MILP must be specified: variable count, binary count by source, which PWL terms are General curvature, whether the simultaneity binary is enabled, and the scenario count from ADR-005 tuning."
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [ADR-005, ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0681
+  statement: Solver choice should follow from a benchmark on the real model rather than precede it.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0682
+  statement: The solver decision is blocked by L3-planner reaching a fixed formulation.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0683
+  statement: The solver choice changes nothing structural, because IOptimizationBackend exists precisely so it is a configuration decision.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [ADR-001, ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0684
+  statement: Backends must in any case be conformance-tested against each other, and the LP-relaxation backend is needed regardless for the Tier-2 bound.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [ADR-010, ADR-015, T1]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0685
+  statement: If Gurobi is confirmed, licence seat count becomes a backtest throughput constraint rather than a runtime one, because parallel backtests each need a seat.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0686
+  statement: The per-tick latency budget is deferred until operational requirements per market are settled.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0687
+  statement: Before the latency budget can be set, it must be decided whether the engine participates in continuous intraday by periodic re-optimisation on a timer or by event-driven response to book updates.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0688
+  statement: Periodic re-optimisation and event-driven response imply latency budgets two orders of magnitude apart.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
+  class: empirical
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0689
+  statement: The latency budget determines which tier of the co-optimisation ladder is the production path and the escalation thresholds, but not the architecture.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-010, ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0690
+  statement: The tier ladder exists to make the latency-budget decision late and reversible.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-010, ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0691
+  statement: Solve time distribution per tier and per gate type, as a function of scenario count and breakpoint count, is instrumented now so the latency decision is evidenced.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015, T5]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0692
+  statement: Intraday fill-model fidelity is deferred until the existing simulator's behaviour is characterised.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0693
+  statement: Because Execution is fixed and pre-existing and the engine's question is only which limit orders to submit, the fill model's job is to predict the simulator's behaviour and its accuracy target is defined by that rather than by the real market in the abstract.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-012, ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0694
+  statement: Predicting the simulator is a narrower and much more tractable problem than a general LOB model, which is why the fill-fidelity decision can wait.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0695
+  statement: Before the fill-fidelity decision can be taken, a characterisation run against the simulator must measure realised versus predicted fill rate by price band, product and time-to-gate.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
+  class: empirical
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015, T4]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0696
+  statement: The fill-fidelity decision changes the representation of FillProbView's BoundTerm — a scalar volume cap versus a per-price-band cap — and how much of the cold tier must hold raw order-book data, but not the C2 contract shape.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0697
+  statement: Whatever is calibrated against the simulator inherits the simulator's biases.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0698
+  statement: When the engine is pointed at a real venue the fill model must be recalibrated, and the gap between simulator-calibrated and venue-calibrated behaviour becomes a named risk.
+  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
+  class: empirical
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0699
+  statement: At each workstream boundary the open-decision register is reviewed for whether the blocking condition is met, whether the decision is still safely deferrable, and whether new design work has accidentally created a dependency on it.
+  owner: 01-adr/ADR-015-open-decisions.md §Review protocol
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0700
+  statement: A deferred decision that has quietly acquired dependents must be taken immediately or the dependency removed.
+  owner: 01-adr/ADR-015-open-decisions.md §Review protocol
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0701
+  statement: Available PV routinely exceeds load plus charge headroom plus the export limit, so a bridge without a curtailment term is an equality over non-negative quantities that is infeasible under an ordinary condition.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0702
+  statement: "q is not merely a feasibility slack: under the Abgrenzungsoption it moves Z1NE¼ and therefore (2)¼, (23)¼ and every monthly aggregate downstream — (11), (13), (16), (30) and (32)."
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0703
+  statement: Whether curtailing a quarter-hour pays depends jointly on the spot price, on AW that hour, and on the state of the calendar-month aggregates.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Context
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0704
+  statement: q[t,k] is a decision variable of the Planner's MILP, priced against the same objective as every other lever.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0705
+  statement: No rule, heuristic or preprocessing step may fix q.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0706
+  statement: Valuation may publish BoundTerms constraining q to the physically available generation, but never a schedule for it.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Decision
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0707
+  statement: With q as a decision variable the generation allocation is always feasible, and the export limit's shadow price becomes readable instead of implicit in an infeasibility.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0708
+  statement: Curtailment couples to the monthly aggregates (16) and (32), so horizon truncation is economically load-bearing.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0709
+  statement: A quarter-hour of q is valued only through the calendar month it falls in, so V(SOC) plus the carried monthly state must span that boundary.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-007, ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0710
+  statement: Because off-take is not a control, q and the battery are the only levers on Z1NB¼ and Z1NE¼, so their joint treatment is mandatory rather than optional.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Consequences
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0711
+  statement: "Curtailing only when the export limit binds ignores price and AW: it forgoes curtailment that pays at negative prices and forces curtailment that does not pay whenever charging could absorb the excess more cheaply."
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Rejected
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0712
+  statement: The claim that curtailment is dominated under the delineation regime is false, because it assumes off-take is a control and that AW>0 accounting is local, and neither holds.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Rejected
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0713
+  statement: Curtailment as a Belief-side adjustment to pv_avail hides a decision inside a forecast, makes it unattributable in Settlement, and breaks replay.
+  owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Rejected
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+
+# ---- 01-adr-f.tsv ----
+# ---- 01-adr/ADR-017 and 01-adr/README.md ----
+- id: CLM-0714
+  statement: The Abgrenzungsoption settles on calendar-month aggregates built from quarter-hour MIN and MAX selections and pays through two competing routes.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Context
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0715
+  statement: (11), the storage energy that reached the grid, splits at (6)·pv_share, below which it is green and above which it is grey.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Context
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0716
+  statement: The green/grey split is set by the month's PV-versus-grid charging mix, the aggregate of about 2,880 quarter-hourly decisions each also driven by spot, aFRR, peak and imbalance.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Context
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0717
+  statement: (31) = (30)·(28) with (30) = (29)/(11) is a ratio of decision-dependent monthly sums times a MIN, so it is bilinear and outside the ADR-008 algebra.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Context
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-008, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0718
+  statement: The active branch of every MIN is chosen by the optimiser, so a lever's marginal effect has no fixed sign.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Context
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0719
+  statement: Levies are charged on (21) rather than on (3), so the composer's stage-1 precondition that POI energy is fully marked requires stage-2 information.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Context
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-009, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0720
+  statement: The MILP carries the seven month-to-date accumulators and their state equations as constraints.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0721
+  statement: Valuation publishes only the marginal values λ_j = ∂V_del/∂A_j, recomputed every tick.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0722
+  statement: The accumulator set is A = { (3), (5), (6), (9), (11), (26), (29) }, month-to-date, reset at the Europe/Berlin month boundary.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0723
+  statement: In-horizon accumulation is A_j = A_j^MTD + Σ over t in H of contribution_j(t).
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0724
+  statement: Everything from (10) to (33) is a closed-form function of A.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0725
+  statement: V_del is evaluated arithmetically from a projection of the remaining month and is never fitted.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0726
+  statement: In the grey-present regime ∂(31)/∂(29) = (15)/(11).
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0727
+  statement: In the grey-present regime ∂(31)/∂(11) = −(31)/(11).
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0728
+  statement: In the grey-present regime ∂(31)/∂(6) = (31)/(6).
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0729
+  statement: In the grey-present regime ∂(31)/∂(5) = (31)·(9)/((5)·(10)).
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0730
+  statement: In the grey-present regime ∂(31)/∂(9) = −(31)/(10).
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0731
+  statement: "No lever carries a delineation coefficient of its own: curtailment q, charge source, discharge routing, reserve headroom and activation are priced through the accumulator constraints rather than through terms written against them."
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0732
+  statement: "V_soc and V_del are separable: V = V_soc(SOC, peakState, qualState) + V_del(delineation coordinates, slotsToMonthEnd)."
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0733
+  statement: Separability of V_soc and V_del is permitted because (12) = 0 is assured, which removes the only SOC coupling.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0734
+  statement: V_del is evaluated per scenario and its risk treatment is the tail of V_del itself, not a per-accumulator sign convention.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-005, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0735
+  statement: Settlement computes the exact delineation machinery, the linearisation lives only in Valuation, and the difference is booked.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Decision
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0736
+  statement: SubsidyRevenue is owned by DelineationView on the Delineation base and equals MAX[AW − MW_month; 0] · (32), while spot revenue on the same kWh stays in SpotEnergyValue.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-009, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0737
+  statement: EnfgLevies is owned by DelineationView on the Delineation base and is charged on (21), the reducible EnFG components only.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-009, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0738
+  statement: LeviesAndTaxes is owned by TariffView on the PoiImport base and is narrowed to the non-reducible components, Stromsteuer and Konzessionsabgabe.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-009, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0739
+  statement: There are thirteen economic effects.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-009, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0740
+  statement: The delineation split is a base split and not a relief booked as revenue, so ADR-009 exclusivity holds unchanged.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-009, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0741
+  statement: A new composer stage 3, Delineation, requires battery energy marked and establishes (21).
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-009, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0742
+  statement: Composer stage 1 keeps only the non-reducible tariff surface and stays linear.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-009, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0743
+  statement: (12) = 0 whenever monthly charge throughput exceeds η_d·E/(1−η_rt), about 8 charge-equivalent cycles, so Fremdtankstrom vanishes and V_del is separable from SOC; this is asserted, not modelled.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0744
+  statement: (2)¼ needs no binary when λ_11 ≥ 0, because (11) feeds (13), the base of both routes, and the hypograph relaxation (2) ≤ Z1NE, (2) ≤ Z2E is then tight.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0745
+  statement: With no grid charging, (9) = 0, the green route is linear because (31) = (29) and the ratio cancels.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0746
+  statement: All curvature in this design is created by grid charging.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0747
+  statement: A5 reduces to A1 when all plants are marktprämien-gefördert on a common EEG vintage so that (24x)¼ is common, giving (32x) = ZFx·(32), no per-plant accumulators, and value (32) · Σ_x ZFx·premium_x.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0748
+  statement: (21) = 0 identically when load = 0 and the connection never clips discharge, because (16)+(19) = (9) = (3); this is held as a settlement test fixture and never as a code path.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0749
+  statement: Import/export exclusivity requires one binary per slot, because levies penalise import while the premium rewards export and the pair is otherwise unbounded.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0750
+  statement: (1)¼ = MIN[Z1NB; Z2V] needs a second binary whenever λ_9 may be negative, which is whenever the site has load.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0751
+  statement: "INV-S-10, the zero-gap invariant, is split: modelError gains a linearizationGap sub-bucket comparing L2's λ-linearisation against L5's exact machinery on the same trajectory."
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0752
+  statement: The linearizationGap is expected, budgeted and reported, and residual modelError is still asserted zero.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0753
+  statement: Without splitting INV-S-10 the most valuable test in L5 fails permanently on day one.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0754
+  statement: The linearizationGap is interpretable as one thing, projection error.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [INV-S-10]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0755
+  statement: MW_month is not known at decision time, and because MAX[AW − MW; 0] is convex, pricing at the mean understates the premium.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0756
+  statement: MW_month is derived per scenario from national spot and national solar generation on the shared scenario axis and is never modelled independently.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-005, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0757
+  statement: An independent MW_month series would destroy the correlation that makes the opposing channels representable, cannibalisation raising the premium while negative-price hours lower (30).
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0758
+  statement: (24)¼ is a state machine and not a comparison, because § 51 and § 51b EEG carry a duration condition, so the indicator for a slot depends on a run of neighbouring day-ahead prices.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: regulatory
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0759
+  statement: The (24)¼ indicator is declared in L1 as a function of the day-ahead series, with the threshold as configuration per EEG vintage.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0760
+  statement: A kWh discharged into load never enters (11), so self-consumption forfeits both routes.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0761
+  statement: Because self-consumption forfeiture falls out of the state equations, no SelfConsumptionView is needed.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0762
+  statement: The negative resolution of self-consumption assumes retail supply is spot-indexed.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+  vague: true
+- id: CLM-0763
+  statement: A coefficient on q or on reserve headroom must embed the MIN-branch case analysis, evaluated at a state the Planner has not yet chosen.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0764
+  statement: Raising Z1NB raises (9) only while Z1NB < Z2V, and curtailment eats (2)¼ when Z1NE ≤ Z2E and (23)¼ otherwise, giving four regimes selected inside the same solve.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-016, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0765
+  statement: Attributing energy from PV to battery, battery to grid, or a discharge to a named plant models a fiction.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0766
+  statement: The delineation evaluates MIN and MAX on four metered scalars per quarter-hour — Z1NB¼, Z1NE¼, Z2V¼, Z2E¼ — and the labels follow with no attribution freedom.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0767
+  statement: A flow formulation invents degrees of freedom, most damagingly an apparent choice of which plant's AW a discharge earns, which ZF fixes statically, and books value settlement will not pay.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0768
+  statement: A flow formulation reconciles against nothing the Netzbetreiber records, which is what makes L5 §5.1 a test rather than a second opinion.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0769
+  statement: C2's vocabulary gains meter-shaped variables only.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0770
+  statement: An exact formulation to month end is up to 2,880 slots times scenarios per tick with the bilinear terms intact, which is not survivable at C_tick and is forbidden by ADR-008.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-008, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0771
+  statement: Fitting V_del would bake the uncertainty into coefficients instead of leaving it in a projection where it is visible and testable, and would import the staleness machinery for nothing.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0772
+  statement: A LevyRelief effect double-counts against LeviesAndTaxes unless the base changes too, and relief is not a cashflow.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-009, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0773
+  statement: (20) is reported as a diagnostic quantity.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0774
+  statement: (21) = 0 is a load-specific identity and not a conservative simplification, so every dual and term built on it is wrong the moment load exists.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0775
+  statement: The general delineation case is built first rather than scoping v1 to co-location.
+  owner: 01-adr/ADR-017-delineation-in-the-objective.md §Rejected
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0776
+  statement: Seventeen decisions are expensive to reverse, each recording context, the decision, its consequences, and what was rejected and why.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0777
+  statement: ADR IDs are stable and referenced throughout the specification.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0778
+  statement: ADR-001, C# for the engine with the solver behind an abstraction, is Accepted and cheap to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: cheap
+  br_source: ADR-001
+  anchors: [ADR-001]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0779
+  statement: ADR-002, four clocks with the market calendar as data, is Accepted and moderate to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-002
+  anchors: [ADR-002]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0780
+  statement: ADR-003, typed quantities and two reference frames, is Accepted and expensive later to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-003
+  anchors: [ADR-003]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0781
+  statement: ADR-004, the bitemporal three-tier content-addressed Belief store, is Accepted and very expensive to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-004
+  anchors: [ADR-004]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0782
+  statement: ADR-005, one joint scenario ensemble with a shared scenario axis, is Accepted and very expensive to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0783
+  statement: ADR-006, forward within a tick and lagged across ticks via L0, is Accepted and very expensive to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-006
+  anchors: [ADR-006]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0784
+  statement: ADR-007, publishing V(SOC) rather than a scalar λ_SOC, is Accepted and expensive to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-007
+  anchors: [ADR-007]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0785
+  statement: ADR-008, Valuation emitting linearizable primitives rather than prices, is Accepted and very expensive to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-008
+  anchors: [ADR-008]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0786
+  statement: ADR-009, the term ownership matrix with the composer enforcing no double count, is Accepted and moderate to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-009
+  anchors: [ADR-009]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0787
+  statement: ADR-010, the three-tier co-optimisation ladder with a measured gap, is Accepted and moderate to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0788
+  statement: ADR-011, the tariff regime as a plug-in with qualification state as a state variable, is Accepted and expensive later to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: [ADR-011]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0789
+  statement: ADR-012, the Planner emitting intent with quoting as a separate policy, is Accepted and moderate to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-012
+  anchors: [ADR-012]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0790
+  statement: ADR-013, content-addressed determinism with every artefact replayable, is Accepted and very expensive to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-013
+  anchors: [ADR-013]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0791
+  statement: ADR-014, five named degradation modes with quality driving risk rather than branches, is Accepted and moderate to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-014
+  anchors: [ADR-014]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0792
+  statement: ADR-015, the register of deliberately deferred decisions, is Open.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [ADR-015]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0793
+  statement: ADR-016, curtailment as a priced MILP decision and never a rule, is Accepted and moderate to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-016
+  anchors: [ADR-016]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0794
+  statement: ADR-017, delineation as MILP state equations plus marginal values, is Accepted and very expensive to reverse.
+  owner: 01-adr/README.md
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-017
+  anchors: [ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0795
+  statement: Very expensive decisions must be implemented first and correctly, because retrofitting them means rewriting every layer above.
+  owner: 01-adr/README.md §Reversibility as a sequencing guide
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: null
+  band: null
+- id: CLM-0796
+  statement: The first two workstreams are the Belief store (ADR-004, ADR-005) and the contract surface (ADR-006, ADR-008, ADR-017), before any economics or optimisation is written.
+  owner: 01-adr/README.md §Reversibility as a sequencing guide
+  class: analytic
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: [ADR-004, ADR-005, ADR-006, ADR-008, ADR-017]
+  evidence: unlabelled
+  tn: null
+  band: null
