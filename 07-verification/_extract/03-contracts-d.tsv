@@ -1,0 +1,109 @@
+# ---- 03-contracts/C5 ----
+C5 carries the StateUpdate payload at version 1.0 from L5 to L0 and is the only backwards edge in the system.	03-contracts/C5-settlement-to-state.md §1	analytic	very-expensive	ADR-006	ADR-006
+C5 is written at the end of a tick and read at the top of the next, so everything in it is by construction at least one tick old when used.	03-contracts/C5-settlement-to-state.md §1	analytic	very-expensive	ADR-006	ADR-006
+The one-tick lag on C5 is explicit and priceable rather than hidden.	03-contracts/C5-settlement-to-state.md §1	analytic	very-expensive	ADR-006	ADR-006
+The C5 envelope adds isFinal, revisionOf, and effectiveFrom, the slot from which the state applies.	03-contracts/C5-settlement-to-state.md §1	analytic	very-expensive	ADR-006	ADR-006
+realisedPeak is carried per regime and is the epigraph floor for the next tick.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	ADR-011	ADR-011
+realisedPeakSlot records when the realised peak occurred and is diagnostically important.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	ADR-011	ADR-011
+periodStart and periodEnd are the accounting period bounds per regime, derived from the local calendar.	03-contracts/C5-settlement-to-state.md §2	regulatory	very-expensive	ADR-002	ADR-002
+peakIsProvisional is true per regime while meter data is unfinal.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	argued
+unsettledGapFrom is the earliest slot not yet settled, per regime.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	ADR-006	ADR-006
+headroomToPeakKw is the distance from realisedPeak to the level at which a new peak would be set, and is the continuous analogue of qualificationMarginHours.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	ADR-011	ADR-011
+peakCritical is true when headroomToPeakKw is inside the configured margin, or the horizon contains a slot whose CVaR peak belief exceeds realisedPeak.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	ADR-011	ADR-011
+peakCritical forces tier escalation and the protective bound.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	ADR-011	ADR-010; ADR-011
+peakCritical is written by Settlement and read by L2's PeakView and L3's escalation policy.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	ADR-011	ADR-011
+peakCritical and qualCritical are both computed by Settlement and never by the Planner, so the escalation trigger cannot be influenced by the thing it is meant to guard.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	ADR-011	ADR-011
+unsettledGapFrom is what makes the lag safe.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	ADR-006	ADR-006
+The Planner knows the realised peak is authoritative only up to unsettledGapFrom and treats the gap conservatively, using its own modelled POI trajectory as a provisional peak contribution rather than assuming the gap contained nothing.	03-contracts/C5-settlement-to-state.md §2	analytic	very-expensive	ADR-006	ADR-006
+annualEnergyKwh is accumulated in the qualification year.	03-contracts/C5-settlement-to-state.md §3	regulatory	expensive-later	ADR-011	ADR-011
+annualPeakKw is the denominator of full-load hours.	03-contracts/C5-settlement-to-state.md §3	regulatory	expensive-later	ADR-011	ADR-011
+fullLoadHours is annualEnergy divided by annualPeak.	03-contracts/C5-settlement-to-state.md §3	regulatory	expensive-later	ADR-011	ADR-011
+hlzfPeakKw is the peak within HLZF windows only.	03-contracts/C5-settlement-to-state.md §3	regulatory	expensive-later	ADR-011	ADR-011
+qualificationStatus is one of Qualified, AtRisk, Lost or NotApplicable, per applicable §19(2) path.	03-contracts/C5-settlement-to-state.md §3	regulatory	expensive-later	ADR-011	ADR-011
+qualificationMarginHours is the distance to the threshold and drives qualCritical.	03-contracts/C5-settlement-to-state.md §3	analytic	expensive-later	ADR-011	ADR-011
+projectedYearEndFlh is a forward projection from the slow loop.	03-contracts/C5-settlement-to-state.md §3	analytic	expensive-later	ADR-011	ADR-011
+qualCritical is true within the configured margin and forces tier escalation and the protective bound.	03-contracts/C5-settlement-to-state.md §3	analytic	expensive-later	ADR-011	ADR-010; ADR-011
+The margin is carried and not just the status, because a binary qualified flag tells the engine nothing until the moment it is too late, whereas the margin lets the value function price the approach to the cliff continuously.	03-contracts/C5-settlement-to-state.md §3	analytic	expensive-later	ADR-011	ADR-007; ADR-011
+The delineation state carries month-to-date accumulators of the Abgrenzungsoption machinery, computed by Settlement Phase A from Z1 and Z2 alone.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+Seven accumulators are carried and no others, because everything from (10) to (33) is a closed-form function of them.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+mtdGridImport is (3), the gesamter Netzbezug, defaulting to zero.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+mtdStorageCharge is (5), the Verbrauch im Stromspeicher, defaulting to zero.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+mtdStorageDischarge is (6), the Erzeugung im Stromspeicher, defaulting to zero.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+mtdSimultaneousGridCharge is (9), the sum of MIN[Z1NB¼; Z2V¼], defaulting to zero.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+mtdStorageExport is (11), the sum of MIN[Z1NE¼; Z2E¼], defaulting to zero.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+mtdDirectFeedInAwPos is (26), direct feed-in in AW>0 hours only, defaulting to zero.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+mtdStorageExportAwPos is (29), storage feed-in in AW>0 hours only, defaulting to zero.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+The derived delineation quantities are published for readability and for the escalation triggers, are recomputable from the seven accumulators, and are carried so that four layers do not each re-derive them.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+pvShare is (10)/(5), the PV share of charging, and sets the route split.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+awPositiveShare is (30), a ratio, so a late-month AW=0 export dilutes the whole month's (28).	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+saldierungsfaehig is (16), the grey route.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+foerderfaehig is (32), the green route.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+umlagebelasteterNetzbezug is (21), the base of EnfgLevies.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-009; ADR-017
+fremdtank is (12) and is expected to be zero.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	INV-S-16
+monthStart and monthEnd are Europe/Berlin civil-calendar bounds derived via CivilCalendar.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	INV-S-12
+slotsToMonthEnd is a coordinate of V_del, and the accumulators reset at monthEnd.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+throughputBoundMet is true when charge throughput exceeds η_d·E_usable/(1−η_rt) so that (12) = 0 is arithmetically assured, and its conservative default is not assured.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	INV-S-16
+delineationIsProvisional is true while the month's meter data is unfinal.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+The delineation accumulators reset to zero at monthEnd and SOC does not.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+The month-boundary discontinuity is in value and not in physics: the same kWh in the same battery is worth a different amount either side of the boundary because the aggregates its route ran through have vanished.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+slotsToMonthEnd is what lets V_del price the approach to the month boundary continuously, and it is the delineation counterpart of qualificationMarginHours.	03-contracts/C5-settlement-to-state.md §3.1	analytic	very-expensive	ADR-017	ADR-017
+A commitment ledger entry carries an entryId, a kind of SpotPosition, ReserveAward or OpenOrder, and a status of Pending, Confirmed, Settled or Cancelled.	03-contracts/C5-settlement-to-state.md §4	analytic	very-expensive	ADR-006	ADR-006
+The Pending versus Confirmed distinction in the commitment ledger is load-bearing.	03-contracts/C5-settlement-to-state.md §4	analytic	very-expensive	ADR-006	ADR-006
+signedVolume in the commitment ledger is in the market frame.	03-contracts/C5-settlement-to-state.md §4	analytic	very-expensive	ADR-003	ADR-003
+For reserve awards the feasibilityRequirement carries the SOC corridor that must be maintained.	03-contracts/C5-settlement-to-state.md §4	analytic	very-expensive	ADR-006	ADR-006
+A Confirmed reserve award's feasibilityRequirement becomes a hard constraint in every degradation mode.	03-contracts/C5-settlement-to-state.md §4	analytic	very-expensive	ADR-014	ADR-014
+Pending ledger entries are exposure rather than obligation, and the Planner treats them probabilistically.	03-contracts/C5-settlement-to-state.md §4	analytic	very-expensive	ADR-006	ADR-006
+Realised P&L is decomposed into the same EconomicEffect enumeration used by Valuation, so planned and realised value are comparable term by term.	03-contracts/C5-settlement-to-state.md §5	analytic	very-expensive	ADR-009	ADR-009
+plannedByEffect records what Valuation expected.	03-contracts/C5-settlement-to-state.md §5	analytic	very-expensive	ADR-009	ADR-009
+unexplained is a mandatory bucket carrying the effect-level residual, the realised cash not attributable to any EconomicEffect.	03-contracts/C5-settlement-to-state.md §5	analytic	very-expensive	ADR-009	INV-S-02
+unexplainedRatio is alerted above a threshold.	03-contracts/C5-settlement-to-state.md §5	empirical	very-expensive	ADR-009	INV-S-07	y
+The unexplained bucket is not optional and must not be allowed to be silently absorbed elsewhere.	03-contracts/C5-settlement-to-state.md §5	analytic	very-expensive	ADR-009	INV-S-02
+A rising unexplained ratio is the single best early warning that a term definition has drifted between Valuation and Settlement.	03-contracts/C5-settlement-to-state.md §5	empirical	very-expensive	ADR-009	ADR-009	y
+unexplained in §5 is the residual of the cash decomposition and unexplainedError in §6 is the residual of the error decomposition; they are never netted against one another and each has its own invariant.	03-contracts/C5-settlement-to-state.md §5	analytic	very-expensive	ADR-009	INV-S-02; INV-S-03
+The error decomposition is the mechanism that makes the system improvable rather than merely operable.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+The gap between planned value and realised value splits into four attributable buckets.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+optimalityGap is the value given up because the tier actually used was not Tier 1, and its fix lives in L3.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+forecastError is the value lost because the world differed from the belief the plan was built on, and its fix lives in L1 and the scenario model.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-005	ADR-005
+modelError is the value lost because the valuation was wrong given the belief, and its fix lives in L2.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+executionSlippage is the value lost between intent and fill, and its fix lives in the quoting policy.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-012	ADR-012
+The decomposition telescopes from the Tier-1 reference value and not from the value of the plan that was actually used.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+Ĵ₁ is the Tier-1 objective on the tick's beliefs and is the anchor of the decomposition.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+Ĵ is the used-tier objective on the same beliefs, A is the used plan re-scored on realised outturn, and R is the realised value from settled cash.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+optimalityGap = Ĵ₁ − Ĵ.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+forecastError = Ĵ − A.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+modelError plus executionSlippage plus unexplainedError equals A − R.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	INV-S-03
+A suboptimal tier lowers the planned value and the realised value, so it nets out of planned minus realised entirely.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+Anchoring at Ĵ would leave optimalityGap with nowhere to live and would silently attribute optimiser weakness to forecast error.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+planned in INV-S-03 means Ĵ₁.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	INV-S-03
+When Tier 1 was the tier used, Ĵ₁ = Ĵ and the two anchors coincide.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+plannedByEffect remains the used-tier value because that is what the cash decomposition must reconcile against, and both anchors are recorded.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+Each error bucket is a counterfactual re-run, possible only because every layer is a pure function of a recorded input.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-013	ADR-013
+optimalityGap is computed by re-solving the tick at Tier 1 on the recorded C2 payload and taking the difference of objective values.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+forecastError is computed by re-scoring the plan that was actually submitted against realised outturn, holding the plan fixed, which is the telescoping form.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+Re-planning on realised data measures the value of perfect foresight, which is recorded separately as valueOfForesight and is also the perfect-foresight upper bound.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+The telescoping forecast error and the value of perfect foresight must not be conflated: one is a link in the chain and the other is a bound.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-010	ADR-010
+modelError is computed by valuing the actual trajectory using Valuation's own term definitions and comparing with Settlement's independent accounting of the same trajectory.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+A non-zero modelError means Valuation and Settlement disagree about what a MWh was worth, which is a definition drift.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+executionSlippage is computed by valuing the fills at intent prices versus executed prices.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-012	ADR-012
+ActivationRisk and the CVaR weighting are objective penalties and not cashflows.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+Realised value can never contain risk penalties, so comparing a risk-loaded planned value against a risk-free realised one books the risk premium as a loss every single day.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+Both sides of the error decomposition use the risk-free objective.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+PlanResult reports gross risk-free and net risk-loaded values, and only the gross figure enters the error decomposition chain.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+The four error buckets plus unexplainedError sum to Ĵ₁ − R within tolerance.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	INV-S-03	y
+The four-way error split is what turns a statement about losing money last week into a statement about the load forecast degrading on Tuesdays, which is actionable.	03-contracts/C5-settlement-to-state.md §6	analytic	very-expensive	ADR-009	ADR-009
+degradationMode is computed centrally and written in C5.	03-contracts/C5-settlement-to-state.md §7	analytic	very-expensive	ADR-014	ADR-014
+modeTransitions carries the full audit trail of (SlotId, from, to, cause) for the period.	03-contracts/C5-settlement-to-state.md §7	analytic	very-expensive	ADR-014	ADR-014
+ticksByMode lets P&L be conditioned on operating mode.	03-contracts/C5-settlement-to-state.md §7	analytic	very-expensive	ADR-014	ADR-014
+seriesQualitySummary feeds data-source SLAs.	03-contracts/C5-settlement-to-state.md §7	analytic	very-expensive	ADR-014	ADR-014
+vSocStale is true beyond the value function's validityHorizon.	03-contracts/C5-settlement-to-state.md §8	analytic	expensive-later	ADR-007	ADR-007
+stateDriftSignal measures how far the current state is from where V was fitted.	03-contracts/C5-settlement-to-state.md §8	analytic	expensive-later	ADR-007	ADR-007	y
+refreshRequested indicates the slow loop should re-run.	03-contracts/C5-settlement-to-state.md §8	analytic	expensive-later	ADR-007	ADR-007
+stateDriftSignal allows the slow loop to be event-driven rather than purely periodic, because a large peak event or a qualification status change invalidates V faster than the calendar does.	03-contracts/C5-settlement-to-state.md §8	analytic	expensive-later	ADR-007	ADR-007
+realisedPeak is non-decreasing within an accounting period and resets exactly at the local-calendar boundary, and violation is a HALT.	03-contracts/C5-settlement-to-state.md §9	analytic	very-expensive	ADR-011	INV-S-01
+realisedByEffect sums, with unexplained, to total realised P&L, and violation is a HALT.	03-contracts/C5-settlement-to-state.md §9	analytic	very-expensive	ADR-009	INV-S-02
+The four error buckets sum to planned minus realised within tolerance, and violation warns.	03-contracts/C5-settlement-to-state.md §9	analytic	very-expensive	ADR-009	INV-S-03	y
+There is no reserve delivery shortfall, mirroring C4, and violation alerts and halts.	03-contracts/C5-settlement-to-state.md §9	regulatory	very-expensive	argued	INV-S-04
+Every Confirmed commitment has a feasibilityRequirement where the product requires one, and violation is a HALT.	03-contracts/C5-settlement-to-state.md §9	analytic	very-expensive	ADR-006	INV-S-05
+fullLoadHours equals annualEnergyKwh divided by annualPeakKw within tolerance, and violation is a HALT.	03-contracts/C5-settlement-to-state.md §9	analytic	very-expensive	ADR-011	INV-S-06	y
+unexplainedRatio is below threshold, and violation warns, escalating to alert.	03-contracts/C5-settlement-to-state.md §9	empirical	very-expensive	ADR-009	INV-S-07	y
+State is never written for a slot earlier than effectiveFrom of the previous update, except as an explicit revisionOf, and violation is a HALT.	03-contracts/C5-settlement-to-state.md §9	analytic	very-expensive	ADR-006	INV-S-08

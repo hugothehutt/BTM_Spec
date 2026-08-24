@@ -1,0 +1,78 @@
+# ---- 03-contracts/C2 ----
+C2 carries the ValuationBundle payload at version 1.0 from L2 to L3 and is the load-bearing seam.	03-contracts/C2-valuation-to-planner.md §1	analytic	very-expensive	ADR-008	ADR-008
+Everything the Planner knows about economics arrives through C2, expressed in the closed algebra of five shapes.	03-contracts/C2-valuation-to-planner.md §1	analytic	very-expensive	ADR-008	ADR-008
+The Planner has no access to Belief, to prices, or to scenario arrays.	03-contracts/C2-valuation-to-planner.md §1	analytic	very-expensive	ADR-008	ADR-008
+compositionOrder records the stages actually applied, in order, for audit.	03-contracts/C2-valuation-to-planner.md §1	analytic	very-expensive	ADR-009	ADR-009
+effectCoverage records which view owned which effect this tick.	03-contracts/C2-valuation-to-planner.md §1	analytic	very-expensive	ADR-009	ADR-009
+unclaimedEffects are priced at zero, and an empty unclaimedEffects is the expected case.	03-contracts/C2-valuation-to-planner.md §1	analytic	very-expensive	ADR-009	ADR-009
+Terms refer to decision variables by a closed enumeration: the Planner owns the variables and Valuation may only name them.	03-contracts/C2-valuation-to-planner.md §2	analytic	very-expensive	ADR-008	ADR-008
+The decision variable vocabulary is pCharge, pDischarge, soc, socTerminal, pPoi, zPeak, vDaBuy, vDaSell, vIdBuy, vIdSell, rUp, rDn, eAfrrUp, eAfrrDn, eImbalance, q and aDel.	03-contracts/C2-valuation-to-planner.md §2	analytic	very-expensive	ADR-008	ADR-008
+pCharge and pDischarge are in the battery frame, pPoi and zPeak in the POI frame.	03-contracts/C2-valuation-to-planner.md §2	analytic	very-expensive	ADR-003	ADR-003
+aDel spans the accumulators j in {(3),(5),(6),(9),(11),(26),(29)}.	03-contracts/C2-valuation-to-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+Like zPeak, aDel is not a free decision because the Planner's state equations pin it, but a term must be able to name it because DelineationView prices it at λ_j = ∂V_del/∂A_j.	03-contracts/C2-valuation-to-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+The C2 vocabulary is meter-shaped only: no symbol attributes energy to a path or to a named installation.	03-contracts/C2-valuation-to-planner.md §2	analytic	very-expensive	ADR-017	INV-V-17
+The delineation's per-slot variables Z1NB, Z1NE, Z2V, Z2E and the MIN selectors are Planner-internal and deliberately absent from C2, because no lever may carry a delineation coefficient.	03-contracts/C2-valuation-to-planner.md §2	analytic	very-expensive	ADR-017	INV-V-17
+Adding a symbol to the decision variable vocabulary is a major version bump.	03-contracts/C2-valuation-to-planner.md §2	analytic	very-expensive	ADR-008	ADR-008
+Every term carries a common header of termId, originView, effect, base, slots, mandatory and confidence.	03-contracts/C2-valuation-to-planner.md §3	analytic	very-expensive	ADR-008	ADR-008
+termId is stable and unique within the bundle.	03-contracts/C2-valuation-to-planner.md §3	analytic	very-expensive	ADR-008	ADR-008
+The effect field is from the closed enumeration and is the basis of the exclusivity check.	03-contracts/C2-valuation-to-planner.md §3	analytic	very-expensive	ADR-009	ADR-009
+The base field is one of PoiImport, BatteryThroughput, MarketVolume, TerminalSoc, ReserveCapacity or Delineation.	03-contracts/C2-valuation-to-planner.md §3	analytic	very-expensive	ADR-009	ADR-009
+If mandatory is true, dropping the term invalidates the plan, and peak protection is mandatory.	03-contracts/C2-valuation-to-planner.md §3	analytic	very-expensive	ADR-014	ADR-014
+The confidence field is propagated from input quality, feeds riskProfile, and never drives a branch.	03-contracts/C2-valuation-to-planner.md §3	analytic	very-expensive	ADR-014	ADR-014
+A LinearTerm carries a variable from the vocabulary, a per-slot coefficient in EUR per variable unit, and a sense of Maximize or Minimize.	03-contracts/C2-valuation-to-planner.md §3.1	analytic	very-expensive	ADR-008	ADR-008
+A PwlTerm carries the abscissa variable, strictly increasing breakpointsX in variable units, breakpointsY in EUR, a curvature, a sense, and an extrapolation of Clamp or Forbid.	03-contracts/C2-valuation-to-planner.md §3.2	analytic	very-expensive	ADR-008	ADR-008
+A PwlTerm's curvature is verified against the breakpoints and not trusted.	03-contracts/C2-valuation-to-planner.md §3.2	analytic	very-expensive	ADR-008	INV-V-12
+An extrapolation of Forbid adds bounds at the end breakpoints.	03-contracts/C2-valuation-to-planner.md §3.2	analytic	very-expensive	ADR-008	ADR-008
+The combinations (Concave, Maximize) and (Convex, Minimize) require no binaries and are LP-exact.	03-contracts/C2-valuation-to-planner.md §3.2	analytic	very-expensive	ADR-008	ADR-008
+Any other curvature-sense combination, and any General curvature, requires SOS2 or binaries.	03-contracts/C2-valuation-to-planner.md §3.2	analytic	very-expensive	ADR-008	ADR-008
+The bundle must declare the binary count in problemClassHint so a solve-time regression is attributable to a specific economic modelling choice.	03-contracts/C2-valuation-to-planner.md §3.2	analytic	very-expensive	ADR-008	ADR-008
+An EpigraphTerm carries epigraphVar, dominates, overSlots, floor, unitPrice and prorationFactor.	03-contracts/C2-valuation-to-planner.md §3.3	analytic	very-expensive	ADR-008	ADR-008
+The overSlots subset is how HLZF is expressed.	03-contracts/C2-valuation-to-planner.md §3.3	analytic	very-expensive	ADR-011	ADR-011
+The epigraph floor is the realised peak so far, taken from L0.	03-contracts/C2-valuation-to-planner.md §3.3	analytic	very-expensive	ADR-006	ADR-006
+prorationFactor is the fraction of the accounting period inside this horizon.	03-contracts/C2-valuation-to-planner.md §3.3	analytic	very-expensive	ADR-008	ADR-008
+Because the horizon is shorter than the accounting period, the full period charge must not be applied to a partial window.	03-contracts/C2-valuation-to-planner.md §3.3	analytic	very-expensive	ADR-008	ADR-008
+The remaining accounting-period value is carried by V.	03-contracts/C2-valuation-to-planner.md §3.3	analytic	very-expensive	ADR-007	ADR-007
+Mis-setting prorationFactor is a classic overweighting of peak.	03-contracts/C2-valuation-to-planner.md §3.3	analytic	very-expensive	ADR-008	INV-V-13
+A BoundTerm carries a target variable or linear expression, per-slot lower and upper bounds either of which may be null for a one-sided bound, a reason, and an optional softPenalty where null means a hard bound.	03-contracts/C2-valuation-to-planner.md §3.4	analytic	very-expensive	ADR-008	ADR-008
+A BoundTerm's reason is one of Physical, Contractual, Liquidity, Risk or Regulatory.	03-contracts/C2-valuation-to-planner.md §3.4	analytic	very-expensive	ADR-008	ADR-008
+Feasibility restoration relaxes bounds in a declared order: Risk first, then Liquidity, and never Physical or Regulatory.	03-contracts/C2-valuation-to-planner.md §3.4	analytic	very-expensive	ADR-008	ADR-008
+Without the reason tag an infeasible model can only be relaxed blindly.	03-contracts/C2-valuation-to-planner.md §3.4	analytic	very-expensive	ADR-008	ADR-008
+A CouplingConstraint carries a kind from the closed set ReserveCorridor, ReservePowerHeadroom, Commitment, ChanceConstraint or Custom, its rows as linear rows per slot or per block, a scenarioScope, and a declared introducesBinaries count.	03-contracts/C2-valuation-to-planner.md §3.5	analytic	very-expensive	ADR-008	ADR-008
+A CouplingConstraint's declared introducesBinaries is checked against what is built.	03-contracts/C2-valuation-to-planner.md §3.5	analytic	very-expensive	ADR-008	ADR-008
+The value function is carried separately from the term list because it is structurally distinctive and its staleness is handled specially.	03-contracts/C2-valuation-to-planner.md §4	analytic	very-expensive	ADR-007	ADR-007
+vSocBreakpointsX is strictly increasing and spans [socMin, socMax].	03-contracts/C2-valuation-to-planner.md §4	analytic	very-expensive	ADR-007	ADR-007
+vSocSlopes is strictly decreasing, which is concavity, and this is asserted.	03-contracts/C2-valuation-to-planner.md §4	analytic	very-expensive	ADR-007	INV-V-11
+The value function is conditioned on (peakState, qualState, calendarContext).	03-contracts/C2-valuation-to-planner.md §4	analytic	very-expensive	ADR-007	ADR-007
+The value function carries producedAt, the slot when the slow loop produced it, and a validityHorizon beyond which a staleness penalty applies.	03-contracts/C2-valuation-to-planner.md §4	analytic	very-expensive	ADR-014	ADR-014
+stalenessPenalty is a shrink factor in [0,1] applied when the value function is stale.	03-contracts/C2-valuation-to-planner.md §4	analytic	very-expensive	ADR-014	ADR-014	y
+The value function carries an artefactHash for the Merkle chain.	03-contracts/C2-valuation-to-planner.md §4	analytic	very-expensive	ADR-013	ADR-013
+rUpMax and rDnMax are the per-block reserve envelope from prequalification and asset limits.	03-contracts/C2-valuation-to-planner.md §5	regulatory	very-expensive	ADR-010	ADR-010
+capacityValueCurveUp and capacityValueCurveDn are per-block PwlTerms, concave in offered MW, carrying the expected value of the bid curve.	03-contracts/C2-valuation-to-planner.md §5	analytic	very-expensive	ADR-008	ADR-008
+deliveryObligation carries already-confirmed awards from L0 as a hard commitment.	03-contracts/C2-valuation-to-planner.md §5	analytic	very-expensive	ADR-006	ADR-006
+deliveryObligation is separated from the offer decision because confirmed awards are physical obligations that survive every degradation mode, whereas offers are decisions.	03-contracts/C2-valuation-to-planner.md §5	analytic	very-expensive	ADR-014	ADR-014
+The risk profile is how input quality reaches the optimisation without becoming control flow.	03-contracts/C2-valuation-to-planner.md §6	analytic	very-expensive	ADR-014	ADR-014
+cvarLevel is widened when quality degrades.	03-contracts/C2-valuation-to-planner.md §6	analytic	very-expensive	ADR-014	ADR-014	y
+cvarWeight is the weight on the CVaR term against expectation.	03-contracts/C2-valuation-to-planner.md §6	analytic	very-expensive	ADR-014	ADR-014
+chanceLevel is the ε for SOC feasibility chance constraints.	03-contracts/C2-valuation-to-planner.md §6	analytic	very-expensive	ADR-010	ADR-010
+positionScale is a multiplier in [0,1] on speculative position bounds.	03-contracts/C2-valuation-to-planner.md §6	analytic	very-expensive	ADR-014	ADR-014
+peakSafetyMarginKw is added to the epigraph floor under degraded load quality.	03-contracts/C2-valuation-to-planner.md §6	analytic	very-expensive	ADR-014	ADR-014	y
+driverSummary records which quality issues moved which parameter, for the audit trail.	03-contracts/C2-valuation-to-planner.md §6	analytic	very-expensive	ADR-014	ADR-014
+The problem class hint is computed by the composer from the terms present, before the solver sees anything.	03-contracts/C2-valuation-to-planner.md §7	analytic	very-expensive	ADR-008	ADR-008
+isLinearProgram is true when no term introduces a binary.	03-contracts/C2-valuation-to-planner.md §7	analytic	very-expensive	ADR-008	ADR-008
+binariesByOrigin attributes the binary count to the term that caused it.	03-contracts/C2-valuation-to-planner.md §7	analytic	very-expensive	ADR-008	ADR-008
+The problem class hint is the instrument that keeps solve time explainable, and when a solve slows down binariesByOrigin names the term responsible.	03-contracts/C2-valuation-to-planner.md §7	analytic	very-expensive	ADR-008	ADR-008
+No (effect, variable, slot) triple is priced by more than one term, and violation is a HALT for double counting.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-009	INV-V-01
+Every term's originView is the owner of its effect in the ownership matrix, and violation is a HALT.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-009	INV-V-02
+Every term references only symbols in the C2 vocabulary, and violation is a HALT.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-008	INV-V-03
+Every mandatory term is present, and violation is a HALT.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-008	INV-V-04
+unclaimedEffects are logged, and if any is in the critical set the engine escalates.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-009	INV-V-05
+No scenario array and no Belief handle appears anywhere in the bundle, and violation is a HALT.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-008	INV-V-06
+compositionOrder satisfies the stage precondition table, and violation is a HALT.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-009	INV-V-07
+binariesByOrigin sums to binaryCount, and violation warns.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-008	INV-V-14
+Every BoundTerm has a reason and no Physical bound is soft, and violation is a HALT.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-008	INV-V-15
+FillProbView emits only BoundTerms and has no priced term, and violation is a HALT.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-012	INV-V-16
+No term references a provenance flow attributing energy to a path or to a named installation, and violation is a HALT.	03-contracts/C2-valuation-to-planner.md §8	analytic	very-expensive	ADR-017	INV-V-17
+Prices do not cross C2: the Planner sees coefficients on variables rather than a price series, which is what stops it re-deriving economics.	03-contracts/C2-valuation-to-planner.md §9	analytic	very-expensive	ADR-008	ADR-008
+Scenario arrays do not cross C2, and scenario structure reaches the Planner only through CouplingConstraint rows with a scenarioScope and through terms already aggregated by Valuation.	03-contracts/C2-valuation-to-planner.md §9	analytic	very-expensive	ADR-008	ADR-008
+Delegates and expression trees do not cross C2.	03-contracts/C2-valuation-to-planner.md §9	analytic	very-expensive	ADR-008	ADR-008
+Nothing from Belief crosses C2 unpriced: if the Planner needs it, a view must own it and price or bound it.	03-contracts/C2-valuation-to-planner.md §9	analytic	very-expensive	ADR-008	ADR-008

@@ -1,0 +1,49 @@
+# ---- 02-layers/L4 ----
+Execution is a pre-existing, strategy-independent market simulation engine that is fixed, stable and out of scope for design.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	ADR-012
+L4 specifies only the seam, the adapter between C3 and C4, which is where the boundary either holds or erodes.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	ADR-012
+The adapter performs no economics: it translates, records and reconciles.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	ADR-012
+A number the adapter needs but does not receive belongs upstream in a view or in the quoting policy.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-009	ADR-009; ADR-012
+L4 is impure by nature and is the only I/O boundary in the pipeline.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	ADR-012
+An OrderInstruction carries IntentId as the idempotency key stable across replaces, Market, ProductId, Delivery, Side, LimitPrice, Volume, Validity and an optional ReplacesIntentId.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	ADR-012
+An OrderInstruction's limit price and volume are tick- and lot-aligned at C3 and are never re-rounded.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	INV-X-10
+shadowValue and urgency are absent from the OrderInstruction type, so Execution cannot read them, making the projection invariant structural rather than a rule anyone must remember.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	INV-X-04
+An ExecutionInstructionSet carries the Gate, the DegradationMode, the ManifestId, the orders, and the DA bid curves which are monotone.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	INV-P-09
+IExecutionAdapter exposes Submit, CancelReplace, Poll, Subscribe, Reconcile and Seal.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	ADR-012
+Poll and Subscribe are alternatives normalised into one VenueEvent stream.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	ADR-012
+Seal is the only producer of C4 and validates before returning.	02-layers/L4-execution-boundary.md §1	analytic	moderate	ADR-012	ADR-012
+Project from ExecutionIntent to ExecutionInstructionSet is the only crossing, lives in exactly one file, and the target type has no field to hold shadowValue or urgency.	02-layers/L4-execution-boundary.md §2	analytic	moderate	ADR-012	INV-X-04
+The full intent including audit fields is recorded to the seam log on the Planner side of the projection, so L5 still receives shadowValue and urgency without Execution ever having seen them.	02-layers/L4-execution-boundary.md §2	analytic	moderate	ADR-013	ADR-013
+A comment saying not to read a value is not a boundary, whereas a type that cannot express the value is.	02-layers/L4-execution-boundary.md §2	analytic	moderate	ADR-012	ADR-012
+The quoting policy is strategy and belongs to L3.	02-layers/L4-execution-boundary.md §3	analytic	moderate	ADR-012	ADR-012
+The adapter receives limit prices and does not choose, improve, peg, or re-price a residual after a partial fill.	02-layers/L4-execution-boundary.md §3	analytic	moderate	ADR-012	ADR-012
+A re-price is a new OrderIntent carrying replacesIntentId, produced by the quoting policy from the current fill curve and the unchanged shadowValue, re-entering through C3.	02-layers/L4-execution-boundary.md §3	analytic	moderate	ADR-012	ADR-012
+If the adapter acquires a price rule, the shadow-value invariant becomes unenforceable, the executionSlippage bucket stops measuring the quoting policy and starts measuring an untested piece of the adapter, and Execution stops being strategy-independent and therefore replaceable.	02-layers/L4-execution-boundary.md §3	analytic	moderate	ADR-012	INV-P-10
+The simulator and the live venue share one interface with two implementations.	02-layers/L4-execution-boundary.md §4	analytic	moderate	ADR-012	ADR-012
+Simulator latency is deterministic or zero while live venue latency is variable and a source of adverse selection.	02-layers/L4-execution-boundary.md §4	analytic	moderate	ADR-012	ADR-012
+Simulator partial fills follow the simulator's fill model while live partial fills follow the real book.	02-layers/L4-execution-boundary.md §4	analytic	moderate	ADR-012	ADR-012
+Simulator rejections are a narrow modelled set while live rejections come from risk limits, credit, product state and malformed orders.	02-layers/L4-execution-boundary.md §4	analytic	moderate	ADR-012	ADR-012
+The fill-model calibration target is the simulator's behaviour for the simulator and the venue's behaviour for a live venue.	02-layers/L4-execution-boundary.md §4	analytic	moderate	ADR-015	ADR-015
+A fill model fitted to the simulator inherits the simulator's biases, and so does everything derived from it: FillProbView's BoundTerm, the quoting ladder, and therefore the executionSlippage bucket.	02-layers/L4-execution-boundary.md §4	analytic	moderate	ADR-015	ADR-015
+Recalibration against the live venue is a precondition for live operation rather than a follow-up.	02-layers/L4-execution-boundary.md §4	analytic	moderate	ADR-015	ADR-015
+The gap between simulator-calibrated and venue-calibrated behaviour is reported and never absorbed.	02-layers/L4-execution-boundary.md §4	empirical	moderate	ADR-015	ADR-015; T4	y
+intentId is the idempotency key, so a repeated submission leaves at most one live order.	02-layers/L4-execution-boundary.md §5	analytic	moderate	ADR-012	INV-X-07
+Idempotency by intentId makes retry-after-timeout safe and reconnect logic simple enough to be correct.	02-layers/L4-execution-boundary.md §5	analytic	moderate	ADR-012	INV-X-07
+Cancel/replace is a chain keyed by replacesIntentId and the adapter never invents an identifier, so Settlement can follow it.	02-layers/L4-execution-boundary.md §5	analytic	moderate	ADR-012	ADR-012
+On reconnect the adapter calls Reconcile and diffs live venue orders against the commitment ledger.	02-layers/L4-execution-boundary.md §5	analytic	moderate	ADR-006	ADR-006
+At reconciliation a matched order requires no action, a ledger entry with no venue order is re-submitted under the same intentId, and a venue order with no ledger entry is an orphan and a HALT.	02-layers/L4-execution-boundary.md §5	analytic	moderate	ADR-012	INV-X-08
+Live exposure the engine does not know it has makes every ledger-derived plan untrustworthy, and no mode short of HALT is honest about that.	02-layers/L4-execution-boundary.md §5	analytic	moderate	ADR-014	ADR-014
+Re-submitting an intentId yields at most one live order, and violation is a HALT.	02-layers/L4-execution-boundary.md §5	analytic	moderate	ADR-012	INV-X-07
+There is no orphaned venue order at reconciliation, and violation is a HALT.	02-layers/L4-execution-boundary.md §5	analytic	moderate	ADR-012	INV-X-08
+The simulator is byte-reproducible given the same instruction stream and seed, and violation fails the run.	02-layers/L4-execution-boundary.md §5	analytic	very-expensive	ADR-013	INV-X-09
+limitPrice and volume reach the venue exactly as received, and violation is a HALT.	02-layers/L4-execution-boundary.md §5	analytic	moderate	ADR-012	INV-X-10
+The simulator sits inside the determinism chain, so it must be deterministic under a fixed seed for the replay guarantee to hold at all.	02-layers/L4-execution-boundary.md §6	analytic	very-expensive	ADR-013	ADR-013
+The simulator's seed and version are manifest fields.	02-layers/L4-execution-boundary.md §6	analytic	very-expensive	ADR-013	ADR-013
+If the simulator is non-deterministic through hash-ordered iteration, wall-clock reads, an unseeded RNG or thread-count-dependent matching, that is a named gap in the replay guarantee for the whole pipeline rather than a local defect in L4.	02-layers/L4-execution-boundary.md §6	analytic	very-expensive	ADR-013	ADR-013
+Closing the simulator determinism gap is a prerequisite for T3 and T6.	02-layers/L4-execution-boundary.md §6	analytic	very-expensive	ADR-013	ADR-013; T3; T6
+Until the simulator determinism gap is closed, any comparison downstream of C3 must state the non-determinism explicitly.	02-layers/L4-execution-boundary.md §6	analytic	very-expensive	ADR-013	ADR-013
+One adapter conformance suite is run against the simulator and a recorded venue stub, and both satisfy the same postconditions.	02-layers/L4-execution-boundary.md §7	analytic	moderate	ADR-012	T1
+A divergence between the simulator and the venue stub in the conformance suite is a finding about the simulator rather than an exemption.	02-layers/L4-execution-boundary.md §7	analytic	moderate	ADR-012	ADR-012
+A reflection test asserts that no field of ExecutionInstructionSet is reachable from shadowValue or urgency and that Project is the sole construction path.	02-layers/L4-execution-boundary.md §7	analytic	moderate	ADR-012	INV-X-04
+Idempotency and reconnect are tested by submit, duplicate and submit-after-timeout, then by killing the connection mid-gate and asserting the three reconciliation outcomes are classified correctly and an injected orphan halts.	02-layers/L4-execution-boundary.md §7	analytic	moderate	ADR-012	INV-X-07; INV-X-08
+Fault injection covers rejection, partial fill, out-of-order and duplicate events, and a fill for an unknown intentId which must trip the phantom-fill invariant.	02-layers/L4-execution-boundary.md §7	analytic	moderate	ADR-012	INV-X-01
+Determinism and fidelity are tested by running the same instruction stream and seed twice and byte-comparing, and by a property test that every price and volume reaching the venue equals the one that left C3.	02-layers/L4-execution-boundary.md §7	analytic	very-expensive	ADR-013	INV-X-09; INV-X-10

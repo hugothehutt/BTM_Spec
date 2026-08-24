@@ -1,0 +1,9 @@
+# Sections of the specification that own no claim, each with the reason.
+#
+# `check_claims.py` requires every top-level (`##`) section of every in-scope
+# document either to own at least one register entry or to appear here. A new
+# section is therefore triaged deliberately rather than silently uncovered.
+#
+# Format: `<path> §<section token>: <reason>`
+
+01-adr/ADR-011-tariff-regime-plugin.md §sources: A list of source URLs, not assertions about the engine.

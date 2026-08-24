@@ -1,0 +1,102 @@
+# ---- 02-layers/L3 ----
+L3 owns the whole decision: it composes the primitives from C2 into a MILP family, solves it at staged market gates carrying commitments forward, and emits order intent.	02-layers/L3-planner.md §1	analytic	moderate	ADR-010	ADR-010
+L3's input is the ValuationBundle plus the lagged StateSnapshot, and its output is the ExecutionIntent plus an internally recorded PlanResult.	02-layers/L3-planner.md §1	analytic	moderate	ADR-012	ADR-012
+L3 is pure given a fixed solver configuration and seed.	02-layers/L3-planner.md §1	analytic	very-expensive	ADR-013	ADR-013
+The Planner does not run once per day: it runs at gates, and each run has a different information set and a different irreversibility.	02-layers/L3-planner.md §1	analytic	moderate	ADR-002	ADR-002
+Conflating the gate stages is the mistake that makes the problem look intractable.	02-layers/L3-planner.md §1	analytic	moderate	ADR-010	ADR-010
+Stage S0, the slow loop on C_slow, decides V(SOC, peakState, qualState), freezes nothing, and adds new realised state and refreshed long-horizon scenarios.	02-layers/L3-planner.md §1	analytic	expensive-later	ADR-007	ADR-007
+Stage S1, the reserve gate on C_gate, decides rUp and rDn offers, freezes reserve offers once submitted, and adds reserve price beliefs.	02-layers/L3-planner.md §1	analytic	moderate	ADR-010	ADR-010
+Stage S2, the day-ahead gate, decides the DA bid curve per slot, freezes the DA position at clearing, and adds the reserve awards from S1.	02-layers/L3-planner.md §1	regulatory	moderate	ADR-012	ADR-012
+Stage S3, the post-DA rebalance on C_gate, decides the initial intraday target position, freezes nothing, and adds the realised DA clearing.	02-layers/L3-planner.md §1	analytic	moderate	ADR-010	ADR-010
+Stage S4, continuous intraday on C_tick, decides the re-optimised intraday target position, freezes progressively as fills occur, and adds book state and updated forecasts.	02-layers/L3-planner.md §1	analytic	moderate	ADR-010	ADR-010
+Stage S5, dispatch in real time, decides the setpoint within the SOC corridor and adds the activation signal.	02-layers/L3-planner.md §1	analytic	moderate	ADR-012	ADR-012
+The delineation machinery is monthly, so each gate commits under a different amount of knowledge about the month it is committing into.	02-layers/L3-planner.md §1	analytic	very-expensive	ADR-017	ADR-017
+At S0 the delineation information is the MTD accumulators, the MW_month distribution and the AW>0 forecast for the remaining month, measured by V_del projection drift against the previous slow tick.	02-layers/L3-planner.md §1	analytic	very-expensive	ADR-017	ADR-017
+At S1 the delineation information is the same but without D+1 certainty, which is the widest delineation uncertainty of any stage.	02-layers/L3-planner.md §1	analytic	very-expensive	ADR-017	ADR-017
+The cost of S1's delineation uncertainty is measured by re-solving on the realised D+1 (24)¼ vector, and the objective delta is the reserve gate's delineation foresight cost.	02-layers/L3-planner.md §1	analytic	very-expensive	ADR-017	ADR-017
+At S2 the realised D+1 (24)¼ is known, since § 51 and § 51b make it a function of day-ahead price signs, measured by the value of the S1 forecast versus the realised indicator.	02-layers/L3-planner.md §1	regulatory	very-expensive	ADR-017	ADR-017
+At S3 and S4 the elapsed-slot (2)¼ and (23)¼ are realised and (30) firms as the month proceeds, measured by intraday drift of the λ_j within the day.	02-layers/L3-planner.md §1	analytic	very-expensive	ADR-017	ADR-017
+S1 is the delineation row that matters, because the reserve gate is the one commitment made before the month's route is knowable.	02-layers/L3-planner.md §1	analytic	very-expensive	ADR-017	ADR-017
+A large measured S1 delineation foresight cost is a direct argument for smaller reserve volumes late in an undecided month, and a small one retires the question.	02-layers/L3-planner.md §1	empirical	very-expensive	ADR-017	ADR-017	y
+The same core model is solved at every stage, and what changes is which variables are free and which are fixed by the commitment ledger.	02-layers/L3-planner.md §1	analytic	moderate	ADR-010	ADR-010
+There is one formulation, one set of tests and six information sets.	02-layers/L3-planner.md §1	analytic	moderate	ADR-010	ADR-010
+Writing six models would be six times the surface area and six chances to disagree about the physics.	02-layers/L3-planner.md §1	analytic	moderate	ADR-010	ADR-010
+S5 is a controller rather than an optimiser and is out of scope.	02-layers/L3-planner.md §1	analytic	moderate	argued
+The Planner's decision variables are the C2 vocabulary and its constraints fall into three groups.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-008	ADR-008
+The physical constraints are SOC dynamics with split charge and discharge and one-way efficiency, SOC bounds, per-slot power bounds, the POI envelope, and the POI bridge.	02-layers/L3-planner.md §2	analytic	very-expensive	argued
+The market constraints are position accounting per market and slot, the DA position fixed after clearing, intraday volume bounded by FillProbView's BoundTerm, and reserve offers on the product grid with minimum bid, bid step and symmetry if required.	02-layers/L3-planner.md §2	regulatory	moderate	ADR-012	ADR-012
+The power headroom coupling constraints are p_d[t] + rUp[b(t)] ≤ pMaxDischarge[t] and p_c[t] + rDn[b(t)] ≤ pMaxCharge[t].	02-layers/L3-planner.md §2	analytic	moderate	ADR-010	ADR-010
+The SOC corridor coupling constraints are soc[t] − rUp[b(t)]·D/η_d ≥ socMin and soc[t] + rDn[b(t)]·D·η_c ≤ socMax.	02-layers/L3-planner.md §2	analytic	moderate	ADR-010	ADR-010
+The chance constraint requires soc[s,t] to stay within [socMin, socMax] for weighted scenario mass of at least 1−ε.	02-layers/L3-planner.md §2	analytic	moderate	ADR-010	ADR-010
+The seven month-to-date accumulators are carried forward as variables over the horizon and their state equations are constraints.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+The meter identity is Z1NB[t] − Z1NE[t] = (load + p_c − P_net − p_d)·Δt with Z1NB and Z1NE non-negative.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+The in-model delineation selections are (1)¼ = MIN[Z1NB; Z2V], (2)¼ = MIN[Z1NE; Z2E], (23)¼ = Z1NE − (2)¼, (25)¼ = (24)¼·(23)¼ and (27)¼ = (24)¼·(2)¼.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+The complementarity Z1NB · Z1NE = 0 costs one binary per slot, because levies penalise import while the premium rewards export, so adding the same δ to both pays whenever the premium exceeds the levy and the pair is unbounded without complementarity.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+(2)¼ = MIN[Z1NE; Z2E] costs no binary, because λ_11 ≥ 0 as (11) feeds (13), the base of both routes, so the objective pushes (2) up and the two inequalities are tight.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+(1)¼ = MIN[Z1NB; Z2V] costs one binary per slot when load is present, because λ_9 carries the sign of (30)·premium − levy_rate and flips with the route.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+With load = 0, Z1NB ≤ Z2V always and the (1)¼ MIN is linear.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+(24)¼ costs no binary because it is a parameter from the day-ahead price series rather than a variable.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+Curtailment q, charge source, discharge routing and reserve headroom are priced through the delineation constraints against the λ_j from C2 rather than through a coefficient.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-017	ADR-017
+Writing a delineation coefficient on any lever would require the MIN-branch case analysis evaluated at a state the solve has not yet chosen, which is ADR-016's rejected rule one level up.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-017	ADR-016; ADR-017
+The objective is assembled entirely from C2 terms and the Planner adds no economics of its own.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-008	INV-V-02
+If the Planner needs a number, a view must own it.	02-layers/L3-planner.md §2	analytic	moderate	ADR-009	ADR-009
+The objective maximises the sum of LinearTerms and PwlTerms plus V(socTerminal) minus prorated peak charge plus the sum of λ_j·A_j minus cvarWeight times the CVaR of imbalance and activation cost.	02-layers/L3-planner.md §2	analytic	very-expensive	ADR-008	ADR-008
+Where the stage has genuine recourse — reserve committed before intraday information — the model is two-stage stochastic.	02-layers/L3-planner.md §2	analytic	moderate	ADR-010	ADR-010
+First-stage variables rUp, rDn and the DA position are scenario-independent, and second-stage variables carry a scenario index.	02-layers/L3-planner.md §2	analytic	moderate	ADR-010	ADR-010
+Non-anticipativity is structural: first-stage variables simply have no scenario index, which is both the cheapest and the least error-prone way to enforce it.	02-layers/L3-planner.md §2	analytic	moderate	ADR-010	ADR-010
+ICoOptimizer takes the ValuationBundle, the StateSnapshot and a SolveBudget and returns a CoOptResult plus the tier used.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010
+Tier 1 solves the joint model directly and is the reference accuracy.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010
+Tier 2 applies Lagrangian decomposition on the coupling block, where the multipliers μ_up and μ_dn are the internal reservation price of headroom.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010
+Tier 2 returns a feasible primal and a dual bound, so the gap is certified per solve.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010
+Tier 3 evaluates the learned surface μ̂, prices the headroom, and solves one spot MILP.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010
+Tier 3 escalates to Tier 2 within budget when the solution sits within a tolerance of a coupling constraint boundary, the state is outside μ̂'s training envelope, peakCritical or qualCritical is set, or V is stale.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010; ADR-011
+Escalation is logged and appears in the settlement record, so having been on the fast path is always visible.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010
+A bundle method is preferred over plain subgradient for Tier 2 convergence stability.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010
+Tier 2's iteration cap and time cap come from the SolveBudget.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010
+Every Tier 2 exit path returns a feasible primal, including the cap-exhausted path.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010
+A decomposition that can return infeasible is not usable in production.	02-layers/L3-planner.md §3	analytic	moderate	ADR-010	ADR-010
+The commitment ledger read from L0 is what makes the staged design safe.	02-layers/L3-planner.md §4	analytic	very-expensive	ADR-006	ADR-006
+Confirmed ledger entries are hard constraints: an awarded reserve fixes deliveryObligation and its SOC corridor for the block, and a filled spot position fixes the position variable.	02-layers/L3-planner.md §4	analytic	very-expensive	ADR-006	ADR-006
+A Pending open order that may or may not fill is modelled as a scenario-dependent position weighted by the fill belief.	02-layers/L3-planner.md §4	analytic	very-expensive	ADR-006	ADR-006
+Probabilistic pending exposure is what lets S4 re-optimise continuously without either double-selling the same MWh or ignoring live exposure.	02-layers/L3-planner.md §4	analytic	very-expensive	ADR-006	ADR-006
+Every solve is checked for commitment feasibility before it is emitted, and a plan that cannot honour a confirmed award never reaches C3.	02-layers/L3-planner.md §4	analytic	moderate	ADR-012	INV-P-02
+The MILP produces target positions and the quoting policy produces orders.	02-layers/L3-planner.md §5	analytic	moderate	ADR-012	ADR-012
+The shadow value is the dual on the position accounting constraint, which is the Planner's indifference price in EUR/MWh.	02-layers/L3-planner.md §5	analytic	moderate	ADR-012	ADR-012
+Urgency is the objective degradation if the position is not reached, normalised.	02-layers/L3-planner.md §5	analytic	moderate	ADR-012	ADR-012
+The quoting policy maps target, shadow value, urgency, the fill curve and microstructure state to a limit-order ladder.	02-layers/L3-planner.md §5	analytic	moderate	ADR-012	ADR-012
+The hard rule is never to quote through the shadow value, except for intents tagged CommitmentCover.	02-layers/L3-planner.md §5	analytic	moderate	ADR-012	INV-P-10
+The shadow-value rule has severity warn but the offending intent is blocked and never reaches the venue.	02-layers/L3-planner.md §5	analytic	moderate	ADR-012	INV-P-10
+The shadow-value rule is not a HALT because covering a confirmed commitment at a loss is sometimes correct, but such an intent must carry the tag and an untagged one is a quoting-policy defect.	02-layers/L3-planner.md §5	analytic	moderate	ADR-012	INV-P-10
+The DA bid curve is produced by parametric re-solve over a grid of candidate clearing prices, and the resulting price-quantity schedule is the curve.	02-layers/L3-planner.md §5	analytic	moderate	ADR-012	ADR-012
+A non-monotone DA result signals a formulation error, most often a missing coupling constraint, and halts rather than being sorted into compliance.	02-layers/L3-planner.md §5	analytic	moderate	ADR-012	INV-P-09
+The model must never be reported infeasible to the operator without a diagnosis.	02-layers/L3-planner.md §6	analytic	moderate	ADR-008	ADR-008
+Bounds carry a BoundReason and relaxation proceeds in the fixed order Risk then Liquidity then stop.	02-layers/L3-planner.md §6	analytic	moderate	ADR-008	INV-V-15
+Physical, Regulatory and confirmed-commitment constraints are never relaxed.	02-layers/L3-planner.md §6	analytic	moderate	ADR-008	INV-V-15
+If the model is infeasible with only the never-relaxed constraints remaining, the state is genuinely infeasible and the engine goes to HALT with the irreducible infeasible subsystem reported.	02-layers/L3-planner.md §6	analytic	moderate	ADR-014	ADR-014
+Relaxation is done with explicit slack variables at declared penalties rather than by deleting constraints, so the amount and location of relaxation is visible in the solution and recorded.	02-layers/L3-planner.md §6	analytic	moderate	ADR-008	ADR-008
+SolveBudget carries a deterministic work limit, a MIP gap tolerance and the escalation allowance.	02-layers/L3-planner.md §6	analytic	very-expensive	ADR-013	ADR-013
+On budget exhaustion the first fallback is the best incumbent if feasible and within an acceptable gap, with the gap recorded.	02-layers/L3-planner.md §6	analytic	moderate	ADR-010	ADR-010	y
+The second fallback on budget exhaustion is the previous tick's plan projected forward and re-checked for feasibility.	02-layers/L3-planner.md §6	analytic	moderate	ADR-014	ADR-014
+The third fallback on budget exhaustion is the DEFENSIVE baseline: honour commitments, protect peak, no new exposure.	02-layers/L3-planner.md §6	analytic	moderate	ADR-014	ADR-014
+The fourth fallback on budget exhaustion is HALT.	02-layers/L3-planner.md §6	analytic	moderate	ADR-014	ADR-014
+Every budget-exhaustion fallback step is recorded, and repeated use of the second or third step is itself a mode trigger.	02-layers/L3-planner.md §6	analytic	moderate	ADR-014	ADR-014
+Peak protection and commitment feasibility are never dropped, in every mode.	02-layers/L3-planner.md §6	analytic	moderate	ADR-014	ADR-014
+S5's interface is fixed at C3 §4: the Planner publishes a SOC corridor and a setpoint, and the corridor rather than the setpoint is binding.	02-layers/L3-planner.md §7	analytic	moderate	ADR-012	ADR-012
+The controller may deviate from the setpoint to follow an aFRR activation signal but must remain inside the corridor, which is exactly the guarantee that keeps the reserve commitment deliverable without the Planner running at control frequency.	02-layers/L3-planner.md §7	analytic	moderate	ADR-012	ADR-012
+PlanResult is recorded for settlement and diagnostics and is not sent to Execution.	02-layers/L3-planner.md §8	analytic	very-expensive	ADR-013	ADR-013
+PlanResult records the objective value and its decomposition by EconomicEffect, which is plannedByEffect in C5 and is what makes planned-versus-realised comparable.	02-layers/L3-planner.md §8	analytic	moderate	ADR-009	ADR-009
+PlanResult records λ_SOC at the optimum as the subgradient of V, the diagnostic the original design wanted as an input and now gets as an output.	02-layers/L3-planner.md §8	analytic	expensive-later	ADR-007	ADR-007
+PlanResult records the μ* reservation prices when Tier 2 ran, which are interpretable and human-checkable.	02-layers/L3-planner.md §8	analytic	moderate	ADR-010	ADR-010
+PlanResult records the MIP gap, tier used, escalations, solve time and relaxations applied.	02-layers/L3-planner.md §8	analytic	moderate	ADR-010	ADR-010
+PlanResult records the full planned trajectory for the counterfactual re-runs in the error decomposition.	02-layers/L3-planner.md §8	analytic	very-expensive	ADR-009	ADR-009
+The planned trajectory satisfies every physical constraint and satisfies confirmed commitments under every scenario in the ensemble, not just the mean.	02-layers/L3-planner.md §9	analytic	moderate	ADR-012	INV-P-01
+Same C2 and same manifest gives byte-identical C3.	02-layers/L3-planner.md §9	analytic	very-expensive	ADR-013	ADR-013
+Raising the Marktprämie must make planned PV charging non-decreasing, since PV charging is what moves (15) and converts grey to green.	02-layers/L3-planner.md §9	analytic	very-expensive	ADR-017	ADR-017
+Raising the EnFG rate in a slack regime must not decrease planned grid charging.	02-layers/L3-planner.md §9	analytic	very-expensive	ADR-017	ADR-017
+Raising afrrCapPrice must make planned reserve MW non-decreasing.	02-layers/L3-planner.md §9	analytic	moderate	ADR-010	ADR-010
+Shifting all prices up uniformly must not decrease planned discharge.	02-layers/L3-planner.md §9	analytic	moderate	ADR-010	ADR-010
+Raising peakPrice must not increase the planned peak.	02-layers/L3-planner.md §9	analytic	expensive-later	ADR-011	ADR-011
+The metamorphic relations are cheap to state and catch formulation errors that feasibility tests cannot.	02-layers/L3-planner.md §9	analytic	moderate	argued	T2
+On small instances Tiers 1, 2 and 3 are solved on identical input, Tier 2's dual bound must dominate Tier 1's objective, and Tier 3's gap is recorded.	02-layers/L3-planner.md §9	analytic	moderate	ADR-010	ADR-010
+Injecting a confirmed award that the current SOC cannot serve must produce a HALT and never a quiet under-delivery.	02-layers/L3-planner.md §9	analytic	moderate	ADR-014	ADR-014
+Forcing a time-out at each fallback rung must take and record the correct rung.	02-layers/L3-planner.md §9	analytic	moderate	ADR-014	ADR-014

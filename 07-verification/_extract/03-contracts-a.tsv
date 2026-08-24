@@ -1,0 +1,104 @@
+# ---- 03-contracts/C0 and C1 ----
+A contract is the complete, closed description of what crosses a seam: if it is not in the field table, it does not cross.	03-contracts/C0-contract-conventions.md §1	analytic	very-expensive	argued
+There is no additional-context parameter, no object and no dictionary of extras in any contract.	03-contracts/C0-contract-conventions.md §1	analytic	very-expensive	argued
+A contract is a value: immutable record types and readonly structs, with no references to mutable state, no handles into another layer's storage and no delegates.	03-contracts/C0-contract-conventions.md §1	analytic	very-expensive	argued
+A contract is serialisable and round-trips to a stable binary and a stable JSON form.	03-contracts/C0-contract-conventions.md §1	analytic	very-expensive	ADR-013	ADR-013
+Serialisability is what makes seam recording and per-layer golden tests possible.	03-contracts/C0-contract-conventions.md §1	analytic	very-expensive	ADR-013	ADR-013
+Every payload carries schemaVersion, and a consumer rejects a version it does not understand rather than guessing.	03-contracts/C0-contract-conventions.md §1	analytic	very-expensive	argued
+Every payload carries contentHash of itself and inputHashes of the payloads that produced it, forming the Merkle chain.	03-contracts/C0-contract-conventions.md §1	analytic	very-expensive	ADR-013	ADR-013
+Every contract documents its fields in a table with the columns Field, Type, Unit, Card., Range, Null, Default, MaxStale and Notes.	03-contracts/C0-contract-conventions.md §2	analytic	very-expensive	argued
+The Type column names the typed quantity and not a primitive.	03-contracts/C0-contract-conventions.md §2	analytic	very-expensive	ADR-003	ADR-003
+The Unit column is explicit even when implied by the type.	03-contracts/C0-contract-conventions.md §2	analytic	very-expensive	ADR-003	ADR-003
+Cardinality is one of 1, [H] per slot, [S,H] per scenario and slot, [B] per block, or 0..1 optional.	03-contracts/C0-contract-conventions.md §2	analytic	very-expensive	argued
+A value outside the declared Range is a contract failure.	03-contracts/C0-contract-conventions.md §2	analytic	very-expensive	argued
+The Default column carries the conservative default, or an em dash if none exists.	03-contracts/C0-contract-conventions.md §2	analytic	very-expensive	ADR-014	ADR-014
+MaxStale is the maximum age before quality degrades, expressed in SlotSpan.	03-contracts/C0-contract-conventions.md §2	analytic	very-expensive	ADR-014	ADR-014
+A field with Null = yes must have either a Default or a documented escalation, and a nullable field with no defined behaviour on absence is an incomplete contract.	03-contracts/C0-contract-conventions.md §2	analytic	very-expensive	argued
+The universal invariants are applied at every seam by a shared validator invoked on both sides.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	argued
+No numeric field contains NaN or infinity.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	argued	INV-G-01
+Every numeric field has a declared unit in its field table; dimensioned quantities use a typed quantity while dimensionless fields may be double or int but must be declared with an em dash in the Unit column and range-constrained, and a dimensioned field typed as a bare double is a violation.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	ADR-003	INV-G-02
+schemaVersion is recognised by the consumer.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	argued	INV-G-03
+contentHash matches the payload, and inputHashes are present and non-empty.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	ADR-013	INV-G-04
+No payload contains a wall-clock timestamp taken at construction.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	ADR-013	INV-G-05
+All slot-indexed arrays have the length declared by horizon.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	argued	INV-G-06
+All scenario-indexed arrays share the scenario axis length and ordering.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	ADR-005	INV-G-07
+asOf is non-decreasing across successive payloads on the same seam.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	ADR-004	INV-G-08
+Every field marked Null = no is present.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	argued	INV-G-09
+Declared ranges hold for every element, not merely the first.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	argued	INV-G-10
+Validation is on by default in every environment, including production.	03-contracts/C0-contract-conventions.md §3	analytic	very-expensive	argued
+Validation costs a few microseconds against a solve measured in milliseconds.	03-contracts/C0-contract-conventions.md §3	empirical	very-expensive	argued	y
+Each seam is validated twice: the producer validates before emitting and the consumer validates on receipt.	03-contracts/C0-contract-conventions.md §4	analytic	very-expensive	argued
+A producer-side validation failure enters the producing layer's degradation ladder.	03-contracts/C0-contract-conventions.md §4	analytic	very-expensive	ADR-014	ADR-014
+A consumer-side validation failure goes to HALT, because a contract violation means the producer is in an unknown state and nothing downstream can be trusted.	03-contracts/C0-contract-conventions.md §4	analytic	very-expensive	ADR-014	ADR-014
+An additive change — a new optional field with a default — is a minor version bump and old consumers keep working.	03-contracts/C0-contract-conventions.md §5	analytic	very-expensive	argued
+Removing a field, changing a type, changing a unit, changing a semantic or tightening a range is a major version bump, and the consumer must be updated in the same commit.	03-contracts/C0-contract-conventions.md §5	analytic	very-expensive	argued
+Unit changes are always major, even when the type is unchanged, because a field silently moving from EUR/MWh to EUR/kWh is the archetypal catastrophic change.	03-contracts/C0-contract-conventions.md §5	analytic	very-expensive	ADR-003	ADR-003
+A contract change requires the doc, the version and the conformance tests in one commit.	03-contracts/C0-contract-conventions.md §5	analytic	very-expensive	argued
+Fields subject to data quality carry a parallel quality channel rather than embedding quality in the value.	03-contracts/C0-contract-conventions.md §6	analytic	very-expensive	ADR-014	ADR-014
+A QualityStamp carries provenance, quality, knowledgeTime, sourceId and maxStaleBreached.	03-contracts/C0-contract-conventions.md §6	analytic	very-expensive	ADR-014	ADR-014
+A QualityStamp is carried per series where quality is uniform across the array and per element where it is not, such as a forecast with a measured prefix and a forecast suffix.	03-contracts/C0-contract-conventions.md §6	analytic	very-expensive	ADR-014	ADR-014
+Consumers map quality to risk parameters and never to branches.	03-contracts/C0-contract-conventions.md §6	analytic	very-expensive	ADR-014	ADR-014
+Every payload carries tickId as (SlotId, clock, sequence), which identifies the tick uniquely.	03-contracts/C0-contract-conventions.md §7	analytic	very-expensive	ADR-013	ADR-013
+Every payload carries asOf, the knowledge-time boundary for every fact inside it.	03-contracts/C0-contract-conventions.md §7	analytic	very-expensive	ADR-004	ADR-004
+Every payload carries horizon as a SlotSpan, assetId for the battery, poiId for the connection point, and manifestId as the run manifest hash.	03-contracts/C0-contract-conventions.md §7	analytic	very-expensive	ADR-013	ADR-013
+Multi-asset is not in scope for v1, but assetId and poiId are present in every contract from the start so that adding a second asset is not a schema break.	03-contracts/C0-contract-conventions.md §7	analytic	very-expensive	ADR-003	ADR-003
+C1 carries the BeliefSnapshot payload at version 1.0 from L1 to L2.	03-contracts/C1-belief-to-valuation.md §1	analytic	very-expensive	ADR-004	ADR-004
+C1 carries everything Valuation may know about the world, as of a knowledge-time boundary, over the hot window, and nothing else reaches Valuation.	03-contracts/C1-belief-to-valuation.md §1	analytic	very-expensive	ADR-004	ADR-004
+Valuation has no access to the Belief store, to the network, or to a clock.	03-contracts/C1-belief-to-valuation.md §1	analytic	very-expensive	ADR-004	ADR-004
+The C1 envelope adds scenarioCount, the shared scenario axis length S; scenarioWeights, non-negative and summing to 1; slotStart, the first slot of the window; and slotCount, equal to H_hot.	03-contracts/C1-belief-to-valuation.md §1	analytic	very-expensive	ADR-005	ADR-005
+socNow is measured, and if telemetry is lost the engine escalates rather than defaulting.	03-contracts/C1-belief-to-valuation.md §2	analytic	very-expensive	ADR-014	ADR-014
+The operating band socMin to socMax includes warranty derates.	03-contracts/C1-belief-to-valuation.md §2	analytic	very-expensive	argued
+pMaxDischarge and pMaxCharge are per-slot and may derate on temperature or state of health.	03-contracts/C1-belief-to-valuation.md §2	analytic	very-expensive	argued
+sohFraction is informational, and derates flow through pMax* and socMax rather than through it.	03-contracts/C1-belief-to-valuation.md §2	analytic	very-expensive	argued
+poiImportLimit and poiExportLimit are the contractual and physical POI envelope, per slot.	03-contracts/C1-belief-to-valuation.md §2	analytic	very-expensive	argued
+auxLoad is explicit per slot and not folded into η, and its conservative default is the site maximum.	03-contracts/C1-belief-to-valuation.md §2	analytic	very-expensive	ADR-014	ADR-014
+The conservative default for load is a high quantile, because a high load protects the peak.	03-contracts/C1-belief-to-valuation.md §3	analytic	very-expensive	ADR-014	ADR-014
+The conservative default for pv is zero, because zero PV protects the peak.	03-contracts/C1-belief-to-valuation.md §3	analytic	very-expensive	ADR-014	ADR-014
+loadQuality and pvQuality are per-element QualityStamps, carrying a measured prefix and a forecast suffix.	03-contracts/C1-belief-to-valuation.md §3	analytic	very-expensive	ADR-014	ADR-014
+daPrice is scenario- and slot-indexed in EUR/MWh with range [-9999, 9999], and negative prices are legal and material.	03-contracts/C1-belief-to-valuation.md §4	regulatory	very-expensive	argued
+daCleared is present only post-gate and null pre-gate.	03-contracts/C1-belief-to-valuation.md §4	analytic	very-expensive	argued
+idSpreadBelief is a half-spread belief whose wide default suppresses trading.	03-contracts/C1-belief-to-valuation.md §4	analytic	very-expensive	ADR-014	ADR-014
+afrrCapPrice is per product block with a zero default, so the engine does not chase reserve revenue on invented prices.	03-contracts/C1-belief-to-valuation.md §4	analytic	very-expensive	ADR-014	ADR-014
+activationUp and activationDn are fractions of committed MW in [0,1] and are scenario-consistent with prices.	03-contracts/C1-belief-to-valuation.md §4	analytic	very-expensive	ADR-005	ADR-005
+imbalancePrice is a reBAP-type belief.	03-contracts/C1-belief-to-valuation.md §4	regulatory	very-expensive	argued
+Every scenario-indexed array shares the axis, so index s denotes the same state of the world in load, pv, daPrice, activationUp and all others.	03-contracts/C1-belief-to-valuation.md §4	analytic	very-expensive	ADR-005	INV-D-05
+Violation of the shared scenario axis is a hard failure and not a warning.	03-contracts/C1-belief-to-valuation.md §4	analytic	very-expensive	ADR-005	INV-D-05
+idReliableVolumeBuy and idReliableVolumeSell are the volumes that may be counted on, defaulting to zero.	03-contracts/C1-belief-to-valuation.md §5	analytic	very-expensive	ADR-012	ADR-012
+idVolumeByPriceBand is an optional refinement pending the fill-fidelity decision.	03-contracts/C1-belief-to-valuation.md §5	analytic	very-expensive	ADR-015	ADR-015
+The liquidity beliefs are volumes only, with no price field, which is the C1-side enforcement of the rule that fill probability constrains the Planner but never prices for it.	03-contracts/C1-belief-to-valuation.md §5	analytic	very-expensive	ADR-008	ADR-008; ADR-012
+Prices for quoting reach the quoting policy by a different route, outside C2.	03-contracts/C1-belief-to-valuation.md §5	analytic	very-expensive	ADR-012	ADR-012
+activeRegimes is a non-empty list of TariffRegimeIds taken from the calendar.	03-contracts/C1-belief-to-valuation.md §6	analytic	very-expensive	ADR-011	ADR-011
+peakPrice is carried per regime in EUR/kW/period and is non-negative.	03-contracts/C1-belief-to-valuation.md §6	regulatory	very-expensive	ADR-011	ADR-011
+leviesAndTaxes is a closed enumerated list of the non-reducible components, summed.	03-contracts/C1-belief-to-valuation.md §6	regulatory	very-expensive	ADR-017	ADR-017
+enfgLevies is the reducible EnFG components summed, charged on (21) and never on metered import.	03-contracts/C1-belief-to-valuation.md §6	regulatory	very-expensive	ADR-017	ADR-017
+isHlzf comes from the DSO HLZF table and its conservative default is true, inside the window.	03-contracts/C1-belief-to-valuation.md §6	analytic	very-expensive	ADR-011	ADR-011; ADR-014
+awPositive and anzulegenderWert are derived in L1 §4.2.1 and not ingested.	03-contracts/C1-belief-to-valuation.md §6.1	analytic	very-expensive	ADR-017	ADR-017
+awPositive carries (24)¼, is a realised parameter within the settled day-ahead horizon and scenario-indexed beyond it, and its conservative default of false forfeits the premium.	03-contracts/C1-belief-to-valuation.md §6.1	analytic	very-expensive	ADR-017	ADR-014; ADR-017
+anzulegenderWert is AW, static per plant and EEG vintage.	03-contracts/C1-belief-to-valuation.md §6.1	regulatory	very-expensive	ADR-017	ADR-017
+zuordnungsFaktor is ZF, power-weighted, and sums to 1 across plants.	03-contracts/C1-belief-to-valuation.md §6.1	regulatory	very-expensive	ADR-017	ADR-017
+marktwertMonth is MW_month, derived per scenario from national spot and national solar generation on the shared axis, and never an independent series.	03-contracts/C1-belief-to-valuation.md §6.1	analytic	very-expensive	ADR-017	ADR-005; ADR-017
+commonEegVintage is true only when every plant shares a § 51 or § 51b threshold, which is what makes the AW forfeit simultaneous and collapses A5 to A1, and false forbids the collapse.	03-contracts/C1-belief-to-valuation.md §6.1	regulatory	very-expensive	ADR-017	ADR-017
+The premium is MAX[anzulegenderWert − marktwertMonth; 0], which is convex in marktwertMonth.	03-contracts/C1-belief-to-valuation.md §6.1	analytic	very-expensive	ADR-017	ADR-017
+marktwertMonth crosses as [S] rather than as a scalar because a point forecast understates the premium, most severely when AW and MW_month are close.	03-contracts/C1-belief-to-valuation.md §6.1	analytic	very-expensive	ADR-017	ADR-017
+blockIndex maps each slot to its aFRR product block.	03-contracts/C1-belief-to-valuation.md §7	analytic	very-expensive	ADR-010	ADR-010
+blockSlots carries the aFRR block lengths and comes from the calendar.	03-contracts/C1-belief-to-valuation.md §7	regulatory	very-expensive	ADR-002	ADR-002
+sustainDuration is the prequalification requirement D.	03-contracts/C1-belief-to-valuation.md §7	regulatory	very-expensive	ADR-010	ADR-010
+minBidMw and bidStepMw are the aFRR product granularity and are strictly positive.	03-contracts/C1-belief-to-valuation.md §7	regulatory	very-expensive	ADR-002	ADR-002
+symmetricProduct declares whether up and down reserve must be equal.	03-contracts/C1-belief-to-valuation.md §7	regulatory	very-expensive	ADR-002	ADR-002
+seriesQuality carries one QualityStamp per series and is the basis of the risk multiplier.	03-contracts/C1-belief-to-valuation.md §8	analytic	very-expensive	ADR-014	ADR-014
+degradationMode is read from L0 and echoed in C1 so Valuation need not consult L0 separately.	03-contracts/C1-belief-to-valuation.md §8	analytic	very-expensive	ADR-014	ADR-014
+criticalMissing is empty in NORMAL, and a non-empty criticalMissing implies a mode of at least DEFENSIVE.	03-contracts/C1-belief-to-valuation.md §8	analytic	very-expensive	ADR-014	ADR-014
+socMin ≤ socNow ≤ socMax, and violation is a HALT because telemetry or the model is wrong.	03-contracts/C1-belief-to-valuation.md §9	analytic	very-expensive	ADR-004	INV-D-01
+No fact inside a BeliefSnapshot has knowledgeTime greater than asOf, and violation is a HALT for lookahead.	03-contracts/C1-belief-to-valuation.md §9	analytic	very-expensive	ADR-004	INV-D-02
+Every [H] array in C1 has length slotCount, and violation is a HALT.	03-contracts/C1-belief-to-valuation.md §9	analytic	very-expensive	ADR-004	INV-D-03
+blockIndex is non-decreasing and covers every slot exactly once, and violation is a HALT.	03-contracts/C1-belief-to-valuation.md §9	analytic	very-expensive	ADR-010	INV-D-04
+scenarioWeights are non-negative and sum to 1 within 1e-9, and violation is a HALT.	03-contracts/C1-belief-to-valuation.md §9	analytic	very-expensive	ADR-005	INV-D-06
+Reduced-ensemble marginal means match the full ensemble within tolerance, and violation warns and sets DEGRADED.	03-contracts/C1-belief-to-valuation.md §9	analytic	very-expensive	ADR-005	INV-D-07	y
+pMaxCharge and pMaxDischarge are non-negative and finite for every slot, and violation is a HALT.	03-contracts/C1-belief-to-valuation.md §9	analytic	very-expensive	ADR-004	INV-D-08
+etaCharge · etaDischarge ≤ 1, and violation is a HALT.	03-contracts/C1-belief-to-valuation.md §9	analytic	very-expensive	ADR-004	INV-D-09
+Every C1 field marked Null = no is present or is listed in criticalMissing, and otherwise the engine escalates per the ladder.	03-contracts/C1-belief-to-valuation.md §9	analytic	very-expensive	ADR-014	INV-D-10
+No handle, cursor or reference into the Belief store crosses C1.	03-contracts/C1-belief-to-valuation.md §10	analytic	very-expensive	ADR-004	ADR-004
+No raw order-book data crosses C1; only the derived volume beliefs do.	03-contracts/C1-belief-to-valuation.md §10	analytic	very-expensive	ADR-004	ADR-004
+No Planner or Settlement output crosses C1, because that arrives via L0 at a lag.	03-contracts/C1-belief-to-valuation.md §10	analytic	very-expensive	ADR-006	ADR-006
+No wall-clock time crosses C1.	03-contracts/C1-belief-to-valuation.md §10	analytic	very-expensive	ADR-013	ADR-013
+No model objects cross C1; only their evaluated outputs and their version hashes do.	03-contracts/C1-belief-to-valuation.md §10	analytic	very-expensive	ADR-004	ADR-004
