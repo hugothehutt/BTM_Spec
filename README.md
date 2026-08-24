@@ -20,7 +20,7 @@ plan. Implementation happens in the engine repository against these documents.
 | Delineation regime (MiSpel, A1/A5) | Normative, transcribed from Anlage 1; route split and identities derived |
 | Delineation in the objective (ADR-017) | Normative — accumulators on C5/C6, state equations in L3, exact recomputation in L5 |
 | ADR-001 … ADR-014, ADR-016, ADR-017 | Accepted |
-| ADR-015 (open register) | Open — three decisions deferred by design |
+| ADR-015 (open register) | Placeholder — its three decisions are named below and carry no register entries |
 | Seam contracts C1–C6 | Normative, versioned |
 | Layer designs L0–L5 | Normative for structure, indicative for algorithm choice |
 | Compliance architecture | Normative |
@@ -39,10 +39,14 @@ A part with a hole in it is neither normative nor absent, which is why the third
 value exists. Holes are greppable (`> [!HOLE]`), each names an open ticket, and
 no document may cite a holed section without carrying a marker itself.
 
-Three decisions are deliberately **deferred** and tracked in `01-adr/ADR-015`:
-the MILP solver (Gurobi intended), the per-tick latency budget, and intraday
-fill-model fidelity. Nothing in this specification depends on them. Where a
-document must reference one, it references the *abstraction*, never the choice.
+Three decisions are deliberately **deferred**: the MILP solver (Gurobi
+intended), the per-tick latency budget, and intraday fill-model fidelity.
+Nothing in this specification depends on them. Where a document must reference
+one, it references the *abstraction*, never the choice. `01-adr/ADR-015` is a
+title-only placeholder: the three are outside the verification route and hold no
+claim-register entries, and they return only if a technical note acquires a
+dependency on one. `05-implementation/P0-workstreams.md` carries the per-workstream
+review that checks no such dependency has appeared.
 
 ---
 
