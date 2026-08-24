@@ -353,7 +353,7 @@ is priced at, all else equal.
 
 | Input change | Expected relation on the bundle |
 |---|---|
-| `peakPriceEurPerMw ↑` | `EpigraphTerm.unitPriceEurPerMw ↑`; the priced value of a kW of peak reduction is non-decreasing |
+| `peakPriceEurPerMw ↑` | `EpigraphTerm.unitPriceEurPerMw ↑`; the priced value of a MW of peak reduction is non-decreasing |
 | `afrrCapPriceEurPerMwH[s,b] ↑ ∀s` | `capacityValueCurve[b]` is pointwise non-decreasing in offered MW |
 | `daPriceEurPerMwh[s,t] ↑ ∀s` | the `LinearTerm` coefficient on `vDaSell[t]` is non-decreasing; on `vDaBuy[t]` non-increasing (the cost of buying rose) |
 | `volumetricChargeEurPerMwh ↑` | the `LinearTerm` on `PoiImport` becomes more negative |
