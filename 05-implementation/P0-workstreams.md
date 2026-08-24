@@ -242,7 +242,7 @@ workstream.
 1. **The seams hold under a real payload.** Five contracts, validated on both
    sides, round-tripping and hashing, with a real week of data behind them.
 2. **The loop closes.** Settlement's realised peak becomes next tick's
-   `EpigraphTerm.floor` through L0, at a one-tick lag, and `INV-S-01` holds
+   `EpigraphTerm.pPoiFloorMw` through L0, at a one-tick lag, and `INV-S-01` holds
    across a month boundary. This is the single hardest structural property in the
    system (ADR-006) and it is proven by the smallest possible instance.
 3. **Determinism is real.** The recorded week replays byte-identically, and the

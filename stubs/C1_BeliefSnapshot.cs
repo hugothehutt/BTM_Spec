@@ -209,7 +209,7 @@ public sealed record TariffAndNetwork
 
     /// <summary>Peak charge <b>per regime</b>, keyed by <see cref="ActiveRegimes"/>.
     /// Unit EUR/MW. Range <c>≥0</c>.</summary>
-    public required IReadOnlyDictionary<TariffRegimeId, double> double { get; init; }
+    public required IReadOnlyDictionary<TariffRegimeId, double> PeakPriceEurPerMw { get; init; }
 
     /// <summary>Network volumetric component. Unit EUR/MWh. Card. <c>[H]</c>.
     /// Range <c>≥0</c>.</summary>

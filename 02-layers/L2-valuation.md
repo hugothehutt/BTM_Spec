@@ -69,7 +69,7 @@ Prices the marginal MW of grid peak, under whichever tariff regimes are active
   Getting this wrong is the most common way to make the engine pathologically
   peak-averse.
 - **Degradation response:** poor `loadMw` quality adds
-  `riskProfile.pPoiPPoiPeakSafetyMarginMw` to the floor rather than changing behaviour.
+  `riskProfile.pPoiPeakSafetyMarginMw` to the floor rather than changing behaviour.
 
 ### OppCostView — the internal cost of using the battery
 
@@ -268,8 +268,8 @@ Quality never becomes a branch (ADR-014 §1). It becomes parameters:
 
 | Degraded input | Risk response |
 |---|---|
-| `loadMw` quality | ↑ `pPoiPPoiPeakSafetyMarginMw`; ↑ `cvarLevel` for peak |
-| `pvAvailMw` quality | ↑ `pPoiPPoiPeakSafetyMarginMw` (PV shortfall raises import) |
+| `loadMw` quality | ↑ `pPoiPeakSafetyMarginMw`; ↑ `cvarLevel` for peak |
+| `pvAvailMw` quality | ↑ `pPoiPeakSafetyMarginMw` (PV shortfall raises import) |
 | price beliefs | ↓ `positionScale`; ↑ `cvarWeight` |
 | `activation` beliefs | ↑ `chanceLevel` for SOC feasibility |
 | `V(SOC)` stale | apply `stalenessPenalty` shrink to `V`'s slopes |

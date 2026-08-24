@@ -589,8 +589,8 @@
   owner: 00-overview/01-system-model.md §5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -606,12 +606,12 @@
   band: null
 # ---- 00-overview/02-conventions.md ----
 - id: CLM-0058
-  statement: There are two distinct sign reference frames and they must never be conflated.
+  statement: There are three distinct sign reference frames — battery, POI and market — and they must never be conflated; market is sign-aligned with battery, so battery to POI is the only sign flip in the system.
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -620,8 +620,8 @@
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -630,8 +630,8 @@
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -640,8 +640,8 @@
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -660,8 +660,8 @@
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -721,8 +721,8 @@
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -731,8 +731,8 @@
   owner: 00-overview/02-conventions.md §1
   class: empirical
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -742,8 +742,8 @@
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -752,8 +752,8 @@
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -762,8 +762,8 @@
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -772,8 +772,8 @@
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -782,8 +782,8 @@
   owner: 00-overview/02-conventions.md §2
   class: regulatory
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -802,8 +802,8 @@
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -812,8 +812,8 @@
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -822,8 +822,8 @@
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -832,8 +832,8 @@
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -842,8 +842,8 @@
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -1243,8 +1243,8 @@
   owner: 00-overview/02-conventions.md §6
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -1253,8 +1253,8 @@
   owner: 00-overview/02-conventions.md §6
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -1273,8 +1273,8 @@
   owner: 00-overview/02-conventions.md §6
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -7444,12 +7444,12 @@
   tn: null
   band: null
 - id: CLM-0780
-  statement: ADR-003, typed quantities and two reference frames, is Deleted and superseded by 02-conventions.md §5.2 and §1; its id is retained in the index and never reissued.
+  statement: ADR-003, typed quantities and two reference frames (as it was titled), is Deleted and superseded by 02-conventions.md §5.2 and §1; its id is retained in the index and never reissued.
   owner: 01-adr/README.md
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -9599,8 +9599,8 @@
   owner: 02-layers/L1-belief.md §1
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -9979,8 +9979,8 @@
   owner: 02-layers/L1-belief.md §2.1
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -11056,8 +11056,8 @@
   owner: 02-layers/L1-belief.md §6.1
   class: analytic
   blast_radius: cheap
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -12992,8 +12992,8 @@
   owner: 02-layers/L2-valuation.md §7
   class: empirical
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -14912,8 +14912,8 @@
   owner: 02-layers/L5-settlement.md §4
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -14932,8 +14932,8 @@
   owner: 02-layers/L5-settlement.md §4
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -16568,8 +16568,8 @@
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -16578,8 +16578,8 @@
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -16658,7 +16658,7 @@
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
+  br_source: 02-conventions §5.2
   anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
@@ -16818,8 +16818,8 @@
   owner: 03-contracts/C0-contract-conventions.md §5
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -16908,8 +16908,8 @@
   owner: 03-contracts/C0-contract-conventions.md §7
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -17601,8 +17601,8 @@
   owner: 03-contracts/C2-valuation-to-planner.md §2
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -18376,8 +18376,8 @@
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
   blast_radius: moderate
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -18526,8 +18526,8 @@
   owner: 03-contracts/C3-planner-to-execution.md §4
   class: analytic
   blast_radius: moderate
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -19512,8 +19512,8 @@
   owner: 03-contracts/C5-settlement-to-state.md §4
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -20341,8 +20341,8 @@
   owner: 03-contracts/C6-state-to-layers.md §3
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -20491,8 +20491,8 @@
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -21567,8 +21567,8 @@
   owner: 04-compliance/T0-test-architecture.md §6
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -22009,8 +22009,8 @@
   owner: 04-compliance/T1-invariants.md §1.3
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -22019,8 +22019,8 @@
   owner: 04-compliance/T1-invariants.md §1.3
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -22029,8 +22029,8 @@
   owner: 04-compliance/T1-invariants.md §1.3
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -22080,7 +22080,7 @@
   owner: 04-compliance/T1-invariants.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
+  br_source: 02-conventions §5.2
   anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
@@ -22934,7 +22934,7 @@
   owner: 04-compliance/T1-invariants.md §9.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
+  br_source: 02-conventions §5.2
   anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
@@ -23024,8 +23024,8 @@
   owner: 04-compliance/T1-invariants.md §9.2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23034,8 +23034,8 @@
   owner: 04-compliance/T1-invariants.md §9.2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23226,8 +23226,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23256,8 +23256,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23946,8 +23946,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23956,8 +23956,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23966,8 +23966,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23976,8 +23976,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23986,8 +23986,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23996,8 +23996,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24006,8 +24006,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24016,8 +24016,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24026,8 +24026,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24036,8 +24036,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24647,8 +24647,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24969,8 +24969,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24979,8 +24979,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24989,8 +24989,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24999,8 +24999,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -25379,8 +25379,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -25429,8 +25429,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -27650,8 +27650,8 @@
   owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -29465,8 +29465,8 @@
   owner: 04-compliance/T6-adversarial-audit.md §4
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null

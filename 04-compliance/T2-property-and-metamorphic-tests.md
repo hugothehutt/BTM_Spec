@@ -233,8 +233,8 @@ response.
 | `C1` field | `Good` | `Degraded` | `Stale` | `Imputed` | `Missing` |
 |---|---|---|---|---|---|
 | `socNowMwh` | `NORMAL` | `DEGRADED` | `DEFENSIVE` | **not permitted** — never defaulted (`C1` §2) | `HALT` via `INV-D-01`/critical |
-| `loadMw` | `NORMAL` | `DEGRADED`, ↑`pPoiPPoiPeakSafetyMarginMw`, ↑`cvarLevel` | `DEGRADED`, ↑↑`pPoiPPoiPeakSafetyMarginMw` | `DEGRADED`, default = **high quantile** | `DEFENSIVE`, default high, `criticalMissing` populated |
-| `pvAvailMw` | `NORMAL` | `DEGRADED`, ↑`pPoiPPoiPeakSafetyMarginMw` | as `Degraded` | default = `0` (protects peak) | `DEGRADED`, default `0` |
+| `loadMw` | `NORMAL` | `DEGRADED`, ↑`pPoiPeakSafetyMarginMw`, ↑`cvarLevel` | `DEGRADED`, ↑↑`pPoiPeakSafetyMarginMw` | `DEGRADED`, default = **high quantile** | `DEFENSIVE`, default high, `criticalMissing` populated |
+| `pvAvailMw` | `NORMAL` | `DEGRADED`, ↑`pPoiPeakSafetyMarginMw` | as `Degraded` | default = `0` (protects peak) | `DEGRADED`, default `0` |
 | `daPriceEurPerMwh` | `NORMAL` | ↓`positionScale`, ↑`cvarWeight` | ↓↓`positionScale` | ↓↓`positionScale` | `DEFENSIVE` — critical |
 | `idPriceRefEurPerMwh` | `NORMAL` | ↓`positionScale` | ↓`positionScale` | ↓`positionScale` | `DEGRADED` |
 | `idSpreadBeliefEurPerMwh` | `NORMAL` | wider | default **wide** (suppresses trading) | wide | `DEGRADED`, wide |
@@ -406,7 +406,7 @@ value function's `Y` breakpoints. Then:
   `EpigraphTerm.unitPriceEurPerMw`, the objective value, `V`'s slopes, every entry in
   `plannedByEffect`, and the shadow value on every position constraint;
 - **every physical quantity is bit-identical** — every `BoundTerm.lower/upper`,
-  every `PwlTerm.breakpointsX`, `EpigraphTerm.floor`, the SOC trajectory, the
+  every `PwlTerm.breakpointsX`, `EpigraphTerm.pPoiFloorMw`, the SOC trajectory, the
   planned dispatch, `rUp`/`rDn`, and the peak level;
 - **the argmax is unchanged** — scaling a linear objective by a positive constant
   does not move the optimum.

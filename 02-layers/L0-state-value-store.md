@@ -100,8 +100,10 @@ binary flag tells the engine nothing until it is too late (C5 §3, ADR-011).
 | `kind` | `SpotPosition \| ReserveAward \| OpenOrder` | |
 | `status` | `Pending \| Confirmed \| Settled \| Cancelled` | Load-bearing (ADR-006) |
 | `market`, `productId`, `slot`/`block` | — | |
-| `signedVolumeMwh` | `double` / `double` | Market frame |
-| `priceEurPerMwh` | `double` / `double` | |
+| `signedVolumeMwh` | `double` | Market frame. Energy markets only |
+| `signedVolumeMw` | `double` | Market frame. `AfrrCapacity` only |
+| `priceEurPerMwh` | `double` | Energy markets only |
+| `priceEurPerMwH` | `double` | `AfrrCapacity` only |
 | `feasibilityRequirement` | `SocCorridor?` | Hard constraint in every degradation mode |
 
 `Confirmed` entries are hard constraints; `Pending` entries are probabilistic
@@ -498,7 +500,7 @@ explicitly, and it is a particularly bad one: the gap is the *most recent* windo
 so it is disproportionately likely to contain a peak the engine just caused.
 
 Where the gap trajectory is itself uncertain, it receives the same CVaR treatment
-as the forward peak and picks up `riskProfile.pPoiPPoiPeakSafetyMarginMw` (L2 §6). The
+as the forward peak and picks up `riskProfile.pPoiPeakSafetyMarginMw` (L2 §6). The
 asymmetry is deliberate: overstating the provisional peak costs a little
 optimisation freedom, understating it can cost an entire period's demand charge.
 

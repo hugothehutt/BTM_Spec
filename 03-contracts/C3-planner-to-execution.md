@@ -62,7 +62,7 @@ DA requires a monotone schedule, not a point order.
 
 | Field | Type | Unit | Notes |
 |---|---|---|---|
-| `curvePoints` | `(double, double)[]` | EUR/MWh, MWh | Price-ordered |
+| `curvePoints` | `DaCurvePoint[]` | — | Price-ordered. Each point is `(priceEurPerMwh, quantityMwh)`; the pair is a named record rather than an anonymous tuple precisely so each component carries its own unit suffix (`INV-G-02`) |
 | `slot` | `SlotId` | — | |
 | `monotone` | `bool` | — | Asserted, not declared: `INV-P-09` |
 

@@ -382,7 +382,7 @@ public sealed record StateSnapshot : ContractEnvelope
     public required ContentHash SourceUpdate { get; init; }
 
     /// <summary>Realised peak per regime, including <c>unsettledGapFrom</c>
-    /// (C5 §2). The <c>EpigraphTerm.floor</c> comes from here.</summary>
+    /// (C5 §2). The <c>EpigraphTerm.pPoiFloorMw</c> comes from here.</summary>
     public required IReadOnlyList<PeakState> PeakStates { get; init; }
 
     /// <summary>§19(2) state and margin (C5 §3).</summary>

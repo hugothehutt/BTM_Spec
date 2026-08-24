@@ -236,7 +236,7 @@ silently become a hardcoded constant is detected:
 
 ```
 property ThresholdsAreConfiguration():
-    for threshold in {fullLoadHoursThreshold, annualEnergyThresholdKwh,
+    for threshold in {fullLoadHoursThreshold, annualEnergyThresholdMwh,
                       hlzfWindows, qualificationMargin}:
         a = Run(config)
         b = Run(config.with(threshold materially changed))

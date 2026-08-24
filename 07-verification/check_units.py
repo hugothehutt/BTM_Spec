@@ -5,16 +5,26 @@
 system and into the identifier. That is only worth anything if a machine checks
 it, so this is the machine.
 
-Three checks, all read off the contract field tables themselves:
+Three checks read off the contract field tables themselves:
 
   (a) SUFFIX  a dimensioned field's identifier ends in its unit, and that suffix
               equals the Unit column of its own row
-  (b) FRAME   a power or energy field carries a frame prefix — pBatt/soc
-              (battery), pPoi (POI), or a declared market-product name — so that
-              no MW or MWh quantity is frame-ambiguous
+  (b) FRAME   a power or energy field carries a frame token — pBatt/soc
+              (battery), pPoi (POI), a market product's own name, load/pv/aux
+              (site), or mtd and the MiSpel register names (delineation) — so
+              that no MW or MWh quantity is frame-ambiguous
   (c) RANGE   a dimensionless field carries `—` in the Unit column plus a range
               (§2.3); a dimensionless field with no range is a violation, not a
               field awaiting documentation
+
+INV-G-02 is a seam invariant, so (a)-(c) are scoped to `03-contracts`. A stale
+unit in a layer design or a test fixture is just as wrong, and nothing was
+looking for it, so a fourth check runs repo-wide:
+
+  (d) FOREIGN no kW, no kWh and no factor of 1000 outside
+              `allowed-foreign-units.yaml`, which holds the regulatory
+              primitives and the sentences whose job is to say kW does not
+              exist. Adding a line there is a decision someone writes down.
 
 Stdlib only, no venv. Run: python3 07-verification/check_units.py
 """
@@ -39,15 +49,21 @@ SUFFIX = {
 }
 
 # Units that are neither dimensioned in the sense above nor dimensionless: they
-# are counts, instants and durations, which carry no suffix rule.
-EXEMPT_UNITS = {"—", "-", "", "slots", "slot", "h", "hours", "int", "UTC",
+# are counts, instants and durations, which carry no suffix rule. A BLANK unit
+# cell is deliberately absent: it is a field awaiting documentation, which §2.3
+# calls a violation rather than an exemption.
+EXEMPT_UNITS = {"—", "-", "slots", "slot", "h", "hours", "int", "UTC",
                 "µs", "us", "ms", "bytes", "count", "EUR/t", "%"}
 
-# The generic term shapes of C2 are polymorphic in their variable: a LinearTerm's
-# coefficient is EUR per whatever the variable is. These units are declared, not
-# missing, and carry no suffix rule.
+# The generic term shapes of ADR-008 are polymorphic in their variable: a
+# LinearTerm's coefficient is EUR per whatever `variable` names, and there are
+# thirteen VarSymbols, so the shape cannot be split per unit. §5.2 allows this
+# exactly when the unit is fixed by a sibling VarSymbol field in the same record
+# — which is checked below, not assumed: a table using a polymorphic unit must
+# itself declare the field that resolves it.
 POLY_UNITS = {"variable unit", "target unit", "EUR per variable unit",
-              "EUR per unit violation", "EUR/MWh, MWh"}
+              "EUR per unit violation"}
+POLY_RESOLVERS = ("variable", "target", "epigraphvar", "dominates")
 
 # Frame tokens for power and energy (§5.2). Matched case-insensitively anywhere
 # in the identifier, so `vSocBreakpointsXMwh` reads as battery frame.
@@ -70,9 +86,28 @@ FRAMES = {
     # frame. The German names are proper nouns from the register; naming them
     # here is the declaration.
     "delineation": ("mtd", "saldierungsfaehig", "foerderfaehig",
-                    "umlagebelastet", "fremdtank"),
+                    "umlagebelasteter", "fremdtank"),
 }
 FRAME_TOKENS = tuple(t for group in FRAMES.values() for t in group)
+
+
+def names_a_frame(identifier: str) -> bool:
+    """True when a frame token appears as a camelCase WORD of the identifier.
+
+    Substring matching is not good enough: "lot" is inside "slot", "rup" is
+    inside "socCorridorUpper", and "pv" is inside any identifier that happens to
+    contain those letters. Splitting on camelCase boundaries first means a token
+    has to be a word the author actually wrote.
+    """
+    words = re.findall(r"[A-Z]?[a-z0-9]+|[A-Z]+(?![a-z])", identifier)
+    lowered = [w.lower() for w in words]
+    if any(w in FRAME_TOKENS for w in lowered):
+        return True
+    # `pBattMw` and `pPoiMw` split as ['p','Batt','Mw'] / ['p','Poi','Mw'], so
+    # check the leading pair as one token too.
+    if len(lowered) >= 2 and lowered[0] + lowered[1] in FRAME_TOKENS:
+        return True
+    return False
 
 FIELD_TOKEN = re.compile(r"`([A-Za-z][A-Za-z0-9_]*)`")
 NUMERIC_TYPE = re.compile(r"^`double(\[[^\]]*\])?`$")
@@ -109,8 +144,66 @@ def tables(text: str):
             i += 1
 
 
-def main() -> int:
+FOREIGN = re.compile(r"\bkW\b|\bkWh\b|\bKwh\b|/ ?1000\b|\* ?1e-3\b|\b0\.001\b",
+                     re.IGNORECASE)
+ALLOWLIST = ROOT / "07-verification" / "allowed-foreign-units.yaml"
+
+
+def load_allowlist() -> tuple[set[str], dict[str, list[str]]]:
+    """A deliberately small reader for the allowlist's fixed shape."""
+    whole: set[str] = set()
+    subs: dict[str, list[str]] = {}
+    current = None
+    in_allow = False
+    for raw in ALLOWLIST.read_text().split("\n"):
+        if not raw.strip() or raw.lstrip().startswith("#"):
+            continue
+        if not raw.startswith(" ") and raw.rstrip().endswith(":"):
+            current = raw.rstrip()[:-1].strip()
+            subs.setdefault(current, [])
+            in_allow = False
+        elif current and raw.strip() == "allow:":
+            in_allow = True
+        elif current and raw.strip().startswith("allow_whole_file: true"):
+            whole.add(current)
+        elif current and in_allow and raw.strip().startswith("- "):
+            item = raw.strip()[2:].strip()
+            if len(item) >= 2 and item[0] == item[-1] and item[0] in "\"'":
+                item = item[1:-1]
+            subs[current].append(item)
+        elif raw.strip().endswith(">") or raw.startswith("    "):
+            continue
+    return whole, subs
+
+
+def foreign_units() -> list[str]:
+    """Repo-wide: no kW, no kWh, no factor of 1000, outside the allowlist.
+
+    INV-G-02 is scoped to the contract field tables, which is correct — it is a
+    seam invariant. But a stale unit in a layer design or a test fixture is just
+    as wrong and nothing was looking for it. This pass is that check.
+    """
+    whole, subs = load_allowlist()
     errors: list[str] = []
+    for pattern in ("**/*.md", "**/*.cs"):
+        for path in sorted(ROOT.glob(pattern)):
+            rel = path.relative_to(ROOT).as_posix()
+            if rel.startswith((".claude/", "docs/")) or rel in whole:
+                continue
+            allowed = subs.get(rel, [])
+            for i, line in enumerate(path.read_text().split("\n"), 1):
+                if not FOREIGN.search(line):
+                    continue
+                if any(a in line for a in allowed):
+                    continue
+                errors.append(
+                    f"{rel}:{i}: FOREIGN a stale unit or a factor of 1000 — "
+                    f"{line.strip()[:80]!r}")
+    return errors
+
+
+def main() -> int:
+    errors: list[str] = foreign_units()
     checked = elided = 0
 
     for folder in CORPUS:
@@ -139,6 +232,19 @@ def main() -> int:
                     rng = row[ri] if ri is not None and len(row) > ri else ""
 
                     if unit in POLY_UNITS:
+                        # Allowed only where the table declares the field that
+                        # resolves the unit.
+                        table_fields = {
+                            m.lower()
+                            for _, r in rows if len(r) > fi
+                            for m in FIELD_TOKEN.findall(r[fi])
+                        }
+                        if not any(p in table_fields for p in POLY_RESOLVERS):
+                            for n in names:
+                                errors.append(
+                                    f"{rel}:{lineno}: POLY `{n}` declares the "
+                                    f"polymorphic unit {unit!r} but its table "
+                                    f"declares no VarSymbol field to resolve it")
                         continue
                     if unit in SUFFIX:
                         want = SUFFIX[unit]
@@ -148,9 +254,7 @@ def main() -> int:
                                 errors.append(
                                     f"{rel}:{lineno}: SUFFIX `{n}` declares unit "
                                     f"{unit} so it must end in `{want}`")
-                            if unit in ("MW", "MWh") \
-                                    and not any(t in n.lower()
-                                                for t in FRAME_TOKENS):
+                            if unit in ("MW", "MWh") and not names_a_frame(n):
                                 errors.append(
                                     f"{rel}:{lineno}: FRAME `{n}` is a power or "
                                     f"energy field naming no frame")

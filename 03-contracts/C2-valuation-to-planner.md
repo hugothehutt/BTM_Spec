@@ -104,7 +104,7 @@ choice rather than mysterious.
 | `epigraphVar` | `VarSymbol` | — | e.g. `zPeak` |
 | `dominates` | `VarSymbol` | — | e.g. `pPoi` |
 | `overSlots` | `SlotId[]` | — | Subset — this is how HLZF is expressed |
-| `floor` | `double` | variable unit | Realised peak so far, from L0 |
+| `pPoiFloorMw` | `double` | MW | Realised peak so far, from L0 (`pPoiRealisedPeakMw`) |
 | `unitPriceEurPerMw` | `double` | EUR/MW | |
 | `prorationFactor` | `double` | — | `fraction`, range `[0,1]`. Fraction of the accounting period inside this horizon |
 
@@ -175,7 +175,7 @@ How input quality reaches the optimisation without becoming control flow.
 | `cvarWeight` | `double` | — | `≥0` | `weight`. Weight on the CVaR term vs. expectation; `0` recovers the risk-neutral objective |
 | `chanceLevel` | `double` | — | `(0,1)` | `probability`. ε for SOC feasibility chance constraints |
 | `positionScale` | `double` | — | `[0,1]` | `fraction`. Multiplier on speculative position bounds |
-| `pPoiPPoiPeakSafetyMarginMw` | `double` | MW | `≥0` | Added to the epigraph floor under degraded load quality |
+| `pPoiPeakSafetyMarginMw` | `double` | MW | `≥0` | Added to the epigraph floor under degraded load quality |
 | `degradationMode` | `DegradationMode` | — | — | Echoed |
 | `driverSummary` | `string[]` | — | — | Which quality issues moved which parameter — for the audit trail |
 

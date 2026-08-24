@@ -42,7 +42,7 @@ public enum EconomicEffect
     ReserveEnergyRevenue,
 
     /// <summary>Imbalance cost. Owner: <c>ImbalanceRiskView</c>.</summary>
-    ImbalanceCostEur,
+    ImbalanceCost,
 
     /// <summary>Network demand charge. Owner: <c>PeakView</c>. Base <c>PoiImport</c>.</summary>
     NetworkPeakCharge,
@@ -55,13 +55,13 @@ public enum EconomicEffect
     /// <summary>Levies, taxes and surcharges a delineation regime cannot reduce —
     /// Stromsteuer, Konzessionsabgabe — normalised to EUR/MWh.
     /// Owner: <c>TariffView</c>. Base <c>PoiImport</c>.</summary>
-    LeviesAndTaxesEurPerMwh,
+    LeviesAndTaxes,
 
     /// <summary>The reducible EnFG components, charged on the umlagebelasteter
     /// Netzbezug (21) rather than on metered import. Owner: <c>DelineationView</c>.
     /// Base <c>Delineation</c> (ADR-017). Charging these on (3) overstates the
     /// charge by the whole relief.</summary>
-    EnfgLeviesEurPerMwh,
+    EnfgLevies,
 
     /// <summary>Marktprämie MAX[AW - MW_month; 0] on the insgesamt förderfähige
     /// Netzeinspeisung (32). Owner: <c>DelineationView</c>. Base <c>Delineation</c>.

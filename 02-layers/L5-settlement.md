@@ -164,7 +164,7 @@ SubsidyRevenue         = (32) · Σ_x ZFx · MAX[ AWx − marktwertMonthEurPerMw
                            Under a common EEG vintage (32x) = ZFx·(32), so the
                            per-plant sum collapses to one weighted premium ]
 
-CycleDegradation       = − degCostPerKwh
+CycleDegradation       = − degCostEurPerMwh
                            · Σ_t (pBattChargeEnergyMwh[t] + pBattDischargeEnergyMwh[t]) / 2
 
 StoredEnergyContinuation
@@ -211,8 +211,8 @@ Instantaneous POI power in the tariff's own frame, floored at zero because the
 charge is levied on import (`02-conventions.md` §1):
 
 ```
-p_import_kw[t] = max( (pPoiMeteredImportMwh[t] − pPoiMeteredExportMwh[t]) / Δt_h , 0 )
-realisedPeakKw = max over t ∈ periodSlots(regime) of p_import_kw[t]
+pPoiImportMw[t]    = max( (pPoiMeteredImportMwh[t] − pPoiMeteredExportMwh[t]) / Δt_h , 0 )
+pPoiRealisedPeakMw = max over t ∈ periodSlots(regime) of pPoiImportMw[t]
 ```
 
 | Regime | `periodSlots` | Charge |
@@ -226,7 +226,7 @@ realisedPeakKw = max over t ∈ periodSlots(regime) of p_import_kw[t]
 
 ```
 pPoiAnnualEnergyMwh = Σ_{t ∈ year} pPoiMeteredImportMwh[t]
-pPoiAnnualPeakMw    = max_{t ∈ year} p_import_mw[t]
+pPoiAnnualPeakMw    = max_{t ∈ year} pPoiImportMw[t]
 fullLoadHours   = pPoiAnnualEnergyMwh / pPoiAnnualPeakMw          [ MWh / MW = h ]  INV-S-06
 flhMargin       = fullLoadHours   − flhThreshold          [ threshold config, 7,000 h ]
 energyMargin    = pPoiAnnualEnergyMwh − energyThreshold       [ threshold config, 10 GWh ]
@@ -393,15 +393,15 @@ computed by **independent re-runs rather than by differencing**, specifically so
 that the residual is a test of the pipeline instead of a definition:
 
 ```
-unexplainedError = (Ĵ₁ − J) − (optimalityGapEur + forecastErrorEur
+unexplainedErrorEur = (Ĵ₁ − J) − (optimalityGapEur + forecastErrorEur
                                 + executionSlippageEur + modelErrorEur)
 ```
 
-`INV-S-03` warns when `|unexplainedError|` exceeds tolerance. Legitimate sources
+`INV-S-03` warns when `|unexplainedErrorEur|` exceeds tolerance. Legitimate sources
 are bounded and enumerable: `b*` is itself an estimate while imbalance prices are
 provisional; a term-set version changed between plan and settlement; tick-size
 rounding at C3 (`02-conventions.md` §6 — which is why rounding happens once and
-only there). Anything else is a defect. `unexplainedError` is a distinct quantity
+only there). Anything else is a defect. `unexplainedErrorEur` is a distinct quantity
 from C5 §5's `unexplainedEur`, which is the *effect-level* residual under `INV-S-02`;
 the two are never netted and never reported as one number.
 
@@ -517,7 +517,7 @@ right answer is often computable by hand.
 - **Zero-gap** — feed Settlement the **exact planned trajectory as realised**:
   every intent filled at its limit price, metered series equal to the planned POI
   trajectory, imbalance zero. Assert `optimalityGapEur = forecastErrorEur =
-  executionSlippageEur = modelErrorEur = unexplainedError = 0` within tolerance
+  executionSlippageEur = modelErrorEur = unexplainedErrorEur = 0` within tolerance
   (`INV-S-10`). This is the single most valuable test in the layer: any non-zero
   bucket is a definitional disagreement between L2 and L5 that would otherwise
   masquerade as a real finding for months.

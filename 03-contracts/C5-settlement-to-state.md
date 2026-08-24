@@ -135,9 +135,9 @@ The `unexplainedEur` bucket is not optional and must not be allowed to be silent
 absorbed elsewhere. A rising unexplained ratio is the single best early warning
 that a term definition has drifted between Valuation and Settlement.
 
-**Do not confuse this with `unexplainedError` in §6.** They are different
+**Do not confuse this with `unexplainedErrorEur` in §6.** They are different
 quantities: `unexplainedEur` here is the residual of the *cash* decomposition;
-`unexplainedError` in §6 is the residual of the *error* decomposition. They are
+`unexplainedErrorEur` in §6 is the residual of the *error* decomposition. They are
 never netted against one another, and each has its own invariant (`INV-S-02`
 and `INV-S-03` respectively).
 
@@ -167,7 +167,7 @@ R    realised value from settled cash
 
 optimalityGapEur     = Ĵ₁ − Ĵ
 forecastErrorEur     = Ĵ  − A
-modelErrorEur + executionSlippageEur + unexplainedError = A − R
+modelErrorEur + executionSlippageEur + unexplainedErrorEur = A − R
 ```
 
 This anchoring is necessary, not cosmetic. A suboptimal tier lowers the planned
@@ -208,8 +208,8 @@ and only the gross figure enters this chain.
 
 ### Reconciliation
 
-The four buckets plus `unexplainedError` sum to `Ĵ₁ − R` within tolerance
-(`INV-S-03`). `unexplainedError` is the residual of the *error* decomposition and
+The four buckets plus `unexplainedErrorEur` sum to `Ĵ₁ − R` within tolerance
+(`INV-S-03`). `unexplainedErrorEur` is the residual of the *error* decomposition and
 is distinct from `unexplainedEur` in §5, which is the residual of the *cash*
 decomposition. This four-way split is what turns "we lost money last week" into
 "the load forecast degraded on Tuesdays", which is actionable.
