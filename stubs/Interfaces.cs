@@ -311,13 +311,13 @@ public sealed record MilpModel
 public sealed record BackendSolution
 {
     public required bool IsFeasible { get; init; }
-    public required Money ObjectiveValue { get; init; }
-    public required Money DualBound { get; init; }
+    public required double ObjectiveValue { get; init; }
+    public required double DualBound { get; init; }
     public required double MipGap { get; init; }
     public required IReadOnlyDictionary<VarSymbol, ReadOnlyMemory<double>> PrimalValues { get; init; }
 
     /// <summary>Duals on the position accounting constraints — the source of
-    /// <c>shadowValue</c> (L3 §5, ADR-012).</summary>
+    /// <c>shadowValueEurPerMwh</c> (L3 §5, ADR-012).</summary>
     public required IReadOnlyDictionary<VarSymbol, ReadOnlyMemory<double>> Duals { get; init; }
 
     /// <summary>The irreducible infeasible subsystem, when infeasible. The model
@@ -358,17 +358,17 @@ public interface IOptimizationBackend
 public sealed record CoOptResult
 {
     public required bool IsFeasible { get; init; }
-    public required Money ObjectiveValue { get; init; }
+    public required double ObjectiveValue { get; init; }
 
     /// <summary>Objective decomposed by effect. This becomes
     /// <c>plannedByEffect</c> in C5 §5 and is what makes planned and realised
     /// value comparable term by term.</summary>
-    public required IReadOnlyDictionary<EconomicEffect, Money> ObjectiveByEffect { get; init; }
+    public required IReadOnlyDictionary<EconomicEffect, double> ObjectiveByEffect { get; init; }
 
     /// <summary>Certified dual bound. From Tier 2 the Lagrangian supplies it
     /// directly; from Tier 1 and Tier 3 it is the backend's bound
     /// (ADR-010).</summary>
-    public required Money DualBound { get; init; }
+    public required double DualBound { get; init; }
 
     /// <summary>λ_SOC at the optimum — the subgradient of <c>V</c> at the optimal
     /// terminal SOC. <b>An output, not an input</b>: this is the inversion that
@@ -493,7 +493,7 @@ public sealed record FillProbabilityCurve
     public required string ProductId { get; init; }
     public required SlotId Slot { get; init; }
     public required OrderSide Side { get; init; }
-    public required ReadOnlyMemory<EnergyPrice> PriceGrid { get; init; }
+    public required ReadOnlyMemory<double> PriceGrid { get; init; }
     public required ReadOnlyMemory<double> FillProbability { get; init; }
     public required SlotSpan TimeToGate { get; init; }
     public required ContentHash ArtefactHash { get; init; }
@@ -506,9 +506,9 @@ public sealed record MicrostructureState
     public required MarketId Market { get; init; }
     public required string ProductId { get; init; }
     public required SlotId Slot { get; init; }
-    public required EnergyPrice BestBid { get; init; }
-    public required EnergyPrice BestAsk { get; init; }
-    public required EnergyKwh DepthAtBest { get; init; }
+    public required double BestBid { get; init; }
+    public required double BestAsk { get; init; }
+    public required double DepthAtBest { get; init; }
     public required SlotSpan TimeToGate { get; init; }
 }
 
@@ -516,7 +516,7 @@ public sealed record MicrostructureState
 /// The quoting policy (<b>ADR-012</b>, L3 §5).
 /// </summary>
 /// <remarks>
-/// Maps <c>(target position, shadowValue, urgency, fill curve, microstructure
+/// Maps <c>(target position, shadowValueEurPerMwh, urgency, fill curve, microstructure
 /// state) → a ladder of limit orders</c>. The Planner answers "what net position
 /// do I want?"; turning that into a limit price involves fill probability,
 /// urgency, adverse selection and the shape of the remaining trading window, and
@@ -564,7 +564,7 @@ public interface IQuotingPolicy
 /// <para>
 /// <b>It consumes <see cref="ExecutionIntentProjection"/>, not
 /// <see cref="ExecutionIntent"/>.</b> That is the structural enforcement of
-/// INV-X-04: <c>shadowValue</c> and <c>urgency</c> are absent from the projected
+/// INV-X-04: <c>shadowValueEurPerMwh</c> and <c>urgency</c> are absent from the projected
 /// type, so Execution cannot read them even by accident. Widening this parameter
 /// to the full payload would silently open the side channel the split exists to
 /// close.
@@ -585,7 +585,7 @@ public interface IExecutionAdapter
 public sealed record SettlementResult
 {
     public required StateUpdate StateUpdate { get; init; }
-    public required Money TotalRealisedPnl { get; init; }
+    public required double TotalRealisedPnl { get; init; }
     public required bool IsFinal { get; init; }
     public required ContentHash ContentHash { get; init; }
 }

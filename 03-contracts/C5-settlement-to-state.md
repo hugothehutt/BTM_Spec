@@ -109,8 +109,10 @@ its own modelled trajectory rather than assuming it contributed nothing.
 | `kind` | `SpotPosition \| ReserveAward \| OpenOrder` | |
 | `status` | `Pending \| Confirmed \| Settled \| Cancelled` | Pending vs. Confirmed is load-bearing (ADR-006) |
 | `market`,`productId`,`slot`/`block` | — | |
-| `signedVolumeMwh` | `double` | Market frame |
-| `priceEurPerMwh` | `double`/`double` | |
+| `signedVolumeMwh` | `double` | Market frame. Energy markets only |
+| `signedVolumeMw` | `double` | Market frame. `AfrrCapacity` only |
+| `priceEurPerMwh` | `double` | Energy markets only |
+| `priceEurPerMwH` | `double` | `AfrrCapacity` only |
 | `feasibilityRequirement` | `SocCorridor?` | For reserve awards: the corridor that must be maintained |
 
 `Confirmed` reserve awards carry a `feasibilityRequirement` that becomes a hard

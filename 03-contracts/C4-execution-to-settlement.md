@@ -48,7 +48,8 @@ market-dependent unit is what `INV-G-02` now rejects.
 | `intentId` | `string` | |
 | `disposition` | `Expired \| Cancelled \| Rejected \| PartiallyFilled` | |
 | `rejectReason` | `string?` | Populated for `Rejected` |
-| `residualVolumeMwh` | `double` | What did not trade |
+| `residualVolumeMwh` | `double` | What did not trade. Energy markets only |
+| `residualVolumeMw` | `double` | What did not trade. `AfrrCapacity` only |
 
 Unfilled orders are as important as fills. Without them, the four-bucket error
 decomposition (L5) cannot separate "we were wrong about value" from "we could not

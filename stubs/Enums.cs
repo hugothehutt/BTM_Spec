@@ -42,7 +42,7 @@ public enum EconomicEffect
     ReserveEnergyRevenue,
 
     /// <summary>Imbalance cost. Owner: <c>ImbalanceRiskView</c>.</summary>
-    ImbalanceCost,
+    ImbalanceCostEur,
 
     /// <summary>Network demand charge. Owner: <c>PeakView</c>. Base <c>PoiImport</c>.</summary>
     NetworkPeakCharge,
@@ -55,17 +55,17 @@ public enum EconomicEffect
     /// <summary>Levies, taxes and surcharges a delineation regime cannot reduce —
     /// Stromsteuer, Konzessionsabgabe — normalised to EUR/MWh.
     /// Owner: <c>TariffView</c>. Base <c>PoiImport</c>.</summary>
-    LeviesAndTaxes,
+    LeviesAndTaxesEurPerMwh,
 
     /// <summary>The reducible EnFG components, charged on the umlagebelasteter
     /// Netzbezug (21) rather than on metered import. Owner: <c>DelineationView</c>.
     /// Base <c>Delineation</c> (ADR-017). Charging these on (3) overstates the
     /// charge by the whole relief.</summary>
-    EnfgLevies,
+    EnfgLeviesEurPerMwh,
 
     /// <summary>Marktprämie MAX[AW - MW_month; 0] on the insgesamt förderfähige
     /// Netzeinspeisung (32). Owner: <c>DelineationView</c>. Base <c>Delineation</c>.
-    /// Spot revenue on the same kWh stays in <see cref="SpotEnergyValue"/>.</summary>
+    /// Spot revenue on the same MWh stays in <see cref="SpotEnergyValue"/>.</summary>
     SubsidyRevenue,
 
     /// <summary>Cycle/throughput degradation cost, charged once.
@@ -106,22 +106,22 @@ public enum TermBase
 /// </summary>
 public enum VarSymbol
 {
-    /// <summary>Battery charge power. Frame: battery. Index <c>[H]</c>. Unit kW.</summary>
+    /// <summary>Battery charge power. Frame: battery. Index <c>[H]</c>. Unit MW.</summary>
     PCharge,
 
-    /// <summary>Battery discharge power. Frame: battery. Index <c>[H]</c>. Unit kW.</summary>
+    /// <summary>Battery discharge power. Frame: battery. Index <c>[H]</c>. Unit MW.</summary>
     PDischarge,
 
-    /// <summary>State of charge, end of slot. Index <c>[H]</c>. Unit kWh.</summary>
+    /// <summary>State of charge, end of slot. Index <c>[H]</c>. Unit MWh.</summary>
     Soc,
 
-    /// <summary>SOC at end of horizon. Index <c>1</c>. Unit kWh. Abscissa of V (ADR-007).</summary>
+    /// <summary>SOC at end of horizon. Index <c>1</c>. Unit MWh. Abscissa of V (ADR-007).</summary>
     SocTerminal,
 
-    /// <summary>POI net power. Frame: POI. Index <c>[H]</c>. Unit kW.</summary>
+    /// <summary>POI net power. Frame: POI. Index <c>[H]</c>. Unit MW.</summary>
     PPoi,
 
-    /// <summary>Peak epigraph variable, per regime. Frame: POI. Index: per regime. Unit kW.</summary>
+    /// <summary>Peak epigraph variable, per regime. Frame: POI. Index: per regime. Unit MW.</summary>
     ZPeak,
 
     /// <summary>Day-ahead purchase volume. Frame: market. Index <c>[H]</c>.</summary>
@@ -172,7 +172,7 @@ public enum BoundReason
 /// <summary>Declared structural coupling spanning decision variables (C2 §3.5).</summary>
 public enum CouplingKind
 {
-    /// <summary><c>soc[t] − rUp·D/η_d ≥ socMin</c>, <c>soc[t] + rDn·D·η_c ≤ socMax</c> (ADR-010).</summary>
+    /// <summary><c>soc[t] − rUp·D/η_d ≥ socMinMwh</c>, <c>soc[t] + rDn·D·η_c ≤ socMaxMwh</c> (ADR-010).</summary>
     ReserveCorridor,
 
     /// <summary><c>p_d[t] + rUp[b(t)] ≤ P_max_dis</c>, <c>p_c[t] + rDn[b(t)] ≤ P_max_chg</c>.</summary>

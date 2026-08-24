@@ -23,52 +23,25 @@ namespace Flexbid.Btm.Contracts;
 //  Price and volume carriers
 // =============================================================================
 
-/// <summary>Which unit an <see cref="OrderPrice"/> carries.</summary>
-public enum PriceKind
-{
-    /// <summary>EUR/MWh — DA, intraday, aFRR energy.</summary>
-    Energy,
-    /// <summary>EUR/MW/h — aFRR capacity.</summary>
-    Capacity,
-}
-
-/// <summary>Which unit an <see cref="OrderVolume"/> carries.</summary>
-public enum VolumeKind
-{
-    /// <summary>kWh — energy markets.</summary>
-    Energy,
-    /// <summary>MW — reserve capacity.</summary>
-    Reserve,
-}
-
-/// <summary>
-/// A limit price, discriminated by unit (C3 §2). <b>Already rounded to the
-/// market tick size</b>: rounding happens exactly once, here at the order intent
-/// boundary, and the rounded value is what Settlement reconciles against
-/// (conventions §6, INV-P-04). Rounding earlier corrupts the optimality gap
-/// measurement.
-/// </summary>
-public readonly record struct OrderPrice
-{
-    public required PriceKind Kind { get; init; }
-    public EnergyPrice? Energy { get; init; }
-    public CapacityPrice? Capacity { get; init; }
-
-    public static OrderPrice Of(EnergyPrice price) => throw new NotImplementedException();
-    public static OrderPrice Of(CapacityPrice price) => throw new NotImplementedException();
-}
-
-/// <summary>A volume, discriminated by unit (C3 §2). Lot-aligned and
-/// <c>&gt; 0</c> (INV-P-04).</summary>
-public readonly record struct OrderVolume
-{
-    public required VolumeKind Kind { get; init; }
-    public EnergyKwh? Energy { get; init; }
-    public ReserveMw? Reserve { get; init; }
-
-    public static OrderVolume Of(EnergyKwh volume) => throw new NotImplementedException();
-    public static OrderVolume Of(ReserveMw volume) => throw new NotImplementedException();
-}
+// A limit price and a volume used to be carried by two discriminated-union
+// structs, `OrderPrice` and `OrderVolume`, each tagging itself Energy or
+// Capacity at runtime. Conventions §5.2 moved unit safety into the identifier,
+// and a tag is not an identifier: the reader of `order.Price` still cannot see
+// which unit they hold without following the tag. The union is therefore
+// replaced by two exclusive nullable fields per quantity, named for their unit,
+// with `Market` as the discriminator (C3 §2, C4 §2).
+//
+// Exactly one of each pair is populated:
+//
+//   Da, IdContinuous, IdAuction, AfrrEnergy -> LimitPriceEurPerMwh, VolumeMwh
+//   AfrrCapacity                            -> LimitPriceEurPerMwH, VolumeMw
+//
+// Both populated, or the wrong one for the market, is a contract failure.
+//
+// Prices are <b>already rounded to the market tick size</b>: rounding happens
+// exactly once, here at the order intent boundary, and the rounded value is what
+// Settlement reconciles against (conventions §6, INV-P-04). Rounding earlier
+// corrupts the optimality gap measurement.
 
 /// <summary>Order validity (C3 §2). <see cref="ValidityKind.GtdUntil"/> carries
 /// the expiry slot; the other kinds carry nothing.</summary>
@@ -85,14 +58,14 @@ public readonly record struct OrderValidity(ValidityKind Kind, SlotId? Until)
 // =============================================================================
 
 /// <summary>
-/// One order. <c>(market, product, slot, side, limitPrice, volume, validity,
+/// One order. <c>(market, product, slot, side, limitPriceEurPerMwh, volume, validity,
 /// replacesId, tag)</c> — it says nothing about venue mechanics; the Execution
 /// adapter translates intent into whatever the simulator or a live venue
 /// requires (ADR-012).
 /// </summary>
 /// <remarks>
 /// The Planner decides the <i>target position</i>; the quoting policy decides the
-/// <i>orders</i> (ADR-012, L3 §5). The handoff is <see cref="ShadowValue"/>: the
+/// <i>orders</i> (ADR-012, L3 §5). The handoff is <see cref="ShadowValueEurPerMwh"/>: the
 /// Planner's own indifference price, which gives the quoting policy an
 /// economically meaningful bound — never quote worse than it, because at that
 /// price the trade destroys value.
@@ -117,11 +90,21 @@ public sealed record OrderIntent
     /// <summary>Market frame: <c>Sell = discharge</c> (C3 §2).</summary>
     public required OrderSide Side { get; init; }
 
-    /// <summary>Tick-aligned (INV-P-04).</summary>
-    public required OrderPrice LimitPrice { get; init; }
+    /// <summary>Unit EUR/MWh. Energy markets only; null on
+    /// <see cref="MarketId.AfrrCapacity"/>. Tick-aligned (INV-P-04).</summary>
+    public double? LimitPriceEurPerMwh { get; init; }
 
-    /// <summary>Lot-aligned, <c>&gt; 0</c> (INV-P-04).</summary>
-    public required OrderVolume Volume { get; init; }
+    /// <summary>Unit EUR/MW/h. <see cref="MarketId.AfrrCapacity"/> only; null on
+    /// the energy markets. Tick-aligned (INV-P-04).</summary>
+    public double? LimitPriceEurPerMwH { get; init; }
+
+    /// <summary>Unit MWh. Energy markets only. Lot-aligned, <c>&gt; 0</c>
+    /// (INV-P-04).</summary>
+    public double? VolumeMwh { get; init; }
+
+    /// <summary>Unit MW of committed power. <see cref="MarketId.AfrrCapacity"/>
+    /// only. Lot-aligned, <c>&gt; 0</c> (INV-P-04).</summary>
+    public double? VolumeMw { get; init; }
 
     public required OrderValidity Validity { get; init; }
 
@@ -150,11 +133,11 @@ public sealed record OrderIntent
     /// <see cref="OrderIntentProjection"/>, which does not have it.
     /// </para>
     /// </remarks>
-    public required EnergyPrice ShadowValue { get; init; }
+    public required double ShadowValueEurPerMwh { get; init; }
 
     /// <summary>Range <c>[0,1]</c>. Objective degradation if the position is not
     /// reached, normalised. <b>Audit only</b>, same treatment as
-    /// <see cref="ShadowValue"/> (INV-X-04).</summary>
+    /// <see cref="ShadowValueEurPerMwh"/> (INV-X-04).</summary>
     public required double Urgency { get; init; }
 
     /// <summary>For settlement attribution only; it does not affect routing
@@ -168,7 +151,7 @@ public sealed record OrderIntent
 // =============================================================================
 
 /// <summary>One point of a DA bid curve, price-ordered (C3 §3).</summary>
-public readonly record struct DaCurvePoint(EnergyPrice Price, EnergyKwh Quantity);
+public readonly record struct DaCurvePoint(double PriceEurPerMwh, double QuantityMwh);
 
 /// <summary>
 /// A day-ahead bid curve. <b>DA requires a monotone schedule, not a point
@@ -207,30 +190,30 @@ public sealed record DaBidCurve
 /// </summary>
 /// <remarks>
 /// <b>The corridor, not the setpoint, is the binding instruction.</b> The
-/// controller may deviate from <see cref="PSetpoint"/> to follow an aFRR
+/// controller may deviate from <see cref="PBattSetpointMw"/> to follow an aFRR
 /// activation signal, but never outside the corridor — which is exactly the
 /// guarantee that keeps the reserve commitment deliverable without the Planner
 /// running at control frequency.
 /// </remarks>
 public sealed record DispatchSetpoints
 {
-    /// <summary>Card. <c>[H_near]</c>. Unit kW. <b>Battery frame</b>
+    /// <summary>Card. <c>[H_near]</c>. Unit MW. <b>Battery frame</b>
     /// (positive = discharge).</summary>
-    public required ReadOnlyMemory<BatteryPowerKw> PSetpoint { get; init; }
+    public required ReadOnlyMemory<double> PBattSetpointMw { get; init; }
 
-    /// <summary>Card. <c>[H_near]</c>. Unit kWh. Lower edge of the band the
+    /// <summary>Card. <c>[H_near]</c>. Unit MWh. Lower edge of the band the
     /// controller must stay in to keep commitments feasible.</summary>
-    public required ReadOnlyMemory<EnergyKwh> SocCorridorLower { get; init; }
+    public required ReadOnlyMemory<double> SocCorridorLowerMwh { get; init; }
 
-    /// <summary>Card. <c>[H_near]</c>. Unit kWh.</summary>
-    public required ReadOnlyMemory<EnergyKwh> SocCorridorUpper { get; init; }
+    /// <summary>Card. <c>[H_near]</c>. Unit MWh.</summary>
+    public required ReadOnlyMemory<double> SocCorridorUpperMwh { get; init; }
 
     /// <summary>Card. <c>[H_near]</c>. Unit MW. Confirmed awards the controller
     /// must be able to serve.</summary>
-    public required ReadOnlyMemory<ReserveMw> ReserveObligationUp { get; init; }
+    public required ReadOnlyMemory<double> ReserveObligationUpMw { get; init; }
 
     /// <summary>Card. <c>[H_near]</c>. Unit MW.</summary>
-    public required ReadOnlyMemory<ReserveMw> ReserveObligationDn { get; init; }
+    public required ReadOnlyMemory<double> ReserveObligationDnMw { get; init; }
 
     /// <summary><c>H_near</c> — typically the next few slots (C3 §4).</summary>
     public required SlotSpan NearHorizon { get; init; }
@@ -280,12 +263,12 @@ public sealed record ExecutionIntent : ContractEnvelope
 // =============================================================================
 
 /// <summary>
-/// An <see cref="OrderIntent"/> <b>with <c>shadowValue</c> and <c>urgency</c>
+/// An <see cref="OrderIntent"/> <b>with <c>shadowValueEurPerMwh</c> and <c>urgency</c>
 /// removed</b>.
 /// </summary>
 /// <remarks>
 /// This type exists for one reason: <b>INV-X-04 asserts that Execution did not
-/// consume <c>shadowValue</c> or <c>urgency</c>, and it is enforced structurally
+/// consume <c>shadowValueEurPerMwh</c> or <c>urgency</c>, and it is enforced structurally
 /// rather than by discipline</b> (C3 §2, C4 §7 — "structural — adapter
 /// projection"). The two fields are absent from this type, so no implementation
 /// of <c>IExecutionAdapter</c> can read them, no test can accidentally depend on
@@ -306,8 +289,10 @@ public sealed record OrderIntentProjection
     public SlotId? Slot { get; init; }
     public BlockId? Block { get; init; }
     public required OrderSide Side { get; init; }
-    public required OrderPrice LimitPrice { get; init; }
-    public required OrderVolume Volume { get; init; }
+    public double? LimitPriceEurPerMwh { get; init; }
+    public double? LimitPriceEurPerMwH { get; init; }
+    public double? VolumeMwh { get; init; }
+    public double? VolumeMw { get; init; }
     public required OrderValidity Validity { get; init; }
     public string? ReplacesIntentId { get; init; }
 
@@ -315,13 +300,13 @@ public sealed record OrderIntentProjection
     /// unread on C4, not a decision input (C3 §6).</summary>
     public required StrategyTag Tag { get; init; }
 
-    // Deliberately absent: ShadowValue, Urgency. See the type remarks.
+    // Deliberately absent: ShadowValueEurPerMwh, Urgency. See the type remarks.
 }
 
 /// <summary>
 /// The view of an <see cref="ExecutionIntent"/> that
 /// <c>IExecutionAdapter</c> is given. Carries
-/// <see cref="OrderIntentProjection"/> rows, so <c>shadowValue</c> and
+/// <see cref="OrderIntentProjection"/> rows, so <c>shadowValueEurPerMwh</c> and
 /// <c>urgency</c> are structurally unreachable from Execution (INV-X-04).
 /// </summary>
 public sealed record ExecutionIntentProjection
@@ -375,7 +360,7 @@ public sealed record ExecutionIntentProjection
 ///   <item><term>INV-P-09</term><description>DA curves monotone →
 ///     <c>HALT</c>.</description></item>
 ///   <item><term>INV-P-10</term><description>No sell intent priced below
-///     <c>shadowValue</c>; no buy intent priced above it → warn + block the
+///     <c>shadowValueEurPerMwh</c>; no buy intent priced above it → warn + block the
 ///     intent, unless tagged <c>CommitmentCover</c>.</description></item>
 /// </list>
 /// <para>
