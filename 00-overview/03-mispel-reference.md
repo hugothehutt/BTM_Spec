@@ -27,7 +27,7 @@ Normative transcription of the delineation machinery from `Anlage1_Arbeitsstand.
 | `Z2V¼` | Verbrauch im Stromspeicher (V: Verbrauch) | quarter-hour | kWh |
 | `Z2E¼` | Erzeugung im Stromspeicher (E: Erzeugung) | quarter-hour | kWh |
 | `AW¼`, `AWa¼`, `AWb¼` | anzulegender Wert of the EE-Anlage, resp. of plant a / b in A5 | quarter-hour | EUR/MWh |
-| `Pa_inst`, `Pb_inst` | installierte Leistung of EE-Anlage a resp. b per § 24 Abs. 3 S. 2 Halbsatz 2 EEG. For gleichartige Windenergieanlagen an Land, use Referenzertrag / Standardertrag instead (§ 24 Abs. 3 S. 2 Halbsatz 1 EEG). | static | kW |
+| `Pa_inst`, `Pb_inst` | installierte Leistung of EE-Anlage a resp. b per § 24 Abs. 3 S. 2 Halbsatz 2 EEG. For gleichartige Windenergieanlagen an Land, use Referenzertrag / Standardertrag instead (§ 24 Abs. 3 S. 2 Halbsatz 1 EEG). | static | MW |
 | `ZF` | Zuordnungs-Faktor — leistungsgewichteter share of the Netzeinspeisung assigned to one plant | static | fraction 0..1 |
 | index `¼` | the formula applies to the single quarter-hour | | |
 | `∑M` / `∑J` | sum over the quarter-hours of a calendar month / the months of a calendar year | | |
