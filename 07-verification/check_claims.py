@@ -6,10 +6,10 @@ W0 definition of done (a)): parse the specification markdown, derive the set of
 things that must be covered, and assert one-to-one correspondence with the
 register. The doc and the register cannot drift silently.
 
-Six checks:
+Eight checks:
 
   1. schema      — every entry has exactly the declared keys, enums are legal.
-  2. ids         — CLM ids unique, well-formed, and never recycled (VOID list).
+  2. ids         — CLM ids unique, well-formed, never recycled (RETIRED list).
   3. owners      — every `owner` names a file that exists and a section that
                    exists in that file.
   4. anchors     — every `INV-*` id defined anywhere in the specification is
@@ -19,6 +19,11 @@ Six checks:
                    in `no-claim-sections.yaml`.
   6. bands       — an empirical claim that has been given an evidence label
                    must carry an acceptance band.
+  7. regulatory  — a `regulatory` claim carries no evidence label. PROTOCOL §2.2:
+                   a label invites re-derivation of something that is given.
+  8. depends_on  — every dependency names a live claim, nothing depends on
+                   itself, and the graph is acyclic, so PROTOCOL §10.1 promotion
+                   terminates.
 
 Stdlib only, no venv. Run: python3 07-verification/check_claims.py
 """
@@ -38,16 +43,24 @@ CORPUS = ["00-overview", "01-adr", "02-layers", "03-contracts", "04-compliance"]
 
 KEYS_REQUIRED = ["id", "statement", "owner", "class", "blast_radius",
                  "br_source", "anchors", "evidence", "tn", "band"]
-KEYS_OPTIONAL = ["vague"]
+KEYS_OPTIONAL = ["vague", "depends_on"]
 
 CLASSES = {"analytic", "empirical", "regulatory"}
 RADII = {"very-expensive", "expensive-later", "moderate", "cheap"}
 EVIDENCE = {"unlabelled", "derived", "prototyped", "empirical-pending",
             "refuted", "assumed-declared"}
 
-# Claim ids voided by a change of estimator (protocol mechanism 2). Never
-# recycled — precedent: T1 §10 reserved invariant ids.
-VOID: set[str] = set()
+# Claim ids retired because the text asserting them was deleted (PROTOCOL §9) or
+# because a narrower claim replaced them (PROTOCOL §6). Never reused — precedent:
+# T1 §10 reserved invariant ids. Procedure ids are voided by a different
+# mechanism into `voided.yaml` (PROTOCOL §4.3); the two id spaces never interact.
+RETIRED: set[str] = {
+    # ADR-015's OPEN-1/2/3 and review-protocol sections, deleted from the
+    # specification. The deferred decisions are still asserted by `README.md`
+    # and `05-implementation/P0-workstreams.md`; a rebuilt ADR-015 registers
+    # them under fresh ids.
+    *(f"CLM-{n:04d}" for n in range(678, 701)),
+}
 
 INV_RE = re.compile(r"\bINV-[A-Z]+-\d{2}\b")
 CLM_RE = re.compile(r"^CLM-\d{3,4}$")
@@ -147,6 +160,28 @@ def section_token(heading: str) -> str:
     return m.group(1) if m else heading.strip().lower()
 
 
+def find_cycle(start: str, graph: dict[str, list[str]]) -> list[str] | None:
+    """The first cycle reachable from `start`, as a path, or None."""
+    path: list[str] = []
+    on_path: set[str] = set()
+
+    def walk(node: str) -> list[str] | None:
+        if node in on_path:
+            return path[path.index(node):] + [node]
+        if node not in graph:
+            return None
+        path.append(node)
+        on_path.add(node)
+        for nxt in graph[node]:
+            if found := walk(nxt):
+                return found
+        path.pop()
+        on_path.discard(node)
+        return None
+
+    return walk(start)
+
+
 errors: list[str] = []
 
 
@@ -179,8 +214,8 @@ def main() -> int:
             fail(f"{cid}: malformed id")
         if cid in seen:
             fail(f"{cid}: duplicate id")
-        if cid in VOID:
-            fail(f"{cid}: voided id reused")
+        if cid in RETIRED:
+            fail(f"{cid}: retired id reused")
         seen.add(cid)
         if e.get("class") not in CLASSES:
             fail(f"{cid}: class {e.get('class')!r} not in {sorted(CLASSES)}")
@@ -194,6 +229,12 @@ def main() -> int:
                 and e.get("evidence") not in (None, "unlabelled")
                 and not e.get("band")):
             fail(f"{cid}: labelled empirical claim with no acceptance band")
+        if (e.get("class") == "regulatory"
+                and e.get("evidence") not in (None, "unlabelled")):
+            fail(f"{cid}: regulatory claim carries the evidence label "
+                 f"{e.get('evidence')!r}; a primitive is given, not derived")
+        if (dep := e.get("depends_on")) is not None and not isinstance(dep, list):
+            fail(f"{cid}: depends_on must be a list of CLM ids")
 
     # 3 owners
     owned: set[str] = set()
@@ -222,6 +263,21 @@ def main() -> int:
             anchored.add(str(a))
     for inv in sorted(declared - anchored):
         fail(f"{inv}: defined in the specification, anchored to no claim")
+
+    # 8 depends_on
+    graph = {str(e.get("id")): [str(d) for d in (e.get("depends_on") or [])]
+             for e in entries}
+    for cid, deps in graph.items():
+        for d in deps:
+            if d == cid:
+                fail(f"{cid}: depends on itself")
+            elif d not in graph:
+                fail(f"{cid}: depends_on {d} is not a live claim"
+                     + (" (retired)" if d in RETIRED else ""))
+    for cid in graph:
+        if cycle := find_cycle(cid, graph):
+            fail(f"depends_on cycle: {' -> '.join(cycle)}")
+            break
 
     # 5 sections
     for f in spec_files():

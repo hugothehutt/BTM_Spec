@@ -1,7 +1,7 @@
 # claims.yaml — the claim register
 #
 # One entry per claim the specification asserts. Every evidence label attaches
-# here. Built by ticket #5 (Extract the claim register); checked by
+# here. Governed by `07-verification/PROTOCOL.md`; checked by
 # `07-verification/check_claims.py`.
 #
 # Statements are transcribed, not improved. A claim too vague to be testable as
@@ -17,15 +17,18 @@
 # blast_radius  cost of retrofitting if the claim turns out false
 # br_source     the ADR whose reversibility was copied, or `argued`
 # evidence      unlabelled | derived | prototyped | empirical-pending
-#               | refuted | assumed-declared   (labelling is not this ticket's job)
+#               | refuted | assumed-declared   — PROTOCOL §2.1. A `regulatory`
+#               claim is exempt and stays `unlabelled` (PROTOCOL §2.2).
 # tn            the technical note that earned the evidence label
 # band          acceptance band; required once an empirical claim is labelled
 #
-# GENERATED FILE — edit `_extract/*.tsv` and re-run `_extract/gen.py`.
+# depends_on    the claims this one rests on; absent means none. Claim Y depends
+#               on X if Y's technical note or owning section cites X. PROTOCOL
+#               §10.1 promotes and unlabels Y when X is refuted.
+#
+# Hand-maintained. `CLM-NNNN` ids are allocated by appending, never by
+# renumbering, and a retired id is never reused (PROTOCOL §11).
 
-
-# ---- 00-overview.tsv ----
-# statement	owner	class	blast_radius	br_source	anchors	vague
 # ---- 00-overview/01-system-model.md ----
 - id: CLM-0001
   statement: "The engine has six components: five form the pipeline and the sixth exists to make the pipeline acyclic."
@@ -2387,7 +2390,6 @@
   tn: null
   band: null
 
-# ---- 01-adr-a.tsv ----
 # ---- 01-adr/ADR-001 .. ADR-004 ----
 - id: CLM-0236
   statement: A market simulation engine already exists in C# and the BTM engine must be built around it.
@@ -3433,7 +3435,6 @@
   band: null
   vague: true
 
-# ---- 01-adr-b.tsv ----
 # ---- 01-adr/ADR-005 .. ADR-007 ----
 - id: CLM-0339
   statement: The engine is uncertain about DA prices, intraday prices, imbalance prices, aFRR capacity clearing prices, aFRR activation volumes and direction, site load, and PV simultaneously.
@@ -4314,7 +4315,6 @@
   tn: null
   band: null
 
-# ---- 01-adr-c.tsv ----
 # ---- 01-adr/ADR-008 .. ADR-010 ----
 - id: CLM-0426
   statement: Several terms are not linear in x — peak is a max and aFRR is a curve — so Valuation must publish functions rather than scalars and bounds rather than just prices.
@@ -5554,7 +5554,6 @@
   tn: null
   band: null
 
-# ---- 01-adr-d.tsv ----
 # ---- 01-adr/ADR-011 .. ADR-013 ----
 - id: CLM-0549
   statement: Pricing the maximum POI import over the accounting period is correct for today's Leistungspreis and is about to stop being the only regime that matters.
@@ -6430,7 +6429,6 @@
   tn: null
   band: null
 
-# ---- 01-adr-e.tsv ----
 # ---- 01-adr/ADR-014 .. ADR-016 ----
 - id: CLM-0636
   statement: "Data goes missing: a forecast is late, a meter drops out, the value function has not been refreshed, the solver times out, the reserve price feed is stale."
@@ -6853,238 +6851,6 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0678
-  statement: Three decisions are deferred on purpose, and nothing in the current design depends on any of them because every document references the abstraction rather than the choice.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0679
-  statement: The intended MILP solver is Gurobi, deferred until the Planner formulation is concrete.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
-  class: analytic
-  blast_radius: cheap
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0680
-  statement: "Before the solver decision can be taken, the exact MILP must be specified: variable count, binary count by source, which PWL terms are General curvature, whether the simultaneity binary is enabled, and the scenario count from ADR-005 tuning."
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
-  class: analytic
-  blast_radius: cheap
-  br_source: argued
-  anchors: [ADR-005, ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0681
-  statement: Solver choice should follow from a benchmark on the real model rather than precede it.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
-  class: analytic
-  blast_radius: cheap
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0682
-  statement: The solver decision is blocked by L3-planner reaching a fixed formulation.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
-  class: analytic
-  blast_radius: cheap
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0683
-  statement: The solver choice changes nothing structural, because IOptimizationBackend exists precisely so it is a configuration decision.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
-  class: analytic
-  blast_radius: cheap
-  br_source: argued
-  anchors: [ADR-001, ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0684
-  statement: Backends must in any case be conformance-tested against each other, and the LP-relaxation backend is needed regardless for the Tier-2 bound.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
-  class: analytic
-  blast_radius: cheap
-  br_source: argued
-  anchors: [ADR-010, ADR-015, T1]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0685
-  statement: If Gurobi is confirmed, licence seat count becomes a backtest throughput constraint rather than a runtime one, because parallel backtests each need a seat.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-1 — MILP solver
-  class: analytic
-  blast_radius: cheap
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0686
-  statement: The per-tick latency budget is deferred until operational requirements per market are settled.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0687
-  statement: Before the latency budget can be set, it must be decided whether the engine participates in continuous intraday by periodic re-optimisation on a timer or by event-driven response to book updates.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0688
-  statement: Periodic re-optimisation and event-driven response imply latency budgets two orders of magnitude apart.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
-  class: empirical
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-  vague: true
-- id: CLM-0689
-  statement: The latency budget determines which tier of the co-optimisation ladder is the production path and the escalation thresholds, but not the architecture.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-010, ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0690
-  statement: The tier ladder exists to make the latency-budget decision late and reversible.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-010, ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0691
-  statement: Solve time distribution per tier and per gate type, as a function of scenario count and breakpoint count, is instrumented now so the latency decision is evidenced.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-2 — Per-tick latency budget
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015, T5]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0692
-  statement: Intraday fill-model fidelity is deferred until the existing simulator's behaviour is characterised.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0693
-  statement: Because Execution is fixed and pre-existing and the engine's question is only which limit orders to submit, the fill model's job is to predict the simulator's behaviour and its accuracy target is defined by that rather than by the real market in the abstract.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-012, ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0694
-  statement: Predicting the simulator is a narrower and much more tractable problem than a general LOB model, which is why the fill-fidelity decision can wait.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0695
-  statement: Before the fill-fidelity decision can be taken, a characterisation run against the simulator must measure realised versus predicted fill rate by price band, product and time-to-gate.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
-  class: empirical
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015, T4]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0696
-  statement: The fill-fidelity decision changes the representation of FillProbView's BoundTerm — a scalar volume cap versus a per-price-band cap — and how much of the cold tier must hold raw order-book data, but not the C2 contract shape.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0697
-  statement: Whatever is calibrated against the simulator inherits the simulator's biases.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0698
-  statement: When the engine is pointed at a real venue the fill model must be recalibrated, and the gap between simulator-calibrated and venue-calibrated behaviour becomes a named risk.
-  owner: 01-adr/ADR-015-open-decisions.md §OPEN-3 — Intraday fill-model fidelity
-  class: empirical
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-  vague: true
-- id: CLM-0699
-  statement: At each workstream boundary the open-decision register is reviewed for whether the blocking condition is met, whether the decision is still safely deferrable, and whether new design work has accidentally created a dependency on it.
-  owner: 01-adr/ADR-015-open-decisions.md §Review protocol
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0700
-  statement: A deferred decision that has quietly acquired dependents must be taken immediately or the dependency removed.
-  owner: 01-adr/ADR-015-open-decisions.md §Review protocol
-  class: analytic
-  blast_radius: moderate
-  br_source: argued
-  anchors: [ADR-015]
-  evidence: unlabelled
-  tn: null
-  band: null
 - id: CLM-0701
   statement: Available PV routinely exceeds load plus charge headroom plus the export limit, so a bridge without a curtailment term is an equality over non-negative quantities that is infeasible under an ordinary condition.
   owner: 01-adr/ADR-016-curtailment-as-priced-decision.md §Context
@@ -7216,7 +6982,6 @@
   tn: null
   band: null
 
-# ---- 01-adr-f.tsv ----
 # ---- 01-adr/ADR-017 and 01-adr/README.md ----
 - id: CLM-0714
   statement: The Abgrenzungsoption settles on calendar-month aggregates built from quarter-hour MIN and MAX selections and pays through two competing routes.
@@ -8051,7 +7816,6 @@
   tn: null
   band: null
 
-# ---- 02-layers-a.tsv ----
 # ---- 02-layers/L0 ----
 - id: CLM-0797
   statement: L0 holds everything that must survive a tick and nothing else.
@@ -9961,7 +9725,6 @@
   tn: null
   band: null
 
-# ---- 02-layers-b.tsv ----
 # ---- 02-layers/L1 ----
 - id: CLM-0987
   statement: "L1 is the single source of truth about the world as known at a point in time and answers exactly one question: what could the engine have known at asOf over [t, t + H_hot]."
@@ -12385,7 +12148,6 @@
   tn: null
   band: null
 
-# ---- 02-layers-c.tsv ----
 # ---- 02-layers/L2 ----
 - id: CLM-1228
   statement: L2 turns beliefs about the world into what a MWh, a kW of peak, or a MW of aFRR capacity is worth in euros, expressed as linearizable primitives rather than prices.
@@ -13459,7 +13221,6 @@
   tn: null
   band: null
 
-# ---- 02-layers-d.tsv ----
 # ---- 02-layers/L3 ----
 - id: CLM-1335
   statement: "L3 owns the whole decision: it composes the primitives from C2 into a MILP family, solves it at staged market gates carrying commitments forward, and emits order intent."
@@ -14474,7 +14235,6 @@
   tn: null
   band: null
 
-# ---- 02-layers-e.tsv ----
 # ---- 02-layers/L4 ----
 - id: CLM-1436
   statement: Execution is a pre-existing, strategy-independent market simulation engine that is fixed, stable and out of scope for design.
@@ -14958,7 +14718,6 @@
   tn: null
   band: null
 
-# ---- 02-layers-f.tsv ----
 # ---- 02-layers/L5 ----
 - id: CLM-1484
   statement: L5 recomputes what actually happened from realised data, attributes P&L to the same economic effects Valuation used, and decomposes the gap between planned and realised value into four owned buckets.
@@ -16925,7 +16684,6 @@
   tn: null
   band: null
 
-# ---- 03-contracts-a.tsv ----
 # ---- 03-contracts/C0 and C1 ----
 - id: CLM-1680
   statement: "A contract is the complete, closed description of what crosses a seam: if it is not in the field table, it does not cross."
@@ -17959,7 +17717,6 @@
   tn: null
   band: null
 
-# ---- 03-contracts-b.tsv ----
 # ---- 03-contracts/C2 ----
 - id: CLM-1783
   statement: C2 carries the ValuationBundle payload at version 1.0 from L2 to L3 and is the load-bearing seam.
@@ -18735,7 +18492,6 @@
   tn: null
   band: null
 
-# ---- 03-contracts-c.tsv ----
 # ---- 03-contracts/C3 and C4 ----
 - id: CLM-1860
   statement: C3 carries the ExecutionIntent payload at version 1.0 from L3 to L4.
@@ -19452,7 +19208,6 @@
   tn: null
   band: null
 
-# ---- 03-contracts-d.tsv ----
 # ---- 03-contracts/C5 ----
 - id: CLM-1931
   statement: C5 carries the StateUpdate payload at version 1.0 from L5 to L0 and is the only backwards edge in the system.
@@ -20542,7 +20297,6 @@
   tn: null
   band: null
 
-# ---- 03-contracts-e.tsv ----
 # ---- 03-contracts/C6 ----
 - id: CLM-2039
   statement: C6 carries the StateSnapshot payload at version 1.0 from L0 to L1, L2 and L3, and is the read side of L0.
@@ -21296,7 +21050,6 @@
   tn: null
   band: null
 
-# ---- 04-compliance-a.tsv ----
 # ---- 04-compliance/T0 ----
 - id: CLM-2114
   statement: L1, L2, L3 and L5 are pure functions of their declared contract inputs.
@@ -22252,7 +22005,6 @@
   tn: null
   band: null
 
-# ---- 04-compliance-b.tsv ----
 # ---- 04-compliance/T1 ----
 - id: CLM-2209
   statement: T1 is the single authoritative list of every invariant defined anywhere in the specification, with its severity, check site and test level.
@@ -23590,7 +23342,6 @@
   tn: null
   band: null
 
-# ---- 04-compliance-c.tsv ----
 # ---- 04-compliance/T2 ----
 - id: CLM-2342
   statement: A property test states something that must be true of a single output, generated over many inputs and shrunk to a minimal reproduction on failure.
@@ -26086,7 +25837,6 @@
   tn: null
   band: null
 
-# ---- 04-compliance-d.tsv ----
 # ---- 04-compliance/T3 ----
 - id: CLM-2591
   statement: Two runs with the same manifest must produce byte-identical outputs, and this is tested rather than asserted.
@@ -27263,7 +27013,6 @@
   tn: null
   band: null
 
-# ---- 04-compliance-e.tsv ----
 # ---- 04-compliance/T4 ----
 - id: CLM-2708
   statement: The fill model is FillProbView's underlying probability-of-fill surface and the derived reliable-volume bounds that cross C1, and it is a prediction about an external system.
@@ -28339,7 +28088,6 @@
   tn: null
   band: null
 
-# ---- 04-compliance-f.tsv ----
 # ---- 04-compliance/T5 ----
 - id: CLM-2815
   statement: No tier ships without its gap measured against Tier 1, and T5 is the procedure that produces that measurement and the release gate that enforces it.
@@ -29453,7 +29201,6 @@
   tn: null
   band: null
 
-# ---- 04-compliance-g.tsv ----
 # ---- 04-compliance/T6 ----
 - id: CLM-2926
   statement: T0 through T5 test the engine against inputs it is supposed to handle, while T6 tests it against inputs designed to break a specific claim.

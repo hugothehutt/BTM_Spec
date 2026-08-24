@@ -26,7 +26,6 @@ plan. Implementation happens in the engine repository against these documents.
 | Compliance architecture | Normative |
 | Implementation plan | Advisory |
 | Verification protocol | Normative |
-| `RECONCILIATION.md` | Cross-consistency findings: 20 resolved, 11 open |
 
 **Status vocabulary.** Three values, defined in `07-verification/PROTOCOL.md` §9.3:
 
@@ -64,8 +63,10 @@ Read in this order. Each part assumes the previous one.
 6. `02-layers/` — the internals of each layer.
 7. `04-compliance/` — how we know it works: the seven test levels.
 8. `05-implementation/` — sequencing and the agent playbook.
-9. `RECONCILIATION.md` — what was inconsistent and how it was resolved, plus the
-   eight small decisions still open. Read before starting W0.
+9. `07-verification/PROTOCOL.md` — how a claim in this repository earns trust:
+   the five mechanisms, the evidence labels, and what happens to a refutation.
+   `07-verification/claims.yaml` is the register every label attaches to. Read
+   before asserting anything new.
 
 ---
 
@@ -98,10 +99,8 @@ one-tick lag.
 03-contracts/    the six seams — the frozen surface (C0 conventions, C1-C6)
 04-compliance/   invariants, property tests, replay, gap instrumentation (T0-T6)
 05-implementation/ workstreams, sequencing, agent playbook
-06-theory/       technical notes (TN-NN) — the derivations behind the claims
-07-verification/ how a claim earns trust: protocol, claim register, harness
+07-verification/ how a claim earns trust: protocol, claim register, machine check
 stubs/           C# interface stubs — signatures only, no bodies
-RECONCILIATION.md  cross-consistency findings and open decisions
 ```
 
 ## The five architectural corrections

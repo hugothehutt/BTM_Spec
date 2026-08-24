@@ -388,8 +388,15 @@ ADR owns it. **Treatment depth** is what this section sets.
 
 ### 10.1 Promotion on refutation
 
-The register carries `depends_on`. Claim `Y` **depends on** `X` if `Y`'s
-technical note or owning section cites `X`.
+The register carries `depends_on`, a list of `CLM` ids. Claim `Y` **depends on**
+`X` if `Y`'s technical note or owning section cites `X`. The key is omitted when
+the list is empty, so an absent `depends_on` means *no dependency recorded* — it
+is not a claim that none exists. Because no claim yet carries a technical note,
+the graph is currently empty and fills as derivations land.
+
+The machine check enforces what makes the promotion below terminate: every
+dependency names a live claim, no claim depends on itself, and the graph is
+acyclic.
 
 When `X` is refuted, then for every `Y` with `X` in its transitive `depends_on`:
 
@@ -411,7 +418,9 @@ place where derivations fail, and that is durable information.
 |---|---|
 | `06-theory/TN-NN-<slug>.md` | Technical notes. Numbered independently of ADRs; a note may span several ADRs or none. |
 | `07-verification/PROTOCOL.md` | This document. |
-| `07-verification/claims.yaml` | The claim register. One entry per claim. |
+| `07-verification/claims.yaml` | The claim register. One entry per claim. Hand-maintained: ids are allocated by appending, never by renumbering. |
+| `07-verification/check_claims.py` | The register's machine check — the subset of §12 that is decidable from the register and the specification alone. Stdlib only, no venv. |
+| `07-verification/no-claim-sections.yaml` | Specification sections that legitimately own no claim, each with its reason. Input to the coverage check. |
 | `07-verification/voided.yaml` | The void register. Append-only. |
 | `07-verification/procedures/PRC-<12hex>.yaml` | Frozen procedure records. Immutable once committed. |
 | `07-verification/adjudications/ADJ-<PRC-id>.md` | Verdicts. |
@@ -421,7 +430,7 @@ place where derivations fail, and that is durable information.
 
 | Id | Form | Allocation |
 |---|---|---|
-| `CLM-NNN` | Sequential | Never recycled. |
+| `CLM-NNN` | Sequential | Never recycled. An id whose owning text is deleted (§9) or replaced by a narrower claim (§6) is **retired**, listed in `check_claims.py`'s `RETIRED` set, and never reissued. Retirement is not voiding: voiding applies to procedure ids and has its own register (§4.3). |
 | `PRC-<12hex>` | Content hash of the procedure record | Determined by content; voided ids never re-issued. |
 | `ADJ-<PRC-id>` | Derived from the procedure id | One adjudication per procedure. |
 | `TN-NN` | Sequential | Never recycled. |
@@ -446,3 +455,18 @@ place where derivations fail, and that is durable information.
 | No document cites a holed section without carrying a hole marker | Reading past a hole |
 | `assumed-declared` never appears at `expensive-later` or `very-expensive` | An assumption where a derivation is required |
 | Every `empirical-pending` claim's band appears in its owning document | An unnamed unknown |
+| No `depends_on` names a retired or non-existent claim, and the graph is acyclic | A promotion sweep (§10.1) that cannot terminate |
+
+**Live today.** `check_claims.py` implements the checks decidable from the
+register and the specification alone: register coverage, id uniqueness and
+non-reuse of retired ids, owner resolution, `INV-*` anchoring, section coverage,
+band-once-labelled, no label on a `regulatory` claim, and the `depends_on` graph.
+The remaining rows above are gated on artefacts that do not exist yet —
+procedure records, run manifests, packets and adjudications — and land with the
+harness. Two known gaps carry no check at all and are tracked as tickets rather
+than silently deferred:
+
+| Gap | Why it is not yet checkable |
+|---|---|
+| §2.2's transcription source on `regulatory` entries | The register has no `source` field; the 177 regulatory claims need their regulator identifiers transcribed before a check can require one. |
+| §2.1's requirement that an `empirical-pending` band appear *in the owning document* | The check verifies the register's `band` field, not the owning document's prose. Closing it needs the band's prose location fixed by convention. |
