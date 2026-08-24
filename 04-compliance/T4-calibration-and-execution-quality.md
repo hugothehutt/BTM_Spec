@@ -214,7 +214,7 @@ work in, and its job is to capture as much of it as fill probability allows
 ```
 for each fill f with intent i:
     if i.side == Sell:
-        available =  i.shadowValue_reference_market_price − i.shadowValueEurPerMwh      # ≥ 0
+        available =  reference_market_price − i.shadowValueEurPerMwh      # ≥ 0
         captured  =  f.priceEurPerMwh − i.shadowValueEurPerMwh
     else:  # Buy
         available =  i.shadowValueEurPerMwh − reference_market_price
