@@ -25,7 +25,7 @@ source adapter ──▶ normalise ──▶ bitemporal stamp ──▶ validate
       │                │                 │                └─ C0 §3 universal invariants
       │                │                 │                   + cadence and duplicate checks
       │                │                 └─ (validSlot, knowledgeTime, revisionOrdinal)
-      │                └─ units, signs, typed quantities (ADR-003), UTC, 15-min grid
+      │                └─ units, signs, quantity naming (§5.2), UTC, 15-min grid
       └─ declares PublicationSemantics, or the series is quarantined
 ```
 
@@ -77,7 +77,7 @@ version, and the old catalogue remains resolvable for replay.
 The distinction that this buys is the one Settlement needs: **"we were wrong"**
 (row 0 was a bad forecast) versus **"the data was later corrected"** (row 1
 superseded row 0). Collapsing revisions to last-value-wins destroys the ability
-to attribute a P&L gap between C5 §6's `forecastError` bucket and a data
+to attribute a P&L gap between C5 §6's `forecastErrorEur` bucket and a data
 restatement, and there is no way to recover it afterwards.
 
 ### 1.3 The ingestion watermark
@@ -435,8 +435,8 @@ loop. `INV-D-17`.
 
 ### 5.2 What crosses C1
 
-Only C1 §5: `idReliableVolumeBuy`, `idReliableVolumeSell`, and optionally
-`idVolumeByPriceBand`. Volumes, in kWh, per slot. **No price field exists in that
+Only C1 §5: `idReliableVolumeBuyMwh`, `idReliableVolumeSellMwh`, and optionally
+`idVolumeByPriceBandMwh`. Volumes, in MWh, per slot. **No price field exists in that
 section**, and that is the C1-side enforcement of the rule that fill probability
 constrains the Planner but never prices for it (ADR-008, ADR-012, and `INV-V-16`
 on the L2 side).
@@ -506,7 +506,7 @@ assembly on the tick path: L1's read path, L2, L3's model construction, L5.
 | `ArrayPool<T>.Shared` for transient buffers, `clearArray: false`, returned on a deterministic path | The alternative is a per-tick LOH allocation for anything ≥ 85 kB, which the ensemble arrays exceed | Analyzer + rent/return balance assertion in tests |
 | No LINQ anywhere in the tick loop | Allocates an enumerator and usually a closure per call, and — worse — hides iteration order, which ADR-013 requires to be fixed | Roslyn analyzer banning `System.Linq` in hot assemblies |
 | No per-slot or per-scenario object allocation | `H × S × K` objects per tick is gen0 churn measured in hundreds of kB per tick | Allocation-count assertions (§9) |
-| No boxing of typed quantities | `EnergyKwh`, `PoiPowerKw` etc. are readonly structs (ADR-003); boxing them allocates and defeats the entire type discipline | Analyzer: no `object`, no non-generic interfaces, no `string.Format` on typed quantities in hot paths |
+| No boxing of a slot- or scenario-indexed quantity | Dimensioned quantities are plain `double` (`00-overview/02-conventions.md` §5.2), so boxing one is pure allocation with nothing bought in return | Analyzer: no `object`, no non-generic interfaces, no `string.Format` on a numeric in a hot path |
 | `readonly struct` + `in` parameters for snapshot passing | Prevents silent defensive copies of a large struct at every call site | Analyzer: `in` required for struct parameters above a size threshold |
 | No `async` / `Task` in the tick loop | Allocates a state machine, and its presence implies an I/O dependency that must not exist on this path | Analyzer |
 | No `Dictionary<string, _>` lookup in the tick loop | String hashing per lookup, and unordered iteration | Series and slot indices are resolved to `int` once, at cursor open |
@@ -578,7 +578,7 @@ MaxStale = Slots(n)          → stale when  asOf − knowledgeTime > n slots
          | None              → never stale; structural data from the calendar
 ```
 
-`Gate` is the correct semantics for `daPrice` and `afrrCapPrice` (C1 §4): a
+`Gate` is the correct semantics for `daPriceEurPerMwh` and `afrrCapPriceEurPerMwH` (C1 §4): a
 day-ahead price belief from before the gate is not merely old, it has been
 superseded by an event. Expressing that as a slot count would either be too
 lenient at 03:00 or too strict at 11:59.
@@ -592,7 +592,7 @@ isCritical(f)   ≔  C1 field table has  Null = no   ∧   Default = "—"
 criticalMissing ≔  { f : quality(f) = Missing  ∧  isCritical(f) }
 ```
 
-The archetype is `socNow` (C1 §2: "Measured; if telemetry lost, escalate — never
+The archetype is `socNowMwh` (C1 §2: "Measured; if telemetry lost, escalate — never
 default"). A field with `Null = no` and a declared conservative default is not
 critical, because rung 5 always succeeds for it; a field with no safe default
 falls to rung 6 by construction.

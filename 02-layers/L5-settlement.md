@@ -33,7 +33,7 @@ question can reach back and change an accounting number. Phase B is a *compariso
 of two independently produced artefacts, and it is allowed to read the recorded
 plan precisely because it can no longer alter the ledger side of the comparison.
 
-`StrategyTag` and `shadowValue` live on C3, not C4, and are read only in Phase B.
+`StrategyTag` and `shadowValueEurPerMwh` live on C3, not C4, and are read only in Phase B.
 This is what makes "did the quoting policy trade through indifference?" answerable
 without giving the accounting phase a view of intent.
 
@@ -106,66 +106,70 @@ in-place edit** — append-only, consistent with ADR-004 and enforced by
 ## 4. P&L attribution by effect
 
 Phase A computes one signed EUR figure per `EconomicEffect`, plus the mandatory
-`unexplained` bucket (C5 §5). Sign convention: **positive is revenue to the site**,
+`unexplainedEur` bucket (C5 §5). Sign convention: **positive is revenue to the site**,
 consistent with the battery frame (`02-conventions.md` §1), so charges and costs
-are negative. `fees` are always explicit and never netted into a price (C4 §2).
+are negative. `feesEur` are always explicit and never netted into a price (C4 §2).
 
-Let `σ(Sell) = +1`, `σ(Buy) = −1`, and `Δt_h = 0.25` h. Volumes cross from kWh to
-MWh at the market adapter and nowhere else (`02-conventions.md` §2).
+Let `σ(Sell) = +1`, `σ(Buy) = −1`, and `Δt_h = 0.25` h. Every volume below is
+already MWh and every price EUR/MWh, so no term carries a unit conversion
+(`02-conventions.md` §2). The MiSpel registers are the one place a foreign unit
+enters: they are transcribed in kWh because that is the unit the regulation
+quotes them in (`00-overview/03-mispel-reference.md` §2), and are normalised to
+MWh at dataload with everything else. There is no factor of 1000 in this layer.
 
 ```
 SpotEnergyValue        = Σ_{f: market = Da}
-                           σ(f.side) · f.price · f.volume/1000 − f.fees
+                           σ(f.side) · f.priceEurPerMwh · f.volumeMwh − f.feesEur
 
 IdEnergyValue          = Σ_{f: market ∈ {IdContinuous, IdAuction}}
-                           σ(f.side) · f.price · f.volume/1000 − f.fees
+                           σ(f.side) · f.priceEurPerMwh · f.volumeMwh − f.feesEur
 
-ReserveCapacityRevenue = Σ_b ( awardedUp[b]·clearingPriceUp[b]
-                             + awardedDn[b]·clearingPriceDn[b] ) · blockHours[b]
-                         − Σ_{f: market = AfrrCapacity} f.fees
+ReserveCapacityRevenue = Σ_b ( awardedUpMw[b]·clearingPriceUpEurPerMwH[b]
+                             + awardedDnMw[b]·clearingPriceDnEurPerMwH[b] ) · blockHours[b]
+                         − Σ_{f: market = AfrrCapacity} f.feesEur
                          [ MW · EUR/MW/h · h = EUR ;  blockHours from the market
                            calendar, never a constant — block length is a product
                            attribute and changes ]
 
-ReserveEnergyRevenue   = Σ_t ( activatedEnergyUp[t]·activationPriceUp[t]
-                             − activatedEnergyDn[t]·activationPriceDn[t] ) / 1000
+ReserveEnergyRevenue   = Σ_t ( activatedEnergyUpMwh[t]·activationPriceUpEurPerMwh[t]
+                             − activatedEnergyDnMwh[t]·activationPriceDnEurPerMwh[t] )
 
-ImbalanceCost          = Σ_t imbalanceCost[t]
+ImbalanceCost          = Σ_t imbalanceCostEur[t]
                          [ taken from C4 §6 as authoritative, and cross-checked
-                           against imbalanceVolume[t]·imbalancePrice[t]/1000;
+                           against imbalanceVolumeMwh[t]·imbalancePriceEurPerMwh[t];
                            a mismatch is a reconciliation finding, not a silent
                            substitution ]
 
 NetworkPeakCharge      = peak engine output (§5), negative
 
-NetworkVolumetricCharge= − Σ_t (meteredPoiImport[t]/1000) · volumetricRate(t)
+NetworkVolumetricCharge= − Σ_t pPoiMeteredImportMwh[t] · volumetricRate(t)
 
-LeviesAndTaxes         = − Σ_t (meteredPoiImport[t]/1000) · Σ_c leviesRate_c(t)
+LeviesAndTaxes         = − Σ_t pPoiMeteredImportMwh[t] · Σ_c leviesRate_c(t)
                          [ closed component list of the components a delineation
                            regime cannot reduce — Stromsteuer, Konzessionsabgabe —
                            mirroring TariffView's enumeration; an unrecognised
                            invoice line is a configuration error, not an absorbed
                            cost ]
 
-EnfgLevies             = − ((21)/1000) · Σ_c enfgRate_c(month)
+EnfgLevies             = − (21) · Σ_c enfgRate_c(month)
                          [ (21) = MAX[(3) − (16) − (19); 0], from §5.1. The
                            reducible EnFG components only. Charged on (21), never
                            on (3) — booking them on metered import overstates the
                            charge by the whole relief ]
 
-SubsidyRevenue         = ((32)/1000) · Σ_x ZFx · MAX[ AWx − marktwertMonth ; 0 ]
-                         [ Marktprämie per § 19 EEG. Spot revenue on the same kWh
+SubsidyRevenue         = (32) · Σ_x ZFx · MAX[ AWx − marktwertMonthEurPerMwh ; 0 ]
+                         [ Marktprämie per § 19 EEG. Spot revenue on the same MWh
                            stays in SpotEnergyValue, which is what makes the
                            double count impossible rather than merely checked.
                            Under a common EEG vintage (32x) = ZFx·(32), so the
                            per-plant sum collapses to one weighted premium ]
 
-CycleDegradation       = − degCostPerKwh
-                           · Σ_t (batteryChargeEnergy[t] + batteryDischargeEnergy[t]) / 2
+CycleDegradation       = − degCostEurPerMwh
+                           · Σ_t (pBattChargeEnergyMwh[t] + pBattDischargeEnergyMwh[t]) / 2
 
 StoredEnergyContinuation
-                       = V(socMeasured[T], peakState_T, qualState_T)
-                       − V(socMeasured[T₀], peakState_T₀, qualState_T₀)
+                       = V(socMeasuredMwh[T], peakState_T, qualState_T)
+                       − V(socMeasuredMwh[T₀], peakState_T₀, qualState_T₀)
 
 ActivationRisk         = 0     (see below)
 ```
@@ -190,7 +194,7 @@ Three points that decide whether these numbers are comparable to plan at all:
   reason. Comparing a risk-loaded planned value against a risk-free realised value
   makes the engine appear to lose the risk premium every single day.
 
-`unexplained` is the residual of `INV-S-02`: total realised P&L less the sum over
+`unexplainedEur` is the residual of `INV-S-02`: total realised P&L less the sum over
 effects. It is mandatory, it is never absorbed into a neighbouring effect, and
 `unexplainedRatio` is alerted on (`INV-S-07`). A rising ratio is the earliest
 available signal that a term definition has drifted between L2 and L5.
@@ -207,30 +211,30 @@ Instantaneous POI power in the tariff's own frame, floored at zero because the
 charge is levied on import (`02-conventions.md` §1):
 
 ```
-p_import_kw[t] = max( (meteredPoiImport[t] − meteredPoiExport[t]) / Δt_h , 0 )
-realisedPeakKw = max over t ∈ periodSlots(regime) of p_import_kw[t]
+pPoiImportMw[t]    = max( (pPoiMeteredImportMwh[t] − pPoiMeteredExportMwh[t]) / Δt_h , 0 )
+pPoiRealisedPeakMw = max over t ∈ periodSlots(regime) of pPoiImportMw[t]
 ```
 
 | Regime | `periodSlots` | Charge |
 |---|---|---|
-| `AnnualLeistungspreis` | all slots in the local calendar year | `peakPrice · realisedPeakKw` |
-| `MonthlyLeistungspreis` | all slots in the local calendar month | `peakPrice · realisedPeakKw` per month |
-| `AtypicalHlzf` (§19(2) S.1) | HLZF slots only, from the DSO's published window table for that year | `hlzfPeakPrice · hlzfPeakKw` |
+| `AnnualLeistungspreis` | all slots in the local calendar year | `peakPriceEurPerMw · pPoiRealisedPeakMw` |
+| `MonthlyLeistungspreis` | all slots in the local calendar month | `peakPriceEurPerMw · pPoiRealisedPeakMw` per month |
+| `AtypicalHlzf` (§19(2) S.1) | HLZF slots only, from the DSO's published window table for that year | `hlzfPeakPriceEurPerMw · pPoiHlzfPeakMw` |
 | `IntensiveUse` (§19(2) S.2) | all slots in the qualification year | reduced rate conditional on qualification |
 
 ### Intensive-use qualification tracking
 
 ```
-annualEnergyKwh = Σ_{t ∈ year} meteredPoiImport[t]
-annualPeakKw    = max_{t ∈ year} p_import_kw[t]
-fullLoadHours   = annualEnergyKwh / annualPeakKw          [ kWh / kW = h ]  INV-S-06
+pPoiAnnualEnergyMwh = Σ_{t ∈ year} pPoiMeteredImportMwh[t]
+pPoiAnnualPeakMw    = max_{t ∈ year} pPoiImportMw[t]
+fullLoadHours   = pPoiAnnualEnergyMwh / pPoiAnnualPeakMw          [ MWh / MW = h ]  INV-S-06
 flhMargin       = fullLoadHours   − flhThreshold          [ threshold config, 7,000 h ]
-energyMargin    = annualEnergyKwh − energyThreshold       [ threshold config, 10 GWh ]
-qualificationMarginHours = min(flhMargin, energyMargin / annualPeakKw)
+energyMargin    = pPoiAnnualEnergyMwh − energyThreshold       [ threshold config, 10 GWh ]
+qualificationMarginHours = min(flhMargin, energyMargin / pPoiAnnualPeakMw)
 ```
 
 Battery operation moves the numerator **and** the denominator (ADR-011), so
-qualification is not a passive observation — every peak shaved and every kWh
+qualification is not a passive observation — every peak shaved and every MWh
 imported changes it. Both thresholds bind, so the published margin is the binding
 one, expressed in hours so the value function sees a single continuous distance to
 the cliff.
@@ -251,10 +255,12 @@ forces tier escalation and the protective bound (`INV-S-13`, C5 §3).
   days are permanent fixtures in the peak-engine test set.
 - HLZF windows are local-time windows from a data table (ADR-002), resolved to
   `SlotId` sets through the same service.
-- `realisedPeak` is non-decreasing within a period and resets **exactly** at the
-  local-calendar boundary (`INV-S-01`). An off-by-one-hour reset at a DST boundary
-  either destroys a period's accumulated peak or carries it into the next one, and
-  both are silent.
+- `pPoiRealisedPeakMw` is non-decreasing within a period and resets **exactly** at
+  the `SlotId` that `CivilCalendar` resolves the Europe/Berlin local period
+  boundary to — a UTC instant, computed once, never a UTC offset applied to a
+  local timestamp (`02-conventions.md` §4.2, `INV-S-01`). An off-by-one-hour reset
+  at a DST boundary either destroys a period's accumulated peak or carries it into
+  the next one, and both are silent.
 
 ---
 
@@ -266,8 +272,8 @@ alone. This is the reference against which Valuation's linearisation is measured
 it is the only place in the system where the monthly formulas are evaluated.
 
 ```
-Z1NB¼ = meteredPoiImport[t]          Z2V¼ = batteryChargeEnergy[t]
-Z1NE¼ = meteredPoiExport[t]          Z2E¼ = batteryDischargeEnergy[t]
+Z1NB¼ = pPoiMeteredImportMwh[t]          Z2V¼ = pBattChargeEnergyMwh[t]
+Z1NE¼ = pPoiMeteredExportMwh[t]          Z2E¼ = pBattDischargeEnergyMwh[t]
 
 (1)¼ = MIN[Z1NB¼; Z2V¼]     (2)¼ = MIN[Z1NE¼; Z2E¼]     (23)¼ = Z1NE¼ − (2)¼
 (24)¼ from the settled day-ahead price series and the EEG vintage's § 51 / § 51b
@@ -335,38 +341,38 @@ J  = Book(x)           what Settlement booked
 
 | Bucket | Definition | Counterfactual re-run | Large value means | Fix owned by |
 |---|---|---|---|---|
-| `optimalityGap` | `Ĵ₁ − Ĵ` | Re-solve the tick at Tier 1 on the identical C2 bundle, same seed, same `SolveBudget` shape; compare objectives | The fast path is costing real money on this class of day | L3 / ADR-010 |
-| `forecastError` | `Ĵ − A` | Re-score the *unchanged* plan against `b*` | The belief carried value the world did not deliver | L1 / scenario model (ADR-005) |
-| `executionSlippage` | `A − C` | Score plan versus realised positions under one common belief `b*` | We could not get the trades, or got them worse | Quoting policy (ADR-012) |
-| `modelError` | `C − J` | Value the realised trajectory with L2's terms and compare against Phase A's independent accounting of the same trajectory | Valuation and Settlement disagree about what a term means | L2 |
+| `optimalityGapEur` | `Ĵ₁ − Ĵ` | Re-solve the tick at Tier 1 on the identical C2 bundle, same seed, same `SolveBudget` shape; compare objectives | The fast path is costing real money on this class of day | L3 / ADR-010 |
+| `forecastErrorEur` | `Ĵ − A` | Re-score the *unchanged* plan against `b*` | The belief carried value the world did not deliver | L1 / scenario model (ADR-005) |
+| `executionSlippageEur` | `A − C` | Score plan versus realised positions under one common belief `b*` | We could not get the trades, or got them worse | Quoting policy (ADR-012) |
+| `modelErrorEur` | `C − J` | Value the realised trajectory with L2's terms and compare against Phase A's independent accounting of the same trajectory | Valuation and Settlement disagree about what a term means | L2 |
 
-`modelError` carries a declared sub-bucket, `linearizationGap` — see below. Residual
-`modelError` net of it is still asserted zero.
+`modelErrorEur` carries a declared sub-bucket, `linearizationGap` — see below. Residual
+`modelErrorEur` net of it is still asserted zero.
 
 By construction these telescope:
 
 ```
-optimalityGap + forecastError + executionSlippage + modelError
+optimalityGapEur + forecastErrorEur + executionSlippageEur + modelErrorEur
   = (Ĵ₁ − Ĵ) + (Ĵ − A) + (A − C) + (C − J)
   = Ĵ₁ − J
 ```
 
 **`planned` in `INV-S-03` is the Tier-1 reference value `Ĵ₁`.** When Tier 1 was the
-tier actually used, `Ĵ₁ = Ĵ`, `optimalityGap = 0`, and the sum collapses to
+tier actually used, `Ĵ₁ = Ĵ`, `optimalityGapEur = 0`, and the sum collapses to
 C5 §5's `plannedByEffect` total minus realised. Both `Ĵ₁` and `Ĵ` are recorded;
-anchoring at `Ĵ₁` is what gives `optimalityGap` somewhere to live, since a weak
+anchoring at `Ĵ₁` is what gives `optimalityGapEur` somewhere to live, since a weak
 tier lowers the planned *and* the realised side and is invisible in `Ĵ − J`.
 
 ### Sub-decompositions worth carrying
 
-- `executionSlippage` splits into `priceSlippage` (fills valued at intent price
+- `executionSlippageEur` splits into `priceSlippage` (fills valued at intent price
   versus executed price — C5 §6's gloss, and the narrowest reading), plus
   `unfilledOpportunity` (residual volume from C4 §3, valued at `b*`), plus
   `feeDrag`, plus `deliveryDeviation` (the controller's departure from setpoint
   within the corridor). Without the unfilled term the bucket cannot separate "we
   were wrong about value" from "we could not get the trade", which is precisely why
   C4 §3 exists.
-- `linearizationGap` splits out of `modelError`: L2's `λ`-linearisation of the
+- `linearizationGap` splits out of `modelErrorEur`: L2's `λ`-linearisation of the
   delineation machinery, scored on the realised trajectory, against §5.1's exact
   evaluation of the same trajectory. It is **expected, budgeted and reported**, not a
   defect. Without the split, `INV-S-10` fails permanently from the first day the
@@ -375,7 +381,7 @@ tier lowers the planned *and* the realised side and is invisible in `Ĵ − J`.
   is evaluated arithmetically and never fitted (ADR-017) — which is what makes a budget
   for it meaningful rather than arbitrary.
 - `valueOfForesight = Score(Plan(Val(b*)) ; b*) − A` is computed and reported
-  alongside `forecastError`. It answers a different question — what perfect
+  alongside `forecastErrorEur`. It answers a different question — what perfect
   information would have been worth — and it is the ADR-010 upper bound that
   separates "our optimiser is weak" from "the world is uncertain". It is **not**
   booked as a bucket, because it does not telescope.
@@ -387,16 +393,16 @@ computed by **independent re-runs rather than by differencing**, specifically so
 that the residual is a test of the pipeline instead of a definition:
 
 ```
-unexplainedError = (Ĵ₁ − J) − (optimalityGap + forecastError
-                                + executionSlippage + modelError)
+unexplainedErrorEur = (Ĵ₁ − J) − (optimalityGapEur + forecastErrorEur
+                                + executionSlippageEur + modelErrorEur)
 ```
 
-`INV-S-03` warns when `|unexplainedError|` exceeds tolerance. Legitimate sources
+`INV-S-03` warns when `|unexplainedErrorEur|` exceeds tolerance. Legitimate sources
 are bounded and enumerable: `b*` is itself an estimate while imbalance prices are
 provisional; a term-set version changed between plan and settlement; tick-size
 rounding at C3 (`02-conventions.md` §6 — which is why rounding happens once and
-only there). Anything else is a defect. `unexplainedError` is a distinct quantity
-from C5 §5's `unexplained`, which is the *effect-level* residual under `INV-S-02`;
+only there). Anything else is a defect. `unexplainedErrorEur` is a distinct quantity
+from C5 §5's `unexplainedEur`, which is the *effect-level* residual under `INV-S-02`;
 the two are never netted and never reported as one number.
 
 ---
@@ -425,7 +431,7 @@ Stating the allocation rule is not pedantry. Peak charge attributed naively make
 misreading that leads to turning peak protection down.
 
 `CommitmentCover` is read together with `INV-P-10`: an intent priced through
-`shadowValue` is legitimate only under that tag, and Phase B reports the realised
+`shadowValueEurPerMwh` is legitimate only under that tag, and Phase B reports the realised
 cost of cover as a separate line so that "we had to buy back at any price" is
 visible as an operational failure rather than as a bad arbitrage day.
 
@@ -439,7 +445,7 @@ P&L and every error bucket are reported conditioned on:
   from C5 §7. A `DEFENSIVE` week is *supposed* to earn less; without conditioning,
   a data-feed outage looks like a strategy regression and gets "fixed" by loosening
   risk parameters, which is the worst available response.
-- **Tier used** (ADR-010), from `PlanResult`. `optimalityGap` conditioned on tier
+- **Tier used** (ADR-010), from `PlanResult`. `optimalityGapEur` conditioned on tier
   is the number that decides whether the fast path ships, and per ADR-010 it is
   reported as **p50 / p90 / p99 and worst case**, never as a mean, and conditioned
   on regime — high-spread days, peak-critical days, high reserve-price days.
@@ -460,14 +466,14 @@ own self-test, and several are the earliest available warning of a model defect.
 
 | Check | Assertion | Signal |
 |---|---|---|
-| **Energy balance** | `poiImport − poiExport = load − pv (realized after curtailment) + chargeEnergy − dischargeEnergy` within meter tolerance (`INV-X-03`) | Sub-metering fault, or a sign convention inverted somewhere |
-| **SOC consistency** | `socMeasured[t+1] ≈ socMeasured[t] + η_c·charge[t] − discharge[t]/η_d` (`INV-X-05`) | **The early-warning signal for efficiency and SOH model drift.** Persistent one-signed divergence means η or the degradation model is wrong, and it feeds `modelError` directly |
-| **Fee reconciliation** | Σ of C4 `fees` equals fees booked per effect; no fee netted into a price (`INV-S-11`) | Broker or venue fee schedule changed, or a price arrived net |
+| **Energy balance** | `pPoiMeteredImportMwh − pPoiMeteredExportMwh = meteredLoadMwh − meteredPvMwh + pBattChargeEnergyMwh − pBattDischargeEnergyMwh` within meter tolerance (`INV-X-03`). Metered PV is post-curtailment `pv_out`; the battery energies are AC-terminal, so **no η appears** (conventions §3) | Sub-metering fault, or a sign convention inverted somewhere |
+| **SOC consistency** | `socMeasuredMwh[t+1] ≈ socMeasuredMwh[t] + η_c·charge[t] − discharge[t]/η_d` (`INV-X-05`) | **The early-warning signal for efficiency and SOH model drift.** Persistent one-signed divergence means η or the degradation model is wrong, and it feeds `modelErrorEur` directly |
+| **Fee reconciliation** | Σ of C4 `feesEur` equals fees booked per effect; no fee netted into a price (`INV-S-11`) | Broker or venue fee schedule changed, or a price arrived net |
 | **No phantom fills** | Every `fillId` maps to an `intentId` submitted this run (`INV-X-01`) | Adapter reconciliation failure — see `L4-execution-boundary.md` §6 |
 | **Award coverage** | Every award has a commitment-ledger entry (`INV-X-06`) and every confirmed award a `feasibilityRequirement` (`INV-S-05`) | Ledger drift |
-| **Delivery** | `deliveryShortfall = 0` (`INV-S-04`) | Reserve delivery failure — prequalification risk, alert and `HALT` |
-| **Peak monotonicity** | `realisedPeak` non-decreasing in period, resets at the local boundary (`INV-S-01`) | Calendar or DST defect |
-| **FLH identity** | `fullLoadHours = annualEnergyKwh / annualPeakKw` (`INV-S-06`) | Unit error in the qualification path |
+| **Delivery** | `deliveryShortfallMwh = 0` (`INV-S-04`) | Reserve delivery failure — prequalification risk, alert and `HALT` |
+| **Peak monotonicity** | `pPoiRealisedPeakMw` non-decreasing in period, resets at the local boundary (`INV-S-01`) | Calendar or DST defect |
+| **FLH identity** | `fullLoadHours = pPoiAnnualEnergyMwh / pPoiAnnualPeakMw` (`INV-S-06`) | Unit error in the qualification path |
 | **Route split** | `(28) + (16) = (13)` (`INV-S-17`) | A `MIN`/`MAX` branch implemented with the wrong comparison |
 | **Relief multiplier** | `(16) + (19) = (16)·(5)/(6)` (`INV-S-17`) | `(18)` or `(17)` mis-derived |
 | **Throughput bound** | Charge throughput above `η_d·E_usable/(1−η_rt)` implies `(12) = 0` (`INV-S-16`) | An idle month, or a SOC/meter disagreement large enough to fake one |
@@ -485,7 +491,7 @@ before that model has quietly mispriced a quarter of arbitrage decisions.
 |---|---|---|
 | `INV-S-09` | Restatement is append-only: a revision is a new artefact with `revisionOf` set, the superseded artefact is retained, and the chain is acyclic | `HALT` |
 | `INV-S-10` | Zero-gap: settling the planned trajectory as if realised yields all four error buckets zero within tolerance | fail the run |
-| `INV-S-11` | Fees reconcile: Σ C4 `fees` = Σ fees booked by effect; no fee netted into a price | warn, escalating to alert |
+| `INV-S-11` | Fees reconcile: Σ C4 `feesEur` = Σ fees booked by effect; no fee netted into a price | warn, escalating to alert |
 | `INV-S-12` | Every accounting period boundary and HLZF window is derived via `CivilCalendar` under the manifest's pinned tzdata; no UTC-offset arithmetic in the peak engine | `HALT` |
 | `INV-S-13` | While an `IntensiveUse` regime is active, `qualificationMarginHours` is published every tick and reflects both the FLH and the annual-energy threshold | `HALT` |
 | `INV-S-14` | `isFinal` is monotone per settlement period; a provisional artefact never supersedes a final one | `HALT` |
@@ -505,13 +511,13 @@ right answer is often computable by hand.
 - **Determinism** — same C4 and same manifest, byte-identical C5 and
   `SettlementResult`.
 - **Conservation** — total booked P&L equals the sum over effects plus
-  `unexplained` (`INV-S-02`); energy in equals energy out within meter tolerance;
+  `unexplainedEur` (`INV-S-02`); energy in equals energy out within meter tolerance;
   the sum of per-tag P&L equals the per-effect total (`INV-S-15`). Property-tested
   over generated outcomes, not spot-checked.
 - **Zero-gap** — feed Settlement the **exact planned trajectory as realised**:
   every intent filled at its limit price, metered series equal to the planned POI
-  trajectory, imbalance zero. Assert `optimalityGap = forecastError =
-  executionSlippage = modelError = unexplainedError = 0` within tolerance
+  trajectory, imbalance zero. Assert `optimalityGapEur = forecastErrorEur =
+  executionSlippageEur = modelErrorEur = unexplainedErrorEur = 0` within tolerance
   (`INV-S-10`). This is the single most valuable test in the layer: any non-zero
   bucket is a definitional disagreement between L2 and L5 that would otherwise
   masquerade as a real finding for months.
@@ -552,7 +558,7 @@ right answer is often computable by hand.
   bucket and every tag total must be unchanged. Order sensitivity here means an
   accumulator has hidden state, which would break purity.
 - **Counterfactual soundness** — on a recorded day, re-run each bucket's
-  counterfactual twice and assert byte-equality, and assert `optimalityGap ≥ 0`
-  over a backtest in aggregate. Note that a *single-day* `optimalityGap` may be
+  counterfactual twice and assert byte-equality, and assert `optimalityGapEur ≥ 0`
+  over a backtest in aggregate. Note that a *single-day* `optimalityGapEur` may be
   negative — a worse plan can get lucky — which is why ADR-010 requires a
   distribution rather than a point.

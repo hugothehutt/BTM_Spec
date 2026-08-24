@@ -14,7 +14,7 @@ everything in `T0`–`T3`.
 - **The fill model** — `FillProbView`'s underlying `P(fill | price, product,
   time-to-gate)` surface, and the derived `idReliableVolume*` bounds that cross
   `C1` §5. It is a *prediction* about an external system.
-- **The quoting policy** — the mapping `(target, shadowValue, urgency, fill
+- **The quoting policy** — the mapping `(target, shadowValueEurPerMwh, urgency, fill
   curve, microstructure state) → limit-order ladder` (ADR-012). It is a *policy*
   whose quality is measured, not a function whose correctness is asserted.
 
@@ -52,7 +52,7 @@ commentary:
    against a venue, and no document, dashboard or release note may present it as
    such. The go-live gate (`T0` §5.3) requires a recalibration plan and a shadow
    period precisely because this number does not transfer.
-4. Everything downstream that consumes fill quality — `executionSlippage` in the
+4. Everything downstream that consumes fill quality — `executionSlippageEur` in the
    four-bucket decomposition (`C5` §6), `idReliableVolume*` bounds, the quoting
    policy's capture ratio — inherits the same caveat and carries it in its own
    reporting.
@@ -77,7 +77,7 @@ unmeasured).
 
 | Factor | Levels |
 |---|---|
-| Price band | Distance from the reference price, in ticks or in spread units: `[−3σ, −2σ, −1σ, −0.5σ, 0, +0.5σ, +1σ, +2σ, +3σ]` relative to `idPriceRef`, signed by side |
+| Price band | Distance from the reference price, in ticks or in spread units: `[−3σ, −2σ, −1σ, −0.5σ, 0, +0.5σ, +1σ, +2σ, +3σ]` relative to `idPriceRefEurPerMwh`, signed by side |
 | Product | Each intraday product traded: quarter-hour, hour, block, per liquidity class |
 | Time-to-gate | `[> 8h, 4–8h, 2–4h, 1–2h, 30–60 min, 15–30 min, < 15 min]` |
 | Side | Buy, Sell — measured separately; asymmetry is real and must not be averaged away |
@@ -147,7 +147,7 @@ ReliabilityDiagram(product, ttg_band):
 | Points on the diagonal | Calibrated | None |
 | Slope `< 1`, curve flatter than the diagonal | Over-confident: the model over-predicts extremes in both directions | Recalibrate (isotonic or Platt on a holdout); do not simply shrink the surface globally |
 | Systematic offset above the diagonal | Under-predicts fill; the Planner is leaving executable volume on the table via over-tight `idReliableVolume*` bounds | Recalibrate; note that the bias is *conservative* and therefore safe to ship pending the fix |
-| Systematic offset below the diagonal | Over-predicts fill; the Planner is planning on volume it will not get | **Blocks release.** This is the unsafe direction: it produces plans that are infeasible in practice and shows up as `executionSlippage` and unfilled `CommitmentCover` |
+| Systematic offset below the diagonal | Over-predicts fill; the Planner is planning on volume it will not get | **Blocks release.** This is the unsafe direction: it produces plans that are infeasible in practice and shows up as `executionSlippageEur` and unfilled `CommitmentCover` |
 | High MCE in one time-to-gate band only | The urgency dimension is mis-specified | Recalibrate that dimension; check whether the quoting policy's urgency input is on the same scale |
 
 The asymmetry in the two offset rows is deliberate and mirrors ADR-014's
@@ -206,7 +206,7 @@ measurement.
 
 ### 3.1 Capture ratio against shadow value
 
-The Planner's `shadowValue` is its indifference price. The region between the
+The Planner's `shadowValueEurPerMwh` is its indifference price. The region between the
 prevailing market and the shadow value is the space the quoting policy is free to
 work in, and its job is to capture as much of it as fill probability allows
 (ADR-012).
@@ -214,11 +214,11 @@ work in, and its job is to capture as much of it as fill probability allows
 ```
 for each fill f with intent i:
     if i.side == Sell:
-        available =  i.shadowValue_reference_market_price − i.shadowValue      # ≥ 0
-        captured  =  f.price − i.shadowValue
+        available =  reference_market_price − i.shadowValueEurPerMwh      # ≥ 0
+        captured  =  f.priceEurPerMwh − i.shadowValueEurPerMwh
     else:  # Buy
-        available =  i.shadowValue − reference_market_price
-        captured  =  i.shadowValue − f.price
+        available =  i.shadowValueEurPerMwh − reference_market_price
+        captured  =  i.shadowValueEurPerMwh − f.priceEurPerMwh
 
     capture_ratio(f) = captured / available          # available > 0
 
@@ -249,7 +249,7 @@ ratio loses money.
 for each fill f at slot/product p, executed at time τ:
     for Δ in {1 min, 5 min, 15 min, to gate}:
         mark[Δ] = reference_price(p, τ + Δ)
-        markout(f, Δ) = side_sign(f) · (mark[Δ] − f.price) · volume_f
+        markout(f, Δ) = side_sign(f) · (mark[Δ] − f.priceEurPerMwh) · volume_f
                         # positive  => the market moved in our favour after the fill
                         # negative  => we were adversely selected
 
@@ -266,16 +266,16 @@ AdverseSelection(Δ) = − volume_weighted_mean( markout(·, Δ) )
 The last row is the release-relevant one. A quoting policy change ships only if
 capture net of adverse selection improves, or is neutral with a stated reason.
 
-**Reconciliation with `C5`.** The `executionSlippage` bucket of the four-way
+**Reconciliation with `C5`.** The `executionSlippageEur` bucket of the four-way
 decomposition (`C5` §6) values fills at intent prices versus executed prices.
-`T4` asserts that the adverse-selection measurement and the `executionSlippage`
+`T4` asserts that the adverse-selection measurement and the `executionSlippageEur`
 bucket are consistent over the same period, within tolerance. A divergence means
 one of the two definitions has drifted, and that divergence is exactly what
 `unexplainedRatio` (`INV-S-07`) starts registering months later.
 
 ### 3.3 The `INV-P-10` trade-through check
 
-`INV-P-10`: no sell intent priced below its `shadowValue`; no buy intent priced
+`INV-P-10`: no sell intent priced below its `shadowValueEurPerMwh`; no buy intent priced
 above it. Warning severity, and the intent is blocked (`T1` §5). The legitimate
 exception is a `CommitmentCover` intent — covering a commitment at a loss is
 sometimes correct.
@@ -285,18 +285,18 @@ sometimes correct.
 ```
 # 1. EX-ANTE — every emitted intent, every tick, in production and in backtest
 for intent in C3.intents:
-    if intent.side == Sell:  violated = intent.limitPrice < intent.shadowValue − TOL
-    else:                    violated = intent.limitPrice > intent.shadowValue + TOL
+    if intent.side == Sell:  violated = intent.limitPriceEurPerMwh < intent.shadowValueEurPerMwh − TOL
+    else:                    violated = intent.limitPriceEurPerMwh > intent.shadowValueEurPerMwh + TOL
     if violated:
         assert intent.tag == CommitmentCover     # else BLOCK the intent
-        record TradeThrough(intent, magnitude = |limitPrice − shadowValue|)
+        record TradeThrough(intent, magnitude = |limitPriceEurPerMwh − shadowValueEurPerMwh|)
 
 # 2. EX-POST — every fill, from C4, reconciled against the recorded intent
 for fill in C4.fills:
     intent = lookup(fill.intentId)               # INV-X-01 guarantees it exists
     if worse_than_shadow(fill.price, intent):
         record RealisedTradeThrough(fill, value_destroyed =
-            |fill.price − intent.shadowValue| × fill.volume)
+            |fill.price − intent.shadowValueEurPerMwh| × fill.volume)
 
 # 3. AGGREGATE — the report
 report:
@@ -316,7 +316,7 @@ report:
 | Trade-through concentrated in the top urgency decile | `warn` | The policy is panicking near the gate; the urgency mapping is too aggressive |
 
 The third row deserves emphasis. `INV-P-10` is stated as an economic safety net,
-but a high trade-through rate is more often a signal that `shadowValue` is being
+but a high trade-through rate is more often a signal that `shadowValueEurPerMwh` is being
 extracted incorrectly — an approximated dual rather than the real one (ADR-012's
 cost note) — than that the quoting policy is misbehaving. `T4` therefore also
 asserts a sanity property on the shadow value itself:
@@ -326,10 +326,10 @@ property ShadowValueSanity(plan):
     # the dual on the position accounting constraint must sit between the
     # marginal cost of sourcing the MWh and the marginal value of using it
     for slot, market:
-        assert plan.shadowValue[market, slot] is finite
-        assert sign(plan.shadowValue) consistent with the position's direction
+        assert plan.shadowValueEurPerMwh[market, slot] is finite
+        assert sign(plan.shadowValueEurPerMwh) consistent with the position's direction
         # metamorphic: scale all prices by k>0 => shadow value scales by k
-        assert shadowValue(scaled_by_k) ≈ k · shadowValue(base)     # T2 §3.5
+        assert shadowValueEurPerMwh(scaled_by_k) ≈ k · shadowValueEurPerMwh(base)     # T2 §3.5
 ```
 
 ### 3.4 A/B evaluation
@@ -355,7 +355,7 @@ Calibration is not an end in itself; each measurement has a declared consumer.
 | Measurement | Consumer | Effect |
 |---|---|---|
 | Fill-rate calibration by price band | `FillProbView` | Determines whether `BoundTerm` is a scalar volume cap or a per-price-band cap — the open question in ADR-015 OPEN-3. The `C2` contract shape does not change either way |
-| Fill-rate bias | `idReliableVolumeBuy/Sell` (`C1` §5) | A conservative bias is tightened toward truth; an optimistic bias is corrected immediately |
+| Fill-rate bias | `idReliableVolumeBuyMwh/Sell` (`C1` §5) | A conservative bias is tightened toward truth; an optimistic bias is corrected immediately |
 | Activation calibration | `chanceLevel` in `riskProfile` (`C2` §6) | An under-confident activation model widens `ε` until recalibrated |
 | Reliability diagram slope | The fill model artefact | Isotonic recalibration layer, versioned and content-hashed like any other artefact (ADR-004 §4) |
 | Adverse selection by urgency | The quoting policy's urgency mapping | |

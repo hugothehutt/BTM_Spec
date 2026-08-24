@@ -72,7 +72,7 @@ site.
 | Domain | Tolerance |
 |---|---|
 | Money | `1e-6 EUR` absolute |
-| Power | `1e-6 kW` absolute |
+| Power | `1e-6 MW` absolute |
 | Scenario weights | `1e-9` on the sum |
 | Meter energy balance | Meter tolerance, per `meterQuality`, declared per site |
 | Objective agreement between backends | Relative `1e-6`, or the MIP gap tolerance, whichever is larger |
@@ -82,12 +82,12 @@ site.
 ## 2. `INV-G-*` — Global / universal
 
 Applied at **every** seam by the shared validator, on both sides. Sources:
-`C0` §3, `00-overview/02-conventions.md` §6, ADR-003, ADR-013.
+`C0` §3, `00-overview/02-conventions.md` §5.2 and §6, ADR-013.
 
 | ID | Statement | Where checked | Severity | Test level |
 |---|---|---|---|---|
 | `INV-G-01` | No numeric field in any payload is `NaN` or `±Infinity`. Missing is expressed by the quality channel (`C0` §6), never by a sentinel value. | Shared validator, both sides of every seam | `HALT` | `T1`, `T6` (fuzz) |
-| `INV-G-02` | Every numeric field carries a declared unit and a typed quantity (ADR-003). No bare `double` crosses a seam. | Schema check at serialisation and deserialisation | `HALT` | `T1`, `T0` (compile-fail) |
+| `INV-G-02` | Every dimensioned field's unit suffix equals its declared unit, every power and energy field names its frame, and every dimensionless field declares a kind and a closed range (`00-overview/02-conventions.md` §5.2, §2.3). | Schema check at serialisation and deserialisation, read off the field table | `HALT` | `T1`, `T0` (name/unit-table lint) |
 | `INV-G-03` | `schemaVersion` is recognised by the consumer. An unrecognised version is rejected, never guessed at, never partially read. | Consumer, before any field is read | `HALT` | `T1`, `T6` (version rejection) |
 | `INV-G-04` | `contentHash` recomputed over the payload matches the carried value; `inputHashes` is present and non-empty. | Producer at seal, consumer at receipt | `HALT` | `T1`, `T3` |
 | `INV-G-05` | *(consolidated)* No layer reads the system clock. Time enters the pipeline only as `tickId`/`SlotId` and `asOf`, supplied by the driver. No payload contains a wall-clock timestamp taken at construction, and no code path in `L1`, `L2`, `L3` or `L5` calls a wall-clock API. Enforced at two points: a **Roslyn analyzer rule** banning clock APIs in the layer assemblies (ADR-013), and a **payload check** that no timestamp field was populated at construction time (`C0` §3). | Analyzer at build; validator at every seam | `HALT` (build failure at the analyzer; `HALT` at the seam) | `T1`, `T3` |
@@ -105,14 +105,14 @@ Sources: `C1` §9, `C1` §4, ADR-004, ADR-005.
 
 | ID | Statement | Where checked | Severity | Test level |
 |---|---|---|---|---|
-| `INV-D-01` | `socMin ≤ socNow ≤ socMax`. | `C1` producer and consumer | `HALT` | `T1`, `T2` |
+| `INV-D-01` | `socMinMwh ≤ socNowMwh ≤ socMaxMwh`. | `C1` producer and consumer | `HALT` | `T1`, `T2` |
 | `INV-D-02` | No fact inside a `BeliefSnapshot` has `knowledgeTime > asOf`. Enforced structurally: the only read API is `Get(series, validRange, asOf)` and the filter is applied inside the storage layer against an index, not by the caller (ADR-004 §1). | Belief store read path; re-asserted at `C1` | `HALT` | `T1`, `T2` (structural), `T6` (poisoning audit) |
 | `INV-D-03` | Every `[H]` array has length `slotCount`. | `C1` validator | `HALT` | `T1` |
 | `INV-D-04` | `blockIndex` is non-decreasing and covers every slot in the window exactly once; `blockSlots` sums to `slotCount`. | `C1` validator | `HALT` | `T1` |
-| `INV-D-05` | All `[S,·]` arrays share the scenario axis: index `s` denotes the same coherent state of the world in `load`, `pv`, `daPrice`, `activationUp`, `imbalancePrice` and every other scenario-indexed series (ADR-005). Indexing one series by `s` and another by `s'` is a defect. | `C1` validator; enforced by construction in the ensemble artefact | `HALT` | `T1`, `T2` (axis coherence) |
+| `INV-D-05` | All `[S,·]` arrays share the scenario axis: index `s` denotes the same coherent state of the world in `loadMw`, `pvAvailMw`, `daPriceEurPerMwh`, `activationUp`, `imbalancePriceEurPerMwh` and every other scenario-indexed series (ADR-005). Indexing one series by `s` and another by `s'` is a defect. | `C1` validator; enforced by construction in the ensemble artefact | `HALT` | `T1`, `T2` (axis coherence) |
 | `INV-D-06` | `scenarioWeights` are non-negative and sum to `1 ± 1e-9`. | `C1` validator | `HALT` | `T1` |
 | `INV-D-07` | The reduced ensemble preserves each marginal's mean, against the full ensemble, within tolerance. | Offline, at reduction-artefact build; re-checked at `C1` | `warn`, and the mode moves to `DEGRADED` | `T1`, `T2` |
-| `INV-D-08` | `pMaxCharge` and `pMaxDischarge` are `≥ 0` and finite for every slot. | `C1` validator | `HALT` | `T1` |
+| `INV-D-08` | `pBattMaxChargeMw` and `pBattMaxDischargeMw` are `≥ 0` and finite for every slot. | `C1` validator | `HALT` | `T1` |
 | `INV-D-09` | `etaCharge · etaDischarge ≤ 1`. Round-trip efficiency above unity is a physical impossibility and usually a sign that a loss was placed twice or with the wrong sign. | `C1` validator | `HALT` | `T1`, `T0` |
 | `INV-D-10` | Every field marked `Null = no` is present, **or** the field appears in `criticalMissing`. A missing field that is neither present nor declared missing is a broken ingestion path. | `C1` validator | `alert`, then escalate per the ADR-014 §4 ladder | `T1`, `T2` (quality matrix) |
 
@@ -134,7 +134,7 @@ Sources: `C2` §8, `C2` §3.3, `L2` §2/§4/§5, ADR-008, ADR-009.
 | `INV-V-08` | *Reserved. Not allocated. Do not reuse — see §10.* | — | — | — |
 | `INV-V-09` | *Reserved. Not allocated. Do not reuse — see §10.* | — | — | — |
 | `INV-V-10` | *Reserved. Not allocated. Do not reuse — see §10.* | — | — | — |
-| `INV-V-11` | `vSocSlopes` are strictly decreasing: `V` is concave in SOC. Concavity is what makes the PWL binary-free under maximisation (ADR-007). | Value-function artefact build; `C2` producer and consumer | `HALT` | `T1`, `T2` (concavity) |
+| `INV-V-11` | `vSocSlopesEurPerMwh` are strictly decreasing: `V` is concave in SOC. Concavity is what makes the PWL binary-free under maximisation (ADR-007). | Value-function artefact build; `C2` producer and consumer | `HALT` | `T1`, `T2` (concavity) |
 | `INV-V-12` | Every `PwlTerm`'s declared `curvature` is verified against its breakpoints. A term declaring `Concave` with a non-concave breakpoint set is a contract violation, not a silently-wrong relaxation, because binary count — and therefore solve time — depends on the declaration being true (ADR-008). | Composer, curvature verification | `HALT` | `T1`, `T2` (curvature honesty) |
 | `INV-V-13` | `prorationFactor ∈ [0,1]` and is consistent with the `CivilCalendar`: it equals the fraction of the accounting period covered by the planning horizon. Mis-setting it is the classic route to a pathologically peak-averse engine. | Composer; `C2` consumer | `HALT` | `T1`, `T2`, `T0` (calendar) |
 | `INV-V-14` | `binariesByOrigin` sums to `binaryCount`, and `binaryCount` matches the binaries the Planner actually builds. | Composer, then `L3` model build | `warn` | `T1`, `T2` |
@@ -155,11 +155,11 @@ Sources: `C3` §5, `L3` §4/§5, `00-overview/02-conventions.md` §3.
 | `INV-P-03` | No two intents target the same product, slot and side without a `replacesIntentId` chain linking them. | `C3` producer and consumer | `HALT` | `T1`, `T2` |
 | `INV-P-04` | Limit prices are tick-aligned and volumes lot-aligned, rounded exactly once at the `C3` boundary (`00-overview/02-conventions.md` §6). Rounding earlier corrupts the optimality-gap measurement. | `C3` producer | `HALT` | `T1`, `T5` |
 | `INV-P-05` | In `SAFE` mode, the intent set contains only `CommitmentCover` intents and cancels. | `C3` producer and consumer | `HALT` | `T2` (degradation matrix) |
-| `INV-P-06` | Total planned discharge over any window respects energy availability including the reserve corridor: the plan cannot sell the same kWh into spot and hold it as reserve headroom. | `L3` post-solve; `C3` producer | `HALT` | `T2` |
-| `INV-P-07` | *(consolidated)* No solution contains simultaneous charge and discharge above tolerance: for every slot `t`, `¬(p_charge[t] > 1e-6 kW ∧ p_discharge[t] > 1e-6 kW)`. With `η_c·η_d < 1` and non-negative energy prices this is automatic, so the complementarity binary is **omitted by default** and enabled by configuration flag. It is *not* automatic under negative prices, an aFRR activation obligation, or a peak-driven incentive to import, where burning energy can be profitable and the LP relaxation will exploit it. When the binary is disabled, this is a post-solve monitor over the returned trajectory; a violation means the omission was not safe for that instance and the tick is flagged (`00-overview/02-conventions.md` §3). | `L3`, post-solve monitor on every solve | `alert` | `T2` (negative-price and activation fixtures), `T5` |
+| `INV-P-06` | Total planned discharge over any window respects energy availability including the reserve corridor: the plan cannot sell the same MWh into spot and hold it as reserve headroom. | `L3` post-solve; `C3` producer | `HALT` | `T2` |
+| `INV-P-07` | *(consolidated)* No solution contains simultaneous charge and discharge above tolerance: for every slot `t`, `¬(p_charge[t] > 1e-6 MW ∧ p_discharge[t] > 1e-6 MW)`. With `η_c·η_d < 1` and non-negative energy prices this is automatic, so the complementarity binary is **omitted by default** and enabled by configuration flag. It is *not* automatic under negative prices, an aFRR activation obligation, or a peak-driven incentive to import, where burning energy can be profitable and the LP relaxation will exploit it. When the binary is disabled, this is a post-solve monitor over the returned trajectory; a violation means the omission was not safe for that instance and the tick is flagged (`00-overview/02-conventions.md` §3). | `L3`, post-solve monitor on every solve | `alert` | `T2` (negative-price and activation fixtures), `T5` |
 | `INV-P-08` | *Reserved. Not allocated. Do not reuse — see §10.* | — | — | — |
 | `INV-P-09` | Every DA bid curve is monotone: quantity non-increasing in price for a buy curve, non-decreasing for a sell curve. Asserted, never sorted into compliance. A non-monotone curve is rejected by the exchange **and** is diagnostic of a formulation error, most often a missing coupling constraint (ADR-012, `L3` §5). | `L3` after the parametric re-solve; `C3` producer | `HALT` | `T2` (DA curve monotonicity) |
-| `INV-P-10` | No sell intent is priced below its `shadowValue`; no buy intent above it. The quoting policy never trades through the Planner's own indifference price. A legitimate exception exists — covering a commitment at a loss is sometimes correct — but such an intent must carry the `CommitmentCover` tag. An untagged violation is blocked. | Quoting policy output, before `C3` seal; `L5` re-checks ex post | `warn`, **and the intent is blocked** | `T2`, `T4` (trade-through check) |
+| `INV-P-10` | No sell intent is priced below its `shadowValueEurPerMwh`; no buy intent above it. The quoting policy never trades through the Planner's own indifference price. A legitimate exception exists — covering a commitment at a loss is sometimes correct — but such an intent must carry the `CommitmentCover` tag. An untagged violation is blocked. | Quoting policy output, before `C3` seal; `L5` re-checks ex post | `warn`, **and the intent is blocked** | `T2`, `T4` (trade-through check) |
 
 ---
 
@@ -171,9 +171,9 @@ Sources: `C4` §7, `C3` §2.
 |---|---|---|---|---|
 | `INV-X-01` | Every `fillId` references an `intentId` that was submitted in this run. A fill with no matching intent is a phantom fill and means the adapter or the ledger has lost identity. | `C4` consumer (`L5`) | `HALT` | `T1`, `T6` (ledger tampering) |
 | `INV-X-02` | Filled volume, summed across all fills for an intent, does not exceed the intended volume. | `C4` consumer | `HALT` | `T1`, `T2` |
-| `INV-X-03` | Energy balance holds within meter tolerance: `poiImport − poiExport = load − pv + chargeEnergy − dischargeEnergy`, per slot. This is the POI bridge (`00-overview/02-conventions.md` §1) evaluated on realised data. | `L5`, per slot | `warn` while provisional; `HALT` when `isFinal` | `T1`, `T2` (conservation) |
-| `INV-X-04` | Execution does not consume `shadowValue` or `urgency`. They cross `C3` for settlement attribution only. Enforced structurally: the adapter interface exposes a projection of `ExecutionIntent` that omits both fields, so Execution cannot read them even by accident. | Structural — adapter projection type | `HALT` if the projection is bypassed | `T0` (compile-fail), `T1` |
-| `INV-X-05` | `socMeasured` is consistent with `batteryChargeEnergy`, `batteryDischargeEnergy` and the declared efficiencies, within tolerance. Persistent divergence is the earliest available signal that the efficiency or SOH model has drifted, and it feeds the `modelError` bucket in `C5` §6. | `L5`, per slot and as a rolling statistic | `warn`, escalating to `alert` on persistent drift | `T2`, `T4` |
+| `INV-X-03` | Energy balance holds within meter tolerance: `pPoiMeteredImportMwh − pPoiMeteredExportMwh = meteredLoadMwh − meteredPvMwh + pBattChargeEnergyMwh − pBattDischargeEnergyMwh`, per slot. This is the POI bridge (`00-overview/02-conventions.md` §1) evaluated on realised data: metered PV is post-curtailment `pv_out`, and **no efficiency term appears**, which is what places the loss boundary at the AC terminal (conventions §3). | `L5`, per slot | `warn` while provisional; `HALT` when `isFinal` | `T1`, `T2` (conservation) |
+| `INV-X-04` | Execution does not consume `shadowValueEurPerMwh` or `urgency`. They cross `C3` for settlement attribution only. Enforced structurally: the adapter interface exposes a projection of `ExecutionIntent` that omits both fields, so Execution cannot read them even by accident. | Structural — adapter projection type | `HALT` if the projection is bypassed | `T0` (compile-fail), `T1` |
+| `INV-X-05` | `socMeasuredMwh` is consistent with `pBattChargeEnergyMwh`, `pBattDischargeEnergyMwh` and the declared efficiencies, within tolerance. Persistent divergence is the earliest available signal that the efficiency or SOH model has drifted, and it feeds the `modelErrorEur` bucket in `C5` §6. | `L5`, per slot and as a rolling statistic | `warn`, escalating to `alert` on persistent drift | `T2`, `T4` |
 | `INV-X-06` | Every reserve award in `C4` has a corresponding `Confirmed` entry in the commitment ledger by the end of the tick. | `L5` at `C5` write | `HALT` | `T1`, `T2`, `T6` |
 
 ---
@@ -185,12 +185,12 @@ Sources: `C5` §9, `C4` §7 (`INV-S-04` is mirrored there deliberately), and
 
 | ID | Statement | Where checked | Severity | Test level |
 |---|---|---|---|---|
-| `INV-S-01` | `realisedPeak` is non-decreasing within an accounting period and resets **exactly** at the local-calendar period boundary, which is a local-midnight boundary and therefore not a fixed UTC offset across the year (`INV-T-02`). | `L5` at `C5` write; `L0` on read | `HALT` | `T1`, `T2`, `T0` (calendar) |
-| `INV-S-02` | `realisedByEffect`, together with `unexplained`, sums to total realised P&L. The `unexplained` bucket is mandatory and must never be absorbed silently into another effect. | `L5` | `HALT` | `T1`, `T2` (attribution completeness) |
-| `INV-S-03` | The four error buckets — `forecastError`, `modelError`, `optimalityGap`, `executionSlippage` — sum to `(planned − realised)` within tolerance; the residual is `unexplained`. | `L5`, after the counterfactual re-runs | `warn` | `T2` (zero-gap test), `T5` |
-| `INV-S-04` | `deliveryShortfall = 0` for every slot. A reserve delivery failure is a prequalification risk, not an accounting item. Mirrored at `C4` §7 because it must be caught the moment the outcome arrives, not only at the state write. | `L5` on `C4` receipt, and again at `C5` write | `alert` **and** `HALT` | `T2`, `T6` |
+| `INV-S-01` | `pPoiRealisedPeakMw` is non-decreasing within an accounting period and resets **exactly** at the local-calendar period boundary, which is a local-midnight boundary and therefore not a fixed UTC offset across the year (`INV-T-02`). | `L5` at `C5` write; `L0` on read | `HALT` | `T1`, `T2`, `T0` (calendar) |
+| `INV-S-02` | `realisedByEffect`, together with `unexplainedEur`, sums to total realised P&L. The `unexplainedEur` bucket is mandatory and must never be absorbed silently into another effect. | `L5` | `HALT` | `T1`, `T2` (attribution completeness) |
+| `INV-S-03` | The four error buckets — `forecastErrorEur`, `modelErrorEur`, `optimalityGapEur`, `executionSlippageEur` — sum to `(planned − realised)` within tolerance; the residual is `unexplainedEur`. | `L5`, after the counterfactual re-runs | `warn` | `T2` (zero-gap test), `T5` |
+| `INV-S-04` | `deliveryShortfallMwh = 0` for every slot. A reserve delivery failure is a prequalification risk, not an accounting item. Mirrored at `C4` §7 because it must be caught the moment the outcome arrives, not only at the state write. | `L5` on `C4` receipt, and again at `C5` write | `alert` **and** `HALT` | `T2`, `T6` |
 | `INV-S-05` | Every `Confirmed` commitment carries a `feasibilityRequirement` where the product requires one. A confirmed reserve award with no SOC corridor is an obligation the Planner cannot see. | `L5` at `C5` write; `L3` on ledger read | `HALT` | `T1`, `T2`, `T6` (ledger tampering) |
-| `INV-S-06` | `fullLoadHours = annualEnergyKwh / annualPeakKw` within tolerance. Battery operation moves both numerator and denominator (ADR-011), so a stale or inconsistent pair silently mis-states qualification. | `L5` at `C5` write | `HALT` | `T1`, `T2` |
+| `INV-S-06` | `fullLoadHours = pPoiAnnualEnergyMwh / pPoiAnnualPeakMw` within tolerance. Battery operation moves both numerator and denominator (ADR-011), so a stale or inconsistent pair silently mis-states qualification. | `L5` at `C5` write | `HALT` | `T1`, `T2` |
 | `INV-S-07` | `unexplainedRatio` is below the configured threshold. A rising ratio is the single best early warning that a term definition has drifted between Valuation and Settlement. | `L5`, per settlement period | `warn`, escalating to `alert` | `T2`, `T4` |
 | `INV-S-08` | State is never written for a slot earlier than the previous update's `effectiveFrom`, except as an explicit `revisionOf`. Restatements are new artefacts referencing the old one, never in-place edits (ADR-004). | `L0` write path | `HALT` | `T1`, `T2` (restatement idempotency) |
 | `INV-S-16` | While monthly charge throughput exceeds `η_d·E_usable/(1−η_rt)`, `(12)` Fremdtankstrom is zero. The Planner may assume it (ADR-017); Settlement computes it regardless and publishes `throughputBoundMet`. A violated month is a booked cost and a fired invariant, never a silent divergence. | `L5` §5.1; `L3` at model build | `warn`, escalating to `alert` | `T1`, `T2` |
@@ -236,7 +236,7 @@ hand-built fixtures and recorded seams.
 | Check | Assertion |
 |---|---|
 | Schema | The payload's field set equals the contract's field table exactly. Extra fields fail; missing non-nullable fields fail (`INV-G-09`). |
-| Types and units | Every field is the declared typed quantity with the declared unit (`INV-G-02`). |
+| Types and units | Every field is the declared primitive, and its identifier's unit suffix and frame prefix agree with the Unit column and the section it sits in (`INV-G-02`). |
 | Cardinality | `1`, `[H]`, `[S,H]`, `[B]`, `0..1` as declared; array lengths against `horizon`/`scenarioCount` (`INV-G-06`, `INV-G-07`). |
 | Ranges | Elementwise, every element (`INV-G-10`). A range test that checks only `array[0]` is the bug this invariant exists for. |
 | No-NaN | Elementwise across every numeric array (`INV-G-01`). |
@@ -251,8 +251,11 @@ hand-built fixtures and recorded seams.
 `C0` §5: a unit change is **always** a major version bump. `T1` asserts this
 mechanically by comparing the current contract's unit annotations against the
 previous released version's; any changed unit under an unchanged major version
-fails the build. A field silently moving from `EUR/MWh` to `EUR/kWh` is the
-archetypal catastrophic change and it is cheap to make impossible.
+fails the build. A field moving from `EUR/MWh` to `EUR/MW` — an energy price
+becoming a capacity price — is the archetypal catastrophic change, and it is
+cheap to make impossible. Under `00-overview/02-conventions.md` §5.2 it cannot
+even be attempted silently: the unit suffix in the identifier must move with the
+unit, so `INV-G-02` fails on the disagreement before this check runs.
 
 ### 9.3 Backend agreement
 

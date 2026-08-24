@@ -1,6 +1,6 @@
 # L2 — Valuation
 
-Turns "what do we believe about the world right now" into "what is a MWh, a kW
+Turns "what do we believe about the world right now" into "what is a MWh, a MW
 of peak, or a MW of aFRR capacity worth in euros right now" — expressed as
 linearizable primitives (ADR-008), not as prices.
 
@@ -49,14 +49,14 @@ documented.
 
 ### PeakView — network demand charge
 
-Prices the marginal kW of grid peak, under whichever tariff regimes are active
+Prices the marginal MW of grid peak, under whichever tariff regimes are active
 (ADR-011).
 
 - **Emits:** one `EpigraphTerm` per active regime.
 - **Slot set:** all slots for `AnnualLeistungspreis`; **HLZF slots only** for
   `AtypicalHlzf` — expressed through `EpigraphTerm.overSlots`, which is why that
   field is a slot *set* rather than a range.
-- **Floor:** `realisedPeak` from L0, adjusted upward for the unsettled gap
+- **Floor:** `pPoiRealisedPeakMw` from L0, adjusted upward for the unsettled gap
   (C5 §2) using the engine's own modelled trajectory.
 - **Risk treatment:** the peak level used is an **empirical CVaR tail mean over
   the joint ensemble**, not the mean forecast. Concretely, over the reduced
@@ -68,12 +68,12 @@ Prices the marginal kW of grid peak, under whichever tariff regimes are active
   `prorationFactor` scales the in-horizon charge; the remainder is priced by `V`.
   Getting this wrong is the most common way to make the engine pathologically
   peak-averse.
-- **Degradation response:** poor `load` quality adds
-  `riskProfile.peakSafetyMarginKw` to the floor rather than changing behaviour.
+- **Degradation response:** poor `loadMw` quality adds
+  `riskProfile.pPoiPeakSafetyMarginMw` to the floor rather than changing behaviour.
 
 ### OppCostView — the internal cost of using the battery
 
-- **Emits:** `LinearTerm` (cycle/throughput cost per kWh, from the degradation
+- **Emits:** `LinearTerm` (cycle/throughput cost per MWh, from the degradation
   model), `BoundTerm` (power limits, POI limits), and the **`PwlTerm` carrying
   V(SOC)** (ADR-007).
 - **Does not emit λ_SOC.** λ is an output of the Planner, obtained as the
@@ -167,7 +167,7 @@ Recorded so the gaps are deliberate:
   generation and priced against spot and the delineation `λ_j`. A view that scheduled
   curtailment would be a rule wearing a price.
 - **SelfConsumptionView** — **not needed, and deliberately absent** (ADR-017). Avoided
-  import is already `TariffView` + `SpotView`, and the delineation leg — a kWh
+  import is already `TariffView` + `SpotView`, and the delineation leg — a MWh
   discharged into load never enters `(11)` and so forfeits both routes — falls out of
   the accumulator state equations. Revisit only if retail supply stops being
   spot-indexed.
@@ -252,7 +252,7 @@ booked as revenue** (ADR-017), so exclusivity is unaffected: `(20)` is reported 
 diagnostic quantity and never as an effect.
 
 **Note on `SubsidyRevenue`.** It is the Marktprämie `MAX[AW − MW_month; 0]` on `(32)`
-only. Spot revenue on the same exported kWh stays in `SpotEnergyValue`, which is what
+only. Spot revenue on the same exported MWh stays in `SpotEnergyValue`, which is what
 makes the double count impossible by construction rather than by check.
 
 Two effects may share a **base** (`NetworkPeakCharge` and
@@ -268,8 +268,8 @@ Quality never becomes a branch (ADR-014 §1). It becomes parameters:
 
 | Degraded input | Risk response |
 |---|---|
-| `load` quality | ↑ `peakSafetyMarginKw`; ↑ `cvarLevel` for peak |
-| `pv` quality | ↑ `peakSafetyMarginKw` (PV shortfall raises import) |
+| `loadMw` quality | ↑ `pPoiPeakSafetyMarginMw`; ↑ `cvarLevel` for peak |
+| `pvAvailMw` quality | ↑ `pPoiPeakSafetyMarginMw` (PV shortfall raises import) |
 | price beliefs | ↓ `positionScale`; ↑ `cvarWeight` |
 | `activation` beliefs | ↑ `chanceLevel` for SOC feasibility |
 | `V(SOC)` stale | apply `stalenessPenalty` shrink to `V`'s slopes |
@@ -287,8 +287,8 @@ Beyond the seam conformance tests, the properties worth asserting per view
 
 - **Determinism** — same C1 in, byte-identical C2 out.
 - **Schema closure** — output contains only declared fields.
-- **Monotonicity** — raising `peakPrice` never lowers the priced value of peak
-  reduction; raising `afrrCapPrice` never lowers the capacity curve.
+- **Monotonicity** — raising `peakPriceEurPerMw` never lowers the priced value of peak
+  reduction; raising `afrrCapPriceEurPerMwH` never lowers the capacity curve.
 - **Zero-price invariance** — a term whose price is zero contributes nothing.
 - **Scale equivariance** — scaling all prices by `k > 0` scales all EUR terms by
   `k` and leaves all bounds unchanged. This catches a surprising number of

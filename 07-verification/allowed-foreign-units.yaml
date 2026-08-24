@@ -1,0 +1,67 @@
+# Every place the specification is allowed to write kW, kWh or a factor of 1000.
+#
+# Conventions §2 says there is one unit system and no kW anywhere. Two kinds of
+# text are exempt and both are deliberate:
+#
+#   * a regulatory primitive, transcribed in the unit the regulation quotes it
+#     in — §2 forbids rewriting a primitive to suit the table;
+#   * a sentence whose job is to say that kW does not exist.
+#
+# Anything else is a stale unit. check_units.py fails on an occurrence not
+# listed here, which is what makes the rule enforced rather than aspirational:
+# adding a line to this file is a decision someone has to write down.
+#
+# Format: one entry per file, with the substrings allowed to carry the token.
+
+00-overview/03-mispel-reference.md:
+  reason: >
+    The MiSpel register definitions are the delineation ground truth and are
+    transcribed verbatim. The registers are quarter-hour meter values in kWh
+    because that is what the regulation defines; the engine normalises them to
+    MWh at dataload (L5 §4). The allowance covers the kWh registers only: the
+    file's one power row, `Px_inst`, was moved to MW by the owner at 395826c,
+    which changes no value because `Px_inst` is used solely in the ratio
+    `ZFx = Px_inst / (Pa_inst + Pb_inst)`, where the unit cancels.
+  allow_whole_file: true
+
+00-overview/02-conventions.md:
+  reason: The rule itself, and the primitive-transcription example it names.
+  allow:
+    - "There is no kW anywhere in the"
+    - "Leistungspreis in EUR/kW/a"
+
+02-layers/L5-settlement.md:
+  reason: Names the one ingest boundary where a foreign unit enters.
+  allow:
+    - "transcribed in kWh because that is the unit the regulation"
+
+04-compliance/T2-property-and-metamorphic-tests.md:
+  reason: States that the kW/MW hazard no longer exists.
+  allow:
+    - "The kW/MW half of this hazard no longer exists"
+
+04-compliance/T6-adversarial-audit.md:
+  reason: >
+    The config-poisoning fixture asserts that a kW literal is REJECTED. The
+    literal has to appear for the assertion to mean anything.
+  allow:
+    - '"120 EUR/kW" is rejected as a FOREIGN UNIT'
+    - "kW is not in the unit system at all"
+    - 'LoadConfig({peakPriceEurPerMw: "120 EUR/kW"})'
+
+05-implementation/P1-agent-playbook.md:
+  reason: The review checklist, which names kW and every factor of 1000 as defects.
+  allow:
+    - "There is no kW anywhere, no unit adapter"
+    - "there is only one unit system and kW no longer"
+    - "every one of them is a defect"
+    - "Search the diff for `1000`, `0.001`"
+
+stubs/Quantities.cs:
+  reason: >
+    The tombstone comment recording which types were deleted and why, so a
+    reader arriving from an old reference is not left guessing.
+  allow:
+    - "MarketUnits, which held the only sanctioned kW"
+    - "There is no kW and therefore no seam"
+    - "EnergyKwh.At(EnergyPrice), which existed to hide"

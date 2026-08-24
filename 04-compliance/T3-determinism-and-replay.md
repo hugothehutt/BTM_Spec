@@ -197,7 +197,7 @@ which is the entire point of content-addressing (ADR-013).
 
 The field-level diff is part of the tooling, not an afterthought: reporting "the
 `ValuationBundle` differs" is not actionable; reporting "`term
-PeakView.zPeak.annual`, field `floor`, `412.7 → 418.3 kW`" is.
+PeakView.zPeak.annual`, field `pPoiFloorMw`, `0.4127 → 0.4183 MW`" is.
 
 ---
 

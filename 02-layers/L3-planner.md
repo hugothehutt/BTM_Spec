@@ -57,7 +57,7 @@ Decision variables are the C2 §2 vocabulary. Constraints in three groups.
 
 **Physical.** SOC dynamics with split charge/discharge and one-way efficiency
 (`00-overview/02-conventions.md` §3); SOC bounds; power bounds per slot; POI
-envelope; the POI bridge `p_poi = load − pv − p_batt`.
+envelope; the POI bridge `p_poi = load − pv_out − p_batt`, where `pv_out = Σ_k (pv_avail − q)` is post-curtailment (`02-conventions.md` §1, ADR-016).
 
 **Market.** Position accounting per market and slot; DA position fixed after
 clearing; intraday volume bounded by `FillProbView`'s `BoundTerm`; reserve
@@ -67,11 +67,11 @@ offers on the product grid (`minBidMw`, `bidStepMw`, symmetry if required).
 problem — ADR-010):
 
 ```
-p_d[t] + rUp[b(t)]        ≤ pMaxDischarge[t]
-p_c[t] + rDn[b(t)]        ≤ pMaxCharge[t]
-soc[t] − rUp[b(t)]·D/η_d  ≥ socMin
-soc[t] + rDn[b(t)]·D·η_c  ≤ socMax
-soc[s,t] ∈ [socMin, socMax]  for weighted scenario mass ≥ 1−ε
+p_d[t] + rUp[b(t)]        ≤ pBattMaxDischargeMw[t]
+p_c[t] + rDn[b(t)]        ≤ pBattMaxChargeMw[t]
+soc[t] − rUp[b(t)]·D/η_d  ≥ socMinMwh
+soc[t] + rDn[b(t)]·D·η_c  ≤ socMaxMwh
+soc[s,t] ∈ [socMinMwh, socMaxMwh]  for weighted scenario mass ≥ 1−ε
 ```
 
 **Delineation** (ADR-017). The seven month-to-date accumulators of C6 §3.1 are carried
@@ -104,7 +104,7 @@ which is ADR-016's rejected rule one level up.
 of its own — if it needs a number, a view must own it.
 
 ```
-max  Σ LinearTerms + Σ PwlTerms + V(socTerminal) − Σ peakPrice·zPeak·proration
+max  Σ LinearTerms + Σ PwlTerms + V(socTerminal) − Σ peakPriceEurPerMw·zPeak·proration
      + Σ_j λ_j · A_j
      − cvarWeight · CVaR_α(imbalance + activation cost)
 ```
@@ -156,7 +156,7 @@ decomposition that can return infeasible is not usable in production.
 Read from L0 (C5 §4), it is what makes the staged design safe.
 
 - **`Confirmed`** entries are hard constraints. Awarded reserve fixes
-  `deliveryObligation` and its SOC corridor for the block. Filled spot positions
+  `deliveryObligationMw` and its SOC corridor for the block. Filled spot positions
   fix the position variable.
 - **`Pending`** entries are probabilistic exposure. An open order that may or may
   not fill is modelled as a scenario-dependent position, weighted by the fill
@@ -177,7 +177,7 @@ The MILP produces target positions. The **quoting policy** produces orders
    which is the Planner's indifference price in EUR/MWh.
 3. Extract **urgency** — the objective degradation if the position is not
    reached, normalised.
-4. The quoting policy maps `(target, shadowValue, urgency, fill curve,
+4. The quoting policy maps `(target, shadowValueEurPerMwh, urgency, fill curve,
    microstructure state)` to a limit-order ladder.
 5. **Hard rule:** never quote through the shadow value, except for intents tagged
    `CommitmentCover`. Enforcement is `INV-P-10`: severity `warn`, but the
@@ -271,9 +271,9 @@ Detail in `04-compliance/T2`. The properties that matter most:
 - **Metamorphic** — raise the Marktprämie `MAX[AW − MW_month; 0]`: planned PV charging
   must be non-decreasing, since PV charging is what moves `(15)` and converts grey to
   green. Raise the EnFG rate in a slack regime: planned grid charging must not decrease.
-  Raise `afrrCapPrice`: planned reserve MW must be
+  Raise `afrrCapPriceEurPerMwH`: planned reserve MW must be
   non-decreasing. Shift all prices up uniformly: planned discharge must not
-  decrease. Raise `peakPrice`: planned peak must not increase. These are cheap to
+  decrease. Raise `peakPriceEurPerMw`: planned peak must not increase. These are cheap to
   state and catch formulation errors that feasibility tests cannot.
 - **Tier agreement** — on small instances, Tiers 1, 2 and 3 solved on identical
   input; Tier 2's dual bound must dominate Tier 1's objective; Tier 3's gap

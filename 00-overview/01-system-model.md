@@ -39,7 +39,7 @@ As drawn, this is **not acyclic**, because of two dependencies:
 1. **λ_SOC** — the shadow price of state of charge — was placed in Valuation
    (`OppCost`). But λ_SOC is a *dual variable of the Planner's own optimisation*.
    Valuation cannot compute it without solving the Planner's problem.
-2. **peak_to_go** — `PeakView` prices the marginal kW of grid peak, which
+2. **peak_to_go** — `PeakView` prices the marginal MW of grid peak, which
    requires the peak *already realised* in the current accounting period. That
    is a Settlement output. Likewise the §19(2) qualification state (accumulated
    full-load hours, HLZF exposure) is realised history.

@@ -64,6 +64,18 @@ RETIRED: set[str] = {
     # and `05-implementation/P0-workstreams.md`; a rebuilt ADR-015 registers
     # them under fresh ids.
     *(f"CLM-{n:04d}" for n in range(678, 701)),
+    # ADR-003 (typed quantities), deleted by the conventions audit. Quantities
+    # are plain numerics; the unit and frame moved into the identifier, where
+    # `INV-G-02` checks them mechanically. The successor statements are owned by
+    # `00-overview/02-conventions.md` §5.2 and are registered under fresh ids.
+    *(f"CLM-{n:04d}" for n in range(277, 295)),
+    # Two conventions claims whose assertion has no successor. CLM-0069 said the
+    # sign frames were enforced as distinct C# value types; there are no value
+    # types. CLM-0085 said kW->MW conversion happens only at the market adapter
+    # and that there is exactly one 1000.0 per direction; there is no kW, no
+    # adapter and no 1000.0. Both are gone rather than reworded, because a
+    # reworded version would assert nothing.
+    "CLM-0069", "CLM-0085",
 }
 
 INV_RE = re.compile(r"\bINV-[A-Z]+-\d{2}\b")
@@ -267,6 +279,23 @@ def main() -> int:
             anchored.add(str(a))
     for inv in sorted(declared - anchored):
         fail(f"{inv}: defined in the specification, anchored to no claim")
+
+    # 4b ADR anchors resolve to a live ADR. Without this, deleting an ADR leaves
+    # every claim anchored to it pointing at nothing and the register still
+    # reports zero failures — which is exactly what ADR-003's deletion did to 68
+    # entries before this check existed.
+    adr_re = re.compile(r"^ADR-(\d{3})$")
+    live_adrs = {p.name.split("-")[1]
+                 for p in (ROOT / "01-adr").glob("ADR-*.md")}
+    for e in entries:
+        for a in e.get("anchors") or []:
+            m = adr_re.match(str(a).strip())
+            if m and m.group(1) not in live_adrs:
+                fail(f"{e.get('id')}: anchored to {a}, which is not a live ADR")
+        src = str(e.get("br_source") or "").strip()
+        m = adr_re.match(src)
+        if m and m.group(1) not in live_adrs:
+            fail(f"{e.get('id')}: br_source {src} is not a live ADR")
 
     # 8 depends_on
     graph = {str(e.get("id")): [str(d) for d in (e.get("depends_on") or [])]

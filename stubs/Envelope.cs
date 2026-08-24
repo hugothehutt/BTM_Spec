@@ -223,7 +223,7 @@ public abstract record ContractEnvelope
 /// <param name="InvariantId">Invariant ID, e.g. <c>INV-G-01</c>, <c>INV-V-12</c>
 /// (naming: conventions §5).</param>
 /// <param name="FieldPath">Payload path of the offending field, e.g.
-/// <c>pwlTerms[3].breakpointsY[7]</c>.</param>
+/// <c>pwlTerms[3].breakpointsYEur[7]</c>.</param>
 /// <param name="Message">Human-readable diagnosis.</param>
 /// <param name="Action">What the failure costs. Consumer-side failures are
 /// always <see cref="ViolationAction.Halt"/> (C0 §4).</param>
@@ -283,9 +283,11 @@ public interface IContractValidator
 ///   <item><term>INV-G-01</term><description>No <c>NaN</c>, no infinity, in any
 ///     numeric field. Missing is expressed by an explicit quality/provenance
 ///     field, never by a sentinel (conventions §6).</description></item>
-///   <item><term>INV-G-02</term><description>Every numeric field has a declared
-///     unit; no bare <c>double</c>. Enforced structurally by the typed quantities
-///     in <c>Quantities.cs</c> (ADR-003).</description></item>
+///   <item><term>INV-G-02</term><description>Every dimensioned field's unit
+///     suffix equals its declared unit, every power and energy field names its
+///     frame, and every dimensionless field declares a kind and a closed range
+///     (conventions §5.2, §2.3). Checked off the contract field tables by
+///     <c>07-verification/check_units.py</c>.</description></item>
 ///   <item><term>INV-G-03</term><description><c>schemaVersion</c> is recognised
 ///     by the consumer.</description></item>
 ///   <item><term>INV-G-04</term><description><c>contentHash</c> matches the

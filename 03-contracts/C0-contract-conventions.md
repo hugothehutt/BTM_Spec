@@ -28,8 +28,8 @@ Every contract documents its fields in a table with these columns:
 | Column | Meaning |
 |---|---|
 | Field | Name, in the payload's own casing |
-| Type | The typed quantity (ADR-003), not a primitive |
-| Unit | Explicit, even when implied by the type |
+| Type | The primitive: `double` for every dimensioned and dimensionless quantity, `int`, `bool`, an enum, or `SlotId` |
+| Unit | Explicit, and equal to the unit suffix the field name carries (`00-overview/02-conventions.md` §5.2). `—` for dimensionless fields, which then declare a kind and a range (§2.3) |
 | Card. | `1`, `[H]` (per slot), `[S,H]` (per scenario/slot), `[B]` (per block), `0..1` (optional) |
 | Range | Admissible values; violation is a contract failure |
 | Null | Whether absent is legal, and what absent means |
@@ -48,7 +48,7 @@ Applied at every seam by a shared validator, invoked on both sides.
 | ID | Invariant |
 |---|---|
 | `INV-G-01` | No `NaN`, no infinity, in any numeric field |
-| `INV-G-02` | Every numeric field has a declared unit in its field table. Dimensioned quantities use a typed quantity (ADR-003); dimensionless fields (fractions, probabilities, weights, ratios, counts) may be `double`/`int` but must be declared `—` in the Unit column and range-constrained. A dimensioned field typed as a bare `double` is a violation. |
+| `INV-G-02` | Three mechanical equalities, all read off the field table. **(a)** Every dimensioned field's identifier ends in its unit — `Mw`, `Mwh`, `EurPerMwh`, `EurPerMw`, `EurPerMwH`, `Eur` — and that suffix **equals** the Unit column of its own row. **(b)** Every power and energy field carries a frame prefix — `pBatt*` or `soc*` (battery), `pPoi*` (POI), or the market product's own name — and appears in that frame's section. **(c)** Every dimensionless field carries `—` in the Unit column plus a declared kind and a closed range (`00-overview/02-conventions.md` §2.3). A suffix that disagrees with the Unit column, a power or energy field naming no frame, and a dimensionless field with no range are each a violation. |
 | `INV-G-03` | `schemaVersion` is recognised by the consumer |
 | `INV-G-04` | `contentHash` matches the payload; `inputHashes` are present and non-empty |
 | `INV-G-05` | No payload contains a wall-clock timestamp taken at construction |
@@ -79,9 +79,22 @@ producer is in an unknown state and nothing downstream can be trusted.
 - **Any other change** — removing a field, changing a type, changing a unit,
   changing a semantic, tightening a range → **major version bump**, and the
   consumer must be updated in the same commit.
-- **Unit changes are always major**, even when the type is unchanged. A field
-  that silently moves from EUR/MWh to EUR/kWh is the archetypal catastrophic
-  change.
+- **Unit changes are always major.** A field moving from EUR/MWh to EUR/MW — an
+  energy price becoming a capacity price — is the archetypal catastrophic change.
+  It cannot be *silent*: `00-overview/02-conventions.md` §5.2 requires the
+  identifier's unit suffix to change with the unit, so the rename is the alarm
+  and `INV-G-02` fails the build if the two disagree.
+
+**`C1` through `C6` are at 2.0.** The MW/MWh cascade
+([Propagate MW/MWh and retire typed quantities](https://github.com/hugothehutt/BTM_Spec/issues/41))
+changed a unit on every one of them — `peakPriceEurPerMw` became a capacity
+price with the accounting period an explicit input, `vSocSlopesEurPerMwh` moved to
+EUR/MWh, and every power and energy field moved to MW/MWh — and split `C3`/`C4`'s
+single `limitPrice`/`volume` pair, whose unit depended on `market`, into two
+exclusive pairs. Under the rule above each of
+those is major on its own, so there is no 1.x of any contract that a consumer
+should still be reading. No 2.x consumer accepts a 1.x payload: `INV-G-03`
+rejects an unrecognised major rather than guessing at it.
 
 The change discipline in the root `README.md` applies: a contract change requires
 the doc, the version and the conformance tests in one commit.

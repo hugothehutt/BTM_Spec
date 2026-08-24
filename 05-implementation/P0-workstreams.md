@@ -22,7 +22,7 @@ order:
 | Reversibility | Decisions | Consequence for sequencing |
 |---|---|---|
 | **Very expensive** | ADR-004, ADR-005 (belief store, joint ensemble), ADR-006, ADR-008 (contract surface), ADR-013 (determinism) | Build first, build correctly. Retrofitting means rewriting everything above. |
-| Expensive later | ADR-003 (typed quantities), ADR-007 (V not λ), ADR-011 (tariff plug-in) | Get the *types and interfaces* right early; the implementations can follow. |
+| Expensive later | ADR-007 (V not λ), ADR-011 (tariff plug-in) | Get the *interfaces* right early; the implementations can follow. |
 | Moderate | ADR-002, ADR-009, ADR-010, ADR-012, ADR-014 | Sequence for convenience. |
 | Cheap | ADR-001 (solver behind an abstraction) | Defer deliberately — this is OPEN-1. |
 
@@ -72,9 +72,9 @@ correctly sits after W1. Everything else keeps the proposed order.
 | | |
 |---|---|
 | **Goal** | Freeze the vocabulary before anyone writes against it. |
-| **Deliverable** | `stubs/` promoted to `src/Flexbid.Btm.Contracts` with implementations of the value types, the envelope, `IContractValidator` and the five invariant registers (`INV-G-*`, `INV-D-*`, `INV-V-*`, `INV-P-*`, `INV-X-*`, `INV-S-*`); stable binary + JSON serialisers; `ContentHash` / `ManifestId` computation; `SolveBudget` in deterministic work units. |
+| **Deliverable** | `stubs/` promoted to `src/Flexbid.Btm.Contracts` with implementations of the payload records, the envelope, `IContractValidator` and the five invariant registers (`INV-G-*`, `INV-D-*`, `INV-V-*`, `INV-P-*`, `INV-X-*`, `INV-S-*`); stable binary + JSON serialisers; `ContentHash` / `ManifestId` computation; `SolveBudget` in deterministic work units. |
 | **Depends on** | Nothing. This is the root. |
-| **Definition of done** | (a) Every field in every C0–C5 field table has a corresponding typed member, verified by a table-driven test that parses the markdown field tables and asserts one-to-one correspondence with the DTO members — the doc and the code cannot drift silently. (b) Round-trip property test: for 10 000 generated payloads per contract, `Deserialize(Serialize(x)) == x` and `Hash(Serialize(x))` is stable across process restarts and across machine architectures. (c) Every invariant in every register has at least one passing test and one *failing* test that asserts the correct `ViolationAction`. (d) A payload containing a bare `double` in a contract position fails a Roslyn analyzer rule (`INV-G-02`). |
+| **Definition of done** | (a) Every field in every C0–C5 field table has a corresponding member, verified by a table-driven test that parses the markdown field tables and asserts one-to-one correspondence with the DTO members — the doc and the code cannot drift silently. (b) Round-trip property test: for 10 000 generated payloads per contract, `Deserialize(Serialize(x)) == x` and `Hash(Serialize(x))` is stable across process restarts and across machine architectures. (c) Every invariant in every register has at least one passing test and one *failing* test that asserts the correct `ViolationAction`. (d) The same table-driven test enforces `INV-G-02`: a field whose identifier suffix disagrees with its Unit column, a power or energy field carrying no frame prefix, and a dimensionless field with no declared range each fail the build. This is a lint over the field tables, not a Roslyn analyzer — with no wrapper types there is nothing in the type system left to check. |
 | **ADR-015 review** | None of OPEN-1/2/3 is touched. Confirm no contract field has acquired a dependency on solver identity, latency budget or fill-model fidelity. `FillProbView`'s output is a `BoundTerm` either way (OPEN-3), so C2 is safe. |
 
 ### W1 — Belief store
@@ -114,7 +114,7 @@ correctly sits after W1. Everything else keeps the proposed order.
 | **Goal** | Build the accounting system before the thing whose output must be accounted for. |
 | **Deliverable** | `ISettlementEngine`: ex-post recomputation from C4 plus metered reality; `PnlAttribution` by `EconomicEffect`; the four-bucket `ErrorDecomposition` scaffolding (buckets that need a Planner return zero and are marked unavailable, not omitted); `IStateStore` with the durable, content-addressed L0; peak accounting on the civil calendar; the §19(2) qualification tracker; the commitment ledger with `Pending`/`Confirmed` semantics. |
 | **Depends on** | W0, W1, W2. |
-| **Definition of done** | (a) Replaying a recorded week of C4 payloads reproduces the independently-computed network bill and energy bill to within `1e-6 EUR`, against a spreadsheet reconciliation prepared by someone who did not write the code. (b) `INV-S-01` holds across a month boundary *and* across both DST transitions: realised peak resets at local midnight, not at a fixed UTC offset. (c) `INV-S-06` (`fullLoadHours = annualEnergy / annualPeak`) holds over a synthetic full year. (d) `unexplained` is zero on a fully-synthetic outcome whose true decomposition is known by construction. (e) A restart from a persisted `StateSnapshot` reproduces the pre-restart state bit-identically. |
+| **Definition of done** | (a) Replaying a recorded week of C4 payloads reproduces the independently-computed network bill and energy bill to within `1e-6 EUR`, against a spreadsheet reconciliation prepared by someone who did not write the code. (b) `INV-S-01` holds across a month boundary *and* across both DST transitions: realised peak resets at local midnight, not at a fixed UTC offset. (c) `INV-S-06` (`fullLoadHours = annualEnergy / annualPeak`) holds over a synthetic full year. (d) `unexplainedEur` is zero on a fully-synthetic outcome whose true decomposition is known by construction. (e) A restart from a persisted `StateSnapshot` reproduces the pre-restart state bit-identically. |
 | **ADR-015 review** | None of the three is touched. Check that no settlement code has acquired a dependency on which tier produced the plan beyond the recorded `TierUsed` field. |
 
 > **Why before the Planner?** Two reasons, and the second is the important one.
@@ -138,7 +138,7 @@ correctly sits after W1. Everything else keeps the proposed order.
 | **Deliverable** | `PeakView`, `OppCostView`, `AfrrCapacityView`, `AfrrEnergyView`, `ImbalanceRiskView`, `IdOptionView`, `FillProbView`, `TariffView`, `SpotView`; `IValuationComposer` with staged preconditions; the ownership matrix as enforced data; `ITariffRegime` implementations for `AnnualLeistungspreis`, `MonthlyLeistungspreis` and `AtypicalHlzf`; the quality→risk mapping (L2 §6). |
 | **Depends on** | W0, W1, W3 (views read `StateSnapshot`). |
 | **Definition of done** | (a) Every view passes the seven property tests of L2 §7 — determinism, schema closure, monotonicity, zero-price invariance, scale equivariance, concavity, ensemble coherence — with ensemble coherence asserted *negatively*: a view given a permuted scenario axis on one series must produce a **different** output, and a view that does not is ignoring the dependence structure ADR-005 exists to preserve. (b) A deliberately-injected duplicate term produces an `INV-V-01` `HALT`, not a number. (c) Composing stages out of order raises, verified for all 24 wrong permutations of the four substantive stages. (d) A `PwlTerm` declaring `Concave` over non-concave breakpoints fails `INV-V-12`. (e) `FillProbView` cannot be made to emit a priced term — verified by the type system, and by a test that asserts its output contains only `BoundTerm`. |
-| **ADR-015 review** | OPEN-3: `FillProbView`'s bound is currently a scalar volume cap. Confirm the per-price-band refinement is still additive (C1 §5 `idVolumeByPriceBand` is optional and nullable) and has not become load-bearing. |
+| **ADR-015 review** | OPEN-3: `FillProbView`'s bound is currently a scalar volume cap. Confirm the per-price-band refinement is still additive (C1 §5 `idVolumeByPriceBandMwh` is optional and nullable) and has not become load-bearing. |
 
 ### W5 — Planner Tier 1 (joint MILP)
 
@@ -147,7 +147,7 @@ correctly sits after W1. Everything else keeps the proposed order.
 | **Goal** | The accuracy reference, and the first end-to-end optimiser. |
 | **Deliverable** | The core model (L3 §2): SOC dynamics with split charge/discharge, POI bridge, market position accounting, the ADR-010 coupling block, two-stage structure with structural non-anticipativity; term ingestion from all five C2 shapes; `IOptimizationBackend` with at least two backends (one MILP, one LP-relaxation); feasibility restoration by `BoundReason` order; the `SolveBudget` fallback ladder; `PlanResult` recording; the DA parametric re-solve producing a monotone bid curve. |
 | **Depends on** | W0, W2, W4. |
-| **Definition of done** | (a) The metamorphic suite of L3 §9 passes: raise `afrrCapPrice` → planned reserve MW non-decreasing; shift all prices up uniformly → planned discharge does not decrease; raise `peakPrice` → planned peak does not increase. (b) Commitment safety: injecting a confirmed award the current SOC cannot serve produces `HALT`, never a quiet under-delivery. (c) Feasibility under *every* scenario in the ensemble, not the mean. (d) Each rung of the budget-exhaustion ladder is reachable under a forced timeout and the correct rung is taken and recorded. (e) Two backends agree on objective value within tolerance on the same model (T1). (f) `binariesByOrigin` matches the binaries the model builder actually created, exactly. |
+| **Definition of done** | (a) The metamorphic suite of L3 §9 passes: raise `afrrCapPriceEurPerMwH` → planned reserve MW non-decreasing; shift all prices up uniformly → planned discharge does not decrease; raise `peakPriceEurPerMw` → planned peak does not increase. (b) Commitment safety: injecting a confirmed award the current SOC cannot serve produces `HALT`, never a quiet under-delivery. (c) Feasibility under *every* scenario in the ensemble, not the mean. (d) Each rung of the budget-exhaustion ladder is reachable under a forced timeout and the correct rung is taken and recorded. (e) Two backends agree on objective value within tolerance on the same model (T1). (f) `binariesByOrigin` matches the binaries the model builder actually created, exactly. |
 | **ADR-015 review** | **OPEN-1 becomes decidable here** — ADR-015 states it is blocked by L3 reaching a fixed formulation. On W5 completion the variable count, binary count by source, `General`-curvature terms, simultaneity-binary status and scenario count are all known. Benchmark, then choose. Also check the Gurobi seat count question against *backtest* throughput, since parallel backtests each need a seat. |
 
 > **Why Tier 1 before Tiers 2 and 3?** Because Tier 1 is the oracle, and without
@@ -156,7 +156,7 @@ correctly sits after W1. Everything else keeps the proposed order.
 > cannot be measured is indistinguishable from a bug. Building Tier 3 first would
 > be building the fast path before the definition of "correct" exists — and Tier
 > 3 is precisely the tier most likely to be *plausibly* wrong, because a learned
-> surface fails smoothly and quietly. Tier 1 also produces the `optimalityGap`
+> surface fails smoothly and quietly. Tier 1 also produces the `optimalityGapEur`
 > bucket in C5 §6, so the value of the whole ladder is unmeasurable until it
 > exists. Tier 1 may never run in production; that is an accepted cost.
 
@@ -165,8 +165,8 @@ correctly sits after W1. Everything else keeps the proposed order.
 | | |
 |---|---|
 | **Goal** | Turn target positions into orders, without letting the fill process into the solver. |
-| **Deliverable** | `IQuotingPolicy` mapping `(target, shadowValue, urgency, fill curve, microstructure) → limit order ladder`; the fill-probability artefact and its calibration against the existing simulator; `IExecutionAdapter` consuming `ExecutionIntentProjection`; cancel/replace semantics. |
-| **Depends on** | W5 (`shadowValue` must be extracted from a real solve, not approximated). |
+| **Deliverable** | `IQuotingPolicy` mapping `(target, shadowValueEurPerMwh, urgency, fill curve, microstructure) → limit order ladder`; the fill-probability artefact and its calibration against the existing simulator; `IExecutionAdapter` consuming `ExecutionIntentProjection`; cancel/replace semantics. |
+| **Depends on** | W5 (`shadowValueEurPerMwh` must be extracted from a real solve, not approximated). |
 | **Definition of done** | (a) `INV-P-10` holds on a full replay: no intent priced through the shadow value except those tagged `CommitmentCover`. (b) `INV-X-04` is structural: a compile test asserts `IExecutionAdapter`'s parameter type has no `ShadowValue` or `Urgency` member, at any depth. (c) T4 calibration: realised fill rate matches predicted fill rate by price band, product and time-to-gate, within a declared tolerance; systematic divergence is reported as a calibration failure, not absorbed. (d) The execution-slippage bucket in C5 §6 becomes non-zero and reconciles with intent-versus-executed price on a recorded week. |
 | **ADR-015 review** | **OPEN-3 becomes decidable here** — it is blocked on characterising the simulator, which is what (c) does. Take the decision, and record the simulator-bias caveat as an open risk (see §5, R3) rather than closing it. |
 
@@ -217,14 +217,14 @@ possible implementation, drive one path end to end.
 | Uncertainty | The joint ensemble, at a small `S`. Real ensemble machinery, small size. |
 | Planner | Tier 1 only, no reserve variables, no coupling block. |
 | Execution | The existing simulator, DA only. |
-| Settlement | Full: peak accounting, P&L by effect, and the `forecastError` / `modelError` / `executionSlippage` buckets. |
+| Settlement | Full: peak accounting, P&L by effect, and the `forecastErrorEur` / `modelErrorEur` / `executionSlippageEur` buckets. |
 | Determinism | Full: manifest, seam recording, golden replay of **one recorded week**, lookahead audit. |
 
 ### Out of scope
 
 aFRR (capacity and energy), continuous intraday, the quoting policy, imbalance,
 HLZF and `IntensiveUse` regimes, the fitted value function, the slow loop,
-Tiers 2 and 3, degradation modes beyond `NORMAL`/`HALT`, and the `optimalityGap`
+Tiers 2 and 3, degradation modes beyond `NORMAL`/`HALT`, and the `optimalityGapEur`
 bucket (which is identically zero when only Tier 1 exists — correctly so).
 
 ### Why DA-only is the right first market
@@ -233,7 +233,7 @@ Not because it is the largest revenue line, but because **DA needs no quoting
 policy**. A DA submission is a monotone bid curve produced by the Planner's own
 parametric re-solve (ADR-012, L3 §5); the price-quantity schedule *is* the
 output. Every other market requires the target-position → limit-order mapping,
-which requires `shadowValue` extraction, a fill model and a calibration run. DA
+which requires `shadowValueEurPerMwh` extraction, a fill model and a calibration run. DA
 lets the slice cross C3 with the Planner's own artefact and defers an entire
 workstream.
 
@@ -242,13 +242,13 @@ workstream.
 1. **The seams hold under a real payload.** Five contracts, validated on both
    sides, round-tripping and hashing, with a real week of data behind them.
 2. **The loop closes.** Settlement's realised peak becomes next tick's
-   `EpigraphTerm.floor` through L0, at a one-tick lag, and `INV-S-01` holds
+   `EpigraphTerm.pPoiFloorMw` through L0, at a one-tick lag, and `INV-S-01` holds
    across a month boundary. This is the single hardest structural property in the
    system (ADR-006) and it is proven by the smallest possible instance.
 3. **Determinism is real.** The recorded week replays byte-identically, and the
    lookahead audit passes on a pipeline that actually computes something.
 4. **The ownership matrix works.** Four views, four effects, zero double counts —
-   and `unexplained` in C5 §5 is near zero, which is the empirical statement that
+   and `unexplainedEur` in C5 §5 is near zero, which is the empirical statement that
    Valuation and Settlement agree on what the terms mean.
 5. **The proration is right.** `prorationFactor` on a one-week horizon inside an
    annual accounting period is the most likely place for the engine to become
@@ -272,7 +272,7 @@ Each row must be demonstrably true — a passing, named test or a published repo
 | **G1** | W1 | No read API without `asOf` exists (enforced, not reviewed); three-revision `asOf` test passes; 12-month replay memory within 5% of 1-month; DST fixtures for both transitions in three consecutive years; `INV-D-05` fails on a permuted axis. |
 | **G2** | W2 | Byte-identical replay on two machines in CI; T6 lookahead audit passes; T3 acyclicity audit passes; Merkle diff localises a perturbed input in one step. |
 | **G3** | W3 | Recorded week reconciles to an independently-prepared bill within `1e-6 EUR`; `INV-S-01` across a month boundary and both DST transitions; `INV-S-06` over a synthetic year; `unexplained = 0` on a synthetic outcome; bit-identical restart from `StateSnapshot`. |
-| **G3.5** | **First vertical slice** | One recorded week runs L1→L5 and back to L0; replays byte-identically; realised peak from tick *n* is the epigraph floor at tick *n+1*; `unexplained` below threshold; three of four error buckets populated and reconciling. |
+| **G3.5** | **First vertical slice** | One recorded week runs L1→L5 and back to L0; replays byte-identically; realised peak from tick *n* is the epigraph floor at tick *n+1*; `unexplainedEur` below threshold; three of four error buckets populated and reconciling. |
 | **G4** | W4 | All seven L2 §7 properties per view, ensemble coherence asserted negatively; injected duplicate term halts; all 24 wrong stage permutations raise; mis-declared curvature halts; `FillProbView` proven priceless. |
 | **G5** | W5 | Full metamorphic suite passes; commitment-safety `HALT` verified; feasibility under every scenario; all four budget-exhaustion rungs reachable and recorded; two backends agree within tolerance; declared binaries equal built binaries. **OPEN-1 taken.** |
 | **G6** | W6 | `INV-P-10` clean over a replay; `INV-X-04` proven structurally by a compile test; T4 fill-rate calibration within tolerance by price band; slippage bucket reconciles. **OPEN-3 taken.** |
@@ -287,8 +287,8 @@ Each row must be demonstrably true — a passing, named test or a published repo
 | ID | Risk | Why it is real here | Mitigation | Leading indicator |
 |---|---|---|---|---|
 | **R1** | **Solve time exceeds the budget** once it is set (OPEN-2). | The joint model is scenarios × slots × binaries, and the budget is unknown until intraday participation is decided — periodic versus event-driven imply budgets two orders of magnitude apart. | The ADR-010 tier ladder exists for exactly this: the production tier is a configuration choice made late, with data. `problemClassHint.binariesByOrigin` makes any regression attributable to a specific economic modelling choice rather than mysterious. Breakpoint count and scenario count are tuning knobs with measured accuracy/speed curves (T5). | Solve-time distribution per tier per gate type, tracked from W2 onward, before the budget exists. |
-| **R2** | **Scenario model quality, not the optimiser, is the binding constraint on value.** | The engine can only be as good as the joint distribution it is handed. A perfect optimiser over a poor ensemble loses to a mediocre optimiser over a good one, and the whole cross-market case rests on *correlation* — activation with imbalance with intraday with residual load (ADR-005). | The C5 §6 decomposition is the instrument: `forecastError` versus `optimalityGap` says directly which one is binding. The T5 perfect-foresight upper bound separates "our optimiser is weak" from "the world is uncertain". Resource allocation follows the buckets, not intuition. | `forecastError` persistently exceeding `optimalityGap` by a wide margin. If it does, stop tuning the solver. |
+| **R2** | **Scenario model quality, not the optimiser, is the binding constraint on value.** | The engine can only be as good as the joint distribution it is handed. A perfect optimiser over a poor ensemble loses to a mediocre optimiser over a good one, and the whole cross-market case rests on *correlation* — activation with imbalance with intraday with residual load (ADR-005). | The C5 §6 decomposition is the instrument: `forecastErrorEur` versus `optimalityGapEur` says directly which one is binding. The T5 perfect-foresight upper bound separates "our optimiser is weak" from "the world is uncertain". Resource allocation follows the buckets, not intuition. | `forecastErrorEur` persistently exceeding `optimalityGapEur` by a wide margin. If it does, stop tuning the solver. |
 | **R3** | **Simulator-calibration bias** (ADR-015 OPEN-3). | The fill model is calibrated against the existing simulator, so it inherits the simulator's biases. That is correct while the simulator is the venue, and quietly wrong the moment a real venue is connected. | Recorded now, as ADR-015 requires, rather than discovered later. Concretely: keep the fill model a separate versioned artefact (never inlined into the quoting policy), keep the calibration procedure runnable against any outcome stream, and treat simulator-versus-venue divergence as a named, measured quantity at cutover rather than a surprise. | T4 divergence between realised and predicted fill rate drifting after any simulator change — which is why T4 re-runs whenever the simulator changes, not only per release. |
 | **R4** | **Value function fitting is harder than expected.** | `V` must be concave in SOC, conditioned on a discrete qualification state, fitted over a long horizon on a joint ensemble, and refreshed on drift. The §19(2) cliff makes the underlying value genuinely non-concave, and the response — a separate discrete state dimension — multiplies the fitting problem by the state count. It is also the piece with the most headroom, so it will attract the most churn. | `C_slow` output is an input, never a dependency: the Planner runs on the last valid `V` with a staleness penalty and never blocks. Concavity is enforced by hull projection, so a poor fit is *conservative*, not invalid. The fixed hand-specified `V` in the first vertical slice is a permanent fallback, not scaffolding. `V` is a versioned artefact, so a bad version is a one-line manifest revert. | `stateDriftSignal` persistently high; the fitted-`V` A/B in G7 failing to beat the fixed target. |
-| **R5** | **Contract churn under parallel work.** | Nine workstreams, one frozen surface. A single unversioned field addition made on a branch propagates as silent disagreement between layers. | The change discipline (root `README.md`): doc + version + conformance tests in one commit, restated in the engine repo's `CLAUDE.md`. Surface frozen and committed at W0 before any parallel worktree opens. `unexplained` in C5 §5 is the empirical detector: it rises when a term definition drifts between Valuation and Settlement. | `unexplainedRatio` trending up with no change in data quality. |
+| **R5** | **Contract churn under parallel work.** | Nine workstreams, one frozen surface. A single unversioned field addition made on a branch propagates as silent disagreement between layers. | The change discipline (root `README.md`): doc + version + conformance tests in one commit, restated in the engine repo's `CLAUDE.md`. Surface frozen and committed at W0 before any parallel worktree opens. `unexplainedEur` in C5 §5 is the empirical detector: it rises when a term definition drifts between Valuation and Settlement. | `unexplainedRatio` trending up with no change in data quality. |
 | **R6** | **Determinism erodes.** | Solver thread counts, hash-order iteration, parallel float reduction order, an innocent `DateTime.UtcNow` in a log line that reaches a hash. Erosion is silent until a golden test fails for a reason nobody can localise. | Built at W2 rather than retrofitted; analyzer rule on wall-clock reads (`INV-G-05`); ordered keys everywhere; fixed reduction partitioning; production runs with more threads are recorded as a *different manifest* rather than pretended to be the same run. | Any non-deterministic CI replay, treated as a build break rather than a flake. A "flaky" determinism test is a real defect with a wrong label. |

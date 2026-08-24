@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C4: Execution → Settlement
 //
-//  Payload: ExecutionOutcome   Version: 1.0   Direction: L4 → L5
+//  Payload: ExecutionOutcome   Version: 2.0   Direction: L4 → L5
 //  Normative source: 03-contracts/C4-execution-to-settlement.md §1–§8.
 //
 //  What actually happened. Settlement must be able to reconstruct the truth from
@@ -45,16 +45,25 @@ public sealed record Fill
 
     public required OrderSide Side { get; init; }
 
-    /// <summary>Executed price. Unit EUR/MWh or EUR/MW/h.</summary>
-    public required OrderPrice Price { get; init; }
+    /// <summary>Executed price. Unit EUR/MWh. Energy markets only.</summary>
+    public double? PriceEurPerMwh { get; init; }
 
-    /// <summary>Executed volume. Unit kWh or MW. Summed across all fills for an
+    /// <summary>Executed price. Unit EUR/MW/h.
+    /// <see cref="MarketId.AfrrCapacity"/> only.</summary>
+    public double? PriceEurPerMwH { get; init; }
+
+    /// <summary>Executed volume. Unit MWh. Energy markets only. Summed across all
+    /// fills for an intent, never exceeds the intended volume (INV-X-02).</summary>
+    public double? VolumeMwh { get; init; }
+
+    /// <summary>Executed volume. Unit MW of committed power.
+    /// <see cref="MarketId.AfrrCapacity"/> only. Summed across all fills for an
     /// intent, never exceeds the intended volume (INV-X-02).</summary>
-    public required OrderVolume Volume { get; init; }
+    public double? VolumeMw { get; init; }
 
     /// <summary>Unit EUR. <b>Explicit, never netted into the price</b> (C4 §2) —
     /// netting would corrupt the execution-slippage bucket in C5 §6.</summary>
-    public required Money Fees { get; init; }
+    public required double FeesEur { get; init; }
 
     public required SlotId ExecutedAt { get; init; }
 }
@@ -81,8 +90,12 @@ public sealed record Unfilled
     /// <summary>Populated for <see cref="Disposition.Rejected"/>.</summary>
     public string? RejectReason { get; init; }
 
-    /// <summary>What did not trade. Unit kWh or MW.</summary>
-    public required OrderVolume ResidualVolume { get; init; }
+    /// <summary>What did not trade. Unit MWh. Energy markets only.</summary>
+    public double? ResidualVolumeMwh { get; init; }
+
+    /// <summary>What did not trade. Unit MW.
+    /// <see cref="MarketId.AfrrCapacity"/> only.</summary>
+    public double? ResidualVolumeMw { get; init; }
 }
 
 // =============================================================================
@@ -96,16 +109,16 @@ public sealed record ReserveAward
     public required BlockId Block { get; init; }
 
     /// <summary>Unit MW.</summary>
-    public required ReserveMw AwardedUp { get; init; }
+    public required double AwardedUpMw { get; init; }
 
     /// <summary>Unit MW.</summary>
-    public required ReserveMw AwardedDn { get; init; }
+    public required double AwardedDnMw { get; init; }
 
     /// <summary>Unit EUR/MW/h.</summary>
-    public required CapacityPrice ClearingPriceUp { get; init; }
+    public required double ClearingPriceUpEurPerMwH { get; init; }
 
     /// <summary>Unit EUR/MW/h.</summary>
-    public required CapacityPrice ClearingPriceDn { get; init; }
+    public required double ClearingPriceDnEurPerMwH { get; init; }
 }
 
 /// <summary>C4 §4, per slot. Realised activation against an award.</summary>
@@ -113,22 +126,22 @@ public sealed record ReserveActivation
 {
     public required SlotId Slot { get; init; }
 
-    /// <summary>Realised activated energy. Unit kWh.</summary>
-    public required EnergyKwh ActivatedEnergyUp { get; init; }
+    /// <summary>Realised activated energy. Unit MWh.</summary>
+    public required double ActivatedEnergyUpMwh { get; init; }
 
-    /// <summary>Unit kWh.</summary>
-    public required EnergyKwh ActivatedEnergyDn { get; init; }
-
-    /// <summary>Unit EUR/MWh.</summary>
-    public required EnergyPrice ActivationPriceUp { get; init; }
+    /// <summary>Unit MWh.</summary>
+    public required double ActivatedEnergyDnMwh { get; init; }
 
     /// <summary>Unit EUR/MWh.</summary>
-    public required EnergyPrice ActivationPriceDn { get; init; }
+    public required double ActivationPriceUpEurPerMwh { get; init; }
 
-    /// <summary>Unit kWh. <b>Non-zero triggers INV-S-04</b>: alert + <c>HALT</c>.
+    /// <summary>Unit EUR/MWh.</summary>
+    public required double ActivationPriceDnEurPerMwh { get; init; }
+
+    /// <summary>Unit MWh. <b>Non-zero triggers INV-S-04</b>: alert + <c>HALT</c>.
     /// A reserve delivery failure is a prequalification risk, which is why it is
     /// never absorbed as a cost (C4 §4, ADR-014 §3).</summary>
-    public required EnergyKwh DeliveryShortfall { get; init; }
+    public required double DeliveryShortfallMwh { get; init; }
 }
 
 // =============================================================================
@@ -138,31 +151,31 @@ public sealed record ReserveActivation
 /// <summary>C4 §5. Metered truth. All series card. <c>[H]</c>.</summary>
 public sealed record PhysicalReality
 {
-    /// <summary>Unit kWh. <b>The billing-relevant series</b> — the basis of the
+    /// <summary>Unit MWh. <b>The billing-relevant series</b> — the basis of the
     /// realised peak in C5 §2.</summary>
-    public required ReadOnlyMemory<EnergyKwh> MeteredPoiImport { get; init; }
+    public required ReadOnlyMemory<double> PPoiMeteredImportMwh { get; init; }
 
-    /// <summary>Unit kWh.</summary>
-    public required ReadOnlyMemory<EnergyKwh> MeteredPoiExport { get; init; }
+    /// <summary>Unit MWh.</summary>
+    public required ReadOnlyMemory<double> PPoiMeteredExportMwh { get; init; }
 
-    /// <summary>Unit kWh. Sub-metered where available.</summary>
-    public required ReadOnlyMemory<EnergyKwh> MeteredLoad { get; init; }
+    /// <summary>Unit MWh. Sub-metered where available.</summary>
+    public required ReadOnlyMemory<double> MeteredLoadMwh { get; init; }
 
-    /// <summary>Unit kWh. Sub-metered where available.</summary>
-    public required ReadOnlyMemory<EnergyKwh> MeteredPv { get; init; }
+    /// <summary>Unit MWh. Sub-metered where available.</summary>
+    public required ReadOnlyMemory<double> MeteredPvMwh { get; init; }
 
-    /// <summary>Unit kWh. <b>At the battery terminal</b>, where losses are
+    /// <summary>Unit MWh. <b>At the battery terminal</b>, where losses are
     /// charged (conventions §3).</summary>
-    public required ReadOnlyMemory<EnergyKwh> BatteryChargeEnergy { get; init; }
+    public required ReadOnlyMemory<double> PBattChargeEnergyMwh { get; init; }
 
-    /// <summary>Unit kWh. At the battery terminal.</summary>
-    public required ReadOnlyMemory<EnergyKwh> BatteryDischargeEnergy { get; init; }
+    /// <summary>Unit MWh. At the battery terminal.</summary>
+    public required ReadOnlyMemory<double> PBattDischargeEnergyMwh { get; init; }
 
-    /// <summary>End of slot. Unit kWh. Consistency with charge/discharge energy
+    /// <summary>End of slot. Unit MWh. Consistency with charge/discharge energy
     /// and η is INV-X-05 (warn): persistent divergence is the earliest available
     /// signal that the efficiency or degradation model has drifted, and it is
     /// cheap to monitor. It feeds the model-error bucket in C5 §6.</summary>
-    public required ReadOnlyMemory<EnergyKwh> SocMeasured { get; init; }
+    public required ReadOnlyMemory<double> SocMeasuredMwh { get; init; }
 
     /// <summary>Card. <c>[H]</c>. <b>Provisional meter data is routine</b>
     /// (C4 §5).</summary>
@@ -178,15 +191,15 @@ public sealed record ImbalanceRecord
 {
     public required SlotId Slot { get; init; }
 
-    /// <summary>Unit kWh. <b>Signed.</b></summary>
-    public required EnergyKwh ImbalanceVolume { get; init; }
+    /// <summary>Unit MWh. <b>Signed.</b></summary>
+    public required double ImbalanceVolumeMwh { get; init; }
 
     /// <summary>Unit EUR/MWh. <b>Often final only weeks later</b> — the reason
     /// <c>isFinal</c> and <c>revisionOf</c> exist on this payload (C4 §1).</summary>
-    public required EnergyPrice ImbalancePrice { get; init; }
+    public required double ImbalancePriceEurPerMwh { get; init; }
 
     /// <summary>Unit EUR.</summary>
-    public required Money ImbalanceCost { get; init; }
+    public required double ImbalanceCostEur { get; init; }
 }
 
 // =============================================================================
@@ -252,17 +265,20 @@ public sealed record ExecutionOutcome : ContractEnvelope
 ///   <item><term>INV-X-02</term><description>Filled volume ≤ intended volume per
 ///     intent, across all fills → <c>HALT</c>.</description></item>
 ///   <item><term>INV-X-03</term><description>Energy balance holds within meter
-///     tolerance: <c>poiImport − poiExport = load − pv + chargeEnergy −
-///     dischargeEnergy</c> → warn if provisional, <c>HALT</c> if final.</description></item>
+///     tolerance: <c>pPoiMeteredImportMwh − pPoiMeteredExportMwh =
+///     meteredLoadMwh − meteredPvMwh + pBattChargeEnergyMwh −
+///     pBattDischargeEnergyMwh</c> → warn if provisional, <c>HALT</c> if final.
+///     Metered PV is post-curtailment. <b>No η appears here</b>, which is what
+///     places the loss boundary at the AC terminal (conventions §3).</description></item>
 ///   <item><term>INV-X-04</term><description>Execution did not consume
-///     <c>shadowValue</c>/<c>urgency</c> → <b>structural</b>, via
+///     <c>shadowValueEurPerMwh</c>/<c>urgency</c> → <b>structural</b>, via
 ///     <c>ExecutionIntentProjection</c>.</description></item>
-///   <item><term>INV-X-05</term><description><c>socMeasured</c> consistent with
+///   <item><term>INV-X-05</term><description><c>socMeasuredMwh</c> consistent with
 ///     charge/discharge energy and η within tolerance → warn; drift indicates an
 ///     η or SOH model error.</description></item>
 ///   <item><term>INV-X-06</term><description>Every award has a corresponding entry
 ///     in the commitment ledger by end of tick → <c>HALT</c>.</description></item>
-///   <item><term>INV-S-04</term><description><c>deliveryShortfall = 0</c> → alert
+///   <item><term>INV-S-04</term><description><c>deliveryShortfallMwh = 0</c> → alert
 ///     + <c>HALT</c>. Mirrored in C5 §9 because it is both an execution fact and a
 ///     state consequence.</description></item>
 /// </list>

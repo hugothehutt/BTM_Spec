@@ -1,6 +1,6 @@
 # C6 — State/Value Store → Layers (read side)
 
-**Payload:** `StateSnapshot` **Version:** 1.0 **Direction:** L0 → L1, L2, L3
+**Payload:** `StateSnapshot` **Version:** 2.0 **Direction:** L0 → L1, L2, L3
 
 The read side of L0. ADR-006 asserts that the state store is "a contract with a
 field table, a version and invariants like every other seam"; this document is
@@ -43,12 +43,12 @@ Mirrors C5 §2. Read by `PeakView` (L2) and by the escalation policy (L3).
 | Field | Type | Unit | Range | Null | Default | Notes |
 |---|---|---|---|---|---|---|
 | `regime` | `TariffRegimeId` | — | — | no | — | |
-| `realisedPeak` | `PoiPowerKw` | kW | `≥0` | no | — | The `EpigraphTerm` floor |
+| `pPoiRealisedPeakMw` | `double` | MW | `≥0` | no | — | The `EpigraphTerm` floor |
 | `realisedPeakSlot` | `SlotId` | — | — | no | — | Diagnostic |
 | `periodStart`,`periodEnd` | `SlotId` | — | — | no | — | Local-calendar derived |
 | `peakIsProvisional` | `bool` | — | — | no | `true` | |
 | `unsettledGapFrom` | `SlotId` | — | — | no | — | Peak authoritative only up to here |
-| `headroomToPeakKw` | `PoiPowerKw` | kW | `≥0` | no | `0` | Conservative default: no headroom |
+| `pPoiHeadroomToPeakMw` | `double` | MW | `≥0` | no | `0` | Conservative default: no headroom |
 | `peakCritical` | `bool` | — | — | no | `true` | Conservative default: treat as critical |
 
 **The unsettled gap is not optional to handle.** Between `unsettledGapFrom` and
@@ -56,7 +56,7 @@ Mirrors C5 §2. Read by `PeakView` (L2) and by the escalation policy (L3).
 modelled POI trajectory over that window as a provisional peak contribution:
 
 ```
-effectiveFloor = max( realisedPeak,
+effectiveFloor = max( pPoiRealisedPeakMw,
                       max over slots in [unsettledGapFrom, snapshotAt) of
                           modelledPoiImport[t] )
 ```
@@ -73,10 +73,10 @@ Mirrors C5 §3. Read by `TariffView` and `PeakView` (L2), and by the slow loop.
 
 | Field | Type | Unit | Null | Default | Notes |
 |---|---|---|---|---|---|
-| `annualEnergyKwh` | `EnergyKwh` | kWh | no | — | |
-| `annualPeakKw` | `PoiPowerKw` | kW | no | — | Denominator of full-load hours |
+| `pPoiAnnualEnergyMwh` | `double` | MWh | no | — | |
+| `pPoiAnnualPeakMw` | `double` | MW | no | — | Denominator of full-load hours |
 | `fullLoadHours` | `double` | h | no | — | Dimensionless-per-C0 exception: declared unit `h` |
-| `hlzfPeakKw` | `PoiPowerKw` | kW | no | — | |
+| `pPoiHlzfPeakMw` | `double` | MW | no | — | |
 | `qualificationStatus` | `QualificationStatus` | — | no | `AtRisk` | Conservative default |
 | `qualificationMarginHours` | `double` | h | no | `0` | Conservative default: no margin |
 | `projectedYearEndFlh` | `double` | h | yes | — | From the slow loop |
@@ -96,9 +96,9 @@ accumulators forward as MILP variables over the horizon.
 
 | Field | Type | Unit | Null | Default | Notes |
 |---|---|---|---|---|---|
-| `mtdGridImport` … `mtdStorageExportAwPos` | `EnergyKwh` | kWh | no | `0` | The seven accumulators of C5 §3.1, unchanged |
+| `mtdGridImportMwh`, `mtdStorageChargeMwh`, `mtdStorageDischargeMwh`, `mtdSimultaneousGridChargeMwh`, `mtdStorageExportMwh`, `mtdDirectFeedInAwPosMwh`, `mtdStorageExportAwPosMwh` | `double` | MWh | no | `0` | The seven accumulators of C5 §3.1, unchanged |
 | `pvShare`, `awPositiveShare` | `double` | — | no | `0` | Conservative defaults: no PV attribution, no AW>0 share |
-| `saldierungsfaehig`, `foerderfaehig`, `umlagebelasteterNetzbezug`, `fremdtank` | `EnergyKwh` | kWh | no | `0` | |
+| `saldierungsfaehigMwh`, `foerderfaehigMwh`, `umlagebelasteterNetzbezugMwh`, `fremdtankMwh` | `double` | MWh | no | `0` | |
 | `monthStart`, `monthEnd` | `SlotId` | — | no | — | |
 | `slotsToMonthEnd` | `SlotSpan` | — | no | — | `V_del` coordinate |
 | `throughputBoundMet` | `bool` | — | no | `false` | False forces the Planner to carry `(12)` explicitly rather than assume it away |
@@ -123,10 +123,10 @@ Mirrors C5 §4. Read by L3.
 | Field | Type | Notes |
 |---|---|---|
 | `entries` | `CommitmentEntry[]` | Ordered by `(slot, entryId)` for determinism |
-| `confirmedReserveUp`,`…Dn` | `ReserveMw[B]` | Denormalised for the Planner's hard constraints |
-| `confirmedSpotPosition` | `EnergyKwh[H]` | Denormalised, signed, market frame |
-| `pendingExposure` | `EnergyKwh[H]` | Signed; probabilistic, not an obligation |
-| `requiredSocCorridor` | `(EnergyKwh, EnergyKwh)[H]` | Union of all confirmed `feasibilityRequirement`s |
+| `confirmedReserveUp`,`…Dn` | `double[B]` | Denormalised for the Planner's hard constraints |
+| `confirmedSpotPosition` | `double[H]` | Denormalised, signed, market frame |
+| `pendingExposure` | `double[H]` | Signed; probabilistic, not an obligation |
+| `requiredSocCorridor` | `(double, double)[H]` | Union of all confirmed `feasibilityRequirement`s |
 | `ledgerConsistent` | `bool` | False triggers `SAFE` (ADR-014) |
 
 The denormalised views exist because the Planner needs them on every solve and
@@ -145,14 +145,14 @@ Read by L2 (`OppCostView`), which republishes it across C2 §4.
 
 | Field | Type | Unit | Null | Notes |
 |---|---|---|---|---|
-| `vSocBreakpointsX` | `EnergyKwh[n]` | kWh | no | Strictly increasing, spanning `[socMin, socMax]` |
-| `vSocBreakpointsY` | `Money[n]` | EUR | no | |
-| `vSocSlopes` | `double[n-1]` | EUR/kWh | no | Strictly decreasing (`INV-V-11`) |
+| `vSocBreakpointsXMwh` | `double[n]` | MWh | no | Strictly increasing, spanning `[socMinMwh, socMaxMwh]` |
+| `vSocBreakpointsYEur` | `double[n]` | EUR | no | |
+| `vSocSlopesEurPerMwh` | `double[n-1]` | EUR/MWh | no | Strictly decreasing (`INV-V-11`) |
 | `conditionedOn` | `ValueFunctionContext` | — | no | `(peakState, qualState, calendarContext)` |
 | `producedAt` | `SlotId` | — | no | |
 | `validityHorizon` | `SlotSpan` | — | no | |
 | `isStale` | `bool` | — | no | `snapshotAt − producedAt > validityHorizon` |
-| `contextDrift` | `double` | — | no | Distance from the state `V` was fitted at |
+| `contextDrift` | `double` | — | no | `ratio`, range `≥0`. Normalised distance from the state `V` was fitted at |
 | `artefactHash` | `string` | — | no | Merkle chain |
 
 **Staleness is never silent.** If `isStale`, the mode escalates to at least

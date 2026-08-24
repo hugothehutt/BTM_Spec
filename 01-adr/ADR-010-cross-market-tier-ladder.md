@@ -62,7 +62,7 @@ SOC corridor       soc[t] − r_up[b(t)]·D/η_d  ≥ soc_min            ∀t
 activation path    soc evolves under scenario-s activation, and
                    soc[s,t] ∈ [soc_min, soc_max]  for a weighted
                    fraction ≥ (1−ε) of scenarios       (chance constraint)
-peak               z_peak ≥ p_poi[t] ∀t ;  z_peak ≥ realisedPeak
+peak               z_peak ≥ p_poi[t] ∀t ;  z_peak ≥ pPoiRealisedPeakMw
 ```
 
 `D` is the sustained-delivery requirement from prequalification, a calendar

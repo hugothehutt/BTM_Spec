@@ -34,8 +34,8 @@ no `object`. Every shape is a serialisable value type with a declared schema.
 ### How each lever maps
 
 - **PeakView → `EpigraphTerm`.** `max(·)` is linear in epigraph form:
-  `z_peak ≥ p_poi[t] ∀t ∈ window`, `z_peak ≥ realisedPeak` (the floor, from L0),
-  objective `−peakPrice · z_peak`. No binaries, no max operator, exact. The floor
+  `z_peak ≥ p_poi[t] ∀t ∈ window`, `z_peak ≥ pPoiRealisedPeakMw` (the floor, from L0),
+  objective `−peakPriceEurPerMw · z_peak`. No binaries, no max operator, exact. The floor
   is precisely `peak_to_go`, and it is why the term must be composed last
   (ADR-009).
 - **AfrrCapacity → `PwlTerm` (concave, Max) + `BoundTerm` (MW envelope).** The

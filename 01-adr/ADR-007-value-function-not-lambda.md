@@ -17,7 +17,7 @@ problems:
    λ prices only one point on that curve and misprices every other.
 
 The second point is quantitatively serious in a BTM setting. The peak charge
-creates a large, state-dependent kink: the marginal value of the kWh that keeps
+creates a large, state-dependent kink: the marginal value of the MWh that keeps
 you below the peak threshold is enormous; the marginal value of the next one is
 close to the spot spread. No scalar represents both.
 

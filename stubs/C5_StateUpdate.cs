@@ -1,8 +1,8 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C5: Settlement → State/Value Store, and the read side
 //
-//  Payload:  StateUpdate    Version: 1.0   Direction: L5 → L0   (write)
-//            StateSnapshot  Version: 1.0   Direction: L0 → L2/L3 (read, lagged)
+//  Payload:  StateUpdate    Version: 2.0   Direction: L5 → L0   (write)
+//            StateSnapshot  Version: 2.0   Direction: L0 → L2/L3 (read, lagged)
 //  Normative source: 03-contracts/C5-settlement-to-state.md §1–§9,
 //                    ADR-006 (the only backwards edge), ADR-007, ADR-011, ADR-014.
 //
@@ -30,10 +30,10 @@ public sealed record PeakState
 {
     public required TariffRegimeId Regime { get; init; }
 
-    /// <summary>Unit kW. <b>The epigraph floor for the next tick</b>
+    /// <summary>Unit MW. <b>The epigraph floor for the next tick</b>
     /// (C2 §3.3 <c>floor</c>). Non-decreasing within an accounting period, and
     /// resets exactly at the local-calendar boundary (INV-S-01).</summary>
-    public required PoiPowerKw RealisedPeak { get; init; }
+    public required double PPoiRealisedPeakMw { get; init; }
 
     /// <summary>When it occurred — <b>diagnostically important</b>: a peak set in
     /// an HLZF window and one set outside it have different implications
@@ -85,18 +85,18 @@ public sealed record PeakState
 /// </remarks>
 public sealed record QualificationState
 {
-    /// <summary>Accumulated in the qualification year. Unit kWh.</summary>
-    public required EnergyKwh AnnualEnergyKwh { get; init; }
+    /// <summary>Accumulated in the qualification year. Unit MWh.</summary>
+    public required double PPoiAnnualEnergyMwh { get; init; }
 
-    /// <summary>Denominator of full-load hours. Unit kW.</summary>
-    public required PoiPowerKw AnnualPeakKw { get; init; }
+    /// <summary>Denominator of full-load hours. Unit MW.</summary>
+    public required double PPoiAnnualPeakMw { get; init; }
 
     /// <summary>Unit h. <c>annualEnergy / annualPeak</c>, within tolerance
     /// (INV-S-06).</summary>
     public required double FullLoadHours { get; init; }
 
-    /// <summary>Peak within HLZF windows only. Unit kW.</summary>
-    public required PoiPowerKw HlzfPeakKw { get; init; }
+    /// <summary>Peak within HLZF windows only. Unit MW.</summary>
+    public required double PPoiHlzfPeakMw { get; init; }
 
     /// <summary>Per applicable §19(2) path.</summary>
     public required QualificationStatus QualificationStatus { get; init; }
@@ -121,7 +121,7 @@ public sealed record QualificationState
 
 /// <summary>The SOC corridor a confirmed reserve award requires. Becomes a
 /// <b>hard constraint in every degradation mode</b> (C5 §4, ADR-014 §3).</summary>
-public readonly record struct SocCorridor(EnergyKwh Lower, EnergyKwh Upper, SlotRange Over);
+public readonly record struct SocCorridor(double Lower, double Upper, SlotRange Over);
 
 /// <summary>
 /// C5 §4. One entry in the commitment ledger.
@@ -130,7 +130,7 @@ public readonly record struct SocCorridor(EnergyKwh Lower, EnergyKwh Upper, Slot
 /// <b><see cref="CommitmentStatus.Pending"/> versus
 /// <see cref="CommitmentStatus.Confirmed"/> is load-bearing</b> (ADR-006).
 /// Confirmed entries are hard constraints — an awarded aFRR block fixes
-/// <c>deliveryObligation</c> and its SOC corridor; a filled spot position fixes
+/// <c>deliveryObligationMw</c> and its SOC corridor; a filled spot position fixes
 /// the position variable. Pending entries are <i>exposure, not obligation</i>:
 /// the Planner models an open order as a scenario-dependent position weighted by
 /// the fill belief. That distinction is what lets the continuous intraday loop
@@ -153,10 +153,19 @@ public sealed record CommitmentEntry
 
     public BlockId? Block { get; init; }
 
-    /// <summary><b>Market frame</b> (sale positive). Unit kWh or MW.</summary>
-    public required OrderVolume SignedVolume { get; init; }
+    /// <summary><b>Market frame</b> (sale positive). Unit MWh. Energy markets
+    /// only; a capacity award is carried by the reserve fields, not here.</summary>
+    public double? SignedVolumeMwh { get; init; }
 
-    public required OrderPrice Price { get; init; }
+    /// <summary><b>Market frame</b> (sale positive). Unit MW of committed power.
+    /// <see cref="MarketId.AfrrCapacity"/> only.</summary>
+    public double? SignedVolumeMw { get; init; }
+
+    /// <summary>Unit EUR/MWh. Energy markets only.</summary>
+    public double? PriceEurPerMwh { get; init; }
+
+    /// <summary>Unit EUR/MW/h. <see cref="MarketId.AfrrCapacity"/> only.</summary>
+    public double? PriceEurPerMwH { get; init; }
 
     /// <summary>For reserve awards: the corridor that must be maintained. Every
     /// <c>Confirmed</c> commitment has one where the product requires it
@@ -176,11 +185,11 @@ public sealed record CommitmentEntry
 public sealed record PnlAttribution
 {
     /// <summary>Unit EUR, per effect.</summary>
-    public required IReadOnlyDictionary<EconomicEffect, Money> RealisedByEffect { get; init; }
+    public required IReadOnlyDictionary<EconomicEffect, double> RealisedByEffect { get; init; }
 
     /// <summary>What Valuation expected. Unit EUR, per effect. Sourced from
     /// <c>PlanResult</c>'s objective decomposition (L3 §8).</summary>
-    public required IReadOnlyDictionary<EconomicEffect, Money> PlannedByEffect { get; init; }
+    public required IReadOnlyDictionary<EconomicEffect, double> PlannedByEffect { get; init; }
 
     /// <summary>
     /// Unit EUR. <b>Mandatory bucket.</b>
@@ -192,7 +201,7 @@ public sealed record PnlAttribution
     /// (C5 §5). <see cref="RealisedByEffect"/> plus this sums to total realised
     /// P&amp;L (INV-S-02).
     /// </remarks>
-    public required Money Unexplained { get; init; }
+    public required double UnexplainedEur { get; init; }
 
     /// <summary>Alerted above a threshold (INV-S-07: warn, escalating to
     /// alert).</summary>
@@ -224,25 +233,25 @@ public sealed record ErrorDecomposition
     /// <b>Fix lives in L1 / the scenario model.</b> Computed by re-running
     /// Valuation and Planner on <i>realised</i> data instead of beliefs, keeping
     /// everything else fixed.</summary>
-    public required Money ForecastError { get; init; }
+    public required double ForecastErrorEur { get; init; }
 
     /// <summary>Unit EUR. Value lost because the valuation was wrong <i>given</i>
     /// the belief. <b>Fix lives in L2.</b> Computed by re-running Settlement's
     /// valuation of the actual trajectory using Valuation's terms and comparing
     /// with Settlement's own accounting.</summary>
-    public required Money ModelError { get; init; }
+    public required double ModelErrorEur { get; init; }
 
     /// <summary>Unit EUR. Value lost because the chosen tier was not Tier 1.
     /// <b>Fix lives in L3 / ADR-010.</b> Computed by re-running the tick at
     /// Tier 1 and comparing objective values — this is ADR-010's measured gap,
     /// and it is why Tier 1 must exist even if it never ships.</summary>
-    public required Money OptimalityGap { get; init; }
+    public required double OptimalityGapEur { get; init; }
 
     /// <summary>Unit EUR. Value lost between intent and fill. <b>Fix lives in the
     /// quoting policy.</b> Computed by valuing the fills at intent prices versus
-    /// executed prices — which requires <c>shadowValue</c> to have crossed C3
+    /// executed prices — which requires <c>shadowValueEurPerMwh</c> to have crossed C3
     /// (C3 §2).</summary>
-    public required Money ExecutionSlippage { get; init; }
+    public required double ExecutionSlippageEur { get; init; }
 
     /// <summary>Which tier actually ran, for conditioning the gap
     /// (ADR-010).</summary>
@@ -373,7 +382,7 @@ public sealed record StateSnapshot : ContractEnvelope
     public required ContentHash SourceUpdate { get; init; }
 
     /// <summary>Realised peak per regime, including <c>unsettledGapFrom</c>
-    /// (C5 §2). The <c>EpigraphTerm.floor</c> comes from here.</summary>
+    /// (C5 §2). The <c>EpigraphTerm.pPoiFloorMw</c> comes from here.</summary>
     public required IReadOnlyList<PeakState> PeakStates { get; init; }
 
     /// <summary>§19(2) state and margin (C5 §3).</summary>
@@ -406,7 +415,7 @@ public sealed record StateSnapshot : ContractEnvelope
 /// </summary>
 /// <remarks>
 /// <list type="table">
-///   <item><term>INV-S-01</term><description><c>realisedPeak</c> is non-decreasing
+///   <item><term>INV-S-01</term><description><c>pPoiRealisedPeakMw</c> is non-decreasing
 ///     within an accounting period, and resets exactly at the local-calendar
 ///     boundary → <c>HALT</c>. The reset is calendar-derived, not
 ///     UTC-arithmetic (conventions §4.2).</description></item>
@@ -420,7 +429,7 @@ public sealed record StateSnapshot : ContractEnvelope
 ///     a <c>feasibilityRequirement</c> where the product requires one →
 ///     <c>HALT</c>.</description></item>
 ///   <item><term>INV-S-06</term><description><c>fullLoadHours =
-///     annualEnergyKwh / annualPeakKw</c> within tolerance → <c>HALT</c>.</description></item>
+///     pPoiAnnualEnergyMwh / pPoiAnnualPeakMw</c> within tolerance → <c>HALT</c>.</description></item>
 ///   <item><term>INV-S-07</term><description><c>unexplainedRatio</c> below
 ///     threshold → warn, escalating to alert.</description></item>
 ///   <item><term>INV-S-08</term><description>State is never written for a slot

@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C2: Valuation → Planner
 //
-//  Payload: ValuationBundle   Version: 1.0   Direction: L2 → L3
+//  Payload: ValuationBundle   Version: 2.0   Direction: L2 → L3
 //  Normative source: 03-contracts/C2-valuation-to-planner.md §1–§9,
 //                    ADR-008 (linearizable primitives — this file IS that ADR),
 //                    ADR-007 (V(SOC), not λ), ADR-009 (term ownership),
@@ -131,9 +131,9 @@ public sealed record PwlTerm
     public required ReadOnlyMemory<double> BreakpointsX { get; init; }
 
     /// <summary>Card. <c>[n]</c>. <b>Unit: EUR.</b></summary>
-    public required ReadOnlyMemory<double> BreakpointsY { get; init; }
+    public required ReadOnlyMemory<double> BreakpointsYEur { get; init; }
 
-    /// <summary>Declared, and verified against <see cref="BreakpointsY"/>
+    /// <summary>Declared, and verified against <see cref="BreakpointsYEur"/>
     /// (INV-V-12).</summary>
     public required Curvature Curvature { get; init; }
 
@@ -152,7 +152,7 @@ public sealed record PwlTerm
 /// <remarks>
 /// This is how <c>max(·)</c> becomes linear. <c>PeakView</c> emits one per active
 /// tariff regime: <c>z_peak ≥ p_poi[t] ∀t ∈ window</c>,
-/// <c>z_peak ≥ realisedPeak</c>, objective <c>−peakPrice · z_peak</c>. No
+/// <c>z_peak ≥ pPoiRealisedPeakMw</c>, objective <c>−peakPriceEurPerMw · z_peak</c>. No
 /// binaries, no max operator, exact (ADR-008).
 /// The floor is precisely <c>peak_to_go</c>, which is why the peak term must be
 /// composed <b>last</b> (<see cref="StageId.Peak"/>, ADR-009).
@@ -172,15 +172,15 @@ public sealed record EpigraphTerm
     /// ADR-011 <c>AtypicalHlzf</c>).</summary>
     public required ReadOnlyMemory<SlotId> OverSlots { get; init; }
 
-    /// <summary>Unit: the dominated variable's unit (kW for <c>pPoi</c>).
+    /// <summary>Unit: the dominated variable's unit (MW for <c>pPoi</c>).
     /// <b>Realised peak so far, from L0</b> (C5 §2), adjusted upward for the
     /// unsettled gap using the engine's own modelled trajectory, and increased by
-    /// <c>RiskProfile.PeakSafetyMarginKw</c> under degraded load quality
+    /// <c>RiskProfile.PPoiPeakSafetyMarginMw</c> under degraded load quality
     /// (L2 §2).</summary>
     public required double Floor { get; init; }
 
-    /// <summary>Unit: EUR/kW/period.</summary>
-    public required PeakPrice UnitPrice { get; init; }
+    /// <summary>Unit: EUR/MW.</summary>
+    public required double UnitPriceEurPerMw { get; init; }
 
     /// <summary>
     /// Range <c>[0,1]</c>. Fraction of the accounting period inside this horizon.
@@ -289,7 +289,7 @@ public readonly record struct ScenarioScope(ScenarioScopeKind Kind, double? Epsi
 /// <remarks>
 /// This is the carrier of the cross-market coupling that ADR-010 is about:
 /// power headroom (<c>p_d[t] + rUp[b(t)] ≤ P_max_dis</c>), the SOC corridor
-/// (<c>soc[t] − rUp[b(t)]·D/η_d ≥ socMin</c>), the activation-path chance
+/// (<c>soc[t] − rUp[b(t)]·D/η_d ≥ socMinMwh</c>), the activation-path chance
 /// constraint, and confirmed commitments from the ledger.
 /// <para>
 /// It is also the <i>only</i> route by which scenario structure reaches the
@@ -361,19 +361,19 @@ public readonly record struct ValueFunctionContext(
 /// </remarks>
 public sealed record ValueFunctionCurve
 {
-    /// <summary>Card. <c>[n]</c>. Unit kWh. <b>Strictly increasing</b>, spanning
-    /// <c>[socMin, socMax]</c>.</summary>
-    public required ReadOnlyMemory<EnergyKwh> VSocBreakpointsX { get; init; }
+    /// <summary>Card. <c>[n]</c>. Unit MWh. <b>Strictly increasing</b>, spanning
+    /// <c>[socMinMwh, socMaxMwh]</c>.</summary>
+    public required ReadOnlyMemory<double> VSocBreakpointsXMwh { get; init; }
 
     /// <summary>Card. <c>[n]</c>. Unit EUR.</summary>
-    public required ReadOnlyMemory<Money> VSocBreakpointsY { get; init; }
+    public required ReadOnlyMemory<double> VSocBreakpointsYEur { get; init; }
 
-    /// <summary>Card. <c>[n-1]</c>. Unit EUR/kWh. <b>Strictly decreasing</b> —
+    /// <summary>Card. <c>[n-1]</c>. Unit EUR/MWh. <b>Strictly decreasing</b> —
     /// concavity, asserted, not assumed (INV-V-11). The fitting step projects
     /// onto the concave hull; genuine non-concavity around a §19(2) cliff is
     /// represented as a separate discrete state, never smoothed away silently
     /// (ADR-007).</summary>
-    public required ReadOnlyMemory<double> VSocSlopes { get; init; }
+    public required ReadOnlyMemory<double> VSocSlopesEurPerMwh { get; init; }
 
     public required ValueFunctionContext ConditionedOn { get; init; }
 
@@ -406,10 +406,10 @@ public sealed record ReserveEnvelope
 {
     /// <summary>Card. <c>[B]</c>. Unit MW. Envelope from prequalification and
     /// asset limits.</summary>
-    public required ReadOnlyMemory<ReserveMw> RUpMax { get; init; }
+    public required ReadOnlyMemory<double> RUpMaxMw { get; init; }
 
     /// <summary>Card. <c>[B]</c>. Unit MW.</summary>
-    public required ReadOnlyMemory<ReserveMw> RDnMax { get; init; }
+    public required ReadOnlyMemory<double> RDnMaxMw { get; init; }
 
     /// <summary>Card. <c>[B]</c>. Concave in offered MW: the expected value of the
     /// capacity bid curve. Concavity arises from the clearing model — offering
@@ -435,7 +435,7 @@ public sealed record ReserveEnvelope
     /// confirmed award cannot be met, the engine goes to <c>HALT</c> and alerts
     /// rather than quietly under-delivering.
     /// </remarks>
-    public required ReadOnlyMemory<ReserveMw> DeliveryObligation { get; init; }
+    public required ReadOnlyMemory<double> DeliveryObligationMw { get; init; }
 }
 
 // =============================================================================
@@ -468,10 +468,10 @@ public sealed record RiskProfile
     /// <summary>Range <c>[0,1]</c>. Multiplier on speculative position bounds.</summary>
     public required double PositionScale { get; init; }
 
-    /// <summary>Unit kW. Added to the epigraph floor under degraded load or PV
+    /// <summary>Unit MW. Added to the epigraph floor under degraded load or PV
     /// quality (L2 §6). This is the degradation response for peak: a margin, not
     /// a branch.</summary>
-    public required PoiPowerKw PeakSafetyMarginKw { get; init; }
+    public required double PPoiPeakSafetyMarginMw { get; init; }
 
     /// <summary>Echoed from L0 via C1 §8.</summary>
     public required DegradationMode DegradationMode { get; init; }
@@ -624,7 +624,7 @@ public sealed record ValuationBundle : ContractEnvelope
 ///     handle appears anywhere in the bundle → <c>HALT</c>.</description></item>
 ///   <item><term>INV-V-07</term><description><c>compositionOrder</c> satisfies the
 ///     stage precondition table (ADR-009) → <c>HALT</c>.</description></item>
-///   <item><term>INV-V-11</term><description><c>vSocSlopes</c> strictly decreasing
+///   <item><term>INV-V-11</term><description><c>vSocSlopesEurPerMwh</c> strictly decreasing
 ///     (concavity) → <c>HALT</c>.</description></item>
 ///   <item><term>INV-V-12</term><description>Declared <c>curvature</c> matches the
 ///     breakpoints → <c>HALT</c>.</description></item>
@@ -638,7 +638,7 @@ public sealed record ValuationBundle : ContractEnvelope
 ///     <c>BoundTerm</c>; it has no priced term → <c>HALT</c>.</description></item>
 /// </list>
 /// <para>
-/// INV-V-08 … INV-V-10 are unassigned in C2 §8 as of version 1.0. The gap is in
+/// INV-V-08 … INV-V-10 are unassigned in C2 §8 as of version 2.0. The gap is in
 /// the source register and is preserved here rather than silently renumbered:
 /// invariant IDs are stable identifiers (conventions §5) and reusing a retired
 /// number would break every cross-reference to it.

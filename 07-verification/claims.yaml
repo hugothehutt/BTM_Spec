@@ -144,7 +144,7 @@
   tn: null
   band: null
 - id: CLM-0012
-  statement: PeakView prices the marginal kW of grid peak, which requires the peak already realised in the current accounting period, and that is a Settlement output.
+  statement: PeakView prices the marginal MW of grid peak, which requires the peak already realised in the current accounting period, and that is a Settlement output.
   owner: 00-overview/01-system-model.md §2
   class: analytic
   blast_radius: very-expensive
@@ -592,8 +592,8 @@
   owner: 00-overview/01-system-model.md §5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -609,12 +609,12 @@
   band: null
 # ---- 00-overview/02-conventions.md ----
 - id: CLM-0058
-  statement: There are two distinct sign reference frames and they must never be conflated.
+  statement: There are three distinct sign reference frames — battery, POI and market — and they must never be conflated; market is sign-aligned with battery, so battery to POI is the only sign flip in the system.
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -623,8 +623,8 @@
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -633,8 +633,8 @@
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -643,8 +643,8 @@
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -663,13 +663,13 @@
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-0064
-  statement: The POI bridge is p_poi[t] = load[t] − Σ_k ( pv_avail[t,k] − q[t,k] ) − p_batt[t], in kW slot-average.
+  statement: The POI bridge is p_poi[t] = load[t] − Σ_k ( pv_avail[t,k] − q[t,k] ) − p_batt[t], in MW slot-average.
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: very-expensive
@@ -719,23 +719,13 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0069
-  statement: The sign frames are enforced as distinct C# value types BatteryPowerKw, PoiPowerKw, LoadKw and PvKw, which do not implicitly convert.
-  owner: 00-overview/02-conventions.md §1
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
 - id: CLM-0070
   statement: The POI bridge is the only sanctioned conversion between the two frames and lives in exactly one place.
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -744,64 +734,64 @@
   owner: 00-overview/02-conventions.md §1
   class: empirical
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
   vague: true
 - id: CLM-0072
-  statement: Power is in kW with type *PowerKw; site scale is kW while aFRR is quoted in MW, converted at the market adapter only.
+  statement: Power is in MW in every frame — battery, POI, market and reserve — and there is no kW anywhere in the specification, no unit adapter and no factor of 1000.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-0073
-  statement: Energy is in kWh with type EnergyKwh.
+  statement: Energy is in MWh.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-0074
-  statement: Reserve capacity is in MW with type ReserveMw and is never mixed with kW types.
+  statement: Reserve capacity is in MW, the same unit as every other power quantity; there is no separate reserve unit family to mix.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-0075
-  statement: Energy price is in EUR/MWh with type EnergyPrice, by market convention, and not EUR/kWh.
+  statement: Energy price is in EUR/MWh, by market convention.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-0076
-  statement: Reserve capacity price is in EUR/MW/h with type CapacityPrice, per hour of the product block.
+  statement: Reserve capacity price is in EUR/MW/h, per hour of the product block.
   owner: 00-overview/02-conventions.md §2
   class: regulatory
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-0077
-  statement: Network peak price is in EUR/kW/period with type PeakPrice, where the period is a year or a month depending on the regime.
+  statement: Network peak price is in EUR/MW, and the accounting period is a mandatory explicit input to the peak term rather than a unit denominator.
   owner: 00-overview/02-conventions.md §2
   class: regulatory
   blast_radius: expensive-later
@@ -811,42 +801,42 @@
   tn: null
   band: null
 - id: CLM-0078
-  statement: Tariff components — levies, taxes and surcharges — are normalised to EUR/MWh with type EnergyPrice.
+  statement: Tariff components — levies, taxes and surcharges — are normalised to EUR/MWh.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-0079
-  statement: SOC is in kWh with type EnergyKwh, absolute and never percent internally.
+  statement: SOC is in MWh, absolute and never percent internally.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-0080
-  statement: SOC as a fraction 0..1 with type SocFraction is presentation only and never appears in the objective.
+  statement: SOC as a fraction in [0,1] is presentation only and never appears in the objective.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-0081
-  statement: Efficiency is a one-way fraction 0..1 with type Efficiency, and round-trip efficiency is η_c · η_d.
+  statement: Efficiency is a one-way fraction in (0,1], open at zero because η_d = 0 divides by zero in the SOC dynamics, and round-trip efficiency is η_c · η_d.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -855,8 +845,8 @@
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -877,16 +867,6 @@
   blast_radius: very-expensive
   br_source: argued
   anchors: []
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0085
-  statement: kW to MW conversion happens only at market adapters, is a typed operation, and there is exactly one 1000.0 in the codebase per direction.
-  owner: 00-overview/02-conventions.md §2
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
   evidence: unlabelled
   tn: null
   band: null
@@ -982,7 +962,7 @@
   band: null
   vague: true
 - id: CLM-0095
-  statement: Auxiliary load — HVAC, BMS, standby — is modelled explicitly as a LoadKw component rather than folded into η, so it appears in the POI balance and therefore in the peak.
+  statement: Auxiliary load — HVAC, BMS, standby — is modelled explicitly as a site-frame load component rather than folded into η, so it appears in the POI balance and therefore in the peak.
   owner: 00-overview/02-conventions.md §3
   class: analytic
   blast_radius: expensive-later
@@ -1266,8 +1246,8 @@
   owner: 00-overview/02-conventions.md §6
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -1276,8 +1256,8 @@
   owner: 00-overview/02-conventions.md §6
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -1292,12 +1272,12 @@
   tn: null
   band: null
 - id: CLM-0126
-  statement: Money comparisons use an absolute tolerance of 1e-6 EUR and power comparisons an absolute tolerance of 1e-6 kW.
+  statement: Money comparisons use an absolute tolerance of 1e-6 EUR, power comparisons 1e-6 MW and energy comparisons 1e-6 MWh, each in the quantity's own unit.
   owner: 00-overview/02-conventions.md §6
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -1473,7 +1453,7 @@
   tn: null
   band: null
 - id: CLM-0144
-  statement: Px_inst is the installierte Leistung of EE-Anlage x per § 24 Abs. 3 S. 2 Halbsatz 2 EEG, in kW, and is static.
+  statement: Px_inst is the installierte Leistung of EE-Anlage x per § 24 Abs. 3 S. 2 Halbsatz 2 EEG, in MW, and is static.
   owner: 00-overview/03-mispel-reference.md §2
   class: regulatory
   blast_radius: very-expensive
@@ -2809,188 +2789,6 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0277
-  statement: "Energy optimisation code is dominated by two silent bug classes: sign-frame confusion and unit confusion."
-  owner: 01-adr/ADR-003-typed-quantities.md §Context
-  class: empirical
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-  vague: true
-- id: CLM-0278
-  statement: Sign-frame and unit confusion both produce plausible numbers, neither throws, and both survive code review.
-  owner: 01-adr/ADR-003-typed-quantities.md §Context
-  class: empirical
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-  vague: true
-- id: CLM-0279
-  statement: Where the peak term is a max and the reserve term is a curve, a sign error does not merely scale the answer but inverts the strategy.
-  owner: 01-adr/ADR-003-typed-quantities.md §Context
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0280
-  statement: The two sign frames genuinely coexist because markets price the battery's export while §19 StromNEV prices the site's import.
-  owner: 01-adr/ADR-003-typed-quantities.md §Context
-  class: regulatory
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0281
-  statement: Quantities are distinct value types rather than double, implemented as readonly record structs wrapping a double with no implicit conversions between frames or units.
-  owner: 01-adr/ADR-003-typed-quantities.md §Decision
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0282
-  statement: Arithmetic on typed quantities is defined only where it is dimensionally meaningful.
-  owner: 01-adr/ADR-003-typed-quantities.md §Decision
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0283
-  statement: The minimum typed-quantity set is BatteryPowerKw, PoiPowerKw, LoadKw, PvKw, ReserveMw, EnergyKwh, EnergyPrice, CapacityPrice, PeakPrice, Money, Efficiency, SocFraction, SlotId and SlotSpan.
-  owner: 01-adr/ADR-003-typed-quantities.md §Decision
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0284
-  statement: There is exactly one sanctioned conversion between frames, p_poi = load − pv − p_batt, in one place.
-  owner: 01-adr/ADR-003-typed-quantities.md §Decision
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0285
-  statement: There is exactly one kW to MW conversion per direction, at the market adapter.
-  owner: 01-adr/ADR-003-typed-quantities.md §Decision
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0286
-  statement: The bridge between frames becomes a single, heavily tested function rather than a sign flip scattered through the code.
-  owner: 01-adr/ADR-003-typed-quantities.md §Consequences
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0287
-  statement: Serialisation must handle the typed wrappers, and contracts declare the underlying primitive plus a unit field so that a mismatch is a schema failure rather than a runtime surprise.
-  owner: 01-adr/ADR-003-typed-quantities.md §Consequences
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0288
-  statement: Typed quantities cost some ceremony in arithmetic-heavy inner loops.
-  owner: 01-adr/ADR-003-typed-quantities.md §Consequences
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0289
-  statement: The hot numeric kernels — scenario reduction and PWL evaluation — operate on raw ReadOnlySpan<double> inside a typed façade.
-  owner: 01-adr/ADR-003-typed-quantities.md §Consequences
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0290
-  statement: Type safety belongs at the boundary where errors actually occur, not inside a loop the JIT must vectorise.
-  owner: 01-adr/ADR-003-typed-quantities.md §Consequences
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0291
-  statement: No contract field is a bare double without a declared unit.
-  owner: 01-adr/ADR-003-typed-quantities.md §Consequences
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [INV-G-02]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0292
-  statement: Naming discipline instead of types relies on reviewers and does not survive refactoring or agent-authored code.
-  owner: 01-adr/ADR-003-typed-quantities.md §Rejected
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0293
-  statement: A units library's generality costs allocation and readability, while the fixed set of typed quantities is small and closed.
-  owner: 01-adr/ADR-003-typed-quantities.md §Rejected
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0294
-  statement: A single signed POI-frame variable everywhere makes market-facing code read backwards and makes the efficiency split awkward.
-  owner: 01-adr/ADR-003-typed-quantities.md §Rejected
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
 - id: CLM-0295
   statement: A backtest is only worth running if it is impossible for the engine to have used information it did not have at the time.
   owner: 01-adr/ADR-004-bitemporal-belief-store.md §Context
@@ -4066,7 +3864,7 @@
   band: null
   vague: true
 - id: CLM-0401
-  statement: "The peak charge creates a large, state-dependent kink: the marginal value of the kWh that keeps the site below the peak threshold is enormous while the marginal value of the next one is close to the spot spread."
+  statement: "The peak charge creates a large, state-dependent kink: the marginal value of the MWh that keeps the site below the peak threshold is enormous while the marginal value of the next one is close to the spot spread."
   owner: 01-adr/ADR-007-value-function-not-lambda.md §Context
   class: analytic
   blast_radius: expensive-later
@@ -4440,7 +4238,7 @@
   tn: null
   band: null
 - id: CLM-0438
-  statement: "PeakView maps to an EpigraphTerm, because max is linear in epigraph form: z_peak ≥ p_poi[t] for all t in the window, z_peak ≥ realisedPeak, with objective −peakPrice · z_peak."
+  statement: "PeakView maps to an EpigraphTerm, because max is linear in epigraph form: z_peak ≥ p_poi[t] for all t in the window, z_peak ≥ pPoiRealisedPeakMw, with objective −peakPriceEurPerMw · z_peak."
   owner: 01-adr/ADR-008-linearizable-primitives.md §Decision
   class: analytic
   blast_radius: very-expensive
@@ -5236,7 +5034,7 @@
   tn: null
   band: null
 - id: CLM-0517
-  statement: The peak constraints in Tier 1 are z_peak ≥ p_poi[t] for all t and z_peak ≥ realisedPeak.
+  statement: The peak constraints in Tier 1 are z_peak ≥ p_poi[t] for all t and z_peak ≥ pPoiRealisedPeakMw.
   owner: 01-adr/ADR-010-cross-market-tier-ladder.md §Decision
   class: analytic
   blast_radius: moderate
@@ -5981,7 +5779,7 @@
   tn: null
   band: null
 - id: CLM-0591
-  statement: An OrderIntent is (market, product, slot, side, limitPrice, volume, validity, replacesId, tag) and says nothing about venue mechanics.
+  statement: An OrderIntent is (market, product, slot, side, limitPriceEurPerMwh, volume, validity, replacesId, tag) and says nothing about venue mechanics.
   owner: 01-adr/ADR-012-order-intent.md §Decision
   class: analytic
   blast_radius: moderate
@@ -7207,7 +7005,7 @@
   tn: null
   band: null
 - id: CLM-0736
-  statement: SubsidyRevenue is owned by DelineationView on the Delineation base and equals MAX[AW − MW_month; 0] · (32), while spot revenue on the same kWh stays in SpotEnergyValue.
+  statement: SubsidyRevenue is owned by DelineationView on the Delineation base and equals MAX[AW − MW_month; 0] · (32), while spot revenue on the same MWh stays in SpotEnergyValue.
   owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
   class: regulatory
   blast_radius: very-expensive
@@ -7357,7 +7155,7 @@
   tn: null
   band: null
 - id: CLM-0751
-  statement: "INV-S-10, the zero-gap invariant, is split: modelError gains a linearizationGap sub-bucket comparing L2's λ-linearisation against L5's exact machinery on the same trajectory."
+  statement: "INV-S-10, the zero-gap invariant, is split: modelErrorEur gains a linearizationGap sub-bucket comparing L2's λ-linearisation against L5's exact machinery on the same trajectory."
   owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
   class: analytic
   blast_radius: very-expensive
@@ -7367,7 +7165,7 @@
   tn: null
   band: null
 - id: CLM-0752
-  statement: The linearizationGap is expected, budgeted and reported, and residual modelError is still asserted zero.
+  statement: The linearizationGap is expected, budgeted and reported, and residual modelErrorEur is still asserted zero.
   owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
   class: analytic
   blast_radius: very-expensive
@@ -7448,7 +7246,7 @@
   tn: null
   band: null
 - id: CLM-0760
-  statement: A kWh discharged into load never enters (11), so self-consumption forfeits both routes.
+  statement: A MWh discharged into load never enters (11), so self-consumption forfeits both routes.
   owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
   class: analytic
   blast_radius: very-expensive
@@ -7649,12 +7447,12 @@
   tn: null
   band: null
 - id: CLM-0780
-  statement: ADR-003, typed quantities and two reference frames, is Accepted and expensive later to reverse.
+  statement: ADR-003, typed quantities and two reference frames (as it was titled), is Deleted and superseded by 02-conventions.md §5.2 and §1; its id is retained in the index and never reissued.
   owner: 01-adr/README.md
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -8702,7 +8500,7 @@
   tn: null
   band: null
 - id: CLM-0885
-  statement: The accounting-rollover trigger fires when periodEnd is crossed and realisedPeak resets, and is an invalidation trigger.
+  statement: The accounting-rollover trigger fires when periodEnd is crossed and pPoiRealisedPeakMw resets, and is an invalidation trigger.
   owner: 02-layers/L0-state-value-store.md §5.1
   class: analytic
   blast_radius: expensive-later
@@ -8752,7 +8550,7 @@
   tn: null
   band: null
 - id: CLM-0890
-  statement: "An invalidated curve is the wrong curve: one fitted under Qualified says nothing useful about an AtRisk world, and one fitted against last month's realisedPeak prices a floor that no longer exists."
+  statement: "An invalidated curve is the wrong curve: one fitted under Qualified says nothing useful about an AtRisk world, and one fitted against last month's pPoiRealisedPeakMw prices a floor that no longer exists."
   owner: 02-layers/L0-state-value-store.md §5.1
   class: analytic
   blast_radius: expensive-later
@@ -9147,7 +8945,7 @@
   band: null
   vague: true
 - id: CLM-0929
-  statement: realisedPeak is a max over the settled prefix only.
+  statement: pPoiRealisedPeakMw is a max over the settled prefix only.
   owner: 02-layers/L0-state-value-store.md §6
   class: analytic
   blast_radius: very-expensive
@@ -9187,7 +8985,7 @@
   tn: null
   band: null
 - id: CLM-0933
-  statement: The epigraph floor is zPeak ≥ max(realisedPeak, max over τ in [unsettledGapFrom, t) of p̂_poi[τ]).
+  statement: The epigraph floor is zPeak ≥ max(pPoiRealisedPeakMw, max over τ in [unsettledGapFrom, t) of p̂_poi[τ]).
   owner: 02-layers/L0-state-value-store.md §6.1
   class: analytic
   blast_radius: very-expensive
@@ -9217,7 +9015,7 @@
   tn: null
   band: null
 - id: CLM-0936
-  statement: Where the gap trajectory is itself uncertain it receives the same CVaR treatment as the forward peak and picks up riskProfile.peakSafetyMarginKw.
+  statement: Where the gap trajectory is itself uncertain it receives the same CVaR treatment as the forward peak and picks up riskProfile.peakSafetyMarginMw.
   owner: 02-layers/L0-state-value-store.md §6.1
   class: analytic
   blast_radius: very-expensive
@@ -9237,7 +9035,7 @@
   tn: null
   band: null
 - id: CLM-0938
-  statement: realisedPeak, the settled quantity, is required to be non-decreasing within a period.
+  statement: pPoiRealisedPeakMw, the settled quantity, is required to be non-decreasing within a period.
   owner: 02-layers/L0-state-value-store.md §6.2
   class: analytic
   blast_radius: very-expensive
@@ -9247,7 +9045,7 @@
   tn: null
   band: null
 - id: CLM-0939
-  statement: The Planner's provisional working peak is a different quantity from realisedPeak and may legitimately exceed the peak that eventually settles, because the modelled gap contribution is deliberately biased high.
+  statement: The Planner's provisional working peak is a different quantity from pPoiRealisedPeakMw and may legitimately exceed the peak that eventually settles, because the modelled gap contribution is deliberately biased high.
   owner: 02-layers/L0-state-value-store.md §6.2
   class: analytic
   blast_radius: very-expensive
@@ -9257,7 +9055,7 @@
   tn: null
   band: null
 - id: CLM-0940
-  statement: provisionalPeak is always at least realisedPeak, and provisionalPeak is not required to be at most the eventual settled peak.
+  statement: provisionalPeak is always at least pPoiRealisedPeakMw, and provisionalPeak is not required to be at most the eventual settled peak.
   owner: 02-layers/L0-state-value-store.md §6.2
   class: analytic
   blast_radius: very-expensive
@@ -9267,7 +9065,7 @@
   tn: null
   band: null
 - id: CLM-0941
-  statement: When settlement arrives, unsettledGapFrom advances, realisedPeak may step up, and the modelled gap contribution is discarded rather than blended.
+  statement: When settlement arrives, unsettledGapFrom advances, pPoiRealisedPeakMw may step up, and the modelled gap contribution is discarded rather than blended.
   owner: 02-layers/L0-state-value-store.md §6.2
   class: analytic
   blast_radius: very-expensive
@@ -9418,7 +9216,7 @@
   tn: null
   band: null
 - id: CLM-0956
-  statement: A restatement is a distinct cause from a forecast error and must not be absorbed into the forecastError bucket.
+  statement: A restatement is a distinct cause from a forecast error and must not be absorbed into the forecastErrorEur bucket.
   owner: 02-layers/L0-state-value-store.md §7.2
   class: analytic
   blast_radius: very-expensive
@@ -9548,7 +9346,7 @@
   tn: null
   band: null
 - id: CLM-0969
-  statement: The realisedPeak reset slot must equal CivilCalendar.LocalMidnight(periodStart) expressed as a SlotId, not UTC midnight and not a fixed offset from the previous reset.
+  statement: The pPoiRealisedPeakMw reset slot must equal CivilCalendar.LocalMidnight(periodStart) expressed as a SlotId, not UTC midnight and not a fixed offset from the previous reset.
   owner: 02-layers/L0-state-value-store.md §8
   class: analytic
   blast_radius: very-expensive
@@ -9608,7 +9406,7 @@
   tn: null
   band: null
 - id: CLM-0975
-  statement: A settlement arrival that raises realisedPeak above the previously modelled gap contribution is handled without an assertion failure.
+  statement: A settlement arrival that raises pPoiRealisedPeakMw above the previously modelled gap contribution is handled without an assertion failure.
   owner: 02-layers/L0-state-value-store.md §8
   class: analytic
   blast_radius: very-expensive
@@ -9708,7 +9506,7 @@
   tn: null
   band: null
 - id: CLM-0985
-  statement: The Planner's provisional peak floor is at least realisedPeak and is not required to be at most the eventual settled peak, and violation of the lower side is a HALT.
+  statement: The Planner's provisional peak floor is at least pPoiRealisedPeakMw and is not required to be at most the eventual settled peak, and violation of the lower side is a HALT.
   owner: 02-layers/L0-state-value-store.md §9
   class: analytic
   blast_radius: very-expensive
@@ -9800,12 +9598,12 @@
   tn: null
   band: null
 - id: CLM-0994
-  statement: Normalisation fixes units, signs, typed quantities, UTC and the 15-minute grid.
+  statement: Normalisation fixes units, signs, quantity naming, UTC and the 15-minute grid.
   owner: 02-layers/L1-belief.md §1
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -10070,7 +9868,7 @@
   tn: null
   band: null
 - id: CLM-1021
-  statement: Collapsing revisions to last-value-wins destroys the ability to attribute a P&L gap between the forecastError bucket and a data restatement, and there is no way to recover it afterwards.
+  statement: Collapsing revisions to last-value-wins destroys the ability to attribute a P&L gap between the forecastErrorEur bucket and a data restatement, and there is no way to recover it afterwards.
   owner: 02-layers/L1-belief.md §1.2
   class: analytic
   blast_radius: very-expensive
@@ -10184,8 +9982,8 @@
   owner: 02-layers/L1-belief.md §2.1
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -11066,7 +10864,7 @@
   tn: null
   band: null
 - id: CLM-1120
-  statement: Only idReliableVolumeBuy, idReliableVolumeSell and optionally idVolumeByPriceBand cross C1 from the order book, as volumes in kWh per slot.
+  statement: Only idReliableVolumeBuyMwh, idReliableVolumeSellMwh and optionally idVolumeByPriceBandMwh cross C1 from the order book, as volumes in MWh per slot.
   owner: 02-layers/L1-belief.md §5.2
   class: analytic
   blast_radius: very-expensive
@@ -11257,12 +11055,12 @@
   tn: null
   band: null
 - id: CLM-1139
-  statement: Boxing of typed quantities is banned because it allocates and defeats the entire type discipline.
+  statement: Boxing a slot- or scenario-indexed quantity is banned because dimensioned quantities are plain double, so boxing one is pure allocation with nothing bought in return.
   owner: 02-layers/L1-belief.md §6.1
   class: analytic
   blast_radius: cheap
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -11550,7 +11348,7 @@
   tn: null
   band: null
 - id: CLM-1168
-  statement: Gate is the correct staleness semantics for daPrice and afrrCapPrice, because a day-ahead price belief from before the gate has been superseded by an event rather than merely being old.
+  statement: Gate is the correct staleness semantics for daPriceEurPerMwh and afrrCapPriceEurPerMwH, because a day-ahead price belief from before the gate has been superseded by an event rather than merely being old.
   owner: 02-layers/L1-belief.md §7.2
   class: analytic
   blast_radius: moderate
@@ -11600,7 +11398,7 @@
   tn: null
   band: null
 - id: CLM-1173
-  statement: The archetype of a critical field is socNow, which is measured and escalates rather than defaulting if telemetry is lost.
+  statement: The archetype of a critical field is socNowMwh, which is measured and escalates rather than defaulting if telemetry is lost.
   owner: 02-layers/L1-belief.md §7.3
   class: analytic
   blast_radius: moderate
@@ -12153,7 +11951,7 @@
 
 # ---- 02-layers/L2 ----
 - id: CLM-1228
-  statement: L2 turns beliefs about the world into what a MWh, a kW of peak, or a MW of aFRR capacity is worth in euros, expressed as linearizable primitives rather than prices.
+  statement: L2 turns beliefs about the world into what a MWh, a MW of peak, or a MW of aFRR capacity is worth in euros, expressed as linearizable primitives rather than prices.
   owner: 02-layers/L2-valuation.md §1
   class: analytic
   blast_radius: very-expensive
@@ -12243,7 +12041,7 @@
   tn: null
   band: null
 - id: CLM-1237
-  statement: PeakView prices the marginal kW of grid peak under whichever tariff regimes are active.
+  statement: PeakView prices the marginal MW of grid peak under whichever tariff regimes are active.
   owner: 02-layers/L2-valuation.md §2
   class: analytic
   blast_radius: expensive-later
@@ -12273,7 +12071,7 @@
   tn: null
   band: null
 - id: CLM-1240
-  statement: PeakView's floor is realisedPeak from L0, adjusted upward for the unsettled gap using the engine's own modelled trajectory.
+  statement: PeakView's floor is pPoiRealisedPeakMw from L0, adjusted upward for the unsettled gap using the engine's own modelled trajectory.
   owner: 02-layers/L2-valuation.md §2
   class: analytic
   blast_radius: very-expensive
@@ -12333,7 +12131,7 @@
   tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1246
-  statement: Poor load quality adds peakSafetyMarginKw to PeakView's floor rather than changing behaviour.
+  statement: Poor load quality adds peakSafetyMarginMw to PeakView's floor rather than changing behaviour.
   owner: 02-layers/L2-valuation.md §2
   class: analytic
   blast_radius: moderate
@@ -12343,7 +12141,7 @@
   tn: null
   band: null
 - id: CLM-1247
-  statement: OppCostView emits a LinearTerm for cycle and throughput cost per kWh from the degradation model, BoundTerms for power and POI limits, and the PwlTerm carrying V(SOC).
+  statement: OppCostView emits a LinearTerm for cycle and throughput cost per MWh from the degradation model, BoundTerms for power and POI limits, and the PwlTerm carrying V(SOC).
   owner: 02-layers/L2-valuation.md §2
   class: analytic
   blast_radius: expensive-later
@@ -13033,7 +12831,7 @@
   tn: null
   band: null
 - id: CLM-1316
-  statement: Spot revenue on the same exported kWh stays in SpotEnergyValue, which makes the double count impossible by construction rather than by check.
+  statement: Spot revenue on the same exported MWh stays in SpotEnergyValue, which makes the double count impossible by construction rather than by check.
   owner: 02-layers/L2-valuation.md §5
   class: analytic
   blast_radius: very-expensive
@@ -13073,7 +12871,7 @@
   tn: null
   band: null
 - id: CLM-1320
-  statement: Degraded load quality raises peakSafetyMarginKw and raises cvarLevel for peak.
+  statement: Degraded load quality raises peakSafetyMarginMw and raises cvarLevel for peak.
   owner: 02-layers/L2-valuation.md §6
   class: analytic
   blast_radius: moderate
@@ -13083,7 +12881,7 @@
   tn: null
   band: null
 - id: CLM-1321
-  statement: Degraded pv quality raises peakSafetyMarginKw, because a PV shortfall raises import.
+  statement: Degraded pv quality raises peakSafetyMarginMw, because a PV shortfall raises import.
   owner: 02-layers/L2-valuation.md §6
   class: analytic
   blast_radius: moderate
@@ -13163,7 +12961,7 @@
   tn: null
   band: null
 - id: CLM-1329
-  statement: Raising peakPrice never lowers the priced value of peak reduction, and raising afrrCapPrice never lowers the capacity curve.
+  statement: Raising peakPriceEurPerMw never lowers the priced value of peak reduction, and raising afrrCapPriceEurPerMwH never lowers the capacity curve.
   owner: 02-layers/L2-valuation.md §7
   class: analytic
   blast_radius: very-expensive
@@ -13197,8 +12995,8 @@
   owner: 02-layers/L2-valuation.md §7
   class: empirical
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -13487,7 +13285,7 @@
   tn: null
   band: null
 - id: CLM-1361
-  statement: The power headroom coupling constraints are p_d[t] + rUp[b(t)] ≤ pMaxDischarge[t] and p_c[t] + rDn[b(t)] ≤ pMaxCharge[t].
+  statement: The power headroom coupling constraints are p_d[t] + rUp[b(t)] ≤ pBattMaxDischargeMw[t] and p_c[t] + rDn[b(t)] ≤ pBattMaxChargeMw[t].
   owner: 02-layers/L3-planner.md §2
   class: analytic
   blast_radius: moderate
@@ -13497,7 +13295,7 @@
   tn: null
   band: null
 - id: CLM-1362
-  statement: The SOC corridor coupling constraints are soc[t] − rUp[b(t)]·D/η_d ≥ socMin and soc[t] + rDn[b(t)]·D·η_c ≤ socMax.
+  statement: The SOC corridor coupling constraints are soc[t] − rUp[b(t)]·D/η_d ≥ socMinMwh and soc[t] + rDn[b(t)]·D·η_c ≤ socMaxMwh.
   owner: 02-layers/L3-planner.md §2
   class: analytic
   blast_radius: moderate
@@ -13507,7 +13305,7 @@
   tn: null
   band: null
 - id: CLM-1363
-  statement: The chance constraint requires soc[s,t] to stay within [socMin, socMax] for weighted scenario mass of at least 1−ε.
+  statement: The chance constraint requires soc[s,t] to stay within [socMinMwh, socMaxMwh] for weighted scenario mass of at least 1−ε.
   owner: 02-layers/L3-planner.md §2
   class: analytic
   blast_radius: moderate
@@ -13797,7 +13595,7 @@
   tn: null
   band: null
 - id: CLM-1392
-  statement: "Confirmed ledger entries are hard constraints: an awarded reserve fixes deliveryObligation and its SOC corridor for the block, and a filled spot position fixes the position variable."
+  statement: "Confirmed ledger entries are hard constraints: an awarded reserve fixes deliveryObligationMw and its SOC corridor for the block, and a filled spot position fixes the position variable."
   owner: 02-layers/L3-planner.md §4
   class: analytic
   blast_radius: very-expensive
@@ -14168,7 +13966,7 @@
   tn: null
   band: null
 - id: CLM-1429
-  statement: Raising afrrCapPrice must make planned reserve MW non-decreasing.
+  statement: Raising afrrCapPriceEurPerMwH must make planned reserve MW non-decreasing.
   owner: 02-layers/L3-planner.md §9
   class: analytic
   blast_radius: moderate
@@ -14188,7 +13986,7 @@
   tn: null
   band: null
 - id: CLM-1431
-  statement: Raising peakPrice must not increase the planned peak.
+  statement: Raising peakPriceEurPerMw must not increase the planned peak.
   owner: 02-layers/L3-planner.md §9
   class: analytic
   blast_radius: expensive-later
@@ -14310,7 +14108,7 @@
   tn: null
   band: null
 - id: CLM-1443
-  statement: shadowValue and urgency are absent from the OrderInstruction type, so Execution cannot read them, making the projection invariant structural rather than a rule anyone must remember.
+  statement: shadowValueEurPerMwh and urgency are absent from the OrderInstruction type, so Execution cannot read them, making the projection invariant structural rather than a rule anyone must remember.
   owner: 02-layers/L4-execution-boundary.md §1
   class: analytic
   blast_radius: moderate
@@ -14360,7 +14158,7 @@
   tn: null
   band: null
 - id: CLM-1448
-  statement: Project from ExecutionIntent to ExecutionInstructionSet is the only crossing, lives in exactly one file, and the target type has no field to hold shadowValue or urgency.
+  statement: Project from ExecutionIntent to ExecutionInstructionSet is the only crossing, lives in exactly one file, and the target type has no field to hold shadowValueEurPerMwh or urgency.
   owner: 02-layers/L4-execution-boundary.md §2
   class: analytic
   blast_radius: moderate
@@ -14370,7 +14168,7 @@
   tn: null
   band: null
 - id: CLM-1449
-  statement: The full intent including audit fields is recorded to the seam log on the Planner side of the projection, so L5 still receives shadowValue and urgency without Execution ever having seen them.
+  statement: The full intent including audit fields is recorded to the seam log on the Planner side of the projection, so L5 still receives shadowValueEurPerMwh and urgency without Execution ever having seen them.
   owner: 02-layers/L4-execution-boundary.md §2
   class: analytic
   blast_radius: moderate
@@ -14410,7 +14208,7 @@
   tn: null
   band: null
 - id: CLM-1453
-  statement: A re-price is a new OrderIntent carrying replacesIntentId, produced by the quoting policy from the current fill curve and the unchanged shadowValue, re-entering through C3.
+  statement: A re-price is a new OrderIntent carrying replacesIntentId, produced by the quoting policy from the current fill curve and the unchanged shadowValueEurPerMwh, re-entering through C3.
   owner: 02-layers/L4-execution-boundary.md §3
   class: analytic
   blast_radius: moderate
@@ -14420,7 +14218,7 @@
   tn: null
   band: null
 - id: CLM-1454
-  statement: If the adapter acquires a price rule, the shadow-value invariant becomes unenforceable, the executionSlippage bucket stops measuring the quoting policy and starts measuring an untested piece of the adapter, and Execution stops being strategy-independent and therefore replaceable.
+  statement: If the adapter acquires a price rule, the shadow-value invariant becomes unenforceable, the executionSlippageEur bucket stops measuring the quoting policy and starts measuring an untested piece of the adapter, and Execution stops being strategy-independent and therefore replaceable.
   owner: 02-layers/L4-execution-boundary.md §3
   class: analytic
   blast_radius: moderate
@@ -14480,7 +14278,7 @@
   tn: null
   band: null
 - id: CLM-1460
-  statement: "A fill model fitted to the simulator inherits the simulator's biases, and so does everything derived from it: FillProbView's BoundTerm, the quoting ladder, and therefore the executionSlippage bucket."
+  statement: "A fill model fitted to the simulator inherits the simulator's biases, and so does everything derived from it: FillProbView's BoundTerm, the quoting ladder, and therefore the executionSlippageEur bucket."
   owner: 02-layers/L4-execution-boundary.md §4
   class: analytic
   blast_radius: moderate
@@ -14601,7 +14399,7 @@
   tn: null
   band: null
 - id: CLM-1472
-  statement: limitPrice and volume reach the venue exactly as received, and violation is a HALT.
+  statement: limitPriceEurPerMwh and volume reach the venue exactly as received, and violation is a HALT.
   owner: 02-layers/L4-execution-boundary.md §5
   class: analytic
   blast_radius: moderate
@@ -14681,7 +14479,7 @@
   tn: null
   band: null
 - id: CLM-1480
-  statement: A reflection test asserts that no field of ExecutionInstructionSet is reachable from shadowValue or urgency and that Project is the sole construction path.
+  statement: A reflection test asserts that no field of ExecutionInstructionSet is reachable from shadowValueEurPerMwh or urgency and that Project is the sole construction path.
   owner: 02-layers/L4-execution-boundary.md §7
   class: analytic
   blast_radius: moderate
@@ -14833,7 +14631,7 @@
   tn: null
   band: null
 - id: CLM-1495
-  statement: StrategyTag and shadowValue live on C3 rather than C4 and are read only in Phase B.
+  statement: StrategyTag and shadowValueEurPerMwh live on C3 rather than C4 and are read only in Phase B.
   owner: 02-layers/L5-settlement.md §1
   class: analytic
   blast_radius: very-expensive
@@ -14843,7 +14641,7 @@
   tn: null
   band: null
 - id: CLM-1496
-  statement: Keeping shadowValue on C3 is what makes the question of whether the quoting policy traded through indifference answerable without giving the accounting phase a view of intent.
+  statement: Keeping shadowValueEurPerMwh on C3 is what makes the question of whether the quoting policy traded through indifference answerable without giving the accounting phase a view of intent.
   owner: 02-layers/L5-settlement.md §1
   class: analytic
   blast_radius: very-expensive
@@ -15117,8 +14915,8 @@
   owner: 02-layers/L5-settlement.md §4
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -15133,12 +14931,12 @@
   tn: null
   band: null
 - id: CLM-1525
-  statement: Volumes cross from kWh to MWh at the market adapter and nowhere else.
+  statement: Every volume in the effect algebra is already MWh and every price EUR/MWh, so no term carries a unit conversion; the MiSpel registers are the one foreign unit, transcribed in kWh and normalised to MWh at dataload.
   owner: 02-layers/L5-settlement.md §4
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -15263,7 +15061,7 @@
   tn: null
   band: null
 - id: CLM-1538
-  statement: SubsidyRevenue is (32) in MWh times the sum over plants of ZFx times MAX[AWx − marktwertMonth; 0], the Marktprämie per § 19 EEG.
+  statement: SubsidyRevenue is (32) in MWh times the sum over plants of ZFx times MAX[AWx − marktwertMonthEurPerMwh; 0], the Marktprämie per § 19 EEG.
   owner: 02-layers/L5-settlement.md §4
   class: regulatory
   blast_radius: very-expensive
@@ -15283,7 +15081,7 @@
   tn: null
   band: null
 - id: CLM-1540
-  statement: CycleDegradation is the negative of the degradation cost per kWh times half the sum of charge and discharge energy.
+  statement: CycleDegradation is the negative of the degradation cost per MWh times half the sum of charge and discharge energy.
   owner: 02-layers/L5-settlement.md §4
   class: analytic
   blast_radius: moderate
@@ -15444,7 +15242,7 @@
   tn: null
   band: null
 - id: CLM-1556
-  statement: AnnualLeistungspreis takes all slots in the local calendar year and charges peakPrice times realisedPeakKw.
+  statement: AnnualLeistungspreis takes all slots in the local calendar year and charges peakPriceEurPerMw times realisedPeakKw.
   owner: 02-layers/L5-settlement.md §5
   class: regulatory
   blast_radius: expensive-later
@@ -15454,7 +15252,7 @@
   tn: null
   band: null
 - id: CLM-1557
-  statement: MonthlyLeistungspreis takes all slots in the local calendar month and charges peakPrice times realisedPeakKw per month.
+  statement: MonthlyLeistungspreis takes all slots in the local calendar month and charges peakPriceEurPerMw times realisedPeakKw per month.
   owner: 02-layers/L5-settlement.md §5
   class: regulatory
   blast_radius: expensive-later
@@ -15484,7 +15282,7 @@
   tn: null
   band: null
 - id: CLM-1560
-  statement: annualEnergyKwh is the sum of metered POI import over the year and annualPeakKw is the maximum import power over the year.
+  statement: pPoiAnnualEnergyMwh is the sum of metered POI import over the year and pPoiAnnualPeakMw is the maximum import power over the year.
   owner: 02-layers/L5-settlement.md §5
   class: regulatory
   blast_radius: expensive-later
@@ -15494,7 +15292,7 @@
   tn: null
   band: null
 - id: CLM-1561
-  statement: fullLoadHours is annualEnergyKwh divided by annualPeakKw, in hours.
+  statement: fullLoadHours is pPoiAnnualEnergyMwh divided by pPoiAnnualPeakMw, in hours.
   owner: 02-layers/L5-settlement.md §5
   class: regulatory
   blast_radius: expensive-later
@@ -15504,7 +15302,7 @@
   tn: null
   band: null
 - id: CLM-1562
-  statement: flhMargin is fullLoadHours minus the configured FLH threshold of 7,000 hours, and energyMargin is annualEnergyKwh minus the configured energy threshold of 10 GWh.
+  statement: flhMargin is fullLoadHours minus the configured FLH threshold of 7,000 hours, and energyMargin is pPoiAnnualEnergyMwh minus the configured energy threshold of 10 GWh.
   owner: 02-layers/L5-settlement.md §5
   class: regulatory
   blast_radius: expensive-later
@@ -15514,7 +15312,7 @@
   tn: null
   band: null
 - id: CLM-1563
-  statement: qualificationMarginHours is the minimum of flhMargin and energyMargin divided by annualPeakKw.
+  statement: qualificationMarginHours is the minimum of flhMargin and energyMargin divided by pPoiAnnualPeakMw.
   owner: 02-layers/L5-settlement.md §5
   class: analytic
   blast_radius: expensive-later
@@ -15524,7 +15322,7 @@
   tn: null
   band: null
 - id: CLM-1564
-  statement: "Battery operation moves both the numerator and the denominator of full-load hours, so qualification is not a passive observation: every peak shaved and every kWh imported changes it."
+  statement: "Battery operation moves both the numerator and the denominator of full-load hours, so qualification is not a passive observation: every peak shaved and every MWh imported changes it."
   owner: 02-layers/L5-settlement.md §5
   class: analytic
   blast_radius: expensive-later
@@ -15864,7 +15662,7 @@
   tn: null
   band: null
 - id: CLM-1598
-  statement: optimalityGap is Ĵ₁ − Ĵ, computed by re-solving the tick at Tier 1 on the identical C2 bundle with the same seed and SolveBudget shape and comparing objectives, and a large value means the fast path is costing real money on this class of day.
+  statement: optimalityGapEur is Ĵ₁ − Ĵ, computed by re-solving the tick at Tier 1 on the identical C2 bundle with the same seed and SolveBudget shape and comparing objectives, and a large value means the fast path is costing real money on this class of day.
   owner: 02-layers/L5-settlement.md §6
   class: analytic
   blast_radius: very-expensive
@@ -15874,7 +15672,7 @@
   tn: null
   band: null
 - id: CLM-1599
-  statement: forecastError is Ĵ − A, computed by re-scoring the unchanged plan against b*, and a large value means the belief carried value the world did not deliver.
+  statement: forecastErrorEur is Ĵ − A, computed by re-scoring the unchanged plan against b*, and a large value means the belief carried value the world did not deliver.
   owner: 02-layers/L5-settlement.md §6
   class: analytic
   blast_radius: very-expensive
@@ -15884,7 +15682,7 @@
   tn: null
   band: null
 - id: CLM-1600
-  statement: executionSlippage is A − C, computed by scoring plan versus realised positions under one common belief b*, and a large value means the trades could not be got or were got worse.
+  statement: executionSlippageEur is A − C, computed by scoring plan versus realised positions under one common belief b*, and a large value means the trades could not be got or were got worse.
   owner: 02-layers/L5-settlement.md §6
   class: analytic
   blast_radius: very-expensive
@@ -15894,7 +15692,7 @@
   tn: null
   band: null
 - id: CLM-1601
-  statement: modelError is C − J, computed by valuing the realised trajectory with L2's terms and comparing against Phase A's independent accounting of the same trajectory, and a large value means Valuation and Settlement disagree about what a term means.
+  statement: modelErrorEur is C − J, computed by valuing the realised trajectory with L2's terms and comparing against Phase A's independent accounting of the same trajectory, and a large value means Valuation and Settlement disagree about what a term means.
   owner: 02-layers/L5-settlement.md §6
   class: analytic
   blast_radius: very-expensive
@@ -15904,7 +15702,7 @@
   tn: null
   band: null
 - id: CLM-1602
-  statement: modelError carries a declared sub-bucket, linearizationGap, and residual modelError net of it is still asserted zero.
+  statement: modelErrorEur carries a declared sub-bucket, linearizationGap, and residual modelErrorEur net of it is still asserted zero.
   owner: 02-layers/L5-settlement.md §6
   class: analytic
   blast_radius: very-expensive
@@ -15934,7 +15732,7 @@
   tn: null
   band: null
 - id: CLM-1605
-  statement: When Tier 1 was the tier actually used, Ĵ₁ = Ĵ, optimalityGap is zero, and the sum collapses to plannedByEffect total minus realised.
+  statement: When Tier 1 was the tier actually used, Ĵ₁ = Ĵ, optimalityGapEur is zero, and the sum collapses to plannedByEffect total minus realised.
   owner: 02-layers/L5-settlement.md §6
   class: analytic
   blast_radius: very-expensive
@@ -15944,7 +15742,7 @@
   tn: null
   band: null
 - id: CLM-1606
-  statement: Both Ĵ₁ and Ĵ are recorded, and anchoring at Ĵ₁ is what gives optimalityGap somewhere to live, since a weak tier lowers both the planned and the realised side and is invisible in Ĵ − J.
+  statement: Both Ĵ₁ and Ĵ are recorded, and anchoring at Ĵ₁ is what gives optimalityGapEur somewhere to live, since a weak tier lowers both the planned and the realised side and is invisible in Ĵ − J.
   owner: 02-layers/L5-settlement.md §6
   class: analytic
   blast_radius: very-expensive
@@ -15954,7 +15752,7 @@
   tn: null
   band: null
 - id: CLM-1607
-  statement: executionSlippage splits into priceSlippage, unfilledOpportunity, feeDrag and deliveryDeviation.
+  statement: executionSlippageEur splits into priceSlippage, unfilledOpportunity, feeDrag and deliveryDeviation.
   owner: 02-layers/L5-settlement.md §6
   class: analytic
   blast_radius: very-expensive
@@ -16004,7 +15802,7 @@
   tn: null
   band: null
 - id: CLM-1612
-  statement: linearizationGap splits out of modelError as L2's λ-linearisation of the delineation machinery scored on the realised trajectory against §5.1's exact evaluation of the same trajectory.
+  statement: linearizationGap splits out of modelErrorEur as L2's λ-linearisation of the delineation machinery scored on the realised trajectory against §5.1's exact evaluation of the same trajectory.
   owner: 02-layers/L5-settlement.md §6
   class: analytic
   blast_radius: very-expensive
@@ -16045,7 +15843,7 @@
   tn: null
   band: null
 - id: CLM-1616
-  statement: valueOfForesight is Score(Plan(Val(b*)); b*) − A, computed and reported alongside forecastError.
+  statement: valueOfForesight is Score(Plan(Val(b*)); b*) − A, computed and reported alongside forecastErrorEur.
   owner: 02-layers/L5-settlement.md §6
   class: analytic
   blast_radius: very-expensive
@@ -16206,7 +16004,7 @@
   tn: null
   band: null
 - id: CLM-1632
-  statement: An intent priced through shadowValue is legitimate only under the CommitmentCover tag.
+  statement: An intent priced through shadowValueEurPerMwh is legitimate only under the CommitmentCover tag.
   owner: 02-layers/L5-settlement.md §7
   class: analytic
   blast_radius: moderate
@@ -16246,7 +16044,7 @@
   tn: null
   band: null
 - id: CLM-1636
-  statement: optimalityGap conditioned on tier is the number that decides whether the fast path ships, and it is reported as p50, p90, p99 and worst case, never as a mean, and conditioned on regime.
+  statement: optimalityGapEur conditioned on tier is the number that decides whether the fast path ships, and it is reported as p50, p90, p99 and worst case, never as a mean, and conditioned on regime.
   owner: 02-layers/L5-settlement.md §8
   class: empirical
   blast_radius: moderate
@@ -16326,7 +16124,7 @@
   tn: null
   band: null
 - id: CLM-1644
-  statement: Persistent one-signed SOC divergence means η or the degradation model is wrong and it feeds modelError directly.
+  statement: Persistent one-signed SOC divergence means η or the degradation model is wrong and it feeds modelErrorEur directly.
   owner: 02-layers/L5-settlement.md §9
   class: analytic
   blast_radius: very-expensive
@@ -16667,7 +16465,7 @@
   tn: null
   band: null
 - id: CLM-1678
-  statement: Counterfactual soundness requires re-running each bucket's counterfactual twice on a recorded day and asserting byte-equality, and asserting optimalityGap is non-negative over a backtest in aggregate.
+  statement: Counterfactual soundness requires re-running each bucket's counterfactual twice on a recorded day and asserting byte-equality, and asserting optimalityGapEur is non-negative over a backtest in aggregate.
   owner: 02-layers/L5-settlement.md §11
   class: analytic
   blast_radius: very-expensive
@@ -16677,7 +16475,7 @@
   tn: null
   band: null
 - id: CLM-1679
-  statement: A single-day optimalityGap may be negative because a worse plan can get lucky, which is why a distribution rather than a point is required.
+  statement: A single-day optimalityGapEur may be negative because a worse plan can get lucky, which is why a distribution rather than a point is required.
   owner: 02-layers/L5-settlement.md §11
   class: analytic
   blast_radius: moderate
@@ -16769,12 +16567,12 @@
   tn: null
   band: null
 - id: CLM-1688
-  statement: The Type column names the typed quantity and not a primitive.
+  statement: The Type column names the primitive — double for every dimensioned and dimensionless quantity, int, bool, an enum, or SlotId — and the Unit column equals the unit suffix the field name carries.
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -16783,8 +16581,8 @@
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -16859,11 +16657,11 @@
   tn: null
   band: null
 - id: CLM-1697
-  statement: Every numeric field has a declared unit in its field table; dimensioned quantities use a typed quantity while dimensionless fields may be double or int but must be declared with an em dash in the Unit column and range-constrained, and a dimensioned field typed as a bare double is a violation.
+  statement: Every dimensioned field's identifier ends in its unit and that suffix equals the Unit column of its own row; every power and energy field carries a frame token and appears in that frame's section; every dimensionless field carries an em dash in the Unit column plus a declared kind and a closed range.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
+  br_source: 02-conventions §5.2
   anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
@@ -17019,12 +16817,12 @@
   tn: null
   band: null
 - id: CLM-1713
-  statement: Unit changes are always major, even when the type is unchanged, because a field silently moving from EUR/MWh to EUR/kWh is the archetypal catastrophic change.
+  statement: Unit changes are always major, because a field moving from EUR/MWh to EUR/MW — an energy price becoming a capacity price — is the archetypal catastrophic change, and it cannot be silent since the identifier’s unit suffix must move with the unit.
   owner: 03-contracts/C0-contract-conventions.md §5
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -17113,8 +16911,8 @@
   owner: 03-contracts/C0-contract-conventions.md §7
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -17159,7 +16957,7 @@
   tn: null
   band: null
 - id: CLM-1727
-  statement: socNow is measured, and if telemetry is lost the engine escalates rather than defaulting.
+  statement: socNowMwh is measured, and if telemetry is lost the engine escalates rather than defaulting.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
   blast_radius: very-expensive
@@ -17169,7 +16967,7 @@
   tn: null
   band: null
 - id: CLM-1728
-  statement: The operating band socMin to socMax includes warranty derates.
+  statement: The operating band socMinMwh to socMaxMwh includes warranty derates.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
   blast_radius: very-expensive
@@ -17179,7 +16977,7 @@
   tn: null
   band: null
 - id: CLM-1729
-  statement: pMaxDischarge and pMaxCharge are per-slot and may derate on temperature or state of health.
+  statement: pBattMaxDischargeMw and pBattMaxChargeMw are per-slot and may derate on temperature or state of health.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
   blast_radius: very-expensive
@@ -17189,7 +16987,7 @@
   tn: null
   band: null
 - id: CLM-1730
-  statement: sohFraction is informational, and derates flow through pMax* and socMax rather than through it.
+  statement: sohFraction is informational, and derates flow through pMax* and socMaxMwh rather than through it.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
   blast_radius: very-expensive
@@ -17199,7 +16997,7 @@
   tn: null
   band: null
 - id: CLM-1731
-  statement: poiImportLimit and poiExportLimit are the contractual and physical POI envelope, per slot.
+  statement: pPoiImportLimitMw and pPoiExportLimitMw are the contractual and physical POI envelope, per slot.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
   blast_radius: very-expensive
@@ -17209,7 +17007,7 @@
   tn: null
   band: null
 - id: CLM-1732
-  statement: auxLoad is explicit per slot and not folded into η, and its conservative default is the site maximum.
+  statement: auxLoadMw is explicit per slot and not folded into η, and its conservative default is the site maximum.
   owner: 03-contracts/C1-belief-to-valuation.md §2
   class: analytic
   blast_radius: very-expensive
@@ -17249,7 +17047,7 @@
   tn: null
   band: null
 - id: CLM-1736
-  statement: daPrice is scenario- and slot-indexed in EUR/MWh with range [-9999, 9999], and negative prices are legal and material.
+  statement: daPriceEurPerMwh is scenario- and slot-indexed in EUR/MWh with range [-9999, 9999], and negative prices are legal and material.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: regulatory
   blast_radius: very-expensive
@@ -17259,7 +17057,7 @@
   tn: null
   band: null
 - id: CLM-1737
-  statement: daCleared is present only post-gate and null pre-gate.
+  statement: daClearedEurPerMwh is present only post-gate and null pre-gate.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: analytic
   blast_radius: very-expensive
@@ -17269,7 +17067,7 @@
   tn: null
   band: null
 - id: CLM-1738
-  statement: idSpreadBelief is a half-spread belief whose wide default suppresses trading.
+  statement: idSpreadBeliefEurPerMwh is a half-spread belief whose wide default suppresses trading.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: analytic
   blast_radius: very-expensive
@@ -17279,7 +17077,7 @@
   tn: null
   band: null
 - id: CLM-1739
-  statement: afrrCapPrice is per product block with a zero default, so the engine does not chase reserve revenue on invented prices.
+  statement: afrrCapPriceEurPerMwH is per product block with a zero default, so the engine does not chase reserve revenue on invented prices.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: analytic
   blast_radius: very-expensive
@@ -17299,7 +17097,7 @@
   tn: null
   band: null
 - id: CLM-1741
-  statement: imbalancePrice is a reBAP-type belief.
+  statement: imbalancePriceEurPerMwh is a reBAP-type belief.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: regulatory
   blast_radius: very-expensive
@@ -17309,7 +17107,7 @@
   tn: null
   band: null
 - id: CLM-1742
-  statement: Every scenario-indexed array shares the axis, so index s denotes the same state of the world in load, pv, daPrice, activationUp and all others.
+  statement: Every scenario-indexed array shares the axis, so index s denotes the same state of the world in load, pv, daPriceEurPerMwh, activationUp and all others.
   owner: 03-contracts/C1-belief-to-valuation.md §4
   class: analytic
   blast_radius: very-expensive
@@ -17329,7 +17127,7 @@
   tn: null
   band: null
 - id: CLM-1744
-  statement: idReliableVolumeBuy and idReliableVolumeSell are the volumes that may be counted on, defaulting to zero.
+  statement: idReliableVolumeBuyMwh and idReliableVolumeSellMwh are the volumes that may be counted on, defaulting to zero.
   owner: 03-contracts/C1-belief-to-valuation.md §5
   class: analytic
   blast_radius: very-expensive
@@ -17339,7 +17137,7 @@
   tn: null
   band: null
 - id: CLM-1745
-  statement: idVolumeByPriceBand is an optional refinement pending the fill-fidelity decision.
+  statement: idVolumeByPriceBandMwh is an optional refinement pending the fill-fidelity decision.
   owner: 03-contracts/C1-belief-to-valuation.md §5
   class: analytic
   blast_radius: very-expensive
@@ -17379,7 +17177,7 @@
   tn: null
   band: null
 - id: CLM-1749
-  statement: peakPrice is carried per regime in EUR/kW/period and is non-negative.
+  statement: peakPriceEurPerMw is carried per regime in EUR/MW/period and is non-negative.
   owner: 03-contracts/C1-belief-to-valuation.md §6
   class: regulatory
   blast_radius: very-expensive
@@ -17389,7 +17187,7 @@
   tn: null
   band: null
 - id: CLM-1750
-  statement: leviesAndTaxes is a closed enumerated list of the non-reducible components, summed.
+  statement: leviesAndTaxesEurPerMwh is a closed enumerated list of the non-reducible components, summed.
   owner: 03-contracts/C1-belief-to-valuation.md §6
   class: regulatory
   blast_radius: very-expensive
@@ -17399,7 +17197,7 @@
   tn: null
   band: null
 - id: CLM-1751
-  statement: enfgLevies is the reducible EnFG components summed, charged on (21) and never on metered import.
+  statement: enfgLeviesEurPerMwh is the reducible EnFG components summed, charged on (21) and never on metered import.
   owner: 03-contracts/C1-belief-to-valuation.md §6
   class: regulatory
   blast_radius: very-expensive
@@ -17419,7 +17217,7 @@
   tn: null
   band: null
 - id: CLM-1753
-  statement: awPositive and anzulegenderWert are derived in L1 §4.2.1 and not ingested.
+  statement: awPositive and anzulegenderWertEurPerMwh are derived in L1 §4.2.1 and not ingested.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: analytic
   blast_radius: very-expensive
@@ -17439,7 +17237,7 @@
   tn: null
   band: null
 - id: CLM-1755
-  statement: anzulegenderWert is AW, static per plant and EEG vintage.
+  statement: anzulegenderWertEurPerMwh is AW, static per plant and EEG vintage.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: regulatory
   blast_radius: very-expensive
@@ -17459,7 +17257,7 @@
   tn: null
   band: null
 - id: CLM-1757
-  statement: marktwertMonth is MW_month, derived per scenario from national spot and national solar generation on the shared axis, and never an independent series.
+  statement: marktwertMonthEurPerMwh is MW_month, derived per scenario from national spot and national solar generation on the shared axis, and never an independent series.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: analytic
   blast_radius: very-expensive
@@ -17479,7 +17277,7 @@
   tn: null
   band: null
 - id: CLM-1759
-  statement: The premium is MAX[anzulegenderWert − marktwertMonth; 0], which is convex in marktwertMonth.
+  statement: The premium is MAX[anzulegenderWertEurPerMwh − marktwertMonthEurPerMwh; 0], which is convex in marktwertMonthEurPerMwh.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: analytic
   blast_radius: very-expensive
@@ -17489,7 +17287,7 @@
   tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1760
-  statement: marktwertMonth crosses as [S] rather than as a scalar because a point forecast understates the premium, most severely when AW and MW_month are close.
+  statement: marktwertMonthEurPerMwh crosses as [S] rather than as a scalar because a point forecast understates the premium, most severely when AW and MW_month are close.
   owner: 03-contracts/C1-belief-to-valuation.md §6.1
   class: analytic
   blast_radius: very-expensive
@@ -17579,7 +17377,7 @@
   tn: null
   band: null
 - id: CLM-1769
-  statement: socMin ≤ socNow ≤ socMax, and violation is a HALT because telemetry or the model is wrong.
+  statement: socMinMwh ≤ socNowMwh ≤ socMaxMwh, and violation is a HALT because telemetry or the model is wrong.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
   blast_radius: very-expensive
@@ -17640,7 +17438,7 @@
   band: null
   vague: true
 - id: CLM-1775
-  statement: pMaxCharge and pMaxDischarge are non-negative and finite for every slot, and violation is a HALT.
+  statement: pBattMaxChargeMw and pBattMaxDischargeMw are non-negative and finite for every slot, and violation is a HALT.
   owner: 03-contracts/C1-belief-to-valuation.md §9
   class: analytic
   blast_radius: very-expensive
@@ -17806,8 +17604,8 @@
   owner: 03-contracts/C2-valuation-to-planner.md §2
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -17932,7 +17730,7 @@
   tn: null
   band: null
 - id: CLM-1804
-  statement: A PwlTerm carries the abscissa variable, strictly increasing breakpointsX in variable units, breakpointsY in EUR, a curvature, a sense, and an extrapolation of Clamp or Forbid.
+  statement: A PwlTerm carries the abscissa variable, strictly increasing breakpointsX in variable units, breakpointsYEur in EUR, a curvature, a sense, and an extrapolation of Clamp or Forbid.
   owner: 03-contracts/C2-valuation-to-planner.md §3.2
   class: analytic
   blast_radius: very-expensive
@@ -17992,7 +17790,7 @@
   tn: null
   band: null
 - id: CLM-1810
-  statement: An EpigraphTerm carries epigraphVar, dominates, overSlots, floor, unitPrice and prorationFactor.
+  statement: An EpigraphTerm carries epigraphVar, dominates, overSlots, floor, unitPriceEurPerMw and prorationFactor.
   owner: 03-contracts/C2-valuation-to-planner.md §3.3
   class: analytic
   blast_radius: very-expensive
@@ -18132,7 +17930,7 @@
   tn: null
   band: null
 - id: CLM-1824
-  statement: vSocBreakpointsX is strictly increasing and spans [socMin, socMax].
+  statement: vSocBreakpointsXMwh is strictly increasing and spans [socMinMwh, socMaxMwh].
   owner: 03-contracts/C2-valuation-to-planner.md §4
   class: analytic
   blast_radius: very-expensive
@@ -18142,7 +17940,7 @@
   tn: null
   band: null
 - id: CLM-1825
-  statement: vSocSlopes is strictly decreasing, which is concavity, and this is asserted.
+  statement: vSocSlopesEurPerMwh is strictly decreasing, which is concavity, and this is asserted.
   owner: 03-contracts/C2-valuation-to-planner.md §4
   class: analytic
   blast_radius: very-expensive
@@ -18193,7 +17991,7 @@
   tn: null
   band: null
 - id: CLM-1830
-  statement: rUpMax and rDnMax are the per-block reserve envelope from prequalification and asset limits.
+  statement: rUpMaxMw and rDnMaxMw are the per-block reserve envelope from prequalification and asset limits.
   owner: 03-contracts/C2-valuation-to-planner.md §5
   class: regulatory
   blast_radius: very-expensive
@@ -18213,7 +18011,7 @@
   tn: null
   band: null
 - id: CLM-1832
-  statement: deliveryObligation carries already-confirmed awards from L0 as a hard commitment.
+  statement: deliveryObligationMw carries already-confirmed awards from L0 as a hard commitment.
   owner: 03-contracts/C2-valuation-to-planner.md §5
   class: analytic
   blast_radius: very-expensive
@@ -18223,7 +18021,7 @@
   tn: null
   band: null
 - id: CLM-1833
-  statement: deliveryObligation is separated from the offer decision because confirmed awards are physical obligations that survive every degradation mode, whereas offers are decisions.
+  statement: deliveryObligationMw is separated from the offer decision because confirmed awards are physical obligations that survive every degradation mode, whereas offers are decisions.
   owner: 03-contracts/C2-valuation-to-planner.md §5
   class: analytic
   blast_radius: very-expensive
@@ -18284,7 +18082,7 @@
   tn: null
   band: null
 - id: CLM-1839
-  statement: peakSafetyMarginKw is added to the epigraph floor under degraded load quality.
+  statement: peakSafetyMarginMw is added to the epigraph floor under degraded load quality.
   owner: 03-contracts/C2-valuation-to-planner.md §6
   class: analytic
   blast_radius: very-expensive
@@ -18581,13 +18379,13 @@
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
   blast_radius: moderate
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-1869
-  statement: limitPrice is tick-aligned and already rounded per the C0 rounding rule.
+  statement: limitPriceEurPerMwh is tick-aligned and already rounded per the C0 rounding rule.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
   blast_radius: moderate
@@ -18627,7 +18425,7 @@
   tn: null
   band: null
 - id: CLM-1873
-  statement: shadowValue is the Planner's indifference price, carried for audit only, and Execution must ignore it.
+  statement: shadowValueEurPerMwh is the Planner's indifference price, carried for audit only, and Execution must ignore it.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
   blast_radius: moderate
@@ -18647,7 +18445,7 @@
   tn: null
   band: null
 - id: CLM-1875
-  statement: shadowValue and urgency cross the seam for settlement attribution rather than for execution, letting L5 answer whether the quoting policy traded through indifference without a private side channel between the Planner and the quoting policy.
+  statement: shadowValueEurPerMwh and urgency cross the seam for settlement attribution rather than for execution, letting L5 answer whether the quoting policy traded through indifference without a private side channel between the Planner and the quoting policy.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
   blast_radius: moderate
@@ -18657,7 +18455,7 @@
   tn: null
   band: null
 - id: CLM-1876
-  statement: Execution does not read shadowValue or urgency, enforced by the adapter interface exposing a projection that omits them.
+  statement: Execution does not read shadowValueEurPerMwh or urgency, enforced by the adapter interface exposing a projection that omits them.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
   blast_radius: moderate
@@ -18727,17 +18525,17 @@
   tn: null
   band: null
 - id: CLM-1883
-  statement: pSetpoint is in the battery frame over the near horizon H_near.
+  statement: pBattSetpointMw is in the battery frame over the near horizon H_near.
   owner: 03-contracts/C3-planner-to-execution.md §4
   class: analytic
   blast_radius: moderate
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-1884
-  statement: socCorridorLower and socCorridorUpper are the band the controller must stay in to keep commitments feasible.
+  statement: socCorridorLowerMwh and socCorridorUpperMwh are the band the controller must stay in to keep commitments feasible.
   owner: 03-contracts/C3-planner-to-execution.md §4
   class: analytic
   blast_radius: moderate
@@ -18747,7 +18545,7 @@
   tn: null
   band: null
 - id: CLM-1885
-  statement: reserveObligationUp and reserveObligationDn are the confirmed awards the controller must be able to serve.
+  statement: reserveObligationUpMw and reserveObligationDnMw are the confirmed awards the controller must be able to serve.
   owner: 03-contracts/C3-planner-to-execution.md §4
   class: analytic
   blast_radius: moderate
@@ -18838,7 +18636,7 @@
   tn: null
   band: null
 - id: CLM-1894
-  statement: No sell intent is priced below shadowValue and no buy intent above it, and violation warns and blocks the intent.
+  statement: No sell intent is priced below shadowValueEurPerMwh and no buy intent above it, and violation warns and blocks the intent.
   owner: 03-contracts/C3-planner-to-execution.md §5
   class: analytic
   blast_radius: moderate
@@ -18998,7 +18796,7 @@
   tn: null
   band: null
 - id: CLM-1910
-  statement: awardedUp and awardedDn are per block and are the binding obligation.
+  statement: awardedUpMw and awardedDnMw are per block and are the binding obligation.
   owner: 03-contracts/C4-execution-to-settlement.md §4
   class: regulatory
   blast_radius: very-expensive
@@ -19008,7 +18806,7 @@
   tn: null
   band: null
 - id: CLM-1911
-  statement: clearingPriceUp and clearingPriceDn are per block in EUR/MW/h.
+  statement: clearingPriceUpEurPerMwH and clearingPriceDnEurPerMwH are per block in EUR/MW/h.
   owner: 03-contracts/C4-execution-to-settlement.md §4
   class: regulatory
   blast_radius: very-expensive
@@ -19018,7 +18816,7 @@
   tn: null
   band: null
 - id: CLM-1912
-  statement: activatedEnergyUp and activatedEnergyDn are realised per slot in kWh, with activation prices per slot in EUR/MWh.
+  statement: activatedEnergyUpMwh and activatedEnergyDnMwh are realised per slot in MWh, with activation prices per slot in EUR/MWh.
   owner: 03-contracts/C4-execution-to-settlement.md §4
   class: regulatory
   blast_radius: very-expensive
@@ -19028,7 +18826,7 @@
   tn: null
   band: null
 - id: CLM-1913
-  statement: deliveryShortfall is per slot, and a non-zero value triggers the reserve delivery invariant.
+  statement: deliveryShortfallMwh is per slot, and a non-zero value triggers the reserve delivery invariant.
   owner: 03-contracts/C4-execution-to-settlement.md §4
   class: analytic
   blast_radius: very-expensive
@@ -19038,7 +18836,7 @@
   tn: null
   band: null
 - id: CLM-1914
-  statement: meteredPoiImport and meteredPoiExport are the billing-relevant series.
+  statement: pPoiMeteredImportMwh and pPoiMeteredExportMwh are the billing-relevant series.
   owner: 03-contracts/C4-execution-to-settlement.md §5
   class: regulatory
   blast_radius: very-expensive
@@ -19048,7 +18846,7 @@
   tn: null
   band: null
 - id: CLM-1915
-  statement: meteredLoad and meteredPv are sub-metered where available.
+  statement: meteredLoadMwh and meteredPvMwh are sub-metered where available.
   owner: 03-contracts/C4-execution-to-settlement.md §5
   class: analytic
   blast_radius: very-expensive
@@ -19058,7 +18856,7 @@
   tn: null
   band: null
 - id: CLM-1916
-  statement: batteryChargeEnergy and batteryDischargeEnergy are measured at the battery terminal.
+  statement: pBattChargeEnergyMwh and pBattDischargeEnergyMwh are measured at the battery terminal.
   owner: 03-contracts/C4-execution-to-settlement.md §5
   class: analytic
   blast_radius: very-expensive
@@ -19068,7 +18866,7 @@
   tn: null
   band: null
 - id: CLM-1917
-  statement: socMeasured is the end-of-slot state of charge.
+  statement: socMeasuredMwh is the end-of-slot state of charge.
   owner: 03-contracts/C4-execution-to-settlement.md §5
   class: analytic
   blast_radius: very-expensive
@@ -19088,7 +18886,7 @@
   tn: null
   band: null
 - id: CLM-1919
-  statement: imbalanceVolume is signed per slot, and the imbalance price is often final only weeks later.
+  statement: imbalanceVolumeMwh is signed per slot, and the imbalance price is often final only weeks later.
   owner: 03-contracts/C4-execution-to-settlement.md §6
   class: regulatory
   blast_radius: very-expensive
@@ -19129,7 +18927,7 @@
   band: null
   vague: true
 - id: CLM-1923
-  statement: deliveryShortfall equals zero, and violation alerts and halts because a reserve delivery failure is a prequalification risk.
+  statement: deliveryShortfallMwh equals zero, and violation alerts and halts because a reserve delivery failure is a prequalification risk.
   owner: 03-contracts/C4-execution-to-settlement.md §7
   class: regulatory
   blast_radius: very-expensive
@@ -19139,7 +18937,7 @@
   tn: null
   band: null
 - id: CLM-1924
-  statement: socMeasured is consistent with charge and discharge energy and η within tolerance, and violation warns because drift indicates an η or SOH model error.
+  statement: socMeasuredMwh is consistent with charge and discharge energy and η within tolerance, and violation warns because drift indicates an η or SOH model error.
   owner: 03-contracts/C4-execution-to-settlement.md §7
   class: analytic
   blast_radius: very-expensive
@@ -19253,7 +19051,7 @@
   tn: null
   band: null
 - id: CLM-1935
-  statement: realisedPeak is carried per regime and is the epigraph floor for the next tick.
+  statement: pPoiRealisedPeakMw is carried per regime and is the epigraph floor for the next tick.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
   blast_radius: very-expensive
@@ -19303,7 +19101,7 @@
   tn: null
   band: null
 - id: CLM-1940
-  statement: headroomToPeakKw is the distance from realisedPeak to the level at which a new peak would be set, and is the continuous analogue of qualificationMarginHours.
+  statement: pPoiHeadroomToPeakMw is the distance from pPoiRealisedPeakMw to the level at which a new peak would be set, and is the continuous analogue of qualificationMarginHours.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
   blast_radius: very-expensive
@@ -19313,7 +19111,7 @@
   tn: null
   band: null
 - id: CLM-1941
-  statement: peakCritical is true when headroomToPeakKw is inside the configured margin, or the horizon contains a slot whose CVaR peak belief exceeds realisedPeak.
+  statement: peakCritical is true when pPoiHeadroomToPeakMw is inside the configured margin, or the horizon contains a slot whose CVaR peak belief exceeds pPoiRealisedPeakMw.
   owner: 03-contracts/C5-settlement-to-state.md §2
   class: analytic
   blast_radius: very-expensive
@@ -19373,7 +19171,7 @@
   tn: null
   band: null
 - id: CLM-1947
-  statement: annualEnergyKwh is accumulated in the qualification year.
+  statement: pPoiAnnualEnergyMwh is accumulated in the qualification year.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: regulatory
   blast_radius: expensive-later
@@ -19383,7 +19181,7 @@
   tn: null
   band: null
 - id: CLM-1948
-  statement: annualPeakKw is the denominator of full-load hours.
+  statement: pPoiAnnualPeakMw is the denominator of full-load hours.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: regulatory
   blast_radius: expensive-later
@@ -19403,7 +19201,7 @@
   tn: null
   band: null
 - id: CLM-1950
-  statement: hlzfPeakKw is the peak within HLZF windows only.
+  statement: pPoiHlzfPeakMw is the peak within HLZF windows only.
   owner: 03-contracts/C5-settlement-to-state.md §3
   class: regulatory
   blast_radius: expensive-later
@@ -19483,7 +19281,7 @@
   tn: null
   band: null
 - id: CLM-1958
-  statement: mtdGridImport is (3), the gesamter Netzbezug, defaulting to zero.
+  statement: mtdGridImportMwh is (3), the gesamter Netzbezug, defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19493,7 +19291,7 @@
   tn: null
   band: null
 - id: CLM-1959
-  statement: mtdStorageCharge is (5), the Verbrauch im Stromspeicher, defaulting to zero.
+  statement: mtdStorageChargeMwh is (5), the Verbrauch im Stromspeicher, defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19503,7 +19301,7 @@
   tn: null
   band: null
 - id: CLM-1960
-  statement: mtdStorageDischarge is (6), the Erzeugung im Stromspeicher, defaulting to zero.
+  statement: mtdStorageDischargeMwh is (6), the Erzeugung im Stromspeicher, defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19513,7 +19311,7 @@
   tn: null
   band: null
 - id: CLM-1961
-  statement: mtdSimultaneousGridCharge is (9), the sum of MIN[Z1NB¼; Z2V¼], defaulting to zero.
+  statement: mtdSimultaneousGridChargeMwh is (9), the sum of MIN[Z1NB¼; Z2V¼], defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19523,7 +19321,7 @@
   tn: null
   band: null
 - id: CLM-1962
-  statement: mtdStorageExport is (11), the sum of MIN[Z1NE¼; Z2E¼], defaulting to zero.
+  statement: mtdStorageExportMwh is (11), the sum of MIN[Z1NE¼; Z2E¼], defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19533,7 +19331,7 @@
   tn: null
   band: null
 - id: CLM-1963
-  statement: mtdDirectFeedInAwPos is (26), direct feed-in in AW>0 hours only, defaulting to zero.
+  statement: mtdDirectFeedInAwPosMwh is (26), direct feed-in in AW>0 hours only, defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19543,7 +19341,7 @@
   tn: null
   band: null
 - id: CLM-1964
-  statement: mtdStorageExportAwPos is (29), storage feed-in in AW>0 hours only, defaulting to zero.
+  statement: mtdStorageExportAwPosMwh is (29), storage feed-in in AW>0 hours only, defaulting to zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19583,7 +19381,7 @@
   tn: null
   band: null
 - id: CLM-1968
-  statement: saldierungsfaehig is (16), the grey route.
+  statement: saldierungsfaehigMwh is (16), the grey route.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19593,7 +19391,7 @@
   tn: null
   band: null
 - id: CLM-1969
-  statement: foerderfaehig is (32), the green route.
+  statement: foerderfaehigMwh is (32), the green route.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19603,7 +19401,7 @@
   tn: null
   band: null
 - id: CLM-1970
-  statement: umlagebelasteterNetzbezug is (21), the base of EnfgLevies.
+  statement: umlagebelasteterNetzbezugMwh is (21), the base of EnfgLevies.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19613,7 +19411,7 @@
   tn: null
   band: null
 - id: CLM-1971
-  statement: fremdtank is (12) and is expected to be zero.
+  statement: fremdtankMwh is (12) and is expected to be zero.
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19673,7 +19471,7 @@
   tn: null
   band: null
 - id: CLM-1977
-  statement: "The month-boundary discontinuity is in value and not in physics: the same kWh in the same battery is worth a different amount either side of the boundary because the aggregates its route ran through have vanished."
+  statement: "The month-boundary discontinuity is in value and not in physics: the same MWh in the same battery is worth a different amount either side of the boundary because the aggregates its route ran through have vanished."
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -19713,12 +19511,12 @@
   tn: null
   band: null
 - id: CLM-1981
-  statement: signedVolume in the commitment ledger is in the market frame.
+  statement: signedVolumeMwh in the commitment ledger is in the market frame.
   owner: 03-contracts/C5-settlement-to-state.md §4
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -19845,7 +19643,7 @@
   tn: null
   band: null
 - id: CLM-1994
-  statement: optimalityGap is the value given up because the tier actually used was not Tier 1, and its fix lives in L3.
+  statement: optimalityGapEur is the value given up because the tier actually used was not Tier 1, and its fix lives in L3.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -19855,7 +19653,7 @@
   tn: null
   band: null
 - id: CLM-1995
-  statement: forecastError is the value lost because the world differed from the belief the plan was built on, and its fix lives in L1 and the scenario model.
+  statement: forecastErrorEur is the value lost because the world differed from the belief the plan was built on, and its fix lives in L1 and the scenario model.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -19865,7 +19663,7 @@
   tn: null
   band: null
 - id: CLM-1996
-  statement: modelError is the value lost because the valuation was wrong given the belief, and its fix lives in L2.
+  statement: modelErrorEur is the value lost because the valuation was wrong given the belief, and its fix lives in L2.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -19875,7 +19673,7 @@
   tn: null
   band: null
 - id: CLM-1997
-  statement: executionSlippage is the value lost between intent and fill, and its fix lives in the quoting policy.
+  statement: executionSlippageEur is the value lost between intent and fill, and its fix lives in the quoting policy.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -19915,7 +19713,7 @@
   tn: null
   band: null
 - id: CLM-2001
-  statement: optimalityGap = Ĵ₁ − Ĵ.
+  statement: optimalityGapEur = Ĵ₁ − Ĵ.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -19925,7 +19723,7 @@
   tn: null
   band: null
 - id: CLM-2002
-  statement: forecastError = Ĵ − A.
+  statement: forecastErrorEur = Ĵ − A.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -19935,7 +19733,7 @@
   tn: null
   band: null
 - id: CLM-2003
-  statement: modelError plus executionSlippage plus unexplainedError equals A − R.
+  statement: modelErrorEur plus executionSlippageEur plus unexplainedError equals A − R.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -19955,7 +19753,7 @@
   tn: null
   band: null
 - id: CLM-2005
-  statement: Anchoring at Ĵ would leave optimalityGap with nowhere to live and would silently attribute optimiser weakness to forecast error.
+  statement: Anchoring at Ĵ would leave optimalityGapEur with nowhere to live and would silently attribute optimiser weakness to forecast error.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -20005,7 +19803,7 @@
   tn: null
   band: null
 - id: CLM-2010
-  statement: optimalityGap is computed by re-solving the tick at Tier 1 on the recorded C2 payload and taking the difference of objective values.
+  statement: optimalityGapEur is computed by re-solving the tick at Tier 1 on the recorded C2 payload and taking the difference of objective values.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -20015,7 +19813,7 @@
   tn: null
   band: null
 - id: CLM-2011
-  statement: forecastError is computed by re-scoring the plan that was actually submitted against realised outturn, holding the plan fixed, which is the telescoping form.
+  statement: forecastErrorEur is computed by re-scoring the plan that was actually submitted against realised outturn, holding the plan fixed, which is the telescoping form.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -20045,7 +19843,7 @@
   tn: null
   band: null
 - id: CLM-2014
-  statement: modelError is computed by valuing the actual trajectory using Valuation's own term definitions and comparing with Settlement's independent accounting of the same trajectory.
+  statement: modelErrorEur is computed by valuing the actual trajectory using Valuation's own term definitions and comparing with Settlement's independent accounting of the same trajectory.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -20055,7 +19853,7 @@
   tn: null
   band: null
 - id: CLM-2015
-  statement: A non-zero modelError means Valuation and Settlement disagree about what a MWh was worth, which is a definition drift.
+  statement: A non-zero modelErrorEur means Valuation and Settlement disagree about what a MWh was worth, which is a definition drift.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -20065,7 +19863,7 @@
   tn: null
   band: null
 - id: CLM-2016
-  statement: executionSlippage is computed by valuing the fills at intent prices versus executed prices.
+  statement: executionSlippageEur is computed by valuing the fills at intent prices versus executed prices.
   owner: 03-contracts/C5-settlement-to-state.md §6
   class: analytic
   blast_radius: very-expensive
@@ -20217,7 +20015,7 @@
   tn: null
   band: null
 - id: CLM-2031
-  statement: realisedPeak is non-decreasing within an accounting period and resets exactly at the local-calendar boundary, and violation is a HALT.
+  statement: pPoiRealisedPeakMw is non-decreasing within an accounting period and resets exactly at the local-calendar boundary, and violation is a HALT.
   owner: 03-contracts/C5-settlement-to-state.md §9
   class: analytic
   blast_radius: very-expensive
@@ -20268,7 +20066,7 @@
   tn: null
   band: null
 - id: CLM-2036
-  statement: fullLoadHours equals annualEnergyKwh divided by annualPeakKw within tolerance, and violation is a HALT.
+  statement: fullLoadHours equals pPoiAnnualEnergyMwh divided by pPoiAnnualPeakMw within tolerance, and violation is a HALT.
   owner: 03-contracts/C5-settlement-to-state.md §9
   class: analytic
   blast_radius: very-expensive
@@ -20432,7 +20230,7 @@
   tn: null
   band: null
 - id: CLM-2052
-  statement: realisedPeak on C6 is the EpigraphTerm floor.
+  statement: pPoiRealisedPeakMw on C6 is the EpigraphTerm floor.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
   blast_radius: very-expensive
@@ -20462,7 +20260,7 @@
   tn: null
   band: null
 - id: CLM-2055
-  statement: The conservative default for headroomToPeakKw is zero, meaning no headroom.
+  statement: The conservative default for pPoiHeadroomToPeakMw is zero, meaning no headroom.
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
   blast_radius: very-expensive
@@ -20512,7 +20310,7 @@
   tn: null
   band: null
 - id: CLM-2060
-  statement: effectiveFloor is the maximum of realisedPeak and the maximum modelled POI import over the slots in [unsettledGapFrom, snapshotAt).
+  statement: effectiveFloor is the maximum of pPoiRealisedPeakMw and the maximum modelled POI import over the slots in [unsettledGapFrom, snapshotAt).
   owner: 03-contracts/C6-state-to-layers.md §2
   class: analytic
   blast_radius: very-expensive
@@ -20546,8 +20344,8 @@
   owner: 03-contracts/C6-state-to-layers.md §3
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -20696,8 +20494,8 @@
   owner: 03-contracts/C6-state-to-layers.md §4
   class: analytic
   blast_radius: very-expensive
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -21772,8 +21570,8 @@
   owner: 04-compliance/T0-test-architecture.md §6
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -21978,7 +21776,7 @@
   tn: null
   band: null
 - id: CLM-2206
-  statement: "The compliance architecture is not a forecasting benchmark: forecast skill is an offline concern, T2 asserts that Belief serves what it was given at the right knowledge time rather than that the forecast was good, and forecast error is measured ex post in the forecastError bucket."
+  statement: "The compliance architecture is not a forecasting benchmark: forecast skill is an offline concern, T2 asserts that Belief serves what it was given at the right knowledge time rather than that the forecast was good, and forecast error is measured ex post in the forecastErrorEur bucket."
   owner: 04-compliance/T0-test-architecture.md §9
   class: analytic
   blast_radius: very-expensive
@@ -22214,8 +22012,8 @@
   owner: 04-compliance/T1-invariants.md §1.3
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -22224,18 +22022,18 @@
   owner: 04-compliance/T1-invariants.md §1.3
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-2231
-  statement: The power tolerance is 1e-6 kW absolute.
+  statement: The power tolerance is 1e-6 MW absolute.
   owner: 04-compliance/T1-invariants.md §1.3
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -22281,11 +22079,11 @@
   tn: null
   band: null
 - id: CLM-2236
-  statement: Every numeric field carries a declared unit and a typed quantity and no bare double crosses a seam; checked at serialisation and deserialisation at HALT severity.
+  statement: Every dimensioned field's unit suffix equals its declared unit, every power and energy field names its frame, and every dimensionless field declares a kind and a closed range; checked at serialisation and deserialisation at HALT severity.
   owner: 04-compliance/T1-invariants.md §2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
+  br_source: 02-conventions §5.2
   anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
@@ -22391,7 +22189,7 @@
   tn: null
   band: null
 - id: CLM-2247
-  statement: socMin ≤ socNow ≤ socMax; checked at the C1 producer and consumer at HALT severity.
+  statement: socMinMwh ≤ socNowMwh ≤ socMaxMwh; checked at the C1 producer and consumer at HALT severity.
   owner: 04-compliance/T1-invariants.md §3
   class: analytic
   blast_radius: very-expensive
@@ -22431,7 +22229,7 @@
   tn: null
   band: null
 - id: CLM-2251
-  statement: All scenario-indexed arrays share the scenario axis so index s denotes the same coherent state of the world in load, pv, daPrice, activationUp, imbalancePrice and every other scenario-indexed series, and indexing one series by s and another by s' is a defect; checked by the C1 validator and enforced by construction in the ensemble artefact at HALT severity.
+  statement: All scenario-indexed arrays share the scenario axis so index s denotes the same coherent state of the world in load, pv, daPriceEurPerMwh, activationUp, imbalancePriceEurPerMwh and every other scenario-indexed series, and indexing one series by s and another by s' is a defect; checked by the C1 validator and enforced by construction in the ensemble artefact at HALT severity.
   owner: 04-compliance/T1-invariants.md §3
   class: analytic
   blast_radius: very-expensive
@@ -22462,7 +22260,7 @@
   band: null
   vague: true
 - id: CLM-2254
-  statement: pMaxCharge and pMaxDischarge are non-negative and finite for every slot; checked by the C1 validator at HALT severity.
+  statement: pBattMaxChargeMw and pBattMaxDischargeMw are non-negative and finite for every slot; checked by the C1 validator at HALT severity.
   owner: 04-compliance/T1-invariants.md §3
   class: analytic
   blast_radius: very-expensive
@@ -22592,7 +22390,7 @@
   tn: null
   band: null
 - id: CLM-2267
-  statement: vSocSlopes are strictly decreasing so V is concave in SOC, and concavity is what makes the PWL binary-free under maximisation; checked at value-function artefact build and at the C2 producer and consumer at HALT severity.
+  statement: vSocSlopesEurPerMwh are strictly decreasing so V is concave in SOC, and concavity is what makes the PWL binary-free under maximisation; checked at value-function artefact build and at the C2 producer and consumer at HALT severity.
   owner: 04-compliance/T1-invariants.md §4
   class: analytic
   blast_radius: expensive-later
@@ -22722,7 +22520,7 @@
   tn: null
   band: null
 - id: CLM-2280
-  statement: Total planned discharge over any window respects energy availability including the reserve corridor, so the plan cannot sell the same kWh into spot and hold it as reserve headroom; checked post-solve in L3 and at the C3 producer at HALT severity.
+  statement: Total planned discharge over any window respects energy availability including the reserve corridor, so the plan cannot sell the same MWh into spot and hold it as reserve headroom; checked post-solve in L3 and at the C3 producer at HALT severity.
   owner: 04-compliance/T1-invariants.md §5
   class: analytic
   blast_radius: moderate
@@ -22732,7 +22530,7 @@
   tn: null
   band: null
 - id: CLM-2281
-  statement: "No solution contains simultaneous charge and discharge above tolerance: for every slot, not both charge and discharge exceed 1e-6 kW."
+  statement: "No solution contains simultaneous charge and discharge above tolerance: for every slot, not both charge and discharge exceed 1e-6 MW."
   owner: 04-compliance/T1-invariants.md §5
   class: analytic
   blast_radius: very-expensive
@@ -22792,7 +22590,7 @@
   tn: null
   band: null
 - id: CLM-2287
-  statement: No sell intent is priced below its shadowValue and no buy intent above it, so the quoting policy never trades through the Planner's own indifference price; a legitimate exception exists for covering a commitment at a loss but such an intent must carry the CommitmentCover tag and an untagged violation is blocked; checked at the quoting policy output before C3 seal and re-checked ex post by L5 at warn severity with the intent blocked.
+  statement: No sell intent is priced below its shadowValueEurPerMwh and no buy intent above it, so the quoting policy never trades through the Planner's own indifference price; a legitimate exception exists for covering a commitment at a loss but such an intent must carry the CommitmentCover tag and an untagged violation is blocked; checked at the quoting policy output before C3 seal and re-checked ex post by L5 at warn severity with the intent blocked.
   owner: 04-compliance/T1-invariants.md §5
   class: analytic
   blast_radius: moderate
@@ -22832,7 +22630,7 @@
   tn: null
   band: null
 - id: CLM-2291
-  statement: Execution does not consume shadowValue or urgency, which cross C3 for settlement attribution only, enforced structurally because the adapter interface exposes a projection of ExecutionIntent that omits both fields so Execution cannot read them even by accident; HALT if the projection is bypassed.
+  statement: Execution does not consume shadowValueEurPerMwh or urgency, which cross C3 for settlement attribution only, enforced structurally because the adapter interface exposes a projection of ExecutionIntent that omits both fields so Execution cannot read them even by accident; HALT if the projection is bypassed.
   owner: 04-compliance/T1-invariants.md §6
   class: analytic
   blast_radius: moderate
@@ -22842,7 +22640,7 @@
   tn: null
   band: null
 - id: CLM-2292
-  statement: socMeasured is consistent with batteryChargeEnergy, batteryDischargeEnergy and the declared efficiencies within tolerance, and persistent divergence is the earliest available signal that the efficiency or SOH model has drifted and feeds the modelError bucket; checked in L5 per slot and as a rolling statistic at warn severity escalating to alert on persistent drift.
+  statement: socMeasuredMwh is consistent with pBattChargeEnergyMwh, pBattDischargeEnergyMwh and the declared efficiencies within tolerance, and persistent divergence is the earliest available signal that the efficiency or SOH model has drifted and feeds the modelErrorEur bucket; checked in L5 per slot and as a rolling statistic at warn severity escalating to alert on persistent drift.
   owner: 04-compliance/T1-invariants.md §6
   class: analytic
   blast_radius: very-expensive
@@ -22863,7 +22661,7 @@
   tn: null
   band: null
 - id: CLM-2294
-  statement: realisedPeak is non-decreasing within an accounting period and resets exactly at the local-calendar period boundary, which is a local-midnight boundary and therefore not a fixed UTC offset across the year; checked in L5 at the C5 write and in L0 on read at HALT severity.
+  statement: pPoiRealisedPeakMw is non-decreasing within an accounting period and resets exactly at the local-calendar period boundary, which is a local-midnight boundary and therefore not a fixed UTC offset across the year; checked in L5 at the C5 write and in L0 on read at HALT severity.
   owner: 04-compliance/T1-invariants.md §7
   class: analytic
   blast_radius: very-expensive
@@ -22883,7 +22681,7 @@
   tn: null
   band: null
 - id: CLM-2296
-  statement: The four error buckets — forecastError, modelError, optimalityGap and executionSlippage — sum to planned minus realised within tolerance, and the residual is unexplained; checked in L5 after the counterfactual re-runs at warn severity.
+  statement: The four error buckets — forecastErrorEur, modelErrorEur, optimalityGapEur and executionSlippageEur — sum to planned minus realised within tolerance, and the residual is unexplained; checked in L5 after the counterfactual re-runs at warn severity.
   owner: 04-compliance/T1-invariants.md §7
   class: analytic
   blast_radius: very-expensive
@@ -22894,7 +22692,7 @@
   band: null
   vague: true
 - id: CLM-2297
-  statement: deliveryShortfall is zero for every slot, because a reserve delivery failure is a prequalification risk rather than an accounting item, and it is mirrored at C4 because it must be caught the moment the outcome arrives rather than only at the state write; checked in L5 on C4 receipt and again at the C5 write at alert and HALT severity.
+  statement: deliveryShortfallMwh is zero for every slot, because a reserve delivery failure is a prequalification risk rather than an accounting item, and it is mirrored at C4 because it must be caught the moment the outcome arrives rather than only at the state write; checked in L5 on C4 receipt and again at the C5 write at alert and HALT severity.
   owner: 04-compliance/T1-invariants.md §7
   class: regulatory
   blast_radius: very-expensive
@@ -22914,7 +22712,7 @@
   tn: null
   band: null
 - id: CLM-2299
-  statement: fullLoadHours equals annualEnergyKwh divided by annualPeakKw within tolerance, and because battery operation moves both numerator and denominator a stale or inconsistent pair silently mis-states qualification; checked in L5 at the C5 write at HALT severity.
+  statement: fullLoadHours equals pPoiAnnualEnergyMwh divided by pPoiAnnualPeakMw within tolerance, and because battery operation moves both numerator and denominator a stale or inconsistent pair silently mis-states qualification; checked in L5 at the C5 write at HALT severity.
   owner: 04-compliance/T1-invariants.md §7
   class: analytic
   blast_radius: expensive-later
@@ -23135,11 +22933,11 @@
   tn: null
   band: null
 - id: CLM-2321
-  statement: The types-and-units check asserts every field is the declared typed quantity with the declared unit.
+  statement: The types-and-units check asserts every field is the declared primitive and that its identifier's unit suffix and frame token agree with the Unit column and the section it sits in.
   owner: 04-compliance/T1-invariants.md §9.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
+  br_source: 02-conventions §5.2
   anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
@@ -23229,18 +23027,18 @@
   owner: 04-compliance/T1-invariants.md §9.2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-2331
-  statement: A field silently moving from EUR/MWh to EUR/kWh is the archetypal catastrophic change and it is cheap to make impossible.
+  statement: A field moving from EUR/MWh to EUR/MW is the archetypal catastrophic change and it is cheap to make impossible; under conventions §5.2 it cannot even be attempted silently, because the suffix and the unit must agree.
   owner: 04-compliance/T1-invariants.md §9.2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23427,12 +23225,12 @@
   tn: null
   band: null
 - id: CLM-2350
-  statement: If every price is multiplied by k greater than zero, every euro figure must be multiplied by exactly k and every kW bound must be unchanged.
+  statement: If every price is multiplied by k greater than zero, every euro figure must be multiplied by exactly k and every MW bound must be unchanged.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23461,8 +23259,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -23847,7 +23645,7 @@
   tn: null
   band: null
 - id: CLM-2392
-  statement: An Imputed socNow is not permitted because socNow is never defaulted, and a Missing socNow is a HALT via the SOC bound invariant.
+  statement: An Imputed socNowMwh is not permitted because socNowMwh is never defaulted, and a Missing socNowMwh is a HALT via the SOC bound invariant.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
   class: analytic
   blast_radius: moderate
@@ -23857,7 +23655,7 @@
   tn: null
   band: null
 - id: CLM-2393
-  statement: Degraded load quality gives DEGRADED mode with raised peakSafetyMarginKw and raised cvarLevel, Stale load gives DEGRADED with a larger margin, Imputed load defaults to a high quantile, and Missing load gives DEFENSIVE with the high default and criticalMissing populated.
+  statement: Degraded load quality gives DEGRADED mode with raised peakSafetyMarginMw and raised cvarLevel, Stale load gives DEGRADED with a larger margin, Imputed load defaults to a high quantile, and Missing load gives DEFENSIVE with the high default and criticalMissing populated.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
   class: analytic
   blast_radius: moderate
@@ -23877,7 +23675,7 @@
   tn: null
   band: null
 - id: CLM-2395
-  statement: Degraded daPrice lowers positionScale and raises cvarWeight, and Missing daPrice is critical and gives DEFENSIVE.
+  statement: Degraded daPriceEurPerMwh lowers positionScale and raises cvarWeight, and Missing daPriceEurPerMwh is critical and gives DEFENSIVE.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
   class: analytic
   blast_radius: moderate
@@ -23887,7 +23685,7 @@
   tn: null
   band: null
 - id: CLM-2396
-  statement: A stale idSpreadBelief defaults wide, which suppresses trading.
+  statement: A stale idSpreadBeliefEurPerMwh defaults wide, which suppresses trading.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
   class: analytic
   blast_radius: moderate
@@ -23897,7 +23695,7 @@
   tn: null
   band: null
 - id: CLM-2397
-  statement: A stale afrrCapPrice defaults to zero so the engine does not chase reserve revenue.
+  statement: A stale afrrCapPriceEurPerMwH defaults to zero so the engine does not chase reserve revenue.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
   class: analytic
   blast_radius: moderate
@@ -23927,7 +23725,7 @@
   tn: null
   band: null
 - id: CLM-2400
-  statement: A Missing peakPrice is a HALT because there is no safe default for a mandatory term.
+  statement: A Missing peakPriceEurPerMw is a HALT because there is no safe default for a mandatory term.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
   class: analytic
   blast_radius: moderate
@@ -24057,7 +23855,7 @@
   tn: null
   band: null
 - id: CLM-2413
-  statement: Raising peakPrice raises the EpigraphTerm unit price and makes the priced value of a kW of peak reduction non-decreasing.
+  statement: Raising peakPriceEurPerMw raises the EpigraphTerm unit price and makes the priced value of a MW of peak reduction non-decreasing.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.3
   class: analytic
   blast_radius: expensive-later
@@ -24067,7 +23865,7 @@
   tn: null
   band: null
 - id: CLM-2414
-  statement: Raising afrrCapPrice across all scenarios makes the capacity value curve pointwise non-decreasing in offered MW.
+  statement: Raising afrrCapPriceEurPerMwH across all scenarios makes the capacity value curve pointwise non-decreasing in offered MW.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.3
   class: analytic
   blast_radius: moderate
@@ -24077,7 +23875,7 @@
   tn: null
   band: null
 - id: CLM-2415
-  statement: Raising daPrice across all scenarios makes the LinearTerm coefficient on DA sell non-decreasing and on DA buy non-increasing, because the cost of buying rose.
+  statement: Raising daPriceEurPerMwh across all scenarios makes the LinearTerm coefficient on DA sell non-decreasing and on DA buy non-increasing, because the cost of buying rose.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.3
   class: analytic
   blast_radius: very-expensive
@@ -24151,8 +23949,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24161,8 +23959,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24171,8 +23969,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24181,8 +23979,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24191,18 +23989,18 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-2427
-  statement: "Scale equivariance fires when a term does not scale by k: a fixed fee sourced from an unscaled field, a constant baked into a breakpoint, or a threshold in EUR compared against a quantity in kW."
+  statement: "Scale equivariance fires when a term does not scale by k: a fixed fee sourced from an unscaled field, a constant baked into a breakpoint, or a threshold in EUR compared against a quantity in MW."
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24211,8 +24009,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24221,18 +24019,18 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-2430
-  statement: Scale equivariance also catches absolute epsilons in the wrong dimension, because a comparison against 1e-6 EUR applied to a kW quantity survives k = 1 and dies at k = 1e4.
+  statement: Scale equivariance also catches absolute epsilons in the wrong dimension, because a comparison against 1e-6 EUR applied to a MW quantity survives k = 1 and dies at k = 1e4.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24241,8 +24039,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -24838,7 +24636,7 @@
   tn: null
   band: null
 - id: CLM-2491
-  statement: Raising afrrCapPrice for a block by a positive delta makes planned reserve for that block non-decreasing, catching a sign error on capacity revenue, headroom coupling with the wrong sense, or a reserve term being ignored entirely.
+  statement: Raising afrrCapPriceEurPerMwH for a block by a positive delta makes planned reserve for that block non-decreasing, catching a sign error on capacity revenue, headroom coupling with the wrong sense, or a reserve term being ignored entirely.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
   class: analytic
   blast_radius: moderate
@@ -24852,13 +24650,13 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
 - id: CLM-2493
-  statement: Raising peakPrice for a regime makes the planned peak for that regime non-increasing and the objective non-increasing, catching an epigraph built with the wrong sense, prorationFactor applied to the wrong side, or an ignored peak floor.
+  statement: Raising peakPriceEurPerMw for a regime makes the planned peak for that regime non-increasing and the objective non-increasing, catching an epigraph built with the wrong sense, prorationFactor applied to the wrong side, or an ignored peak floor.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
   class: analytic
   blast_radius: expensive-later
@@ -24948,7 +24746,7 @@
   tn: null
   band: null
 - id: CLM-2502
-  statement: Increasing socMax makes the objective non-decreasing.
+  statement: Increasing socMaxMwh makes the objective non-decreasing.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
   class: analytic
   blast_radius: moderate
@@ -24958,7 +24756,7 @@
   tn: null
   band: null
 - id: CLM-2503
-  statement: Increasing pMaxDischarge makes the objective non-decreasing.
+  statement: Increasing pBattMaxDischargeMw makes the objective non-decreasing.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
   class: analytic
   blast_radius: moderate
@@ -25150,7 +24948,7 @@
   band: null
   vague: true
 - id: CLM-2522
-  statement: The per-slot energy check catches meter and sign errors while the cumulative check catches a slow divergence between modelled and measured SOC, feeding the modelError bucket before the money shows up in P&L.
+  statement: The per-slot energy check catches meter and sign errors while the cumulative check catches a slow divergence between modelled and measured SOC, feeding the modelErrorEur bucket before the money shows up in P&L.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: very-expensive
@@ -25160,7 +24958,7 @@
   tn: null
   band: null
 - id: CLM-2523
-  statement: Auxiliary load folded into η instead of modelled as a LoadKw component shows up in the SOC check as a one-sided drift.
+  statement: Auxiliary load folded into η instead of modelled as an explicit site-frame load component shows up in the SOC check as a one-sided drift.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: very-expensive
@@ -25174,8 +24972,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -25184,8 +24982,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -25194,8 +24992,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -25204,8 +25002,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -25260,7 +25058,7 @@
   tn: null
   band: null
 - id: CLM-2533
-  statement: A restatement that lowers the metered peak must lower realisedPeak, and that is compatible with realisedPeak being non-decreasing within a period only if the restated artefact is a fresh computation rather than an incremental max against a stale value.
+  statement: A restatement that lowers the metered peak must lower pPoiRealisedPeakMw, and that is compatible with pPoiRealisedPeakMw being non-decreasing within a period only if the restated artefact is a fresh computation rather than an incremental max against a stale value.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.2
   class: analytic
   blast_radius: very-expensive
@@ -25330,7 +25128,7 @@
   tn: null
   band: null
 - id: CLM-2540
-  statement: Perturbing realised prices away from belief makes forecastError non-zero and all other buckets zero.
+  statement: Perturbing realised prices away from belief makes forecastErrorEur non-zero and all other buckets zero.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
   class: analytic
   blast_radius: very-expensive
@@ -25340,7 +25138,7 @@
   tn: null
   band: null
 - id: CLM-2541
-  statement: Valuing the same trajectory with a different term definition makes modelError non-zero and all other buckets zero.
+  statement: Valuing the same trajectory with a different term definition makes modelErrorEur non-zero and all other buckets zero.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
   class: analytic
   blast_radius: very-expensive
@@ -25350,7 +25148,7 @@
   tn: null
   band: null
 - id: CLM-2542
-  statement: Re-running the tick at Tier 1 and comparing makes optimalityGap non-zero and all other buckets zero.
+  statement: Re-running the tick at Tier 1 and comparing makes optimalityGapEur non-zero and all other buckets zero.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
   class: analytic
   blast_radius: very-expensive
@@ -25360,7 +25158,7 @@
   tn: null
   band: null
 - id: CLM-2543
-  statement: Making fill prices differ from limit prices makes executionSlippage non-zero and all other buckets zero.
+  statement: Making fill prices differ from limit prices makes executionSlippageEur non-zero and all other buckets zero.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.3
   class: analytic
   blast_radius: very-expensive
@@ -25530,7 +25328,7 @@
   tn: null
   band: null
 - id: CLM-2560
-  statement: The split zero-gap test asserts residual modelError is zero and linearizationGap is within its declared budget.
+  statement: The split zero-gap test asserts residual modelErrorEur is zero and linearizationGap is within its declared budget.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.9
   class: analytic
   blast_radius: very-expensive
@@ -25584,8 +25382,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.1
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -25634,8 +25432,8 @@
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §6.2
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -27128,7 +26926,7 @@
   tn: null
   band: null
 - id: CLM-2719
-  statement: Everything downstream that consumes fill quality — the executionSlippage bucket, the reliable-volume bounds and the quoting policy's capture ratio — inherits the simulator caveat and carries it in its own reporting.
+  statement: Everything downstream that consumes fill quality — the executionSlippageEur bucket, the reliable-volume bounds and the quoting policy's capture ratio — inherits the simulator caveat and carries it in its own reporting.
   owner: 04-compliance/T4-calibration-and-execution-quality.md §1.2
   class: analytic
   blast_radius: moderate
@@ -27739,7 +27537,7 @@
   tn: null
   band: null
 - id: CLM-2780
-  statement: T4 asserts that the adverse-selection measurement and the executionSlippage bucket are consistent over the same period within tolerance.
+  statement: T4 asserts that the adverse-selection measurement and the executionSlippageEur bucket are consistent over the same period within tolerance.
   owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
   class: analytic
   blast_radius: very-expensive
@@ -27750,7 +27548,7 @@
   band: null
   vague: true
 - id: CLM-2781
-  statement: A divergence between adverse selection and executionSlippage means one of the two definitions has drifted, and that divergence is exactly what the unexplained ratio starts registering months later.
+  statement: A divergence between adverse selection and executionSlippageEur means one of the two definitions has drifted, and that divergence is exactly what the unexplained ratio starts registering months later.
   owner: 04-compliance/T4-calibration-and-execution-quality.md §3.2
   class: analytic
   blast_radius: very-expensive
@@ -27855,8 +27653,8 @@
   owner: 04-compliance/T4-calibration-and-execution-quality.md §3.3
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -28574,7 +28372,7 @@
   tn: null
   band: null
 - id: CLM-2863
-  statement: T5 asserts that the gap it measures and the settlement optimalityGap bucket agree over the same period within tolerance, and a divergence means the counterfactual re-run and the oracle run are not using the same inputs.
+  statement: T5 asserts that the gap it measures and the settlement optimalityGapEur bucket agree over the same period within tolerance, and a divergence means the counterfactual re-run and the oracle run are not using the same inputs.
   owner: 04-compliance/T5-gap-and-performance.md §3.5
   class: analytic
   blast_radius: very-expensive
@@ -29670,8 +29468,8 @@
   owner: 04-compliance/T6-adversarial-audit.md §4
   class: analytic
   blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
+  br_source: 02-conventions §5.2
+  anchors: [INV-G-02]
   evidence: unlabelled
   tn: null
   band: null
@@ -29906,7 +29704,7 @@
   tn: null
   band: null
 - id: CLM-2996
-  statement: Cross-field mutations — socMin above socMax, a round-trip efficiency above one, or a blockIndex not covering every slot — must be rejected by the corresponding belief invariants.
+  statement: Cross-field mutations — socMinMwh above socMaxMwh, a round-trip efficiency above one, or a blockIndex not covering every slot — must be rejected by the corresponding belief invariants.
   owner: 04-compliance/T6-adversarial-audit.md §5.1
   class: analytic
   blast_radius: very-expensive

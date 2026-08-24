@@ -461,9 +461,17 @@ place where derivations fail, and that is durable information.
 **Live today.** `check_claims.py` implements the checks decidable from the
 register and the specification alone: register coverage, id uniqueness and
 non-reuse of retired ids, owner resolution, `INV-*` anchoring, section coverage,
-band-once-labelled, no label on a `regulatory` claim, the `depends_on` graph, and
-note resolution — every non-null `tn` names a file under `06-theory/`, so a
-pointer to a note that never landed on trunk cannot pass for a real one.
+band-once-labelled, no label on a `regulatory` claim, and the `depends_on` graph.
+
+`check_units.py` is the second live check, and it is an invariant rather than a
+register check: it is `INV-G-02` (`00-overview/02-conventions.md` §5.2, §2.3),
+decided from the contract field tables alone. For every numeric field in `C1`–`C6`
+it asserts that a dimensioned identifier's unit suffix equals the Unit column of
+its own row, that a MW or MWh field carries one of the five declared frame
+tokens, and that a dimensionless field carries `—` plus a declared range. It
+exists because the audit that deleted `ADR-003` moved unit and frame safety out
+of the type system and into the identifier, and a naming rule that no machine
+reads is a review convention wearing an invariant's number.
 The remaining rows above are gated on artefacts that do not exist yet —
 procedure records, run manifests, packets and adjudications — and land with the
 harness. Two known gaps carry no check at all and are tracked as tickets rather

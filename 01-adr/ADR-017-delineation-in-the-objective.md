@@ -69,7 +69,7 @@ Four rules follow and are normative:
 
 | Effect | Owner | Base | Note |
 |---|---|---|---|
-| `SubsidyRevenue` | `DelineationView` | `Delineation` | `MAX[AW − MW_month; 0] · (32)`; spot revenue on the same kWh stays in `SpotEnergyValue` |
+| `SubsidyRevenue` | `DelineationView` | `Delineation` | `MAX[AW − MW_month; 0] · (32)`; spot revenue on the same MWh stays in `SpotEnergyValue` |
 | `EnfgLevies` | `DelineationView` | `Delineation` | Charged on `(21)`, the reducible EnFG components only |
 | `LeviesAndTaxes` | `TariffView` | `PoiImport` | **Narrowed** to the non-reducible components — Stromsteuer, Konzessionsabgabe |
 
@@ -94,9 +94,9 @@ needs a second when `λ_9` may be negative — which is whenever the site has lo
 
 ### Costs accepted
 
-- **`INV-S-10` (zero-gap) is split.** `modelError` gains a `linearizationGap`
+- **`INV-S-10` (zero-gap) is split.** `modelErrorEur` gains a `linearizationGap`
   sub-bucket: L2's `λ`-linearisation against L5's exact machinery on the same
-  trajectory. It is expected, budgeted and reported; residual `modelError` is still
+  trajectory. It is expected, budgeted and reported; residual `modelErrorEur` is still
   asserted zero. Without the split the most valuable test in L5 fails permanently on
   day one. `linearizationGap` is interpretable as one thing — projection error.
 - **`MW_month` is not known at decision time.** `MAX[AW − MW; 0]` is convex, so pricing
@@ -108,7 +108,7 @@ needs a second when `λ_9` may be negative — which is whenever the site has lo
   condition, so the indicator for a slot depends on a run of neighbouring day-ahead
   prices. Declared in `L1` as a function of the day-ahead series, with the threshold as
   configuration per EEG vintage.
-- **Self-consumption forfeits both routes.** A kWh discharged into load never enters
+- **Self-consumption forfeits both routes.** A MWh discharged into load never enters
   `(11)`. This falls out of the state equations, so no `SelfConsumptionView` is needed
   and RECONCILIATION item H resolves negatively — but the resolution assumes retail
   supply is spot-indexed.
