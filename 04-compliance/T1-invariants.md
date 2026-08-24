@@ -87,7 +87,7 @@ Applied at **every** seam by the shared validator, on both sides. Sources:
 | ID | Statement | Where checked | Severity | Test level |
 |---|---|---|---|---|
 | `INV-G-01` | No numeric field in any payload is `NaN` or `±Infinity`. Missing is expressed by the quality channel (`C0` §6), never by a sentinel value. | Shared validator, both sides of every seam | `HALT` | `T1`, `T6` (fuzz) |
-| `INV-G-02` | Every numeric field carries a declared unit and a typed quantity (ADR-003). No bare `double` crosses a seam. | Schema check at serialisation and deserialisation | `HALT` | `T1`, `T0` (compile-fail) |
+| `INV-G-02` | Every dimensioned field's unit suffix equals its declared unit, every power and energy field names its frame, and every dimensionless field declares a kind and a closed range (`00-overview/02-conventions.md` §5.2, §2.3). | Schema check at serialisation and deserialisation, read off the field table | `HALT` | `T1`, `T0` (name/unit-table lint) |
 | `INV-G-03` | `schemaVersion` is recognised by the consumer. An unrecognised version is rejected, never guessed at, never partially read. | Consumer, before any field is read | `HALT` | `T1`, `T6` (version rejection) |
 | `INV-G-04` | `contentHash` recomputed over the payload matches the carried value; `inputHashes` is present and non-empty. | Producer at seal, consumer at receipt | `HALT` | `T1`, `T3` |
 | `INV-G-05` | *(consolidated)* No layer reads the system clock. Time enters the pipeline only as `tickId`/`SlotId` and `asOf`, supplied by the driver. No payload contains a wall-clock timestamp taken at construction, and no code path in `L1`, `L2`, `L3` or `L5` calls a wall-clock API. Enforced at two points: a **Roslyn analyzer rule** banning clock APIs in the layer assemblies (ADR-013), and a **payload check** that no timestamp field was populated at construction time (`C0` §3). | Analyzer at build; validator at every seam | `HALT` (build failure at the analyzer; `HALT` at the seam) | `T1`, `T3` |
@@ -236,7 +236,7 @@ hand-built fixtures and recorded seams.
 | Check | Assertion |
 |---|---|
 | Schema | The payload's field set equals the contract's field table exactly. Extra fields fail; missing non-nullable fields fail (`INV-G-09`). |
-| Types and units | Every field is the declared typed quantity with the declared unit (`INV-G-02`). |
+| Types and units | Every field is the declared primitive, and its identifier's unit suffix and frame prefix agree with the Unit column and the section it sits in (`INV-G-02`). |
 | Cardinality | `1`, `[H]`, `[S,H]`, `[B]`, `0..1` as declared; array lengths against `horizon`/`scenarioCount` (`INV-G-06`, `INV-G-07`). |
 | Ranges | Elementwise, every element (`INV-G-10`). A range test that checks only `array[0]` is the bug this invariant exists for. |
 | No-NaN | Elementwise across every numeric array (`INV-G-01`). |

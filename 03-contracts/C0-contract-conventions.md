@@ -48,7 +48,7 @@ Applied at every seam by a shared validator, invoked on both sides.
 | ID | Invariant |
 |---|---|
 | `INV-G-01` | No `NaN`, no infinity, in any numeric field |
-| `INV-G-02` | Every numeric field has a declared unit in its field table. Dimensioned quantities use a typed quantity (ADR-003); dimensionless fields (fractions, probabilities, weights, ratios, counts) may be `double`/`int` but must be declared `—` in the Unit column and range-constrained. A dimensioned field typed as a bare `double` is a violation. |
+| `INV-G-02` | Three mechanical equalities, all read off the field table. **(a)** Every dimensioned field's identifier ends in its unit — `Mw`, `Mwh`, `EurPerMwh`, `EurPerMw`, `EurPerMwH`, `Eur` — and that suffix **equals** the Unit column of its own row. **(b)** Every power and energy field carries a frame prefix — `pBatt*` or `soc*` (battery), `pPoi*` (POI), or the market product's own name — and appears in that frame's section. **(c)** Every dimensionless field carries `—` in the Unit column plus a declared kind and a closed range (`00-overview/02-conventions.md` §2.3). A suffix that disagrees with the Unit column, a power or energy field naming no frame, and a dimensionless field with no range are each a violation. |
 | `INV-G-03` | `schemaVersion` is recognised by the consumer |
 | `INV-G-04` | `contentHash` matches the payload; `inputHashes` are present and non-empty |
 | `INV-G-05` | No payload contains a wall-clock timestamp taken at construction |
