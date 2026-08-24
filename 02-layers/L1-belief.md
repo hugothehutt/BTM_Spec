@@ -77,7 +77,7 @@ version, and the old catalogue remains resolvable for replay.
 The distinction that this buys is the one Settlement needs: **"we were wrong"**
 (row 0 was a bad forecast) versus **"the data was later corrected"** (row 1
 superseded row 0). Collapsing revisions to last-value-wins destroys the ability
-to attribute a P&L gap between C5 §6's `forecastError` bucket and a data
+to attribute a P&L gap between C5 §6's `forecastErrorEur` bucket and a data
 restatement, and there is no way to recover it afterwards.
 
 ### 1.3 The ingestion watermark
@@ -435,8 +435,8 @@ loop. `INV-D-17`.
 
 ### 5.2 What crosses C1
 
-Only C1 §5: `idReliableVolumeBuy`, `idReliableVolumeSell`, and optionally
-`idVolumeByPriceBand`. Volumes, in MWh, per slot. **No price field exists in that
+Only C1 §5: `idReliableVolumeBuyMwh`, `idReliableVolumeSellMwh`, and optionally
+`idVolumeByPriceBandMwh`. Volumes, in MWh, per slot. **No price field exists in that
 section**, and that is the C1-side enforcement of the rule that fill probability
 constrains the Planner but never prices for it (ADR-008, ADR-012, and `INV-V-16`
 on the L2 side).
@@ -578,7 +578,7 @@ MaxStale = Slots(n)          → stale when  asOf − knowledgeTime > n slots
          | None              → never stale; structural data from the calendar
 ```
 
-`Gate` is the correct semantics for `daPrice` and `afrrCapPrice` (C1 §4): a
+`Gate` is the correct semantics for `daPriceEurPerMwh` and `afrrCapPriceEurPerMwH` (C1 §4): a
 day-ahead price belief from before the gate is not merely old, it has been
 superseded by an event. Expressing that as a slot count would either be too
 lenient at 03:00 or too strict at 11:59.
@@ -592,7 +592,7 @@ isCritical(f)   ≔  C1 field table has  Null = no   ∧   Default = "—"
 criticalMissing ≔  { f : quality(f) = Missing  ∧  isCritical(f) }
 ```
 
-The archetype is `socNow` (C1 §2: "Measured; if telemetry lost, escalate — never
+The archetype is `socNowMwh` (C1 §2: "Measured; if telemetry lost, escalate — never
 default"). A field with `Null = no` and a declared conservative default is not
 critical, because rung 5 always succeeds for it; a field with no safe default
 falls to rung 6 by construction.

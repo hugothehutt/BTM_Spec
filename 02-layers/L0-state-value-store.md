@@ -66,7 +66,7 @@ tables mirror C5 exactly; nothing here introduces a field C5 does not carry.
 
 | Field | Type | Unit | Card. | Notes |
 |---|---|---|---|---|
-| `realisedPeak` | `PoiPowerKw` | kW | per regime | The epigraph floor for the next tick |
+| `pPoiRealisedPeakMw` | `double` | MW | per regime | The epigraph floor for the next tick |
 | `realisedPeakSlot` | `SlotId` | — | per regime | When it occurred |
 | `periodStart`, `periodEnd` | `SlotId` | — | per regime | Local-calendar derived (ADR-002) |
 | `peakIsProvisional` | `bool` | — | per regime | True while meter data is unfinal |
@@ -80,10 +80,10 @@ two peak accumulators over different slot sets and different period bounds
 
 | Field | Type | Unit | Notes |
 |---|---|---|---|
-| `annualEnergyKwh` | `EnergyKwh` | kWh | Accumulated in the qualification year |
-| `annualPeakKw` | `PoiPowerKw` | kW | Denominator of full-load hours |
+| `pPoiAnnualEnergyMwh` | `double` | MWh | Accumulated in the qualification year |
+| `pPoiAnnualPeakMw` | `double` | MW | Denominator of full-load hours |
 | `fullLoadHours` | `double` | h | `annualEnergy / annualPeak` (`INV-S-06`) |
-| `hlzfPeakKw` | `PoiPowerKw` | kW | Peak within HLZF windows only |
+| `pPoiHlzfPeakMw` | `double` | MW | Peak within HLZF windows only |
 | `qualificationStatus` | `Qualified \| AtRisk \| Lost \| NotApplicable` | — | Per applicable §19(2) path |
 | `qualificationMarginHours` | `double` | h | Distance to the threshold |
 | `projectedYearEndFlh` | `double` | h | Forward projection from the slow loop |
@@ -100,8 +100,8 @@ binary flag tells the engine nothing until it is too late (C5 §3, ADR-011).
 | `kind` | `SpotPosition \| ReserveAward \| OpenOrder` | |
 | `status` | `Pending \| Confirmed \| Settled \| Cancelled` | Load-bearing (ADR-006) |
 | `market`, `productId`, `slot`/`block` | — | |
-| `signedVolume` | `EnergyKwh` / `ReserveMw` | Market frame |
-| `price` | `EnergyPrice` / `CapacityPrice` | |
+| `signedVolumeMwh` | `double` / `double` | Market frame |
+| `priceEurPerMwh` | `double` / `double` | |
 | `feasibilityRequirement` | `SocCorridor?` | Hard constraint in every degradation mode |
 
 `Confirmed` entries are hard constraints; `Pending` entries are probabilistic
@@ -359,7 +359,7 @@ an input, never a dependency." If it has not run, the Planner uses the last vali
 | Validity expiry | C5 §8 `vSocStale` | `asOf − fittedAt > validityHorizon` | staleness |
 | State drift | C5 §8 `stateDriftSignal` | Above a configured threshold | staleness |
 | Explicit request | C5 §8 `refreshRequested` | Set by Settlement | staleness |
-| Accounting rollover | `C_accounting` | `periodEnd` crossed; `realisedPeak` resets | **invalidation** |
+| Accounting rollover | `C_accounting` | `periodEnd` crossed; `pPoiRealisedPeakMw` resets | **invalidation** |
 | Qualification transition | C5 §3 `qualificationStatus` change, or `qualCritical` set | Discrete conditioning state changed | **invalidation** |
 | Regime change | `MarketCalendar` / ADR-011 | A regime becomes active or inactive | **invalidation** |
 
@@ -368,7 +368,7 @@ accident. A **stale** curve is an out-of-date approximation of the right curve:
 it attracts `stalenessPenalty` shrinkage of its slopes (L2 §6) and the engine
 carries on. An **invalidated** curve is the *wrong* curve — one fitted under
 `Qualified` says nothing useful about an `AtRisk` world, and one fitted against
-last month's `realisedPeak` prices a floor that no longer exists. Invalidation
+last month's `pPoiRealisedPeakMw` prices a floor that no longer exists. Invalidation
 forces `DEFENSIVE` until a refit lands (`INV-G-19`), because shrinking the slopes
 of a curve conditioned on the wrong state does not make it less wrong.
 
@@ -470,11 +470,11 @@ attribution rather than through the fit's own objective.
 ```
 period start ──────────── unsettledGapFrom ──────────── t (now) ──────── horizon
      |<──── settled, authoritative ────>|<─── the gap ───>|<── planned ──>|
-      realisedPeak is a max over this     no meter data     Planner's own
+      pPoiRealisedPeakMw is a max over this     no meter data     Planner's own
                                           yet               trajectory
 ```
 
-`realisedPeak` (C5 §2) is a max over the **settled prefix only**. The gap exists
+`pPoiRealisedPeakMw` (C5 §2) is a max over the **settled prefix only**. The gap exists
 because meter data is published with a lag — provisional telemetry in minutes to
 hours, final metered values in days — and market settlement is later still.
 `peakIsProvisional` and `unsettledGapFrom` are the two fields that make this
@@ -487,7 +487,7 @@ the gap as a provisional peak contribution** (C5 §2, L2 §2 `PeakView`). The
 epigraph floor is
 
 ```
-zPeak  ≥  max(  realisedPeak ,
+zPeak  ≥  max(  pPoiRealisedPeakMw ,
                 max over τ ∈ [unsettledGapFrom, t) of  p̂_poi[τ]  )
 ```
 
@@ -498,25 +498,25 @@ explicitly, and it is a particularly bad one: the gap is the *most recent* windo
 so it is disproportionately likely to contain a peak the engine just caused.
 
 Where the gap trajectory is itself uncertain, it receives the same CVaR treatment
-as the forward peak and picks up `riskProfile.peakSafetyMarginKw` (L2 §6). The
+as the forward peak and picks up `riskProfile.peakSafetyMarginMw` (L2 §6). The
 asymmetry is deliberate: overstating the provisional peak costs a little
 optimisation freedom, understating it can cost an entire period's demand charge.
 
-### 6.2 Provisional peak is not `realisedPeak`
+### 6.2 Provisional peak is not `pPoiRealisedPeakMw`
 
 Worth stating because it is exactly the kind of thing that gets coded as an
-assertion and then fires in production. `INV-S-01` requires `realisedPeak` — the
+assertion and then fires in production. `INV-S-01` requires `pPoiRealisedPeakMw` — the
 *settled* quantity — to be non-decreasing within a period. The Planner's
 provisional working value is a different quantity, and it may legitimately exceed
 the peak that eventually settles, because the modelled gap contribution is
 deliberately biased high.
 
 ```
-INV-G-16:  provisionalPeak ≥ realisedPeak                    (always)
+INV-G-16:  provisionalPeak ≥ pPoiRealisedPeakMw                    (always)
            provisionalPeak ≤ eventual settled peak           (NOT required)
 ```
 
-When settlement arrives, `unsettledGapFrom` advances, `realisedPeak` may step up,
+When settlement arrives, `unsettledGapFrom` advances, `pPoiRealisedPeakMw` may step up,
 and the modelled gap contribution is discarded rather than blended. The step is a
 `stateDriftSignal` contribution (C5 §8), which is the correct response: the fitted
 `V` was conditioned on the old peak state.
@@ -566,7 +566,7 @@ Consequences, all of them intentional:
   bitemporality, and it is the reason the journal is append-only rather than a
   mutable row per field.
 - **Attribution.** A restatement is a distinct cause from a forecast error and
-  must not be absorbed into C5 §6's `forecastError` bucket. It is attributed and
+  must not be absorbed into C5 §6's `forecastErrorEur` bucket. It is attributed and
   reported separately; a restatement that lands after an accounting period has
   closed is booked to the period it belongs to and flagged, never smeared into
   the current one.
@@ -613,7 +613,7 @@ Detail in `04-compliance/T2`; acyclicity and determinism are `T3`.
   `StateSnapshot.contentHash` (`INV-G-14`); and — the meta-test — that enabling
   the recorder does not change any artefact hash.
 
-- **`realisedPeak` monotonicity and reset (`INV-S-01`).** Property test over a
+- **`pPoiRealisedPeakMw` monotonicity and reset (`INV-S-01`).** Property test over a
   generated year of settlement updates: non-decreasing within every accounting
   period, and reset **exactly** at the local-calendar boundary. The reset slot must
   equal `CivilCalendar.LocalMidnight(periodStart)` expressed as a `SlotId`, not
@@ -629,8 +629,8 @@ Detail in `04-compliance/T2`; acyclicity and determinism are `T3`.
   than being carried across.
 
 - **Unsettled gap.** `unsettledGapFrom` non-decreasing and `≤ t` (`INV-G-17`);
-  `provisionalPeak ≥ realisedPeak` always (`INV-G-16`); a settlement arrival that
-  raises `realisedPeak` above the previously modelled gap contribution is handled
+  `provisionalPeak ≥ pPoiRealisedPeakMw` always (`INV-G-16`); a settlement arrival that
+  raises `pPoiRealisedPeakMw` above the previously modelled gap contribution is handled
   without an assertion failure; a stalled gap beyond `maxGapSlots` escalates the
   mode.
 
@@ -658,7 +658,7 @@ Detail in `04-compliance/T2`; acyclicity and determinism are `T3`.
 | `INV-G-13` | A tick that does not reach `Commit` leaves L0 byte-identical at the previous generation | `HALT` |
 | `INV-G-14` | Every payload produced within a tick carries that tick's `StateSnapshot.contentHash` in `inputHashes` | `HALT` |
 | `INV-G-15` | The L0 journal is append-only; current state is the fold of the journal, never an in-place edit | `HALT` |
-| `INV-G-16` | The Planner's provisional peak floor is `≥ realisedPeak`; it is **not** required to be `≤` the eventual settled peak | `HALT` on the `≥` side only |
+| `INV-G-16` | The Planner's provisional peak floor is `≥ pPoiRealisedPeakMw`; it is **not** required to be `≤` the eventual settled peak | `HALT` on the `≥` side only |
 | `INV-G-17` | `unsettledGapFrom` is non-decreasing and never exceeds the current slot | `HALT` |
 | `INV-G-18` | A restored `StateSnapshot` is field-identical to the persisted one and rehashes to the same `contentHash` | `HALT` |
 | `INV-G-19` | A change to `V`'s discrete conditioning state invalidates `V` — mode `≥ DEFENSIVE` until refit — rather than marking it stale | escalate per ADR-014 |

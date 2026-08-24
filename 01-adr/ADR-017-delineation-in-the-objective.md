@@ -94,9 +94,9 @@ needs a second when `λ_9` may be negative — which is whenever the site has lo
 
 ### Costs accepted
 
-- **`INV-S-10` (zero-gap) is split.** `modelError` gains a `linearizationGap`
+- **`INV-S-10` (zero-gap) is split.** `modelErrorEur` gains a `linearizationGap`
   sub-bucket: L2's `λ`-linearisation against L5's exact machinery on the same
-  trajectory. It is expected, budgeted and reported; residual `modelError` is still
+  trajectory. It is expected, budgeted and reported; residual `modelErrorEur` is still
   asserted zero. Without the split the most valuable test in L5 fails permanently on
   day one. `linearizationGap` is interpretable as one thing — projection error.
 - **`MW_month` is not known at decision time.** `MAX[AW − MW; 0]` is convex, so pricing

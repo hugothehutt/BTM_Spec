@@ -38,7 +38,7 @@ the region the quoting policy is free to work in, and its job is to capture as
 much of that spread as fill probability allows.
 
 **C3 carries intent, not routing.** An `OrderIntent` is `(market, product, slot,
-side, limitPrice, volume, validity, replacesId, tag)`. It says nothing about
+side, limitPriceEurPerMwh, volume, validity, replacesId, tag)`. It says nothing about
 venue mechanics. The Execution adapter translates intent into whatever the
 simulator or a live venue requires.
 

@@ -31,7 +31,7 @@ available generation, never a schedule for it.
   truncation is economically load-bearing: a quarter-hour of `q` is valued only
   through the calendar month it falls in, and `V(SOC)` plus the carried monthly state
   (ADR-007, C6) must span that boundary.
-- Off-take is not a control (`load` fixed), so `q` and the battery are the only levers
+- Off-take is not a control (`loadMw` fixed), so `q` and the battery are the only levers
   on `Z1NB¼`/`Z1NE¼` — their joint treatment is mandatory, not optional.
 
 ## Rejected

@@ -299,17 +299,39 @@ identifier and enforced by a check, not by a type.
 - **Unit suffix, mandatory.** Every dimensioned identifier ends in its unit:
   `Mw`, `Mwh`, `EurPerMwh`, `EurPerMw`, `EurPerMwH`, `Eur`.
   Examples: `pBattMw`, `socMwh`, `peakPriceEurPerMw`.
-- **Frame prefix, mandatory for power and energy.** `pBatt*` and `soc*` for the
-  battery frame, `pPoi*` for the POI frame, and market-frame quantities named
-  for their product (`rUpMw`, `imbalanceVolumeMwh`). A power or energy
-  identifier that names no frame is a violation.
+- **Frame token, mandatory for power and energy.** Every power or energy
+  identifier names the frame it is measured in. There are **five** naming
+  groups, and the extra two are not sign frames in the sense of §1 — they are
+  quantities whose sign is fixed by construction, so §1's three frames do not
+  reach them:
+
+  | Group | Token | Example | Sign |
+  |---|---|---|---|
+  | Battery | `pBatt*`, `soc*` | `pBattMw`, `socMwh` | §1 battery frame |
+  | POI | `pPoi*` | `pPoiRealisedPeakMw` | §1 POI frame |
+  | Market | the product's own name | `rUpMw`, `imbalanceVolumeMwh` | §1 market frame |
+  | Site | `load*`, `pv*`, `aux*` | `loadMw`, `pvAvailMw` | Non-negative by construction |
+  | Delineation | `mtd*` and the MiSpel register names | `mtdStorageExportMwh`, `saldierungsfaehigMwh` | Non-negative accumulation |
+
+  Site quantities are consumption and generation *before* the bridge assigns
+  them to a frame; they are non-negative and the bridge's signs do the work
+  (§1). Delineation accumulators are sign-defined by the register arithmetic of
+  `03-mispel-reference.md`, never by battery or POI. A power or energy
+  identifier naming none of the five is a violation.
 - **Beliefs and decisions are distinguished.** `pvAvailMw` is a belief;
   `pvOutMw` is post-decision. A name that could be either is a defect.
 
-`INV-G-02` enforces this mechanically: a field's suffix unit must equal the
-declared unit in its field table, a frame-prefixed field must appear in that
-frame's section, and a dimensionless field must carry `—` plus a range (§2.3).
-It remains a `HALT` schema check at serialisation and deserialisation.
+`INV-G-02` enforces this mechanically, and the check is executable:
+`07-verification/check_units.py` reads the contract field tables and asserts
+that a field's suffix unit equals its declared unit, that every MW or MWh field
+carries one of the five frame tokens, and that a dimensionless field carries `—`
+plus a range (§2.3). It remains a `HALT` schema check at serialisation and
+deserialisation.
+
+A field whose unit depends on another field's value has no suffix it can carry
+and is therefore forbidden. Where one existed — an order volume that was MWh on
+the energy markets and MW on `AfrrCapacity` — it is split into two exclusive
+fields discriminated by `market` (C3 §2, C4 §2).
 
 ---
 

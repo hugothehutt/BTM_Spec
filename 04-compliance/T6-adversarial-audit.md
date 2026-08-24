@@ -108,10 +108,10 @@ determinism discipline, and it is the largest single return that discipline pays
 
 ```
 # scope: every source of future information, not just prices
-poison(series in {daPrice, idPriceRef, idSpreadBelief, afrrCapPrice,
-                  afrrEnergyPriceUp/Dn, activationUp/Dn, imbalancePrice,
+poison(series in {daPriceEurPerMwh, idPriceRefEurPerMwh, idSpreadBeliefEurPerMwh, afrrCapPriceEurPerMwH,
+                  afrrEnergyPriceUpEurPerMwh/Dn, activationUp/Dn, imbalancePriceEurPerMwh,
                   load, pv, meter data, settlement revisions,
-                  daCleared, reserve awards, fill outcomes})
+                  daClearedEurPerMwh, reserve awards, fill outcomes})
 
 # and every artefact with a temporal dimension
 poison(model artefacts fitted on data after t)      # see §7.3
@@ -197,7 +197,7 @@ property ConfigPoisoning():
 
     # 3. a valid key with the wrong TYPE is rejected, never coerced
     assert_raises(ConfigurationError, () => LoadConfig({scenarioCount: "64"}))
-    assert_raises(ConfigurationError, () => LoadConfig({peakPrice: "120 EUR/kW"}))
+    assert_raises(ConfigurationError, () => LoadConfig({peakPriceEurPerMw: "120 EUR/kW"}))
 
     # 4. a tariff component outside the closed enumeration is rejected (L2 §2)
     assert_raises(ConfigurationError,
@@ -289,7 +289,7 @@ procedure ContractFuzz<TPayload>(seed_corpus, iterations):
 | Structural | Duplicate `termId`; a `PwlTerm` with non-increasing `X`; a mis-declared curvature; a `FillProbView` term with a price | `INV-V-12`, `INV-V-16` |
 | Encoding | Truncated binary; trailing bytes; deeply nested JSON; a 100 MB string field | Clean rejection, bounded memory, no hang |
 | Adversarial encoding | Duplicate JSON keys; integer overflow in a length prefix; a self-referential `inputHashes` | Clean rejection |
-| Cross-field | `socMin > socMax`; `etaCharge · etaDischarge > 1`; `blockIndex` not covering every slot | `INV-D-01`, `INV-D-09`, `INV-D-04` |
+| Cross-field | `socMinMwh > socMaxMwh`; `etaCharge · etaDischarge > 1`; `blockIndex` not covering every slot | `INV-D-01`, `INV-D-09`, `INV-D-04` |
 
 ### 5.2 Rules
 
@@ -333,8 +333,8 @@ property LedgerTampering(base_state):
 | Flip a `Pending` entry to `Confirmed` | Reconciliation against `C4`: no fill or award backs it. `HALT`. This is the dangerous direction — the Planner would treat phantom exposure as a hard constraint and over-constrain itself, or worse, believe a position it does not hold |
 | Strip `feasibilityRequirement` from a `Confirmed` reserve award | `INV-S-05`. `HALT`. Without the corridor the Planner cannot see the obligation |
 | Widen a `feasibilityRequirement` corridor so the obligation looks easier | Cross-check against the product's `sustainDuration` and `D` from prequalification (`C1` §7). `HALT` |
-| Alter `signedVolume` on a settled entry | `INV-S-08` — no backward write without an explicit `revisionOf`. `HALT` |
-| Alter `signedVolume` on a `Confirmed` entry | Reconciliation against `C4` fills. `HALT`, `INV-X-02` |
+| Alter `signedVolumeMwh` on a settled entry | `INV-S-08` — no backward write without an explicit `revisionOf`. `HALT` |
+| Alter `signedVolumeMwh` on a `Confirmed` entry | Reconciliation against `C4` fills. `HALT`, `INV-X-02` |
 | Introduce a fill with no matching intent | `INV-X-01` — phantom fill. `HALT` |
 | Duplicate a ledger entry | Idempotency by `entryId`; the duplicate is rejected, not double-counted |
 | Reorder entries | The ledger is keyed and ordered (ADR-013 iteration order); the tick's output must be unchanged |
@@ -384,10 +384,10 @@ property StaleValueFunction():
 
         if age <= H:
             assert r.mode == NORMAL
-            assert r.vSocSlopes == v.slopes                 # unshrunk
+            assert r.vSocSlopesEurPerMwh == v.slopes                 # unshrunk
         else:
             assert r.mode >= DEFENSIVE                      # ADR-014 trigger
-            assert r.vSocSlopes == v.slopes · stalenessPenalty   # shrunk
+            assert r.vSocSlopesEurPerMwh == v.slopes · stalenessPenalty   # shrunk
             assert "V stale" in r.riskProfile.driverSummary      # explainable
             assert r.escalated_tier                         # L3 §3: V stale
                                                             # forces escalation

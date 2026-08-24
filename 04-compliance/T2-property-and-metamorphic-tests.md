@@ -167,7 +167,7 @@ property CivilDaySlotCount(date in [2023-01-01 .. 2030-12-31]):
 property PeakPeriodBoundary(month):
     start = CivilCalendar.PeriodStart(month)     # local midnight
     assert SlotId.ToUtc(start).TimeOfDay == expected_offset_for(month)   # not constant
-    assert realisedPeak resets exactly at start, and not one slot early or late
+    assert pPoiRealisedPeakMw resets exactly at start, and not one slot early or late
 ```
 
 **Why it catches a real bug.** Any code that assumes 96 slots per day is wrong
@@ -191,7 +191,7 @@ metamorphic EnsembleCoherence(snapshot, view):
     # permute the scenario axis of ONE series only, leaving weights and all
     # other series untouched. This preserves every marginal exactly and
     # destroys the joint dependence.
-    permuted = snapshot.with(daPrice = permute_scenarios(snapshot.daPrice, σ))
+    permuted = snapshot.with(daPriceEurPerMwh = permute_scenarios(snapshot.daPriceEurPerMwh, σ))
     out      = view.Evaluate(permuted)
 
     assert out != base        # a view that uses the dependence MUST react
@@ -209,7 +209,7 @@ arbitrary ordering and break determinism.
 
 | View | Must react to a single-series permutation? | Why |
 |---|---|---|
-| `PeakView` | yes | CVaR of `max_t p_poi[s,t]` depends jointly on `load`, `pv` and dispatch |
+| `PeakView` | yes | CVaR of `max_t p_poi[s,t]` depends jointly on `loadMw`, `pvAvailMw` and dispatch |
 | `AfrrEnergyView` | yes | Activation value depends on activation co-moving with price |
 | `ImbalanceRiskView` | yes | Tail co-movement is the entire quantity |
 | `IdOptionView` | yes | Volume value depends on price/liquidity joint |
@@ -232,17 +232,17 @@ response.
 
 | `C1` field | `Good` | `Degraded` | `Stale` | `Imputed` | `Missing` |
 |---|---|---|---|---|---|
-| `socNow` | `NORMAL` | `DEGRADED` | `DEFENSIVE` | **not permitted** — never defaulted (`C1` §2) | `HALT` via `INV-D-01`/critical |
-| `load` | `NORMAL` | `DEGRADED`, ↑`peakSafetyMarginKw`, ↑`cvarLevel` | `DEGRADED`, ↑↑`peakSafetyMarginKw` | `DEGRADED`, default = **high quantile** | `DEFENSIVE`, default high, `criticalMissing` populated |
-| `pv` | `NORMAL` | `DEGRADED`, ↑`peakSafetyMarginKw` | as `Degraded` | default = `0` (protects peak) | `DEGRADED`, default `0` |
-| `daPrice` | `NORMAL` | ↓`positionScale`, ↑`cvarWeight` | ↓↓`positionScale` | ↓↓`positionScale` | `DEFENSIVE` — critical |
-| `idPriceRef` | `NORMAL` | ↓`positionScale` | ↓`positionScale` | ↓`positionScale` | `DEGRADED` |
-| `idSpreadBelief` | `NORMAL` | wider | default **wide** (suppresses trading) | wide | `DEGRADED`, wide |
-| `afrrCapPrice` | `NORMAL` | ↓`positionScale` | default `0` — do not chase | `0` | `DEGRADED`, `0` |
+| `socNowMwh` | `NORMAL` | `DEGRADED` | `DEFENSIVE` | **not permitted** — never defaulted (`C1` §2) | `HALT` via `INV-D-01`/critical |
+| `loadMw` | `NORMAL` | `DEGRADED`, ↑`peakSafetyMarginMw`, ↑`cvarLevel` | `DEGRADED`, ↑↑`peakSafetyMarginMw` | `DEGRADED`, default = **high quantile** | `DEFENSIVE`, default high, `criticalMissing` populated |
+| `pvAvailMw` | `NORMAL` | `DEGRADED`, ↑`peakSafetyMarginMw` | as `Degraded` | default = `0` (protects peak) | `DEGRADED`, default `0` |
+| `daPriceEurPerMwh` | `NORMAL` | ↓`positionScale`, ↑`cvarWeight` | ↓↓`positionScale` | ↓↓`positionScale` | `DEFENSIVE` — critical |
+| `idPriceRefEurPerMwh` | `NORMAL` | ↓`positionScale` | ↓`positionScale` | ↓`positionScale` | `DEGRADED` |
+| `idSpreadBeliefEurPerMwh` | `NORMAL` | wider | default **wide** (suppresses trading) | wide | `DEGRADED`, wide |
+| `afrrCapPriceEurPerMwH` | `NORMAL` | ↓`positionScale` | default `0` — do not chase | `0` | `DEGRADED`, `0` |
 | `activationUp/Dn` | `NORMAL` | ↑`chanceLevel` | ↑`chanceLevel` | ↑↑`chanceLevel` | `DEFENSIVE` |
-| `imbalancePrice` | `NORMAL` | ↑`cvarWeight` | ↑`cvarWeight` | ↑`cvarWeight` | `DEGRADED` |
+| `imbalancePriceEurPerMwh` | `NORMAL` | ↑`cvarWeight` | ↑`cvarWeight` | ↑`cvarWeight` | `DEGRADED` |
 | `isHlzf` | `NORMAL` | default `true` — conservative is *inside* the window | `true` | `true` | `true`, `DEGRADED` |
-| `peakPrice` | `NORMAL` | — | — | — | `HALT` — no safe default for a mandatory term (`INV-V-04`) |
+| `peakPriceEurPerMw` | `NORMAL` | — | — | — | `HALT` — no safe default for a mandatory term (`INV-V-04`) |
 | `V(SOC)` beyond `validityHorizon` | `NORMAL` | apply `stalenessPenalty` shrink to slopes | shrink | shrink | `DEFENSIVE` (ADR-014 trigger) |
 | `idReliableVolume*` | `NORMAL` | ↓ bound | default `0` | `0` | `0` |
 
@@ -353,11 +353,11 @@ is priced at, all else equal.
 
 | Input change | Expected relation on the bundle |
 |---|---|
-| `peakPrice ↑` | `EpigraphTerm.unitPrice ↑`; the priced value of a kW of peak reduction is non-decreasing |
-| `afrrCapPrice[s,b] ↑ ∀s` | `capacityValueCurve[b]` is pointwise non-decreasing in offered MW |
-| `daPrice[s,t] ↑ ∀s` | the `LinearTerm` coefficient on `vDaSell[t]` is non-decreasing; on `vDaBuy[t]` non-increasing (the cost of buying rose) |
-| `volumetricCharge ↑` | the `LinearTerm` on `PoiImport` becomes more negative |
-| `imbalancePrice` spread widened | the CVaR `PwlTerm` is pointwise non-decreasing in penalty |
+| `peakPriceEurPerMw ↑` | `EpigraphTerm.unitPriceEurPerMw ↑`; the priced value of a kW of peak reduction is non-decreasing |
+| `afrrCapPriceEurPerMwH[s,b] ↑ ∀s` | `capacityValueCurve[b]` is pointwise non-decreasing in offered MW |
+| `daPriceEurPerMwh[s,t] ↑ ∀s` | the `LinearTerm` coefficient on `vDaSell[t]` is non-decreasing; on `vDaBuy[t]` non-increasing (the cost of buying rose) |
+| `volumetricChargeEurPerMwh ↑` | the `LinearTerm` on `PoiImport` becomes more negative |
+| `imbalancePriceEurPerMwh` spread widened | the CVaR `PwlTerm` is pointwise non-decreasing in penalty |
 
 ```
 metamorphic PriceMonotone(snapshot, field, delta > 0):
@@ -396,14 +396,14 @@ visible.
 
 **The single highest-value cheap test in the suite.**
 
-**Property.** Multiply every price input by a constant `k > 0` — `daPrice`,
-`idPriceRef`, `idSpreadBelief`, `afrrCapPrice`, `afrrEnergyPrice*`,
-`imbalancePrice`, `peakPrice`, `volumetricCharge`, `leviesAndTaxes`, and the
+**Property.** Multiply every price input by a constant `k > 0` — `daPriceEurPerMwh`,
+`idPriceRefEurPerMwh`, `idSpreadBeliefEurPerMwh`, `afrrCapPriceEurPerMwH`, `afrrEnergyPrice*`,
+`imbalancePriceEurPerMwh`, `peakPriceEurPerMw`, `volumetricChargeEurPerMwh`, `leviesAndTaxesEurPerMwh`, and the
 value function's `Y` breakpoints. Then:
 
 - **every EUR-denominated quantity scales by exactly `k`** — every
-  `LinearTerm.coefficient`, every `PwlTerm.breakpointsY`, every
-  `EpigraphTerm.unitPrice`, the objective value, `V`'s slopes, every entry in
+  `LinearTerm.coefficient`, every `PwlTerm.breakpointsYEur`, every
+  `EpigraphTerm.unitPriceEurPerMw`, the objective value, `V`'s slopes, every entry in
   `plannedByEffect`, and the shadow value on every position constraint;
 - **every physical quantity is bit-identical** — every `BoundTerm.lower/upper`,
   every `PwlTerm.breakpointsX`, `EpigraphTerm.floor`, the SOC trajectory, the
@@ -419,12 +419,12 @@ metamorphic ScaleEquivariance(snapshot, k in {0.01, 0.5, 2, 100, 1e4}):
     for (ta, tb) in zip(a.terms, b.terms):
         assert tb.termId == ta.termId
         assert_close(tb.coefficient,   k * ta.coefficient,   rel=1e-12)
-        assert_close(tb.breakpointsY,  k * ta.breakpointsY,  rel=1e-12)
+        assert_close(tb.breakpointsYEur,  k * ta.breakpointsYEur,  rel=1e-12)
         assert_exact(tb.breakpointsX,  ta.breakpointsX)          # BIT-identical
         assert_exact(tb.lower, ta.lower); assert_exact(tb.upper, ta.upper)
 
-    assert_exact(b.vSocBreakpointsX, a.vSocBreakpointsX)
-    assert_close(b.vSocSlopes, k * a.vSocSlopes, rel=1e-12)
+    assert_exact(b.vSocBreakpointsXMwh, a.vSocBreakpointsXMwh)
+    assert_close(b.vSocSlopesEurPerMwh, k * a.vSocSlopesEurPerMwh, rel=1e-12)
 
     pa = Plan(a); pb = Plan(b)
     assert_exact(pb.trajectory, pa.trajectory)
@@ -463,7 +463,7 @@ property ConcavityOfV(state, context):
     v = SlowLoop.Fit(state, context)
     slopes = diff(v.Y) / diff(v.X)
     assert strictly_decreasing(slopes)                      # INV-V-11
-    assert v.X strictly increasing and spans [socMin, socMax]
+    assert v.X strictly increasing and spans [socMinMwh, socMaxMwh]
     # near the §19(2) cliff, concavity in SOC must hold GIVEN the discrete
     # qualification state (ADR-007, ADR-011)
     for qualState in all_discrete_states:
@@ -503,7 +503,7 @@ The test injects mis-declarations and asserts a clean failure, not a wrong numbe
 ```
 property CurvatureHonesty(term):
     declared = term.curvature
-    actual   = classify_curvature(term.breakpointsY, term.breakpointsX)
+    actual   = classify_curvature(term.breakpointsYEur, term.breakpointsX)
     if declared != actual and not (declared == General):
         assert_raises(ContractViolation[INV-V-12], () => Compose(bundle_with(term)))
     else:
@@ -613,10 +613,10 @@ property FeasibleUnderEveryScenario(bundle, state):
 
     for s in 0 .. S-1:                            # EVERY scenario, weighted or not
         traj = simulate(plan, scenario=s)         # apply scenario-s activation
-        assert traj.soc[t] in [socMin, socMax]        ∀t   or  s in the ε-tail
-        assert traj.p_charge[t]    <= pMaxCharge[t]   ∀t
-        assert traj.p_discharge[t] <= pMaxDischarge[t] ∀t
-        assert traj.p_poi[t] in [-poiExportLimit, poiImportLimit] ∀t
+        assert traj.soc[t] in [socMinMwh, socMaxMwh]        ∀t   or  s in the ε-tail
+        assert traj.p_charge[t]    <= pBattMaxChargeMw[t]   ∀t
+        assert traj.p_discharge[t] <= pBattMaxDischargeMw[t] ∀t
+        assert traj.p_poi[t] in [-pPoiExportLimitMw, pPoiImportLimitMw] ∀t
         assert commitments_served(plan, scenario=s)   ∀ confirmed entries
 
     # the chance constraint is a bound on the tail, not an excuse
@@ -643,7 +643,7 @@ property CommitmentSafety():
     # inject a confirmed award the current SOC cannot serve
     state = base_state.with(ledger += ReserveAward{
                 status = Confirmed, block = b, up = R_mw,
-                feasibilityRequirement = SocCorridor(lower = socNow + huge) })
+                feasibilityRequirement = SocCorridor(lower = socNowMwh + huge) })
 
     result = try(() => Planner.Solve(bundle, state))
 
@@ -789,10 +789,10 @@ the calendar and every other price.
 
 | # | Input change | Expected relation | Bug class caught |
 |---|---|---|---|
-| `M-P1` | `afrrCapPrice[·,b] ↑` by `δ > 0` | Planned reserve `rUp[b] + rDn[b]` is **non-decreasing** | Sign error on capacity revenue; headroom coupling with the wrong sense; a reserve term that is being ignored entirely |
+| `M-P1` | `afrrCapPriceEurPerMwH[·,b] ↑` by `δ > 0` | Planned reserve `rUp[b] + rDn[b]` is **non-decreasing** | Sign error on capacity revenue; headroom coupling with the wrong sense; a reserve term that is being ignored entirely |
 | `M-P2` | All energy price beliefs shifted by `+Δ` (uniform additive, all scenarios, all slots; tariff, peak and reserve prices held fixed) | Planned **net export energy** over the horizon is non-decreasing | Sign frame confusion between battery and POI frames; a charge/discharge asymmetry with the wrong sign |
-| `M-P3` | `peakPrice ↑` for a regime | The planned peak `zPeak` for that regime is **non-increasing**, and the objective is non-increasing | Epigraph built with the wrong sense; `prorationFactor` applied to the wrong side; peak floor ignored |
-| `M-P4` | `poiImportLimit` tightened (or `poiExportLimit` tightened) | The objective is **non-increasing** | Missing POI envelope constraint; a bound applied to the wrong frame; a soft bound where a hard one was specified |
+| `M-P3` | `peakPriceEurPerMw ↑` for a regime | The planned peak `zPeak` for that regime is **non-increasing**, and the objective is non-increasing | Epigraph built with the wrong sense; `prorationFactor` applied to the wrong side; peak floor ignored |
+| `M-P4` | `pPoiImportLimitMw` tightened (or `pPoiExportLimitMw` tightened) | The objective is **non-increasing** | Missing POI envelope constraint; a bound applied to the wrong frame; a soft bound where a hard one was specified |
 
 ```
 metamorphic M_P1_ReserveMonotone(bundle, block b, δ > 0):
@@ -841,10 +841,10 @@ Notes that keep these honest:
 |---|---|---|
 | `M-P5` | Add a redundant constraint (a copy of an existing binding row) | Objective unchanged exactly |
 | `M-P6` | Add a `BoundTerm` that is strictly looser than an existing one | Objective unchanged exactly |
-| `M-P7` | Increase `socMax` | Objective non-decreasing |
-| `M-P8` | Increase `pMaxDischarge` | Objective non-decreasing |
+| `M-P7` | Increase `socMaxMwh` | Objective non-decreasing |
+| `M-P8` | Increase `pBattMaxDischargeMw` | Objective non-decreasing |
 | `M-P9` | Widen `cvarLevel` / lower `positionScale` (degradation) | Objective non-increasing; the plan is weakly more conservative |
-| `M-P10` | Increase `deliveryObligation` on a block | Objective non-increasing; the corridor tightens |
+| `M-P10` | Increase `deliveryObligationMw` on a block | Objective non-increasing; the corridor tightens |
 | `M-P11` | Set `stalenessPenalty` more aggressive | `V`'s slopes shrink; terminal SOC moves toward the myopic optimum |
 | `M-P12` | Refine the PWL breakpoint grid (superset of existing breakpoints) | Objective changes by at most the declared approximation bound, monotonically toward the Tier-1 value |
 
@@ -918,9 +918,9 @@ Settlement has no access to what the Planner intended (`C4` header).
 ```
 property EnergyConservation(outcome):
     for t in slots:
-        lhs = outcome.meteredPoiImport[t] - outcome.meteredPoiExport[t]
-        rhs = outcome.meteredLoad[t] - outcome.meteredPv[t]
-            + outcome.batteryChargeEnergy[t] - outcome.batteryDischargeEnergy[t]
+        lhs = outcome.pPoiMeteredImportMwh[t] - outcome.pPoiMeteredExportMwh[t]
+        rhs = outcome.meteredLoadMwh[t] - outcome.meteredPvMwh[t]
+            + outcome.pBattChargeEnergyMwh[t] - outcome.pBattDischargeEnergyMwh[t]
         residual = lhs - rhs
         if outcome.isFinal: assert abs(residual) <= meter_tolerance    # HALT
         else:               warn_if(abs(residual) > meter_tolerance)
@@ -928,19 +928,19 @@ property EnergyConservation(outcome):
     # SOC consistency, the leading indicator (INV-X-05)
     for t in slots:
         predicted = soc[t-1] + η_c·charge[t] - discharge[t]/η_d
-        assert abs(outcome.socMeasured[t] - predicted) <= soc_tolerance   # warn
+        assert abs(outcome.socMeasuredMwh[t] - predicted) <= soc_tolerance   # warn
 
     # and the rolling form, which is what actually catches η drift
-    drift = cumulative(socMeasured - predicted) over the settlement period
+    drift = cumulative(socMeasuredMwh - predicted) over the settlement period
     assert abs(drift) <= period_drift_threshold                          # alert
 ```
 
 **Why it catches a real bug.** The per-slot check catches meter and sign errors.
 The cumulative check catches the thing that matters: a slow divergence between
 modelled and measured SOC is the earliest available signal that the efficiency or
-degradation model has drifted (`C4` §7), and it feeds the `modelError` bucket
+degradation model has drifted (`C4` §7), and it feeds the `modelErrorEur` bucket
 before the money shows up in P&L. Aux load folded into `η` instead of modelled as
-`LoadKw` shows up here as a one-sided drift.
+`double` shows up here as a one-sided drift.
 
 Sign-frame fixtures, run explicitly, because this is where frame confusion dies:
 
@@ -978,12 +978,12 @@ property RestatementIdempotency(provisional, final):
                   () => WriteState(effectiveFrom = earlier, revisionOf = null))
 
     # 5. peak state after restatement is recomputed, not patched
-    assert s2.realisedPeak == recompute_peak_from_scratch(final)
-    assert monotone_within_period(s2.realisedPeak)          # INV-S-01
+    assert s2.pPoiRealisedPeakMw == recompute_peak_from_scratch(final)
+    assert monotone_within_period(s2.pPoiRealisedPeakMw)          # INV-S-01
 ```
 
 Assertion 5 is the substantive one. A restatement that *lowers* the metered peak
-must lower `realisedPeak` — but `INV-S-01` says `realisedPeak` is non-decreasing
+must lower `pPoiRealisedPeakMw` — but `INV-S-01` says `pPoiRealisedPeakMw` is non-decreasing
 within a period. Both are true simultaneously only if the restated artefact is a
 fresh computation over the corrected series, not an incremental `max` against a
 stale value. The test pins this, because the incremental implementation is the
@@ -1006,10 +1006,10 @@ property ZeroGap(bundle, plan):
 
     s = Settle(outcome)
 
-    assert_zero(s.forecastError,      MONEY_TOL)   # world == belief
-    assert_zero(s.modelError,         MONEY_TOL)   # valuation == accounting
-    assert_zero(s.optimalityGap,      MONEY_TOL)   # same tier, same solve
-    assert_zero(s.executionSlippage,  MONEY_TOL)   # intent price == fill price
+    assert_zero(s.forecastErrorEur,      MONEY_TOL)   # world == belief
+    assert_zero(s.modelErrorEur,         MONEY_TOL)   # valuation == accounting
+    assert_zero(s.optimalityGapEur,      MONEY_TOL)   # same tier, same solve
+    assert_zero(s.executionSlippageEur,  MONEY_TOL)   # intent price == fill price
     assert_zero(s.unexplained,        MONEY_TOL)   # INV-S-02
     assert_close(s.realisedByEffect, plan.plannedByEffect, MONEY_TOL)  # term by term
 ```
@@ -1026,11 +1026,11 @@ Run it for each bucket in isolation by perturbing one input at a time:
 
 | Perturbation | Expected non-zero bucket | All others zero |
 |---|---|---|
-| Realised prices differ from belief | `forecastError` | yes |
-| Settlement values the same trajectory with a different term definition | `modelError` | yes |
-| Re-run the tick at Tier 1 and compare | `optimalityGap` | yes |
-| Fill prices differ from limit prices | `executionSlippage` | yes |
-| Two perturbations at once | both buckets, additively within tolerance | `unexplained` ≈ 0 |
+| Realised prices differ from belief | `forecastErrorEur` | yes |
+| Settlement values the same trajectory with a different term definition | `modelErrorEur` | yes |
+| Re-run the tick at Tier 1 and compare | `optimalityGapEur` | yes |
+| Fill prices differ from limit prices | `executionSlippageEur` | yes |
+| Two perturbations at once | both buckets, additively within tolerance | `unexplainedEur` ≈ 0 |
 
 The last row is the strong one: it asserts the decomposition is (locally)
 additive, which is what `INV-S-03` claims and what makes the four-way split
@@ -1038,8 +1038,8 @@ actionable rather than decorative.
 
 ### 5.4 Attribution completeness
 
-**Property** `INV-S-02`. `realisedByEffect` plus `unexplained` sums to total
-realised P&L, and the `unexplained` bucket is never absorbed elsewhere.
+**Property** `INV-S-02`. `realisedByEffect` plus `unexplainedEur` sums to total
+realised P&L, and the `unexplainedEur` bucket is never absorbed elsewhere.
 
 ```
 property AttributionCompleteness(outcome):
@@ -1108,7 +1108,7 @@ where a late action lowers the value of earlier ones, and a test that does not e
 it will not notice when the ratio is implemented as a per-slot quantity.
 
 **Zero-gap, split.** Feed the planned trajectory back as realised; assert residual
-`modelError = 0` and `linearizationGap` within its declared budget. A `linearizationGap`
+`modelErrorEur = 0` and `linearizationGap` within its declared budget. A `linearizationGap`
 of zero is as suspicious as one above budget — it means the linearisation is not being
 exercised.
 

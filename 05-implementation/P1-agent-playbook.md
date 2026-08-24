@@ -456,7 +456,7 @@ frame is it in? Battery positive is discharge; POI positive is import; market
 positive is sale. Market is sign-aligned with battery, so battery ↔ POI is the
 **only** sign flip in the system. Is `PowerFrames.PoiFromSite` the only place they
 meet? Search the diff for any other `load - pv`, for a bridge missing its
-curtailment term (`pv_out = Σ_k (pv_avail − q)`, not `pv`), or for any sign flip
+curtailment term (`pv_out = Σ_k (pv_avail − q)`, not `pvAvailMw`), or for any sign flip
 on a power quantity. A second implementation of the bridge is a defect even if it
 is currently correct.
 

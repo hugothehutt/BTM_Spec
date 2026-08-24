@@ -239,7 +239,7 @@ Stated so they do not creep in.
 - **Not a forecasting benchmark.** Forecast skill is an offline concern. `T2`
   asserts that Belief serves what it was given, at the right knowledge time; it
   does not assert that the forecast was good. Forecast error is measured ex post,
-  in `C5` §6's `forecastError` bucket.
+  in `C5` §6's `forecastErrorEur` bucket.
 - **Not a substitute for the gap.** No amount of property testing tells you how
   much money the Tier 3 heuristic costs. Only `T5` does.
 - **Not a coverage target.** Line coverage is reported and not gated. The gate is

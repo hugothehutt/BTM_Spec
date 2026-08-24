@@ -86,7 +86,7 @@ Exactly five (ADR-008). Every term carries a common header.
 |---|---|---|---|
 | `variable` | `VarSymbol` | — | The abscissa |
 | `breakpointsX` | `double[n]` | variable unit | Strictly increasing |
-| `breakpointsY` | `double[n]` | EUR | |
+| `breakpointsYEur` | `double[n]` | EUR | |
 | `curvature` | `Concave \| Convex \| General` | — | **Verified against breakpoints, not trusted** |
 | `sense` | `Maximize \| Minimize` | — | |
 | `extrapolation` | `Clamp \| Forbid` | — | `Forbid` adds bounds at the end breakpoints |
@@ -105,8 +105,8 @@ choice rather than mysterious.
 | `dominates` | `VarSymbol` | — | e.g. `pPoi` |
 | `overSlots` | `SlotId[]` | — | Subset — this is how HLZF is expressed |
 | `floor` | `double` | variable unit | Realised peak so far, from L0 |
-| `unitPrice` | `PeakPrice` | EUR/kW/period | |
-| `prorationFactor` | `double` | `[0,1]` | Fraction of the accounting period inside this horizon |
+| `unitPriceEurPerMw` | `double` | EUR/MW | |
+| `prorationFactor` | `double` | — | `fraction`, range `[0,1]`. Fraction of the accounting period inside this horizon |
 
 `prorationFactor` matters: the horizon is shorter than the accounting period, so
 the *full* period charge must not be applied to a partial window. The remaining
@@ -143,25 +143,25 @@ because its staleness is handled specially.
 
 | Field | Type | Unit | Notes |
 |---|---|---|---|
-| `vSocBreakpointsX` | `EnergyKwh[n]` | kWh | Strictly increasing, spanning `[socMin, socMax]` |
-| `vSocBreakpointsY` | `Money[n]` | EUR | |
-| `vSocSlopes` | `double[n-1]` | EUR/kWh | **Strictly decreasing** — concavity, asserted |
+| `vSocBreakpointsXMwh` | `double[n]` | MWh | Strictly increasing, spanning `[socMinMwh, socMaxMwh]` |
+| `vSocBreakpointsYEur` | `double[n]` | EUR | |
+| `vSocSlopesEurPerMwh` | `double[n-1]` | EUR/MWh | **Strictly decreasing** — concavity, asserted |
 | `conditionedOn` | `ValueFunctionContext` | — | `(peakState, qualState, calendarContext)` |
 | `producedAt` | `SlotId` | — | When the slow loop produced it |
 | `validityHorizon` | `SlotSpan` | — | Beyond this, staleness penalty applies |
-| `stalenessPenalty` | `double` | `[0,1]` | Shrink factor applied when stale |
+| `stalenessPenalty` | `double` | — | `fraction`, range `[0,1]`. Shrink factor applied when stale |
 | `artefactHash` | `string` | — | For the Merkle chain |
 
 ## 5. Reserve envelope
 
 | Field | Type | Unit | Card. | Notes |
 |---|---|---|---|---|
-| `rUpMax`,`rDnMax` | `ReserveMw` | MW | `[B]` | Envelope from prequalification and asset limits |
+| `rUpMaxMw`,`rDnMaxMw` | `double` | MW | `[B]` | Envelope from prequalification and asset limits |
 | `capacityValueCurveUp`,`…Dn` | `PwlTerm` | — | `[B]` | Concave in offered MW; the expected value of the bid curve |
 | `sustainDuration` | `SlotSpan` | — | 1 | Echoed from C1 for the corridor constraints |
-| `deliveryObligation` | `ReserveMw` | MW | `[B]` | Already-confirmed awards from L0 — a **hard** commitment |
+| `deliveryObligationMw` | `double` | MW | `[B]` | Already-confirmed awards from L0 — a **hard** commitment |
 
-`deliveryObligation` is separated from the offer decision deliberately: confirmed
+`deliveryObligationMw` is separated from the offer decision deliberately: confirmed
 awards are physical obligations that survive every degradation mode (ADR-014 §3),
 whereas offers are decisions.
 
@@ -175,7 +175,7 @@ How input quality reaches the optimisation without becoming control flow.
 | `cvarWeight` | `double` | Weight on the CVaR term vs. expectation |
 | `chanceLevel` | `double` | ε for SOC feasibility chance constraints |
 | `positionScale` | `double` | `[0,1]` multiplier on speculative position bounds |
-| `peakSafetyMarginKw` | `PoiPowerKw` | Added to the epigraph floor under degraded load quality |
+| `peakSafetyMarginMw` | `double` | Added to the epigraph floor under degraded load quality |
 | `degradationMode` | `DegradationMode` | Echoed |
 | `driverSummary` | `string[]` | Which quality issues moved which parameter — for the audit trail |
 
@@ -206,7 +206,7 @@ down, `binariesByOrigin` names the term responsible.
 | `INV-V-05` | `unclaimedEffects` are logged; if any is in the critical set, escalate | escalate |
 | `INV-V-06` | No scenario array and no Belief handle appears anywhere in the bundle | `HALT` |
 | `INV-V-07` | `compositionOrder` satisfies the stage precondition table (ADR-009) | `HALT` |
-| `INV-V-11` | `vSocSlopes` strictly decreasing (concavity) | `HALT` |
+| `INV-V-11` | `vSocSlopesEurPerMwh` strictly decreasing (concavity) | `HALT` |
 | `INV-V-12` | Declared `curvature` matches the breakpoints | `HALT` |
 | `INV-V-13` | `prorationFactor ∈ [0,1]` and consistent with the calendar | `HALT` |
 | `INV-V-14` | `binariesByOrigin` sums to `binaryCount` | warn |

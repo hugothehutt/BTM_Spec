@@ -15,7 +15,7 @@ reconciles. A number it needs but does not receive belongs upstream in a view
 ## 1. `IExecutionAdapter`
 
 ```csharp
-// The projection: shadowValue and urgency are absent from the TYPE, so Execution
+// The projection: shadowValueEurPerMwh and urgency are absent from the TYPE, so Execution
 // cannot read them. INV-X-04 is structural, not a rule anyone must remember.
 readonly record struct OrderInstruction(
     string IntentId,                      // idempotency key, stable across replaces
@@ -43,7 +43,7 @@ interface IExecutionAdapter {
 
 ## 2. The projection rule
 
-C3 §2 carries `shadowValue` and `urgency` for settlement attribution and states
+C3 §2 carries `shadowValueEurPerMwh` and `urgency` for settlement attribution and states
 that Execution must ignore them. `Project(ExecutionIntent) → ExecutionInstructionSet`
 is the only crossing, lives in exactly one file, and the target type has no field
 to hold them. The full intent, audit fields included, is recorded to the seam log
@@ -58,9 +58,9 @@ policy is strategy and belongs to L3** (ADR-012, `L3-planner.md` §5). The adapt
 receives limit prices; it does not choose, improve, peg, or re-price a residual
 after a partial fill. A re-price is a new `OrderIntent` carrying
 `replacesIntentId`, produced by the quoting policy from the current fill curve and
-the unchanged `shadowValue`, re-entering through C3. Let the adapter acquire a
+the unchanged `shadowValueEurPerMwh`, re-entering through C3. Let the adapter acquire a
 price rule and three things break at once: `INV-P-10` becomes unenforceable; L5's
-`executionSlippage` bucket stops measuring the quoting policy and starts measuring
+`executionSlippageEur` bucket stops measuring the quoting policy and starts measuring
 an untested piece of the adapter; and Execution stops being strategy-independent,
 and therefore replaceable.
 
@@ -77,7 +77,7 @@ One interface, two implementations. What differs:
 
 **Standing risk (ADR-015 OPEN-3).** A fill model fitted to the simulator inherits
 the simulator's biases, and so does everything derived from it — `FillProbView`'s
-`BoundTerm`, the quoting ladder, and therefore L5's `executionSlippage` bucket.
+`BoundTerm`, the quoting ladder, and therefore L5's `executionSlippageEur` bucket.
 Recalibration against the live venue is a **precondition for live operation**, not
 a follow-up, and the gap between the two is reported (`04-compliance/T4`), never
 absorbed.
@@ -100,7 +100,7 @@ that (ADR-014 §3).
 | `INV-X-07` | Re-submitting an `intentId` yields at most one live order | `HALT` |
 | `INV-X-08` | No orphaned venue order at reconciliation | `HALT` |
 | `INV-X-09` | Simulator byte-reproducible given the same instruction stream and seed | fail the run |
-| `INV-X-10` | `limitPrice` and `volume` reach the venue exactly as received | `HALT` |
+| `INV-X-10` | `limitPriceEurPerMwh` and `volumeMwh` reach the venue exactly as received | `HALT` |
 
 ## 6. Determinism in backtest
 
@@ -122,7 +122,7 @@ Detail in `04-compliance/T1` (adapter conformance) and `T4` (fill calibration).
   both satisfy the same postconditions. A divergence is a finding about the
   simulator, not an exemption.
 - **Projection closure** — reflection test: no field of `ExecutionInstructionSet`
-  is reachable from `shadowValue`/`urgency`, and `Project` is the sole construction
+  is reachable from `shadowValueEurPerMwh`/`urgency`, and `Project` is the sole construction
   path. The machine check behind `INV-X-04`.
 - **Idempotency and reconnect** — submit, duplicate, submit-after-timeout; then
   kill the connection mid-gate and assert the three reconciliation outcomes are

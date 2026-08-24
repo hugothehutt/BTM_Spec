@@ -135,11 +135,11 @@ reported with the full percentile set.
 
 | Regime | Definition (from recorded `C1` / `C5`) | Why it is separated |
 |---|---|---|
-| **High-spread days** | Intraday max-minus-min of `daPrice` (ensemble mean) above the corpus 90th percentile | Where the arbitrage term is large and a mis-priced headroom transfer costs most |
-| **Peak-critical days** | `peakCritical` set, or the modelled POI trajectory within a configured margin of `realisedPeak` | The peak charge is the largest single downside in the BTM case; a heuristic that trades a peak breach for a spread is catastrophic here and invisible on average |
-| **High reserve price days** | `afrrCapPrice` block mean above the corpus 90th percentile | Where the reservation price `μ` matters most and Tier 3's learned surface is most likely to be out of distribution |
+| **High-spread days** | Intraday max-minus-min of `daPriceEurPerMwh` (ensemble mean) above the corpus 90th percentile | Where the arbitrage term is large and a mis-priced headroom transfer costs most |
+| **Peak-critical days** | `peakCritical` set, or the modelled POI trajectory within a configured margin of `pPoiRealisedPeakMw` | The peak charge is the largest single downside in the BTM case; a heuristic that trades a peak breach for a spread is catastrophic here and invisible on average |
+| **High reserve price days** | `afrrCapPriceEurPerMwH` block mean above the corpus 90th percentile | Where the reservation price `μ` matters most and Tier 3's learned surface is most likely to be out of distribution |
 | **Qualification-critical days** | `qualCritical` set (ADR-011) | Losing a year of network-charge reduction for a day's spread is the single largest downside event in the business case |
-| **Negative-price episodes** | Any slot with `daPrice < 0` in the ensemble mean | Where `INV-P-07` becomes non-redundant and the LP relaxation can misbehave |
+| **Negative-price episodes** | Any slot with `daPriceEurPerMwh < 0` in the ensemble mean | Where `INV-P-07` becomes non-redundant and the LP relaxation can misbehave |
 | **High activation days** | Realised activation fraction above the 90th percentile | Commitment feasibility under stress |
 | **DST transition days** | From the calendar | Calendar-driven formulation errors surface as a gap |
 | **Degraded-mode days** | Any tick not in `NORMAL` | Gap under a widened risk profile is a different measurement |
@@ -185,9 +185,9 @@ number. Tightening `ORACLE_GAP_TOL` or shrinking the instance is the remedy.
 
 ### 3.5 Reconciliation with `C5`
 
-`C5` §6's `optimalityGap` bucket is defined as *re-run the tick at Tier 1 and
+`C5` §6's `optimalityGapEur` bucket is defined as *re-run the tick at Tier 1 and
 compare objective values* — the same quantity. `T5` asserts that the gap it
-measures and the `optimalityGap` bucket agree over the same period, within
+measures and the `optimalityGapEur` bucket agree over the same period, within
 tolerance. A divergence means the counterfactual re-run and the oracle run are
 not using the same inputs, and it is a defect in one of them.
 

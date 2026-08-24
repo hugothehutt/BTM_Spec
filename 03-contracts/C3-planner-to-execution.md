@@ -29,15 +29,28 @@ One row per order.
 | `productId` | `string` | — | — | no | From the market calendar |
 | `slot` / `block` | `SlotId` / `BlockId` | — | — | no | Delivery period |
 | `side` | `Buy \| Sell` | — | — | no | Market frame (sell = discharge) |
-| `limitPrice` | `EnergyPrice` or `CapacityPrice` | EUR/MWh or EUR/MW/h | tick-aligned | no | Already rounded (C0 rounding rule) |
-| `volume` | `EnergyKwh` or `ReserveMw` | kWh or MW | lot-aligned, `>0` | no | |
+| `limitPriceEurPerMwh` | `double` | EUR/MWh | tick-aligned | yes | Energy markets only. Already rounded (C0 rounding rule) |
+| `limitPriceEurPerMwH` | `double` | EUR/MW/h | tick-aligned | yes | `AfrrCapacity` only. Already rounded (C0 rounding rule) |
+| `volumeMwh` | `double` | MWh | lot-aligned, `>0` | yes | Energy markets only |
+| `volumeMw` | `double` | MW | lot-aligned, `>0` | yes | `AfrrCapacity` only |
 | `validity` | `Ioc \| Fok \| GtdUntil(SlotId) \| GtcUntilGate` | — | — | no | |
 | `replacesIntentId` | `string?` | — | — | yes | Cancel/replace semantics |
-| `shadowValue` | `EnergyPrice` | EUR/MWh | — | no | Planner's indifference price — **audit only**, Execution must ignore it |
-| `urgency` | `double` | `[0,1]` | — | no | Audit only |
+| `shadowValueEurPerMwh` | `double` | EUR/MWh | — | no | Planner's indifference price — **audit only**, Execution must ignore it |
+| `urgency` | `double` | — | `[0,1]` | no | `fraction`. Audit only |
 | `tag` | `StrategyTag` | — | — | no | `Arbitrage \| PeakShave \| ReserveHedge \| Rebalance \| CommitmentCover` |
 
-`shadowValue` and `urgency` are carried across the seam **for settlement
+**The price and volume pairs are exclusive, and `market` decides which.** For
+`Da`, `IdContinuous`, `IdAuction` and `AfrrEnergy` the order carries
+`limitPriceEurPerMwh` and `volumeMwh`; for `AfrrCapacity` it carries
+`limitPriceEurPerMwH` and `volumeMw`. Exactly one of each pair is present and the
+other is absent — populating both, or the wrong one for the market, is a contract
+failure. This replaces a single `limitPrice`/`volume` pair whose unit depended on
+the market, which `INV-G-02` no longer permits: a field's unit suffix must equal
+its declared unit, and a field with two possible units has no suffix it can
+carry. The unit of a capacity order is MW of committed power, not MWh of energy,
+and the seam now says so in the field name.
+
+`shadowValueEurPerMwh` and `urgency` are carried across the seam **for settlement
 attribution, not for execution**. They let L5 answer "did the quoting policy
 trade through indifference?" without the Planner and the quoting policy having a
 private side channel. `INV-X-04` asserts Execution does not read them — enforced
@@ -49,7 +62,7 @@ DA requires a monotone schedule, not a point order.
 
 | Field | Type | Unit | Notes |
 |---|---|---|---|
-| `curvePoints` | `(EnergyPrice, EnergyKwh)[]` | EUR/MWh, kWh | Price-ordered |
+| `curvePoints` | `(double, double)[]` | EUR/MWh, MWh | Price-ordered |
 | `slot` | `SlotId` | — | |
 | `monotone` | `bool` | — | Asserted, not declared: `INV-P-09` |
 
@@ -65,9 +78,9 @@ For the physical controller, which is downstream of the Planner and out of scope
 
 | Field | Type | Unit | Card. | Notes |
 |---|---|---|---|---|
-| `pSetpoint` | `BatteryPowerKw` | kW | `[H_near]` | Battery frame |
-| `socCorridorLower`,`…Upper` | `EnergyKwh` | kWh | `[H_near]` | The band the controller must stay in to keep commitments feasible |
-| `reserveObligationUp`,`…Dn` | `ReserveMw` | MW | `[H_near]` | Confirmed awards the controller must be able to serve |
+| `pBattSetpointMw` | `double` | MW | `[H_near]` | Battery frame |
+| `socCorridorLowerMwh`,`socCorridorUpperMwh` | `double` | MWh | `[H_near]` | The band the controller must stay in to keep commitments feasible |
+| `reserveObligationUpMw`,`reserveObligationDnMw` | `double` | MW | `[H_near]` | Confirmed awards the controller must be able to serve |
 
 `H_near` is short (typically the next few slots). The corridor, not the setpoint,
 is the binding instruction: the controller may deviate from the setpoint to
@@ -84,7 +97,7 @@ follow an activation signal, but never out of the corridor.
 | `INV-P-05` | In `SAFE`, only `CommitmentCover` and cancel intents are present | `HALT` |
 | `INV-P-06` | Total planned discharge over any window respects energy availability including reserve corridor | `HALT` |
 | `INV-P-09` | DA curves monotone | `HALT` |
-| `INV-P-10` | No sell intent priced below `shadowValue`; no buy intent priced above it | warn + block the intent |
+| `INV-P-10` | No sell intent priced below `shadowValueEurPerMwh`; no buy intent priced above it | warn + block the intent |
 
 `INV-P-10` is the economic safety net for the quoting policy. It is a warning
 rather than a halt because a legitimate edge case exists — covering a commitment
