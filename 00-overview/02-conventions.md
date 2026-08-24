@@ -44,8 +44,8 @@ Most market quantities never carry a sign at all: direction rides an enum
 `eAfrrUp`/`eAfrrDn`). The one signed market quantity is the imbalance position:
 
 ```
-imbalanceVolume > 0   →  LONG  (delivered more than scheduled)
-imbalanceVolume < 0   →  SHORT (delivered less than scheduled)
+imbalanceVolumeMwh > 0   →  LONG  (delivered more than scheduled)
+imbalanceVolumeMwh < 0   →  SHORT (delivered less than scheduled)
 ```
 
 ### The bridge
@@ -118,7 +118,7 @@ term, carried as its own field. It is not a unit denominator.
 This is what makes the objective's unit algebra close. The peak contribution is
 
 ```
-peakPrice · zPeak · proration        (EUR/MW) · MW · [0,1]  =  EUR
+peakPriceEurPerMw · zPeak · proration    (EUR/MW) · MW · [0,1]  =  EUR
 ```
 
 with `proration` dimensionless and exactly one period in scope per term.
