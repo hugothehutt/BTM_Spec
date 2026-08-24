@@ -498,7 +498,7 @@ explicitly, and it is a particularly bad one: the gap is the *most recent* windo
 so it is disproportionately likely to contain a peak the engine just caused.
 
 Where the gap trajectory is itself uncertain, it receives the same CVaR treatment
-as the forward peak and picks up `riskProfile.peakSafetyMarginMw` (L2 §6). The
+as the forward peak and picks up `riskProfile.pPoiPPoiPeakSafetyMarginMw` (L2 §6). The
 asymmetry is deliberate: overstating the provisional peak costs a little
 optimisation freedom, understating it can cost an entire period's demand charge.
 

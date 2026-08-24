@@ -77,6 +77,13 @@ FRAME_TOKENS = tuple(t for group in FRAMES.values() for t in group)
 FIELD_TOKEN = re.compile(r"`([A-Za-z][A-Za-z0-9_]*)`")
 NUMERIC_TYPE = re.compile(r"^`double(\[[^\]]*\])?`$")
 
+# A declared range, in a Range column or stated in the Notes where a table has
+# no Range column. §2.3 wants the range declared, not the column.
+RANGE = re.compile(r"[\[\(]\s*-?[\d.]+\s*,\s*-?[\d.]+\s*[\]\)]"
+                   r"|[≥≤<>]\s*-?[\d.]+"
+                   r"|\d+\s*\.\.\s*\d+"
+                   r"|non-negative|unit interval")
+
 
 def split_row(line: str) -> list[str]:
     return [c.strip() for c in line.strip().strip("|").split("|")]
@@ -148,11 +155,17 @@ def main() -> int:
                                     f"{rel}:{lineno}: FRAME `{n}` is a power or "
                                     f"energy field naming no frame")
                     elif unit in EXEMPT_UNITS:
-                        if unit in ("—", "-") and ri is not None and rng in ("", "—", "-"):
-                            for n in names:
-                                errors.append(
-                                    f"{rel}:{lineno}: RANGE `{n}` is dimensionless "
-                                    f"and declares no range (conventions §2.3)")
+                        if unit in ("—", "-"):
+                            # The range may live in the Range column, or — where
+                            # the table has none — anywhere else on the row.
+                            declared = RANGE.search(rng) if ri is not None \
+                                else RANGE.search(" ".join(row))
+                            if not declared:
+                                for n in names:
+                                    errors.append(
+                                        f"{rel}:{lineno}: RANGE `{n}` is "
+                                        f"dimensionless and declares no range "
+                                        f"(conventions §2.3)")
                     else:
                         for n in names:
                             errors.append(

@@ -79,7 +79,7 @@ get the trade".
 
 | Field | Type | Unit | Notes |
 |---|---|---|---|
-| `imbalanceVolumeMwh` | `double` | MWh | Per slot, signed |
+| `imbalanceVolumeMwh` | `double` | MWh | Per slot, signed. **Market frame**: `> 0` is LONG (the Bilanzkreis is over-delivered and the site is owed), `< 0` is SHORT (`02-conventions.md` §1) |
 | `imbalancePriceEurPerMwh` | `double` | EUR/MWh | Per slot; often final only weeks later |
 | `imbalanceCostEur` | `double` | EUR | Per slot |
 
@@ -89,7 +89,7 @@ get the trade".
 |---|---|---|
 | `INV-X-01` | Every `fillId` references an `intentId` submitted in this run | `HALT` — phantom fill |
 | `INV-X-02` | Filled volume ≤ intended volume per intent, across all fills | `HALT` |
-| `INV-X-03` | Energy balance holds within meter tolerance: `poiImport − poiExport = load − pv + chargeEnergy − dischargeEnergy` | warn if provisional, `HALT` if final |
+| `INV-X-03` | Energy balance holds within meter tolerance: `pPoiMeteredImportMwh − pPoiMeteredExportMwh = meteredLoadMwh − meteredPvMwh + pBattChargeEnergyMwh − pBattDischargeEnergyMwh`. Metered PV is generation **after** curtailment, so it is `pv_out`, not `pv_avail`. **No efficiency term appears, and that is not an omission** — it is what places the loss boundary at the AC terminal of the storage unit (conventions §3): the battery energies here are metered on the grid side of the inverter, so conversion losses are already inside them and the identity closes without η | warn if provisional, `HALT` if final |
 | `INV-X-04` | Execution did not consume `shadowValueEurPerMwh`/`urgency` | structural — adapter projection |
 | `INV-S-04` | `deliveryShortfallMwh = 0` | alert + `HALT` — a reserve delivery failure is a prequalification risk |
 | `INV-X-05` | `socMeasuredMwh` consistent with charge/discharge energy and η within tolerance | warn — drift indicates an η or SOH model error |

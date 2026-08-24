@@ -57,7 +57,7 @@ Decision variables are the C2 §2 vocabulary. Constraints in three groups.
 
 **Physical.** SOC dynamics with split charge/discharge and one-way efficiency
 (`00-overview/02-conventions.md` §3); SOC bounds; power bounds per slot; POI
-envelope; the POI bridge `p_poi = load − pv − p_batt`.
+envelope; the POI bridge `p_poi = load − pv_out − p_batt`, where `pv_out = Σ_k (pv_avail − q)` is post-curtailment (`02-conventions.md` §1, ADR-016).
 
 **Market.** Position accounting per market and slot; DA position fixed after
 clearing; intraday volume bounded by `FillProbView`'s `BoundTerm`; reserve

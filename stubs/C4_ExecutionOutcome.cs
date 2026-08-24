@@ -265,8 +265,11 @@ public sealed record ExecutionOutcome : ContractEnvelope
 ///   <item><term>INV-X-02</term><description>Filled volume ≤ intended volume per
 ///     intent, across all fills → <c>HALT</c>.</description></item>
 ///   <item><term>INV-X-03</term><description>Energy balance holds within meter
-///     tolerance: <c>poiImport − poiExport = load − pv + chargeEnergy −
-///     dischargeEnergy</c> → warn if provisional, <c>HALT</c> if final.</description></item>
+///     tolerance: <c>pPoiMeteredImportMwh − pPoiMeteredExportMwh =
+///     meteredLoadMwh − meteredPvMwh + pBattChargeEnergyMwh −
+///     pBattDischargeEnergyMwh</c> → warn if provisional, <c>HALT</c> if final.
+///     Metered PV is post-curtailment. <b>No η appears here</b>, which is what
+///     places the loss boundary at the AC terminal (conventions §3).</description></item>
 ///   <item><term>INV-X-04</term><description>Execution did not consume
 ///     <c>shadowValueEurPerMwh</c>/<c>urgency</c> → <b>structural</b>, via
 ///     <c>ExecutionIntentProjection</c>.</description></item>

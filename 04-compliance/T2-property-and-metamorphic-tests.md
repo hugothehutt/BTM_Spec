@@ -33,7 +33,7 @@ you know with certainty that:
 - if the peak charge goes **up**, the planned peak cannot go **up**;
 - if the POI limit is **tightened**, the objective cannot **improve**;
 - if every price is multiplied by `k > 0`, every euro figure must be multiplied
-  by exactly `k` and every kW bound must be **unchanged**.
+  by exactly `k` and every MW bound must be **unchanged**.
 
 Each of those is a testable assertion over a *pair* of runs, requires no ground
 truth, and is generated automatically from any input in your corpus. One input
@@ -44,7 +44,7 @@ What this catches that feasibility testing does not:
 | Bug class | Why feasibility misses it | Which relation catches it |
 |---|---|---|
 | Sign error on a revenue term | A plan with an inverted sign is still perfectly feasible; it just loses money silently | Price monotonicity |
-| Unit mixing (`EUR/MWh` treated as `EUR/kWh`, `kW` as `MW`) | A factor of 1000 produces a feasible, plausible-looking plan | Scale equivariance |
+| Unit mixing (`EUR/MWh` treated as `EUR/MW`, an energy price read as a capacity price) | The euro figure is wrong by the block length in hours and the plan stays feasible and plausible-looking | Scale equivariance |
 | Missing coupling constraint | The relaxed problem is *more* feasible, not less | POI tightening monotonicity; DA curve monotonicity |
 | Double-counted effect | Every constraint holds; the objective is simply inflated | Duplicate-effect injection; zero-price invariance |
 | Ignoring the dependence structure of the ensemble | Marginals are all correct; only the joint is wrong | Ensemble axis coherence |
@@ -233,8 +233,8 @@ response.
 | `C1` field | `Good` | `Degraded` | `Stale` | `Imputed` | `Missing` |
 |---|---|---|---|---|---|
 | `socNowMwh` | `NORMAL` | `DEGRADED` | `DEFENSIVE` | **not permitted** — never defaulted (`C1` §2) | `HALT` via `INV-D-01`/critical |
-| `loadMw` | `NORMAL` | `DEGRADED`, ↑`peakSafetyMarginMw`, ↑`cvarLevel` | `DEGRADED`, ↑↑`peakSafetyMarginMw` | `DEGRADED`, default = **high quantile** | `DEFENSIVE`, default high, `criticalMissing` populated |
-| `pvAvailMw` | `NORMAL` | `DEGRADED`, ↑`peakSafetyMarginMw` | as `Degraded` | default = `0` (protects peak) | `DEGRADED`, default `0` |
+| `loadMw` | `NORMAL` | `DEGRADED`, ↑`pPoiPPoiPeakSafetyMarginMw`, ↑`cvarLevel` | `DEGRADED`, ↑↑`pPoiPPoiPeakSafetyMarginMw` | `DEGRADED`, default = **high quantile** | `DEFENSIVE`, default high, `criticalMissing` populated |
+| `pvAvailMw` | `NORMAL` | `DEGRADED`, ↑`pPoiPPoiPeakSafetyMarginMw` | as `Degraded` | default = `0` (protects peak) | `DEGRADED`, default `0` |
 | `daPriceEurPerMwh` | `NORMAL` | ↓`positionScale`, ↑`cvarWeight` | ↓↓`positionScale` | ↓↓`positionScale` | `DEFENSIVE` — critical |
 | `idPriceRefEurPerMwh` | `NORMAL` | ↓`positionScale` | ↓`positionScale` | ↓`positionScale` | `DEGRADED` |
 | `idSpreadBeliefEurPerMwh` | `NORMAL` | wider | default **wide** (suppresses trading) | wide | `DEGRADED`, wide |
@@ -434,13 +434,24 @@ metamorphic ScaleEquivariance(snapshot, k in {0.01, 0.5, 2, 100, 1e4}):
 ```
 
 **Why this catches unit mixing, precisely.** Suppose a term computes a euro
-amount as `price_EUR_per_MWh * energy_kWh` and someone forgot the `/1000`. That
-term is wrong by a factor of 1000 — but it is *still linear in price*, so it
-scales by `k` along with everything else and this test passes. Now suppose the
-same term computes `price_EUR_per_MWh * energy_kWh / 1000 + fixed_fee_EUR` where
+amount as `capacityPrice_EUR_per_MW_h * awarded_MW` and someone forgot to
+multiply by the block length in hours. That term is wrong by a factor of
+`blockHours` — but it is *still linear in price*, so it scales by `k` along with
+everything else and this test passes. Scale equivariance never catches a pure
+scalar error on a price-linear term, and it is important to know that.
+
+Now suppose the same term computes
+`capacityPrice_EUR_per_MW_h * awarded_MW * blockHours + fixed_fee_EUR` where
 `fixed_fee_EUR` was sourced from a price field the scaling did not touch, or a
 constant was baked into a breakpoint, or a threshold in EUR is compared against a
-quantity in kW. **Then the term does not scale by `k`, and the test fires.**
+quantity in MW. **Then the term does not scale by `k`, and the test fires.**
+
+The kW/MW half of this hazard no longer exists. There is one unit system and no
+factor of 1000 anywhere (conventions §2), so the classic
+`price_EUR_per_MWh * energy_kWh` defect cannot be written. What remains is the
+confusion between an energy price and a capacity price, which this test catches
+only in its mixed form — the pure form is caught earlier, by `INV-G-02`, because
+the two units force different identifier suffixes.
 
 More generally, scale equivariance separates the two halves of the model that
 must never mix: the **euro half**, which is homogeneous of degree 1 in prices,
@@ -449,7 +460,7 @@ a mixture of the two — a bound that moved when a price changed, a breakpoint `
 that scaled, a "price" constant living inside a feasibility check — is a
 unit-mixing bug, and this one test finds all of them at once. It also catches
 absolute epsilons in the wrong dimension: a comparison against `1e-6 EUR` applied
-to a kW quantity survives `k=1` and dies at `k=1e4`.
+to a MW quantity survives `k=1` and dies at `k=1e4`.
 
 Run it at extreme `k` deliberately. `k = 0.01` and `k = 1e4` expose tolerance
 constants that are dimensionally wrong.

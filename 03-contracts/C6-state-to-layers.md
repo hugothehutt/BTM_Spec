@@ -126,7 +126,7 @@ Mirrors C5 §4. Read by L3.
 | `confirmedReserveUp`,`…Dn` | `double[B]` | Denormalised for the Planner's hard constraints |
 | `confirmedSpotPosition` | `double[H]` | Denormalised, signed, market frame |
 | `pendingExposure` | `double[H]` | Signed; probabilistic, not an obligation |
-| `requiredSocCorridor` | `(EnergyKwh, EnergyKwh)[H]` | Union of all confirmed `feasibilityRequirement`s |
+| `requiredSocCorridor` | `(double, double)[H]` | Union of all confirmed `feasibilityRequirement`s |
 | `ledgerConsistent` | `bool` | False triggers `SAFE` (ADR-014) |
 
 The denormalised views exist because the Planner needs them on every solve and
@@ -152,7 +152,7 @@ Read by L2 (`OppCostView`), which republishes it across C2 §4.
 | `producedAt` | `SlotId` | — | no | |
 | `validityHorizon` | `SlotSpan` | — | no | |
 | `isStale` | `bool` | — | no | `snapshotAt − producedAt > validityHorizon` |
-| `contextDrift` | `double` | — | no | Distance from the state `V` was fitted at |
+| `contextDrift` | `double` | — | no | `ratio`, range `≥0`. Normalised distance from the state `V` was fitted at |
 | `artefactHash` | `string` | — | no | Merkle chain |
 
 **Staleness is never silent.** If `isStale`, the mode escalates to at least

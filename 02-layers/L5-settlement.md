@@ -217,17 +217,17 @@ realisedPeakKw = max over t ∈ periodSlots(regime) of p_import_kw[t]
 
 | Regime | `periodSlots` | Charge |
 |---|---|---|
-| `AnnualLeistungspreis` | all slots in the local calendar year | `peakPriceEurPerMw · realisedPeakKw` |
-| `MonthlyLeistungspreis` | all slots in the local calendar month | `peakPriceEurPerMw · realisedPeakKw` per month |
-| `AtypicalHlzf` (§19(2) S.1) | HLZF slots only, from the DSO's published window table for that year | `hlzfPeakPrice · pPoiHlzfPeakMw` |
+| `AnnualLeistungspreis` | all slots in the local calendar year | `peakPriceEurPerMw · pPoiRealisedPeakMw` |
+| `MonthlyLeistungspreis` | all slots in the local calendar month | `peakPriceEurPerMw · pPoiRealisedPeakMw` per month |
+| `AtypicalHlzf` (§19(2) S.1) | HLZF slots only, from the DSO's published window table for that year | `hlzfPeakPriceEurPerMw · pPoiHlzfPeakMw` |
 | `IntensiveUse` (§19(2) S.2) | all slots in the qualification year | reduced rate conditional on qualification |
 
 ### Intensive-use qualification tracking
 
 ```
 pPoiAnnualEnergyMwh = Σ_{t ∈ year} pPoiMeteredImportMwh[t]
-pPoiAnnualPeakMw    = max_{t ∈ year} p_import_kw[t]
-fullLoadHours   = pPoiAnnualEnergyMwh / pPoiAnnualPeakMw          [ kWh / kW = h ]  INV-S-06
+pPoiAnnualPeakMw    = max_{t ∈ year} p_import_mw[t]
+fullLoadHours   = pPoiAnnualEnergyMwh / pPoiAnnualPeakMw          [ MWh / MW = h ]  INV-S-06
 flhMargin       = fullLoadHours   − flhThreshold          [ threshold config, 7,000 h ]
 energyMargin    = pPoiAnnualEnergyMwh − energyThreshold       [ threshold config, 10 GWh ]
 qualificationMarginHours = min(flhMargin, energyMargin / pPoiAnnualPeakMw)
@@ -255,10 +255,12 @@ forces tier escalation and the protective bound (`INV-S-13`, C5 §3).
   days are permanent fixtures in the peak-engine test set.
 - HLZF windows are local-time windows from a data table (ADR-002), resolved to
   `SlotId` sets through the same service.
-- `pPoiRealisedPeakMw` is non-decreasing within a period and resets **exactly** at the
-  local-calendar boundary (`INV-S-01`). An off-by-one-hour reset at a DST boundary
-  either destroys a period's accumulated peak or carries it into the next one, and
-  both are silent.
+- `pPoiRealisedPeakMw` is non-decreasing within a period and resets **exactly** at
+  the `SlotId` that `CivilCalendar` resolves the Europe/Berlin local period
+  boundary to — a UTC instant, computed once, never a UTC offset applied to a
+  local timestamp (`02-conventions.md` §4.2, `INV-S-01`). An off-by-one-hour reset
+  at a DST boundary either destroys a period's accumulated peak or carries it into
+  the next one, and both are silent.
 
 ---
 
@@ -464,7 +466,7 @@ own self-test, and several are the earliest available warning of a model defect.
 
 | Check | Assertion | Signal |
 |---|---|---|
-| **Energy balance** | `poiImport − poiExport = load − pv (realized after curtailment) + chargeEnergy − dischargeEnergy` within meter tolerance (`INV-X-03`) | Sub-metering fault, or a sign convention inverted somewhere |
+| **Energy balance** | `pPoiMeteredImportMwh − pPoiMeteredExportMwh = meteredLoadMwh − meteredPvMwh + pBattChargeEnergyMwh − pBattDischargeEnergyMwh` within meter tolerance (`INV-X-03`). Metered PV is post-curtailment `pv_out`; the battery energies are AC-terminal, so **no η appears** (conventions §3) | Sub-metering fault, or a sign convention inverted somewhere |
 | **SOC consistency** | `socMeasuredMwh[t+1] ≈ socMeasuredMwh[t] + η_c·charge[t] − discharge[t]/η_d` (`INV-X-05`) | **The early-warning signal for efficiency and SOH model drift.** Persistent one-signed divergence means η or the degradation model is wrong, and it feeds `modelErrorEur` directly |
 | **Fee reconciliation** | Σ of C4 `feesEur` equals fees booked per effect; no fee netted into a price (`INV-S-11`) | Broker or venue fee schedule changed, or a price arrived net |
 | **No phantom fills** | Every `fillId` maps to an `intentId` submitted this run (`INV-X-01`) | Adapter reconciliation failure — see `L4-execution-boundary.md` §6 |

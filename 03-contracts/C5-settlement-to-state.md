@@ -42,7 +42,7 @@ than assuming the gap contained nothing.
 |---|---|---|---|
 | `pPoiAnnualEnergyMwh` | `double` | MWh | Accumulated in the qualification year |
 | `pPoiAnnualPeakMw` | `double` | MW | Denominator of full-load hours |
-| `fullLoadHours` | `double` | h | `annualEnergy / annualPeak` |
+| `fullLoadHours` | `double` | h | `pPoiAnnualEnergyMwh / pPoiAnnualPeakMw` |
 | `pPoiHlzfPeakMw` | `double` | MW | Peak within HLZF windows only |
 | `qualificationStatus` | `Qualified \| AtRisk \| Lost \| NotApplicable` | — | Per applicable §19(2) path |
 | `qualificationMarginHours` | `double` | h | Distance to the threshold — drives `qualCritical` |
@@ -75,8 +75,8 @@ from the seven above; carried so that four layers do not each re-derive them.
 
 | Field | Formula | Type | Unit | Notes |
 |---|---|---|---|---|
-| `pvShare` | `(10)/(5)` | `double` | — | PV share of charging; sets the route split |
-| `awPositiveShare` | `(30)` | `double` | — | A ratio, so a late-month AW=0 export dilutes the whole month's `(28)` |
+| `pvShare` | `(10)/(5)` | `double` | — | `fraction`, range `[0,1]`. PV share of charging; sets the route split |
+| `awPositiveShare` | `(30)` | `double` | — | `fraction`, range `[0,1]`. A ratio, so a late-month AW=0 export dilutes the whole month's `(28)` |
 | `saldierungsfaehigMwh` | `(16)` | `double` | MWh | grey route |
 | `foerderfaehigMwh` | `(32)` | `double` | MWh | green route |
 | `umlagebelasteterNetzbezugMwh` | `(21)` | `double` | MWh | base of `EnfgLevies` |
@@ -87,13 +87,13 @@ Calendar and status:
 | Field | Type | Unit | Null | Default | Notes |
 |---|---|---|---|---|---|
 | `monthStart`, `monthEnd` | `SlotId` | — | no | — | Europe/Berlin civil-calendar bounds, derived via `CivilCalendar` (`INV-S-12`) |
-| `slotsToMonthEnd` | `SlotSpan` | — | no | — | Coordinate of `V_del`; the accumulators reset at `monthEnd` |
+| `slotsToMonthEnd` | `SlotSpan` | — | no | — | Coordinate of `V_del`. A true slot count to `monthEnd`, so it is **DST-varying by construction**: the same calendar distance is 92, 96 or 100 slots per day depending on the transition (`02-conventions.md` §4.3). The accumulators reset at the `SlotId` `CivilCalendar` resolves `monthEnd` to |
 | `throughputBoundMet` | `bool` | — | no | `false` | Charge throughput exceeds `η_d·E_usable/(1−η_rt)`, so `(12) = 0` is arithmetically assured (`INV-S-16`). Conservative default: not assured |
 | `delineationIsProvisional` | `bool` | — | no | `true` | True while the month's meter data is unfinal |
 | `unsettledGapFrom` | `SlotId` | — | yes | — | Earliest slot not yet reflected in the accumulators |
 
 **The accumulators reset to zero at `monthEnd`, and SOC does not.** That discontinuity
-is in value, not in physics: the same kWh in the same battery is worth a different
+is in value, not in physics: the same MWh in the same battery is worth a different
 amount either side of the boundary because the aggregates its route ran through have
 vanished. `slotsToMonthEnd` is what lets `V_del` price the approach continuously, and
 it is the delineation counterpart of `qualificationMarginHours`.
@@ -126,10 +126,10 @@ Decomposed into the **same** `EconomicEffect` enumeration used by Valuation
 
 | Field | Type | Unit | Notes |
 |---|---|---|---|
-| `realisedByEffect` | `map<EconomicEffect, Money>` | EUR | |
-| `plannedByEffect` | `map<EconomicEffect, Money>` | EUR | What Valuation expected |
+| `realisedByEffect` | `map<EconomicEffect, double>` | EUR | |
+| `plannedByEffect` | `map<EconomicEffect, double>` | EUR | What Valuation expected |
 | `unexplainedEur` | `double` | EUR | **Mandatory bucket** — the *effect-level* residual, i.e. realised cash not attributable to any `EconomicEffect` (`INV-S-02`) |
-| `unexplainedRatio` | `double` | — | Alerted above a threshold |
+| `unexplainedRatio` | `double` | — | `ratio`, range `≥0`, of `unexplainedEur` to gross realised value. Alerted above a threshold |
 
 The `unexplainedEur` bucket is not optional and must not be allowed to be silently
 absorbed elsewhere. A rising unexplained ratio is the single best early warning

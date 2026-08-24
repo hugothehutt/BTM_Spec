@@ -182,7 +182,7 @@ solver, no file system, no recorded seam.
 | Epigraph builder | `z ≥ expr[t] ∀t`, `z ≥ floor`, correct `overSlots` subset, correct `prorationFactor` application |
 | `CivilCalendar` | `SlotId ↔ (local date, local time, HLZF window)` on ordinary days and both DST days; 92 / 96 / 100-slot civil days |
 | Typed quantities | Frame and unit conversions; that illegal conversions do not compile (compile-fail tests are part of the suite) |
-| POI bridge | `p_poi = load − pv − p_batt` in isolation, both signs, with aux load present |
+| POI bridge | `p_poi = load − pv_out − p_batt` in isolation, both signs, with aux load present, and with `q > 0` so that `pv_out < pv_avail` — passing `pv_avail` where `pv_out` belongs is the defect this case exists to catch |
 | SOC dynamics kernel | One-way efficiency on each direction, split charge/discharge, no free round trip |
 | Term shape serialisers | Each of the five shapes round-trips to binary and to JSON |
 | Fallback ladder | Each rung of ADR-014 §4 selected for the right input, and the stopping rung recorded |

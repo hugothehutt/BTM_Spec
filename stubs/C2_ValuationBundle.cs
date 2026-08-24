@@ -175,7 +175,7 @@ public sealed record EpigraphTerm
     /// <summary>Unit: the dominated variable's unit (MW for <c>pPoi</c>).
     /// <b>Realised peak so far, from L0</b> (C5 §2), adjusted upward for the
     /// unsettled gap using the engine's own modelled trajectory, and increased by
-    /// <c>RiskProfile.PeakSafetyMarginMw</c> under degraded load quality
+    /// <c>RiskProfile.PPoiPeakSafetyMarginMw</c> under degraded load quality
     /// (L2 §2).</summary>
     public required double Floor { get; init; }
 
@@ -471,7 +471,7 @@ public sealed record RiskProfile
     /// <summary>Unit MW. Added to the epigraph floor under degraded load or PV
     /// quality (L2 §6). This is the degradation response for peak: a margin, not
     /// a branch.</summary>
-    public required double PeakSafetyMarginMw { get; init; }
+    public required double PPoiPeakSafetyMarginMw { get; init; }
 
     /// <summary>Echoed from L0 via C1 §8.</summary>
     public required DegradationMode DegradationMode { get; init; }
