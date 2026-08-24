@@ -1450,7 +1450,7 @@
   tn: null
   band: null
 - id: CLM-0144
-  statement: Px_inst is the installierte Leistung of EE-Anlage x per § 24 Abs. 3 S. 2 Halbsatz 2 EEG, in kW, and is static.
+  statement: Px_inst is the installierte Leistung of EE-Anlage x per § 24 Abs. 3 S. 2 Halbsatz 2 EEG, in MW, and is static.
   owner: 00-overview/03-mispel-reference.md §2
   class: regulatory
   blast_radius: very-expensive

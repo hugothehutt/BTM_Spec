@@ -18,7 +18,10 @@
     The MiSpel register definitions are the delineation ground truth and are
     transcribed verbatim. The registers are quarter-hour meter values in kWh
     because that is what the regulation defines; the engine normalises them to
-    MWh at dataload (L5 §4).
+    MWh at dataload (L5 §4). The allowance covers the kWh registers only: the
+    file's one power row, `Px_inst`, was moved to MW by the owner at 395826c,
+    which changes no value because `Px_inst` is used solely in the ratio
+    `ZFx = Px_inst / (Pa_inst + Pb_inst)`, where the unit cancels.
   allow_whole_file: true
 
 00-overview/02-conventions.md:
