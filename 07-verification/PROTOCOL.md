@@ -298,7 +298,7 @@ disagreement. Silent agreement is evidence.
 | `00-overview/02-conventions.md` — units, signs, grid, naming | The owning `02-layers/` section's derivation and its justification |
 | Battery physics and asset parameters | Any technical note on the claim |
 | The seam signature it must produce: `03-contracts/` **field tables only** — names, types, units, cardinality — with the surrounding prose stripped | Prior adjudications of the claim |
-| The claim statement it is asked to derive a treatment for | `RECONCILIATION.md` |
+| The claim statement it is asked to derive a treatment for | `07-verification/claims.yaml` beyond that one statement — the other entries' labels, bands and `depends_on` edges are the specification's own view of what is already settled |
 
 The test for the boundary: a document is **visible** if it states what is true of
 the world or required at the seam, and **masked** if it states why this
