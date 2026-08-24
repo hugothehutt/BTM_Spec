@@ -85,6 +85,17 @@ producer is in an unknown state and nothing downstream can be trusted.
   identifier's unit suffix to change with the unit, so the rename is the alarm
   and `INV-G-02` fails the build if the two disagree.
 
+**`C1` through `C6` are at 2.0.** The MW/MWh cascade
+([Propagate MW/MWh and retire typed quantities](https://github.com/hugothehutt/BTM_Spec/issues/41))
+changed a unit on every one of them — `peakPriceEurPerMw` became a capacity
+price with the accounting period an explicit input, `vSocSlopesEurPerMwh` moved to
+EUR/MWh, and every power and energy field moved to MW/MWh — and split `C3`/`C4`'s
+single `limitPrice`/`volume` pair, whose unit depended on `market`, into two
+exclusive pairs. Under the rule above each of
+those is major on its own, so there is no 1.x of any contract that a consumer
+should still be reading. No 2.x consumer accepts a 1.x payload: `INV-G-03`
+rejects an unrecognised major rather than guessing at it.
+
 The change discipline in the root `README.md` applies: a contract change requires
 the doc, the version and the conformance tests in one commit.
 

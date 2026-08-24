@@ -1,6 +1,6 @@
 # C4 — Execution → Settlement
 
-**Payload:** `ExecutionOutcome` **Version:** 1.0 **Direction:** L4 → L5
+**Payload:** `ExecutionOutcome` **Version:** 2.0 **Direction:** L4 → L5
 
 What actually happened. Settlement must be able to reconstruct the truth from
 this payload plus metered reality **alone** — it has no access to what the

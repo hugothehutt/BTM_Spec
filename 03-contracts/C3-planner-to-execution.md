@@ -1,6 +1,6 @@
 # C3 — Planner → Execution
 
-**Payload:** `ExecutionIntent` **Version:** 1.0 **Direction:** L3 → L4
+**Payload:** `ExecutionIntent` **Version:** 2.0 **Direction:** L3 → L4
 
 Execution is the pre-existing market simulator, treated as an external system.
 This contract is deliberately thin and carries **intent only** (ADR-012).

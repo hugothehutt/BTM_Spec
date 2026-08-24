@@ -1,6 +1,6 @@
 # C6 — State/Value Store → Layers (read side)
 
-**Payload:** `StateSnapshot` **Version:** 1.0 **Direction:** L0 → L1, L2, L3
+**Payload:** `StateSnapshot` **Version:** 2.0 **Direction:** L0 → L1, L2, L3
 
 The read side of L0. ADR-006 asserts that the state store is "a contract with a
 field table, a version and invariants like every other seam"; this document is

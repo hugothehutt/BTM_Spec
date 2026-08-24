@@ -1,6 +1,6 @@
 # C5 — Settlement → State/Value Store
 
-**Payload:** `StateUpdate` **Version:** 1.0 **Direction:** L5 → L0
+**Payload:** `StateUpdate` **Version:** 2.0 **Direction:** L5 → L0
 
 The **only** backwards edge in the system (ADR-006). Written at the end of a
 tick, read at the top of the next. Everything here is therefore, by

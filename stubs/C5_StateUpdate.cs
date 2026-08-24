@@ -1,8 +1,8 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C5: Settlement → State/Value Store, and the read side
 //
-//  Payload:  StateUpdate    Version: 1.0   Direction: L5 → L0   (write)
-//            StateSnapshot  Version: 1.0   Direction: L0 → L2/L3 (read, lagged)
+//  Payload:  StateUpdate    Version: 2.0   Direction: L5 → L0   (write)
+//            StateSnapshot  Version: 2.0   Direction: L0 → L2/L3 (read, lagged)
 //  Normative source: 03-contracts/C5-settlement-to-state.md §1–§9,
 //                    ADR-006 (the only backwards edge), ADR-007, ADR-011, ADR-014.
 //

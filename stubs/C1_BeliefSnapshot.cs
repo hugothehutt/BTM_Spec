@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C1: Belief → Valuation
 //
-//  Payload: BeliefSnapshot   Version: 1.0   Direction: L1 → L2
+//  Payload: BeliefSnapshot   Version: 2.0   Direction: L1 → L2
 //  Normative source: 03-contracts/C1-belief-to-valuation.md §1–§10,
 //                    ADR-004 (bitemporal store), ADR-005 (joint ensemble),
 //                    ADR-014 (quality, defaults).

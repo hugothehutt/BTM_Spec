@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C2: Valuation → Planner
 //
-//  Payload: ValuationBundle   Version: 1.0   Direction: L2 → L3
+//  Payload: ValuationBundle   Version: 2.0   Direction: L2 → L3
 //  Normative source: 03-contracts/C2-valuation-to-planner.md §1–§9,
 //                    ADR-008 (linearizable primitives — this file IS that ADR),
 //                    ADR-007 (V(SOC), not λ), ADR-009 (term ownership),
@@ -638,7 +638,7 @@ public sealed record ValuationBundle : ContractEnvelope
 ///     <c>BoundTerm</c>; it has no priced term → <c>HALT</c>.</description></item>
 /// </list>
 /// <para>
-/// INV-V-08 … INV-V-10 are unassigned in C2 §8 as of version 1.0. The gap is in
+/// INV-V-08 … INV-V-10 are unassigned in C2 §8 as of version 2.0. The gap is in
 /// the source register and is preserved here rather than silently renumbered:
 /// invariant IDs are stable identifiers (conventions §5) and reusing a retired
 /// number would break every cross-reference to it.

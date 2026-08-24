@@ -1,6 +1,6 @@
 # C1 — Belief → Valuation
 
-**Payload:** `BeliefSnapshot` **Version:** 1.0 **Direction:** L1 → L2
+**Payload:** `BeliefSnapshot` **Version:** 2.0 **Direction:** L1 → L2
 
 Carries everything Valuation may know about the world, as of a knowledge-time
 boundary, over the hot window. Nothing else reaches Valuation. In particular

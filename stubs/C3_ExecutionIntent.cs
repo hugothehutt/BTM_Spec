@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C3: Planner → Execution
 //
-//  Payload: ExecutionIntent   Version: 1.0   Direction: L3 → L4
+//  Payload: ExecutionIntent   Version: 2.0   Direction: L3 → L4
 //  Normative source: 03-contracts/C3-planner-to-execution.md §1–§6,
 //                    ADR-012 (intent, not routing; quoting is a separate policy),
 //                    L3-planner.md §5 (position → orders), §7 (dispatch boundary).
@@ -364,7 +364,7 @@ public sealed record ExecutionIntentProjection
 ///     intent, unless tagged <c>CommitmentCover</c>.</description></item>
 /// </list>
 /// <para>
-/// INV-P-08 is unassigned in the source register as of version 1.0 and is left
+/// INV-P-08 is unassigned in the source register as of version 2.0 and is left
 /// unassigned here; IDs are stable and are not renumbered (conventions §5).
 /// </para>
 /// </remarks>
