@@ -79,9 +79,11 @@ producer is in an unknown state and nothing downstream can be trusted.
 - **Any other change** — removing a field, changing a type, changing a unit,
   changing a semantic, tightening a range → **major version bump**, and the
   consumer must be updated in the same commit.
-- **Unit changes are always major**, even when the type is unchanged. A field
-  that silently moves from EUR/MWh to EUR/kWh is the archetypal catastrophic
-  change.
+- **Unit changes are always major.** A field moving from EUR/MWh to EUR/MW — an
+  energy price becoming a capacity price — is the archetypal catastrophic change.
+  It cannot be *silent*: `00-overview/02-conventions.md` §5.2 requires the
+  identifier's unit suffix to change with the unit, so the rename is the alarm
+  and `INV-G-02` fails the build if the two disagree.
 
 The change discipline in the root `README.md` applies: a contract change requires
 the doc, the version and the conformance tests in one commit.

@@ -72,7 +72,7 @@ site.
 | Domain | Tolerance |
 |---|---|
 | Money | `1e-6 EUR` absolute |
-| Power | `1e-6 kW` absolute |
+| Power | `1e-6 MW` absolute |
 | Scenario weights | `1e-9` on the sum |
 | Meter energy balance | Meter tolerance, per `meterQuality`, declared per site |
 | Objective agreement between backends | Relative `1e-6`, or the MIP gap tolerance, whichever is larger |
@@ -155,8 +155,8 @@ Sources: `C3` §5, `L3` §4/§5, `00-overview/02-conventions.md` §3.
 | `INV-P-03` | No two intents target the same product, slot and side without a `replacesIntentId` chain linking them. | `C3` producer and consumer | `HALT` | `T1`, `T2` |
 | `INV-P-04` | Limit prices are tick-aligned and volumes lot-aligned, rounded exactly once at the `C3` boundary (`00-overview/02-conventions.md` §6). Rounding earlier corrupts the optimality-gap measurement. | `C3` producer | `HALT` | `T1`, `T5` |
 | `INV-P-05` | In `SAFE` mode, the intent set contains only `CommitmentCover` intents and cancels. | `C3` producer and consumer | `HALT` | `T2` (degradation matrix) |
-| `INV-P-06` | Total planned discharge over any window respects energy availability including the reserve corridor: the plan cannot sell the same kWh into spot and hold it as reserve headroom. | `L3` post-solve; `C3` producer | `HALT` | `T2` |
-| `INV-P-07` | *(consolidated)* No solution contains simultaneous charge and discharge above tolerance: for every slot `t`, `¬(p_charge[t] > 1e-6 kW ∧ p_discharge[t] > 1e-6 kW)`. With `η_c·η_d < 1` and non-negative energy prices this is automatic, so the complementarity binary is **omitted by default** and enabled by configuration flag. It is *not* automatic under negative prices, an aFRR activation obligation, or a peak-driven incentive to import, where burning energy can be profitable and the LP relaxation will exploit it. When the binary is disabled, this is a post-solve monitor over the returned trajectory; a violation means the omission was not safe for that instance and the tick is flagged (`00-overview/02-conventions.md` §3). | `L3`, post-solve monitor on every solve | `alert` | `T2` (negative-price and activation fixtures), `T5` |
+| `INV-P-06` | Total planned discharge over any window respects energy availability including the reserve corridor: the plan cannot sell the same MWh into spot and hold it as reserve headroom. | `L3` post-solve; `C3` producer | `HALT` | `T2` |
+| `INV-P-07` | *(consolidated)* No solution contains simultaneous charge and discharge above tolerance: for every slot `t`, `¬(p_charge[t] > 1e-6 MW ∧ p_discharge[t] > 1e-6 MW)`. With `η_c·η_d < 1` and non-negative energy prices this is automatic, so the complementarity binary is **omitted by default** and enabled by configuration flag. It is *not* automatic under negative prices, an aFRR activation obligation, or a peak-driven incentive to import, where burning energy can be profitable and the LP relaxation will exploit it. When the binary is disabled, this is a post-solve monitor over the returned trajectory; a violation means the omission was not safe for that instance and the tick is flagged (`00-overview/02-conventions.md` §3). | `L3`, post-solve monitor on every solve | `alert` | `T2` (negative-price and activation fixtures), `T5` |
 | `INV-P-08` | *Reserved. Not allocated. Do not reuse — see §10.* | — | — | — |
 | `INV-P-09` | Every DA bid curve is monotone: quantity non-increasing in price for a buy curve, non-decreasing for a sell curve. Asserted, never sorted into compliance. A non-monotone curve is rejected by the exchange **and** is diagnostic of a formulation error, most often a missing coupling constraint (ADR-012, `L3` §5). | `L3` after the parametric re-solve; `C3` producer | `HALT` | `T2` (DA curve monotonicity) |
 | `INV-P-10` | No sell intent is priced below its `shadowValue`; no buy intent above it. The quoting policy never trades through the Planner's own indifference price. A legitimate exception exists — covering a commitment at a loss is sometimes correct — but such an intent must carry the `CommitmentCover` tag. An untagged violation is blocked. | Quoting policy output, before `C3` seal; `L5` re-checks ex post | `warn`, **and the intent is blocked** | `T2`, `T4` (trade-through check) |
@@ -251,8 +251,11 @@ hand-built fixtures and recorded seams.
 `C0` §5: a unit change is **always** a major version bump. `T1` asserts this
 mechanically by comparing the current contract's unit annotations against the
 previous released version's; any changed unit under an unchanged major version
-fails the build. A field silently moving from `EUR/MWh` to `EUR/kWh` is the
-archetypal catastrophic change and it is cheap to make impossible.
+fails the build. A field moving from `EUR/MWh` to `EUR/MW` — an energy price
+becoming a capacity price — is the archetypal catastrophic change, and it is
+cheap to make impossible. Under `00-overview/02-conventions.md` §5.2 it cannot
+even be attempted silently: the unit suffix in the identifier must move with the
+unit, so `INV-G-02` fails on the disagreement before this check runs.
 
 ### 9.3 Backend agreement
 

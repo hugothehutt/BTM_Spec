@@ -436,7 +436,7 @@ loop. `INV-D-17`.
 ### 5.2 What crosses C1
 
 Only C1 §5: `idReliableVolumeBuy`, `idReliableVolumeSell`, and optionally
-`idVolumeByPriceBand`. Volumes, in kWh, per slot. **No price field exists in that
+`idVolumeByPriceBand`. Volumes, in MWh, per slot. **No price field exists in that
 section**, and that is the C1-side enforcement of the rule that fill probability
 constrains the Planner but never prices for it (ADR-008, ADR-012, and `INV-V-16`
 on the L2 side).

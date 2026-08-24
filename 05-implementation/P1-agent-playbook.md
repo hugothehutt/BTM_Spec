@@ -143,8 +143,10 @@ requires, **in the same commit**:
 3. the conformance test update in `tests/Conformance/`;
 4. an update to every affected layer design in `docs/arch/02-layers/`.
 
-Unit changes are **always** major, even when the C# type is unchanged. A field
-that silently moves from EUR/MWh to EUR/kWh is the archetypal catastrophic change.
+Unit changes are **always** major. A field moving from EUR/MWh to EUR/MW — an
+energy price becoming a capacity price — is the archetypal catastrophic change.
+It cannot be *silent*, because §5.2 forces the identifier's suffix to move with
+the unit: the rename is the alarm.
 
 Adding a `VarSymbol` (C2 §2) is a major version bump. Adding an `EconomicEffect`
 additionally requires an owner in the term ownership matrix — do not add one
@@ -450,16 +452,22 @@ cheap to check, and catastrophic to miss.
 Work down the list. It is ordered by (probability × cost).
 
 **1. Sign frames.** For every new arithmetic expression involving power: which
-frame is it in? Battery positive is discharge; POI positive is import. Is
-`PowerFrames.PoiFromSite` the only place they meet? Search the diff for any other
-`load - pv -` or any sign flip on a power quantity. A second implementation of
-the bridge is a defect even if it is currently correct.
+frame is it in? Battery positive is discharge; POI positive is import; market
+positive is sale. Market is sign-aligned with battery, so battery ↔ POI is the
+**only** sign flip in the system. Is `PowerFrames.PoiFromSite` the only place they
+meet? Search the diff for any other `load - pv`, for a bridge missing its
+curtailment term (`pv_out = Σ_k (pv_avail − q)`, not `pv`), or for any sign flip
+on a power quantity. A second implementation of the bridge is a defect even if it
+is currently correct.
 
-**2. Units.** EUR/MWh versus EUR/kWh; kW versus MW; kWh versus percent for SOC.
-Search the diff for `1000`, `0.001`, `/ 1000.0`, `* 1e-3`, `/ 4.0` and `* 0.25`.
-Every one of them must be either inside `MarketUnits`, or a documented
-slot-to-hour conversion via `SlotSpan.Hours`. A magic `4` is a quarter-hour
-assumption and a quarter-hour assumption is a DST bug.
+**2. Units.** EUR/MWh versus EUR/MW — an energy price read as a capacity price is
+now the live confusion, since there is only one unit system and kW no longer
+exists. Also MWh versus fraction for SOC. Search the diff for `1000`, `0.001`,
+`/ 1000.0` and `* 1e-3`: **every one of them is a defect**, because the kW/MW seam
+was deleted and normalisation happens once, at dataload. Search for `/ 4.0` and
+`* 0.25` too: these must be a documented slot-to-hour conversion via
+`SlotSpan.Hours`. A magic `4` is a quarter-hour assumption and a quarter-hour
+assumption is a DST bug.
 
 **3. Invariant coverage.** Did the change add a field, a term, a bound or a
 constraint? Then: which invariant covers it? If none does, either the change is

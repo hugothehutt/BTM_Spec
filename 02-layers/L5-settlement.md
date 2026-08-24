@@ -110,15 +110,19 @@ Phase A computes one signed EUR figure per `EconomicEffect`, plus the mandatory
 consistent with the battery frame (`02-conventions.md` §1), so charges and costs
 are negative. `fees` are always explicit and never netted into a price (C4 §2).
 
-Let `σ(Sell) = +1`, `σ(Buy) = −1`, and `Δt_h = 0.25` h. Volumes cross from kWh to
-MWh at the market adapter and nowhere else (`02-conventions.md` §2).
+Let `σ(Sell) = +1`, `σ(Buy) = −1`, and `Δt_h = 0.25` h. Every volume below is
+already MWh and every price EUR/MWh, so no term carries a unit conversion
+(`02-conventions.md` §2). The MiSpel registers are the one place a foreign unit
+enters: they are transcribed in kWh because that is the unit the regulation
+quotes them in (`00-overview/03-mispel-reference.md` §2), and are normalised to
+MWh at dataload with everything else. There is no factor of 1000 in this layer.
 
 ```
 SpotEnergyValue        = Σ_{f: market = Da}
-                           σ(f.side) · f.price · f.volume/1000 − f.fees
+                           σ(f.side) · f.price · f.volume − f.fees
 
 IdEnergyValue          = Σ_{f: market ∈ {IdContinuous, IdAuction}}
-                           σ(f.side) · f.price · f.volume/1000 − f.fees
+                           σ(f.side) · f.price · f.volume − f.fees
 
 ReserveCapacityRevenue = Σ_b ( awardedUp[b]·clearingPriceUp[b]
                              + awardedDn[b]·clearingPriceDn[b] ) · blockHours[b]
@@ -128,33 +132,33 @@ ReserveCapacityRevenue = Σ_b ( awardedUp[b]·clearingPriceUp[b]
                            attribute and changes ]
 
 ReserveEnergyRevenue   = Σ_t ( activatedEnergyUp[t]·activationPriceUp[t]
-                             − activatedEnergyDn[t]·activationPriceDn[t] ) / 1000
+                             − activatedEnergyDn[t]·activationPriceDn[t] )
 
 ImbalanceCost          = Σ_t imbalanceCost[t]
                          [ taken from C4 §6 as authoritative, and cross-checked
-                           against imbalanceVolume[t]·imbalancePrice[t]/1000;
+                           against imbalanceVolume[t]·imbalancePrice[t];
                            a mismatch is a reconciliation finding, not a silent
                            substitution ]
 
 NetworkPeakCharge      = peak engine output (§5), negative
 
-NetworkVolumetricCharge= − Σ_t (meteredPoiImport[t]/1000) · volumetricRate(t)
+NetworkVolumetricCharge= − Σ_t meteredPoiImport[t] · volumetricRate(t)
 
-LeviesAndTaxes         = − Σ_t (meteredPoiImport[t]/1000) · Σ_c leviesRate_c(t)
+LeviesAndTaxes         = − Σ_t meteredPoiImport[t] · Σ_c leviesRate_c(t)
                          [ closed component list of the components a delineation
                            regime cannot reduce — Stromsteuer, Konzessionsabgabe —
                            mirroring TariffView's enumeration; an unrecognised
                            invoice line is a configuration error, not an absorbed
                            cost ]
 
-EnfgLevies             = − ((21)/1000) · Σ_c enfgRate_c(month)
+EnfgLevies             = − (21) · Σ_c enfgRate_c(month)
                          [ (21) = MAX[(3) − (16) − (19); 0], from §5.1. The
                            reducible EnFG components only. Charged on (21), never
                            on (3) — booking them on metered import overstates the
                            charge by the whole relief ]
 
-SubsidyRevenue         = ((32)/1000) · Σ_x ZFx · MAX[ AWx − marktwertMonth ; 0 ]
-                         [ Marktprämie per § 19 EEG. Spot revenue on the same kWh
+SubsidyRevenue         = (32) · Σ_x ZFx · MAX[ AWx − marktwertMonth ; 0 ]
+                         [ Marktprämie per § 19 EEG. Spot revenue on the same MWh
                            stays in SpotEnergyValue, which is what makes the
                            double count impossible rather than merely checked.
                            Under a common EEG vintage (32x) = ZFx·(32), so the
@@ -230,7 +234,7 @@ qualificationMarginHours = min(flhMargin, energyMargin / annualPeakKw)
 ```
 
 Battery operation moves the numerator **and** the denominator (ADR-011), so
-qualification is not a passive observation — every peak shaved and every kWh
+qualification is not a passive observation — every peak shaved and every MWh
 imported changes it. Both thresholds bind, so the published margin is the binding
 one, expressed in hours so the value function sees a single continuous distance to
 the cliff.

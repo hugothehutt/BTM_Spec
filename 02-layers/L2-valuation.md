@@ -1,6 +1,6 @@
 # L2 — Valuation
 
-Turns "what do we believe about the world right now" into "what is a MWh, a kW
+Turns "what do we believe about the world right now" into "what is a MWh, a MW
 of peak, or a MW of aFRR capacity worth in euros right now" — expressed as
 linearizable primitives (ADR-008), not as prices.
 
@@ -49,7 +49,7 @@ documented.
 
 ### PeakView — network demand charge
 
-Prices the marginal kW of grid peak, under whichever tariff regimes are active
+Prices the marginal MW of grid peak, under whichever tariff regimes are active
 (ADR-011).
 
 - **Emits:** one `EpigraphTerm` per active regime.
@@ -73,7 +73,7 @@ Prices the marginal kW of grid peak, under whichever tariff regimes are active
 
 ### OppCostView — the internal cost of using the battery
 
-- **Emits:** `LinearTerm` (cycle/throughput cost per kWh, from the degradation
+- **Emits:** `LinearTerm` (cycle/throughput cost per MWh, from the degradation
   model), `BoundTerm` (power limits, POI limits), and the **`PwlTerm` carrying
   V(SOC)** (ADR-007).
 - **Does not emit λ_SOC.** λ is an output of the Planner, obtained as the
@@ -167,7 +167,7 @@ Recorded so the gaps are deliberate:
   generation and priced against spot and the delineation `λ_j`. A view that scheduled
   curtailment would be a rule wearing a price.
 - **SelfConsumptionView** — **not needed, and deliberately absent** (ADR-017). Avoided
-  import is already `TariffView` + `SpotView`, and the delineation leg — a kWh
+  import is already `TariffView` + `SpotView`, and the delineation leg — a MWh
   discharged into load never enters `(11)` and so forfeits both routes — falls out of
   the accumulator state equations. Revisit only if retail supply stops being
   spot-indexed.
@@ -252,7 +252,7 @@ booked as revenue** (ADR-017), so exclusivity is unaffected: `(20)` is reported 
 diagnostic quantity and never as an effect.
 
 **Note on `SubsidyRevenue`.** It is the Marktprämie `MAX[AW − MW_month; 0]` on `(32)`
-only. Spot revenue on the same exported kWh stays in `SpotEnergyValue`, which is what
+only. Spot revenue on the same exported MWh stays in `SpotEnergyValue`, which is what
 makes the double count impossible by construction rather than by check.
 
 Two effects may share a **base** (`NetworkPeakCharge` and
