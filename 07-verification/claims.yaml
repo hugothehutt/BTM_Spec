@@ -141,7 +141,7 @@
   tn: null
   band: null
 - id: CLM-0012
-  statement: PeakView prices the marginal kW of grid peak, which requires the peak already realised in the current accounting period, and that is a Settlement output.
+  statement: PeakView prices the marginal MW of grid peak, which requires the peak already realised in the current accounting period, and that is a Settlement output.
   owner: 00-overview/01-system-model.md §2
   class: analytic
   blast_radius: very-expensive
@@ -666,7 +666,7 @@
   tn: null
   band: null
 - id: CLM-0064
-  statement: The POI bridge is p_poi[t] = load[t] − Σ_k ( pv_avail[t,k] − q[t,k] ) − p_batt[t], in kW slot-average.
+  statement: The POI bridge is p_poi[t] = load[t] − Σ_k ( pv_avail[t,k] − q[t,k] ) − p_batt[t], in MW slot-average.
   owner: 00-overview/02-conventions.md §1
   class: analytic
   blast_radius: very-expensive
@@ -716,16 +716,6 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0069
-  statement: The sign frames are enforced as distinct C# value types BatteryPowerKw, PoiPowerKw, LoadKw and PvKw, which do not implicitly convert.
-  owner: 00-overview/02-conventions.md §1
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
-  evidence: unlabelled
-  tn: null
-  band: null
 - id: CLM-0070
   statement: The POI bridge is the only sanctioned conversion between the two frames and lives in exactly one place.
   owner: 00-overview/02-conventions.md §1
@@ -748,7 +738,7 @@
   band: null
   vague: true
 - id: CLM-0072
-  statement: Power is in kW with type *PowerKw; site scale is kW while aFRR is quoted in MW, converted at the market adapter only.
+  statement: Power is in MW in every frame — battery, POI, market and reserve — and there is no kW anywhere in the specification, no unit adapter and no factor of 1000.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
@@ -758,7 +748,7 @@
   tn: null
   band: null
 - id: CLM-0073
-  statement: Energy is in kWh with type EnergyKwh.
+  statement: Energy is in MWh.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
@@ -768,7 +758,7 @@
   tn: null
   band: null
 - id: CLM-0074
-  statement: Reserve capacity is in MW with type ReserveMw and is never mixed with kW types.
+  statement: Reserve capacity is in MW, the same unit as every other power quantity; there is no separate reserve unit family to mix.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
@@ -778,7 +768,7 @@
   tn: null
   band: null
 - id: CLM-0075
-  statement: Energy price is in EUR/MWh with type EnergyPrice, by market convention, and not EUR/kWh.
+  statement: Energy price is in EUR/MWh, by market convention.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
@@ -788,7 +778,7 @@
   tn: null
   band: null
 - id: CLM-0076
-  statement: Reserve capacity price is in EUR/MW/h with type CapacityPrice, per hour of the product block.
+  statement: Reserve capacity price is in EUR/MW/h, per hour of the product block.
   owner: 00-overview/02-conventions.md §2
   class: regulatory
   blast_radius: expensive-later
@@ -798,7 +788,7 @@
   tn: null
   band: null
 - id: CLM-0077
-  statement: Network peak price is in EUR/kW/period with type PeakPrice, where the period is a year or a month depending on the regime.
+  statement: Network peak price is in EUR/MW, and the accounting period is a mandatory explicit input to the peak term rather than a unit denominator.
   owner: 00-overview/02-conventions.md §2
   class: regulatory
   blast_radius: expensive-later
@@ -808,7 +798,7 @@
   tn: null
   band: null
 - id: CLM-0078
-  statement: Tariff components — levies, taxes and surcharges — are normalised to EUR/MWh with type EnergyPrice.
+  statement: Tariff components — levies, taxes and surcharges — are normalised to EUR/MWh.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
@@ -818,7 +808,7 @@
   tn: null
   band: null
 - id: CLM-0079
-  statement: SOC is in kWh with type EnergyKwh, absolute and never percent internally.
+  statement: SOC is in MWh, absolute and never percent internally.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
@@ -828,7 +818,7 @@
   tn: null
   band: null
 - id: CLM-0080
-  statement: SOC as a fraction 0..1 with type SocFraction is presentation only and never appears in the objective.
+  statement: SOC as a fraction in [0,1] is presentation only and never appears in the objective.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
@@ -838,7 +828,7 @@
   tn: null
   band: null
 - id: CLM-0081
-  statement: Efficiency is a one-way fraction 0..1 with type Efficiency, and round-trip efficiency is η_c · η_d.
+  statement: Efficiency is a one-way fraction in (0,1], open at zero because η_d = 0 divides by zero in the SOC dynamics, and round-trip efficiency is η_c · η_d.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
@@ -874,16 +864,6 @@
   blast_radius: very-expensive
   br_source: argued
   anchors: []
-  evidence: unlabelled
-  tn: null
-  band: null
-- id: CLM-0085
-  statement: kW to MW conversion happens only at market adapters, is a typed operation, and there is exactly one 1000.0 in the codebase per direction.
-  owner: 00-overview/02-conventions.md §2
-  class: analytic
-  blast_radius: expensive-later
-  br_source: ADR-003
-  anchors: [ADR-003]
   evidence: unlabelled
   tn: null
   band: null
@@ -979,7 +959,7 @@
   band: null
   vague: true
 - id: CLM-0095
-  statement: Auxiliary load — HVAC, BMS, standby — is modelled explicitly as a LoadKw component rather than folded into η, so it appears in the POI balance and therefore in the peak.
+  statement: Auxiliary load — HVAC, BMS, standby — is modelled explicitly as a site-frame load component rather than folded into η, so it appears in the POI balance and therefore in the peak.
   owner: 00-overview/02-conventions.md §3
   class: analytic
   blast_radius: expensive-later
@@ -1289,7 +1269,7 @@
   tn: null
   band: null
 - id: CLM-0126
-  statement: Money comparisons use an absolute tolerance of 1e-6 EUR and power comparisons an absolute tolerance of 1e-6 kW.
+  statement: Money comparisons use an absolute tolerance of 1e-6 EUR, power comparisons 1e-6 MW and energy comparisons 1e-6 MWh, each in the quantity's own unit.
   owner: 00-overview/02-conventions.md §6
   class: analytic
   blast_radius: expensive-later
@@ -3881,7 +3861,7 @@
   band: null
   vague: true
 - id: CLM-0401
-  statement: "The peak charge creates a large, state-dependent kink: the marginal value of the kWh that keeps the site below the peak threshold is enormous while the marginal value of the next one is close to the spot spread."
+  statement: "The peak charge creates a large, state-dependent kink: the marginal value of the MWh that keeps the site below the peak threshold is enormous while the marginal value of the next one is close to the spot spread."
   owner: 01-adr/ADR-007-value-function-not-lambda.md §Context
   class: analytic
   blast_radius: expensive-later
@@ -4255,7 +4235,7 @@
   tn: null
   band: null
 - id: CLM-0438
-  statement: "PeakView maps to an EpigraphTerm, because max is linear in epigraph form: z_peak ≥ p_poi[t] for all t in the window, z_peak ≥ realisedPeak, with objective −peakPrice · z_peak."
+  statement: "PeakView maps to an EpigraphTerm, because max is linear in epigraph form: z_peak ≥ p_poi[t] for all t in the window, z_peak ≥ realisedPeak, with objective −peakPriceEurPerMw · z_peak."
   owner: 01-adr/ADR-008-linearizable-primitives.md §Decision
   class: analytic
   blast_radius: very-expensive
@@ -7022,7 +7002,7 @@
   tn: null
   band: null
 - id: CLM-0736
-  statement: SubsidyRevenue is owned by DelineationView on the Delineation base and equals MAX[AW − MW_month; 0] · (32), while spot revenue on the same kWh stays in SpotEnergyValue.
+  statement: SubsidyRevenue is owned by DelineationView on the Delineation base and equals MAX[AW − MW_month; 0] · (32), while spot revenue on the same MWh stays in SpotEnergyValue.
   owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
   class: regulatory
   blast_radius: very-expensive
@@ -7263,7 +7243,7 @@
   tn: null
   band: null
 - id: CLM-0760
-  statement: A kWh discharged into load never enters (11), so self-consumption forfeits both routes.
+  statement: A MWh discharged into load never enters (11), so self-consumption forfeits both routes.
   owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
   class: analytic
   blast_radius: very-expensive
@@ -7464,7 +7444,7 @@
   tn: null
   band: null
 - id: CLM-0780
-  statement: ADR-003, typed quantities and two reference frames, is Accepted and expensive later to reverse.
+  statement: ADR-003, typed quantities and two reference frames, is Deleted and superseded by 02-conventions.md §5.2 and §1; its id is retained in the index and never reissued.
   owner: 01-adr/README.md
   class: analytic
   blast_radius: expensive-later
@@ -9615,7 +9595,7 @@
   tn: null
   band: null
 - id: CLM-0994
-  statement: Normalisation fixes units, signs, typed quantities, UTC and the 15-minute grid.
+  statement: Normalisation fixes units, signs, quantity naming, UTC and the 15-minute grid.
   owner: 02-layers/L1-belief.md §1
   class: analytic
   blast_radius: very-expensive
@@ -10881,7 +10861,7 @@
   tn: null
   band: null
 - id: CLM-1120
-  statement: Only idReliableVolumeBuy, idReliableVolumeSell and optionally idVolumeByPriceBand cross C1 from the order book, as volumes in kWh per slot.
+  statement: Only idReliableVolumeBuyMwh, idReliableVolumeSellMwh and optionally idVolumeByPriceBandMwh cross C1 from the order book, as volumes in MWh per slot.
   owner: 02-layers/L1-belief.md §5.2
   class: analytic
   blast_radius: very-expensive
@@ -11072,7 +11052,7 @@
   tn: null
   band: null
 - id: CLM-1139
-  statement: Boxing of typed quantities is banned because it allocates and defeats the entire type discipline.
+  statement: Boxing a slot- or scenario-indexed quantity is banned because dimensioned quantities are plain double, so boxing one is pure allocation with nothing bought in return.
   owner: 02-layers/L1-belief.md §6.1
   class: analytic
   blast_radius: cheap
@@ -11968,7 +11948,7 @@
 
 # ---- 02-layers/L2 ----
 - id: CLM-1228
-  statement: L2 turns beliefs about the world into what a MWh, a kW of peak, or a MW of aFRR capacity is worth in euros, expressed as linearizable primitives rather than prices.
+  statement: L2 turns beliefs about the world into what a MWh, a MW of peak, or a MW of aFRR capacity is worth in euros, expressed as linearizable primitives rather than prices.
   owner: 02-layers/L2-valuation.md §1
   class: analytic
   blast_radius: very-expensive
@@ -12058,7 +12038,7 @@
   tn: null
   band: null
 - id: CLM-1237
-  statement: PeakView prices the marginal kW of grid peak under whichever tariff regimes are active.
+  statement: PeakView prices the marginal MW of grid peak under whichever tariff regimes are active.
   owner: 02-layers/L2-valuation.md §2
   class: analytic
   blast_radius: expensive-later
@@ -12158,7 +12138,7 @@
   tn: null
   band: null
 - id: CLM-1247
-  statement: OppCostView emits a LinearTerm for cycle and throughput cost per kWh from the degradation model, BoundTerms for power and POI limits, and the PwlTerm carrying V(SOC).
+  statement: OppCostView emits a LinearTerm for cycle and throughput cost per MWh from the degradation model, BoundTerms for power and POI limits, and the PwlTerm carrying V(SOC).
   owner: 02-layers/L2-valuation.md §2
   class: analytic
   blast_radius: expensive-later
@@ -12848,7 +12828,7 @@
   tn: null
   band: null
 - id: CLM-1316
-  statement: Spot revenue on the same exported kWh stays in SpotEnergyValue, which makes the double count impossible by construction rather than by check.
+  statement: Spot revenue on the same exported MWh stays in SpotEnergyValue, which makes the double count impossible by construction rather than by check.
   owner: 02-layers/L2-valuation.md §5
   class: analytic
   blast_radius: very-expensive
@@ -12978,7 +12958,7 @@
   tn: null
   band: null
 - id: CLM-1329
-  statement: Raising peakPrice never lowers the priced value of peak reduction, and raising afrrCapPrice never lowers the capacity curve.
+  statement: Raising peakPriceEurPerMw never lowers the priced value of peak reduction, and raising afrrCapPrice never lowers the capacity curve.
   owner: 02-layers/L2-valuation.md §7
   class: analytic
   blast_radius: very-expensive
@@ -14003,7 +13983,7 @@
   tn: null
   band: null
 - id: CLM-1431
-  statement: Raising peakPrice must not increase the planned peak.
+  statement: Raising peakPriceEurPerMw must not increase the planned peak.
   owner: 02-layers/L3-planner.md §9
   class: analytic
   blast_radius: expensive-later
@@ -14948,7 +14928,7 @@
   tn: null
   band: null
 - id: CLM-1525
-  statement: Volumes cross from kWh to MWh at the market adapter and nowhere else.
+  statement: Every volume in the effect algebra is already MWh and every price EUR/MWh, so no term carries a unit conversion; the MiSpel registers are the one foreign unit, transcribed in kWh and normalised to MWh at dataload.
   owner: 02-layers/L5-settlement.md §4
   class: analytic
   blast_radius: very-expensive
@@ -15098,7 +15078,7 @@
   tn: null
   band: null
 - id: CLM-1540
-  statement: CycleDegradation is the negative of the degradation cost per kWh times half the sum of charge and discharge energy.
+  statement: CycleDegradation is the negative of the degradation cost per MWh times half the sum of charge and discharge energy.
   owner: 02-layers/L5-settlement.md §4
   class: analytic
   blast_radius: moderate
@@ -15259,7 +15239,7 @@
   tn: null
   band: null
 - id: CLM-1556
-  statement: AnnualLeistungspreis takes all slots in the local calendar year and charges peakPrice times realisedPeakKw.
+  statement: AnnualLeistungspreis takes all slots in the local calendar year and charges peakPriceEurPerMw times realisedPeakKw.
   owner: 02-layers/L5-settlement.md §5
   class: regulatory
   blast_radius: expensive-later
@@ -15269,7 +15249,7 @@
   tn: null
   band: null
 - id: CLM-1557
-  statement: MonthlyLeistungspreis takes all slots in the local calendar month and charges peakPrice times realisedPeakKw per month.
+  statement: MonthlyLeistungspreis takes all slots in the local calendar month and charges peakPriceEurPerMw times realisedPeakKw per month.
   owner: 02-layers/L5-settlement.md §5
   class: regulatory
   blast_radius: expensive-later
@@ -15339,7 +15319,7 @@
   tn: null
   band: null
 - id: CLM-1564
-  statement: "Battery operation moves both the numerator and the denominator of full-load hours, so qualification is not a passive observation: every peak shaved and every kWh imported changes it."
+  statement: "Battery operation moves both the numerator and the denominator of full-load hours, so qualification is not a passive observation: every peak shaved and every MWh imported changes it."
   owner: 02-layers/L5-settlement.md §5
   class: analytic
   blast_radius: expensive-later
@@ -16584,7 +16564,7 @@
   tn: null
   band: null
 - id: CLM-1688
-  statement: The Type column names the typed quantity and not a primitive.
+  statement: The Type column names the primitive — double for every dimensioned and dimensionless quantity, int, bool, an enum, or SlotId — and the Unit column equals the unit suffix the field name carries.
   owner: 03-contracts/C0-contract-conventions.md §2
   class: analytic
   blast_radius: very-expensive
@@ -16674,7 +16654,7 @@
   tn: null
   band: null
 - id: CLM-1697
-  statement: Every numeric field has a declared unit in its field table; dimensioned quantities use a typed quantity while dimensionless fields may be double or int but must be declared with an em dash in the Unit column and range-constrained, and a dimensioned field typed as a bare double is a violation.
+  statement: Every dimensioned field's identifier ends in its unit and that suffix equals the Unit column of its own row; every power and energy field carries a frame token and appears in that frame's section; every dimensionless field carries an em dash in the Unit column plus a declared kind and a closed range.
   owner: 03-contracts/C0-contract-conventions.md §3
   class: analytic
   blast_radius: very-expensive
@@ -16834,7 +16814,7 @@
   tn: null
   band: null
 - id: CLM-1713
-  statement: Unit changes are always major, even when the type is unchanged, because a field silently moving from EUR/MWh to EUR/kWh is the archetypal catastrophic change.
+  statement: Unit changes are always major, because a field moving from EUR/MWh to EUR/MW — an energy price becoming a capacity price — is the archetypal catastrophic change, and it cannot be silent since the identifier’s unit suffix must move with the unit.
   owner: 03-contracts/C0-contract-conventions.md §5
   class: analytic
   blast_radius: very-expensive
@@ -17144,7 +17124,7 @@
   tn: null
   band: null
 - id: CLM-1744
-  statement: idReliableVolumeBuy and idReliableVolumeSell are the volumes that may be counted on, defaulting to zero.
+  statement: idReliableVolumeBuyMwh and idReliableVolumeSellMwh are the volumes that may be counted on, defaulting to zero.
   owner: 03-contracts/C1-belief-to-valuation.md §5
   class: analytic
   blast_radius: very-expensive
@@ -17154,7 +17134,7 @@
   tn: null
   band: null
 - id: CLM-1745
-  statement: idVolumeByPriceBand is an optional refinement pending the fill-fidelity decision.
+  statement: idVolumeByPriceBandMwh is an optional refinement pending the fill-fidelity decision.
   owner: 03-contracts/C1-belief-to-valuation.md §5
   class: analytic
   blast_radius: very-expensive
@@ -17194,7 +17174,7 @@
   tn: null
   band: null
 - id: CLM-1749
-  statement: peakPrice is carried per regime in EUR/kW/period and is non-negative.
+  statement: peakPriceEurPerMw is carried per regime in EUR/MW/period and is non-negative.
   owner: 03-contracts/C1-belief-to-valuation.md §6
   class: regulatory
   blast_radius: very-expensive
@@ -18833,7 +18813,7 @@
   tn: null
   band: null
 - id: CLM-1912
-  statement: activatedEnergyUp and activatedEnergyDn are realised per slot in kWh, with activation prices per slot in EUR/MWh.
+  statement: activatedEnergyUpMwh and activatedEnergyDnMwh are realised per slot in MWh, with activation prices per slot in EUR/MWh.
   owner: 03-contracts/C4-execution-to-settlement.md §4
   class: regulatory
   blast_radius: very-expensive
@@ -19488,7 +19468,7 @@
   tn: null
   band: null
 - id: CLM-1977
-  statement: "The month-boundary discontinuity is in value and not in physics: the same kWh in the same battery is worth a different amount either side of the boundary because the aggregates its route ran through have vanished."
+  statement: "The month-boundary discontinuity is in value and not in physics: the same MWh in the same battery is worth a different amount either side of the boundary because the aggregates its route ran through have vanished."
   owner: 03-contracts/C5-settlement-to-state.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -22045,7 +22025,7 @@
   tn: null
   band: null
 - id: CLM-2231
-  statement: The power tolerance is 1e-6 kW absolute.
+  statement: The power tolerance is 1e-6 MW absolute.
   owner: 04-compliance/T1-invariants.md §1.3
   class: analytic
   blast_radius: expensive-later
@@ -22096,7 +22076,7 @@
   tn: null
   band: null
 - id: CLM-2236
-  statement: Every numeric field carries a declared unit and a typed quantity and no bare double crosses a seam; checked at serialisation and deserialisation at HALT severity.
+  statement: Every dimensioned field's unit suffix equals its declared unit, every power and energy field names its frame, and every dimensionless field declares a kind and a closed range; checked at serialisation and deserialisation at HALT severity.
   owner: 04-compliance/T1-invariants.md §2
   class: analytic
   blast_radius: expensive-later
@@ -22537,7 +22517,7 @@
   tn: null
   band: null
 - id: CLM-2280
-  statement: Total planned discharge over any window respects energy availability including the reserve corridor, so the plan cannot sell the same kWh into spot and hold it as reserve headroom; checked post-solve in L3 and at the C3 producer at HALT severity.
+  statement: Total planned discharge over any window respects energy availability including the reserve corridor, so the plan cannot sell the same MWh into spot and hold it as reserve headroom; checked post-solve in L3 and at the C3 producer at HALT severity.
   owner: 04-compliance/T1-invariants.md §5
   class: analytic
   blast_radius: moderate
@@ -22547,7 +22527,7 @@
   tn: null
   band: null
 - id: CLM-2281
-  statement: "No solution contains simultaneous charge and discharge above tolerance: for every slot, not both charge and discharge exceed 1e-6 kW."
+  statement: "No solution contains simultaneous charge and discharge above tolerance: for every slot, not both charge and discharge exceed 1e-6 MW."
   owner: 04-compliance/T1-invariants.md §5
   class: analytic
   blast_radius: very-expensive
@@ -22950,7 +22930,7 @@
   tn: null
   band: null
 - id: CLM-2321
-  statement: The types-and-units check asserts every field is the declared typed quantity with the declared unit.
+  statement: The types-and-units check asserts every field is the declared primitive and that its identifier's unit suffix and frame token agree with the Unit column and the section it sits in.
   owner: 04-compliance/T1-invariants.md §9.1
   class: analytic
   blast_radius: expensive-later
@@ -23050,7 +23030,7 @@
   tn: null
   band: null
 - id: CLM-2331
-  statement: A field silently moving from EUR/MWh to EUR/kWh is the archetypal catastrophic change and it is cheap to make impossible.
+  statement: A field moving from EUR/MWh to EUR/MW is the archetypal catastrophic change and it is cheap to make impossible; under conventions §5.2 it cannot even be attempted silently, because the suffix and the unit must agree.
   owner: 04-compliance/T1-invariants.md §9.2
   class: analytic
   blast_radius: expensive-later
@@ -23242,7 +23222,7 @@
   tn: null
   band: null
 - id: CLM-2350
-  statement: If every price is multiplied by k greater than zero, every euro figure must be multiplied by exactly k and every kW bound must be unchanged.
+  statement: If every price is multiplied by k greater than zero, every euro figure must be multiplied by exactly k and every MW bound must be unchanged.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §1
   class: analytic
   blast_radius: expensive-later
@@ -23742,7 +23722,7 @@
   tn: null
   band: null
 - id: CLM-2400
-  statement: A Missing peakPrice is a HALT because there is no safe default for a mandatory term.
+  statement: A Missing peakPriceEurPerMw is a HALT because there is no safe default for a mandatory term.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §2.5
   class: analytic
   blast_radius: moderate
@@ -23872,7 +23852,7 @@
   tn: null
   band: null
 - id: CLM-2413
-  statement: Raising peakPrice raises the EpigraphTerm unit price and makes the priced value of a kW of peak reduction non-decreasing.
+  statement: Raising peakPriceEurPerMw raises the EpigraphTerm unit price and makes the priced value of a MW of peak reduction non-decreasing.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.3
   class: analytic
   blast_radius: expensive-later
@@ -24012,7 +23992,7 @@
   tn: null
   band: null
 - id: CLM-2427
-  statement: "Scale equivariance fires when a term does not scale by k: a fixed fee sourced from an unscaled field, a constant baked into a breakpoint, or a threshold in EUR compared against a quantity in kW."
+  statement: "Scale equivariance fires when a term does not scale by k: a fixed fee sourced from an unscaled field, a constant baked into a breakpoint, or a threshold in EUR compared against a quantity in MW."
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
@@ -24042,7 +24022,7 @@
   tn: null
   band: null
 - id: CLM-2430
-  statement: Scale equivariance also catches absolute epsilons in the wrong dimension, because a comparison against 1e-6 EUR applied to a kW quantity survives k = 1 and dies at k = 1e4.
+  statement: Scale equivariance also catches absolute epsilons in the wrong dimension, because a comparison against 1e-6 EUR applied to a MW quantity survives k = 1 and dies at k = 1e4.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §3.5
   class: analytic
   blast_radius: expensive-later
@@ -24673,7 +24653,7 @@
   tn: null
   band: null
 - id: CLM-2493
-  statement: Raising peakPrice for a regime makes the planned peak for that regime non-increasing and the objective non-increasing, catching an epigraph built with the wrong sense, prorationFactor applied to the wrong side, or an ignored peak floor.
+  statement: Raising peakPriceEurPerMw for a regime makes the planned peak for that regime non-increasing and the objective non-increasing, catching an epigraph built with the wrong sense, prorationFactor applied to the wrong side, or an ignored peak floor.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §4.7
   class: analytic
   blast_radius: expensive-later
@@ -24975,7 +24955,7 @@
   tn: null
   band: null
 - id: CLM-2523
-  statement: Auxiliary load folded into η instead of modelled as a LoadKw component shows up in the SOC check as a one-sided drift.
+  statement: Auxiliary load folded into η instead of modelled as an explicit site-frame load component shows up in the SOC check as a one-sided drift.
   owner: 04-compliance/T2-property-and-metamorphic-tests.md §5.1
   class: analytic
   blast_radius: very-expensive

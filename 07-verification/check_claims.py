@@ -65,6 +65,13 @@ RETIRED: set[str] = {
     # `INV-G-02` checks them mechanically. The successor statements are owned by
     # `00-overview/02-conventions.md` §5.2 and are registered under fresh ids.
     *(f"CLM-{n:04d}" for n in range(277, 295)),
+    # Two conventions claims whose assertion has no successor. CLM-0069 said the
+    # sign frames were enforced as distinct C# value types; there are no value
+    # types. CLM-0085 said kW->MW conversion happens only at the market adapter
+    # and that there is exactly one 1000.0 per direction; there is no kW, no
+    # adapter and no 1000.0. Both are gone rather than reworded, because a
+    # reworded version would assert nothing.
+    "CLM-0069", "CLM-0085",
 }
 
 INV_RE = re.compile(r"\bINV-[A-Z]+-\d{2}\b")
