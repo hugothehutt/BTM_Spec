@@ -1,14 +1,15 @@
 # Architecture Decision Records
 
-Seventeen decisions that are expensive to reverse. Each records context, the
+Sixteen live decisions that are expensive to reverse. Each records context, the
 decision, its consequences, and what was rejected and why. ADR IDs are stable
-and referenced throughout the specification.
+and referenced throughout the specification: a deleted decision keeps its id and
+its row, and the id is never reissued.
 
 | ID | Decision | Status | Reversibility |
 |---|---|---|---|
 | [001](ADR-001-language-and-solver-boundary.md) | C# for the engine; solver behind an abstraction | Accepted | Cheap |
 | [002](ADR-002-clocks-and-calendar.md) | Four clocks; market calendar is data | Accepted | Moderate |
-| [003](ADR-003-typed-quantities.md) | Typed quantities and two reference frames | Accepted | Expensive later |
+| 003 | ~~Typed quantities and two reference frames~~ — superseded by `00-overview/02-conventions.md` §5.2 (unit suffix and frame prefix in the identifier, enforced by `INV-G-02`) and §1 (three frames, not two) | **Deleted** | — |
 | [004](ADR-004-bitemporal-belief-store.md) | Bitemporal, three-tier, content-addressed Belief store | Accepted | Very expensive |
 | [005](ADR-005-joint-scenario-ensemble.md) | One joint scenario ensemble, shared scenario axis | Accepted | Very expensive |
 | [006](ADR-006-feedback-resolution.md) | Forward within a tick, lagged across ticks via L0 | Accepted | Very expensive |

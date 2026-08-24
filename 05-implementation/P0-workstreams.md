@@ -22,7 +22,7 @@ order:
 | Reversibility | Decisions | Consequence for sequencing |
 |---|---|---|
 | **Very expensive** | ADR-004, ADR-005 (belief store, joint ensemble), ADR-006, ADR-008 (contract surface), ADR-013 (determinism) | Build first, build correctly. Retrofitting means rewriting everything above. |
-| Expensive later | ADR-003 (typed quantities), ADR-007 (V not λ), ADR-011 (tariff plug-in) | Get the *types and interfaces* right early; the implementations can follow. |
+| Expensive later | ADR-007 (V not λ), ADR-011 (tariff plug-in) | Get the *interfaces* right early; the implementations can follow. |
 | Moderate | ADR-002, ADR-009, ADR-010, ADR-012, ADR-014 | Sequence for convenience. |
 | Cheap | ADR-001 (solver behind an abstraction) | Defer deliberately — this is OPEN-1. |
 

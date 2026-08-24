@@ -57,7 +57,7 @@ engine/
       05-implementation/
   src/
     Flexbid.Btm.Contracts/         # generated from 03-contracts/, committed
-      Quantities.cs                # ADR-003
+      Quantities.cs                # SlotId, SlotSpan, tolerances — conventions §5.2, §6
       Enums.cs
       Envelope.cs                  # C0
       C1_BeliefSnapshot.cs   …  C5_StateUpdate.cs
@@ -188,28 +188,35 @@ written at the end. If a layer needs something a later layer produces, it gets i
 next tick, from `StateSnapshot`, at a lag. If that seems awkward, it is the
 architecture working; say so rather than routing around it.
 
-## 4. Typed quantities — no bare doubles across a seam
+## 4. The unit and frame live in the name
 
-Quantities are distinct value types (ADR-003): `BatteryPowerKw`, `PoiPowerKw`,
-`LoadKw`, `PvKw`, `ReserveMw`, `EnergyKwh`, `EnergyPrice` (EUR/MWh),
-`CapacityPrice` (EUR/MW/h), `PeakPrice` (EUR/kW/period), `Money` (EUR),
-`Efficiency`, `SocFraction`, `SlotId`, `SlotSpan`.
+Dimensioned quantities are plain `double`. There is no wrapper type and no units
+library. Correctness is carried by the identifier and enforced mechanically by
+`INV-G-02` (`00-overview/02-conventions.md` §5.2).
 
-- **No bare `double` in any contract field** (`INV-G-02`). Analyzer-enforced.
-- **No implicit conversion between frames or units.** There is exactly one
-  sanctioned frame bridge — `PowerFrames.PoiFromSite(load, pv, battery)`
-  implementing `p_poi = load − pv − p_batt` — and exactly one kW↔MW conversion
-  per direction, in `MarketUnits`. There is one `1000.0` in the codebase per
-  direction. If you write a second one, you have introduced a bug class.
-- **Battery frame:** positive = discharge. **POI frame:** positive = import.
-  Never conflate them. A sign error here does not scale the answer, it inverts
-  the strategy.
-- SOC is `EnergyKwh` internally, always. `SocFraction` is presentation only and
-  never appears in the objective.
+- **Unit suffix, mandatory.** Every dimensioned identifier ends in its unit:
+  `Mw`, `Mwh`, `EurPerMwh`, `EurPerMw`, `EurPerMwH`, `Eur`. The suffix must equal
+  the Unit column of the field's table — that equality *is* the check.
+- **Frame prefix, mandatory for power and energy.** `pBatt*` and `soc*` for the
+  battery frame, `pPoi*` for the POI frame, market quantities named for their
+  product (`rUpMw`, `imbalanceVolumeMwh`). A power or energy identifier naming no
+  frame is a violation, not a style preference.
+- **Beliefs and decisions are distinguished.** `pvAvailMw` is a belief;
+  `pvOutMw` is post-decision. A name that could be either is a defect.
+- **Everything is MW and MWh.** There is no kW anywhere, no unit adapter and no
+  `1000.0` in the codebase. Source series are normalised at dataload, in the same
+  pass as UTC. If you write a factor of 1000, you have introduced a bug class.
+- **Three frames.** Battery: positive = discharge. POI: positive = import.
+  Market: positive = sale. Market is sign-aligned with battery, so **battery ↔
+  POI is the only sign flip in the system** — one bridge,
+  `PowerFrames.PoiFromSite(loadMw, pvOutMw, pBattMw)`, implementing
+  `p_poi = load − pv_out − p_batt` where `pv_out = Σ_k (pv_avail − q)`.
+- SOC is MWh internally, always. The `[0,1]` SOC fraction is presentation only
+  and never appears in the objective.
 - The objective is denominated in **EUR** and nothing else.
-- Hot numeric kernels may operate on raw `ReadOnlySpan<double>` **inside a typed
-  façade**. The type safety belongs at the boundary where errors occur, not
-  inside a loop the JIT must vectorise.
+- Hot numeric kernels operate on `ReadOnlySpan<double>` directly. With no wrapper
+  type there is no façade to cross and no boxing to avoid; the naming check runs
+  at the seam, where the errors actually occur.
 
 ## 5. Determinism
 

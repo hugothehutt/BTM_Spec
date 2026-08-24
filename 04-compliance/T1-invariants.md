@@ -82,7 +82,7 @@ site.
 ## 2. `INV-G-*` — Global / universal
 
 Applied at **every** seam by the shared validator, on both sides. Sources:
-`C0` §3, `00-overview/02-conventions.md` §6, ADR-003, ADR-013.
+`C0` §3, `00-overview/02-conventions.md` §5.2 and §6, ADR-013.
 
 | ID | Statement | Where checked | Severity | Test level |
 |---|---|---|---|---|

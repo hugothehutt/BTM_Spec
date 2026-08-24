@@ -60,6 +60,11 @@ RETIRED: set[str] = {
     # and `05-implementation/P0-workstreams.md`; a rebuilt ADR-015 registers
     # them under fresh ids.
     *(f"CLM-{n:04d}" for n in range(678, 701)),
+    # ADR-003 (typed quantities), deleted by the conventions audit. Quantities
+    # are plain numerics; the unit and frame moved into the identifier, where
+    # `INV-G-02` checks them mechanically. The successor statements are owned by
+    # `00-overview/02-conventions.md` §5.2 and are registered under fresh ids.
+    *(f"CLM-{n:04d}" for n in range(277, 295)),
 }
 
 INV_RE = re.compile(r"\bINV-[A-Z]+-\d{2}\b")

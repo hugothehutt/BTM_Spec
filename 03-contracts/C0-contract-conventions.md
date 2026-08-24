@@ -28,8 +28,8 @@ Every contract documents its fields in a table with these columns:
 | Column | Meaning |
 |---|---|
 | Field | Name, in the payload's own casing |
-| Type | The typed quantity (ADR-003), not a primitive |
-| Unit | Explicit, even when implied by the type |
+| Type | The primitive: `double` for every dimensioned and dimensionless quantity, `int`, `bool`, an enum, or `SlotId` |
+| Unit | Explicit, and equal to the unit suffix the field name carries (`00-overview/02-conventions.md` §5.2). `—` for dimensionless fields, which then declare a kind and a range (§2.3) |
 | Card. | `1`, `[H]` (per slot), `[S,H]` (per scenario/slot), `[B]` (per block), `0..1` (optional) |
 | Range | Admissible values; violation is a contract failure |
 | Null | Whether absent is legal, and what absent means |

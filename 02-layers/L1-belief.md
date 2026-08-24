@@ -25,7 +25,7 @@ source adapter ──▶ normalise ──▶ bitemporal stamp ──▶ validate
       │                │                 │                └─ C0 §3 universal invariants
       │                │                 │                   + cadence and duplicate checks
       │                │                 └─ (validSlot, knowledgeTime, revisionOrdinal)
-      │                └─ units, signs, typed quantities (ADR-003), UTC, 15-min grid
+      │                └─ units, signs, quantity naming (§5.2), UTC, 15-min grid
       └─ declares PublicationSemantics, or the series is quarantined
 ```
 
@@ -506,7 +506,7 @@ assembly on the tick path: L1's read path, L2, L3's model construction, L5.
 | `ArrayPool<T>.Shared` for transient buffers, `clearArray: false`, returned on a deterministic path | The alternative is a per-tick LOH allocation for anything ≥ 85 kB, which the ensemble arrays exceed | Analyzer + rent/return balance assertion in tests |
 | No LINQ anywhere in the tick loop | Allocates an enumerator and usually a closure per call, and — worse — hides iteration order, which ADR-013 requires to be fixed | Roslyn analyzer banning `System.Linq` in hot assemblies |
 | No per-slot or per-scenario object allocation | `H × S × K` objects per tick is gen0 churn measured in hundreds of kB per tick | Allocation-count assertions (§9) |
-| No boxing of typed quantities | `EnergyKwh`, `PoiPowerKw` etc. are readonly structs (ADR-003); boxing them allocates and defeats the entire type discipline | Analyzer: no `object`, no non-generic interfaces, no `string.Format` on typed quantities in hot paths |
+| No boxing of a slot- or scenario-indexed quantity | Dimensioned quantities are plain `double` (`00-overview/02-conventions.md` §5.2), so boxing one is pure allocation with nothing bought in return | Analyzer: no `object`, no non-generic interfaces, no `string.Format` on a numeric in a hot path |
 | `readonly struct` + `in` parameters for snapshot passing | Prevents silent defensive copies of a large struct at every call site | Analyzer: `in` required for struct parameters above a size threshold |
 | No `async` / `Task` in the tick loop | Allocates a state machine, and its presence implies an I/O dependency that must not exist on this path | Analyzer |
 | No `Dictionary<string, _>` lookup in the tick loop | String hashing per lookup, and unordered iteration | Series and slot indices are resolved to `int` once, at cursor open |
