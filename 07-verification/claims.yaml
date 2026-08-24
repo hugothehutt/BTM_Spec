@@ -19,7 +19,10 @@
 # evidence      unlabelled | derived | prototyped | empirical-pending
 #               | refuted | assumed-declared   — PROTOCOL §2.1. A `regulatory`
 #               claim is exempt and stays `unlabelled` (PROTOCOL §2.2).
-# tn            the technical note that earned the evidence label
+# tn            the technical note that earned the evidence label, or — while the
+#               claim is still `unlabelled` — the note whose adjudication will
+#               decide it. A labelled claim's `tn` always names the note that
+#               earned the label.
 # band          acceptance band; required once an empirical claim is labelled
 #
 # depends_on    the claims this one rests on; absent means none. Claim Y depends
@@ -3646,7 +3649,7 @@
   br_source: ADR-005
   anchors: [ADR-005]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0360
   statement: Ensemble memory is S × H × K × 4 bytes, which for K=8, H=192 and S=64 is about 400 kB per snapshot.
@@ -3727,7 +3730,7 @@
   br_source: ADR-005
   anchors: [INV-D-06, INV-D-07]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
   vague: true
 - id: CLM-0368
@@ -4444,7 +4447,7 @@
   br_source: ADR-008
   anchors: [ADR-008]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0439
   statement: The peak epigraph formulation needs no binaries and no max operator and is exact.
@@ -4454,7 +4457,7 @@
   br_source: ADR-008
   anchors: [ADR-008]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0440
   statement: The peak epigraph floor is precisely peak_to_go, which is why the peak term must be composed last.
@@ -4504,7 +4507,7 @@
   br_source: ADR-008
   anchors: [ADR-008]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0445
   statement: IdOption maps to a PwlTerm in volume, concave because the marginal MWh gets a worse price, plus a BoundTerm from SOC and efficiency feasibility.
@@ -5240,7 +5243,7 @@
   br_source: ADR-010
   anchors: [ADR-010]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0518
   statement: D, the sustained-delivery requirement from prequalification, is a calendar parameter and not a constant.
@@ -5673,7 +5676,7 @@
   br_source: ADR-011
   anchors: [ADR-011]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0561
   statement: The MonthlyLeistungspreis regime emits an EpigraphTerm per calendar month.
@@ -5683,7 +5686,7 @@
   br_source: ADR-011
   anchors: [ADR-011]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0562
   statement: The AtypicalHlzf regime emits an EpigraphTerm over HLZF slots only, taken from the calendar table.
@@ -5693,7 +5696,7 @@
   br_source: ADR-011
   anchors: [ADR-002, ADR-011]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0563
   statement: The IntensiveUse regime emits an EpigraphTerm plus a discrete qualification state.
@@ -5703,7 +5706,7 @@
   br_source: ADR-011
   anchors: [ADR-011]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0564
   statement: Tariff regimes compose, and a site can be subject to more than one simultaneously, such as an HLZF-based charge and a volumetric charge.
@@ -7191,7 +7194,7 @@
   br_source: ADR-017
   anchors: [ADR-005, ADR-017]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0735
   statement: Settlement computes the exact delineation machinery, the linearisation lives only in Valuation, and the difference is booked.
@@ -7402,7 +7405,7 @@
   br_source: ADR-017
   anchors: [ADR-017]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0756
   statement: MW_month is derived per scenario from national spot and national solar generation on the shared scenario axis and is never modelled independently.
@@ -7412,7 +7415,7 @@
   br_source: ADR-017
   anchors: [ADR-005, ADR-017]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0757
   statement: An independent MW_month series would destroy the correlation that makes the opposing channels representable, cannibalisation raising the premium while negative-price hours lower (30).
@@ -8928,7 +8931,7 @@
   br_source: ADR-007
   anchors: [ADR-007]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0908
   statement: The rolling-horizon deterministic equivalent reuses the Planner's own formulation and backend so there is no second physics model to keep in sync, is concave by construction in the LP case, and is the fastest route to something trustworthy.
@@ -9059,7 +9062,7 @@
   br_source: ADR-007
   anchors: [ADR-007]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0921
   statement: Disagreement between the deterministic equivalent and backward recursion around the qualification threshold is the signal that matters.
@@ -10970,7 +10973,7 @@
   br_source: ADR-017
   anchors: [ADR-017]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1111
   statement: K is the number of uncertain series on the shared axis, S_gen the scenarios in the generated ensemble before reduction, and S the scenarios in the reduced ensemble.
@@ -11000,7 +11003,7 @@
   br_source: ADR-005
   anchors: [INV-D-06, INV-D-07]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1114
   statement: The engine never recomputes a feature artefact online.
@@ -12287,7 +12290,7 @@
   br_source: ADR-005
   anchors: [ADR-005]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1242
   statement: The CVaR peak level is the weighted mean of the worst (1−α) mass of the per-scenario maximum POI power over the reduced ensemble with its weights.
@@ -12297,7 +12300,7 @@
   br_source: ADR-005
   anchors: [ADR-005]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1243
   statement: A risk-averse peak level is the correct treatment because the peak charge is a max-of-a-max, so the mean forecast systematically understates it by Jensen's inequality in the unhelpful direction.
@@ -12307,7 +12310,7 @@
   br_source: ADR-011
   anchors: [ADR-011]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1244
   statement: PeakView's prorationFactor scales the in-horizon charge and the remainder is priced by V.
@@ -12317,7 +12320,7 @@
   br_source: ADR-007
   anchors: [INV-V-13]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1245
   statement: Getting proration wrong is the most common way to make the engine pathologically peak-averse.
@@ -12327,7 +12330,7 @@
   br_source: ADR-008
   anchors: [INV-V-13]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1246
   statement: Poor load quality adds peakSafetyMarginKw to PeakView's floor rather than changing behaviour.
@@ -12427,7 +12430,7 @@
   br_source: ADR-008
   anchors: [ADR-008]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1256
   statement: CVaR is linear-programmable, so the risk term does not change the problem class.
@@ -12437,7 +12440,7 @@
   br_source: ADR-008
   anchors: [ADR-008]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1257
   statement: CVaR is chosen over a variance penalty because it carries the same risk intent with no quadratic term and no loss of MILP structure.
@@ -12577,7 +12580,7 @@
   br_source: ADR-017
   anchors: [ADR-017]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1271
   statement: Because MAX[AW − MW_month; 0] is convex the mean projection understates the premium, the direction of pessimism differs per accumulator, and a single cvarLevel would push some accumulators the wrong way.
@@ -12587,7 +12590,7 @@
   br_source: ADR-017
   anchors: [ADR-017]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1272
   statement: "Delineation curvature exists only through grid charging: at (9) = 0 the ratio in (31) = (30)·(28) cancels and the whole green route is a per-slot linear sum."
@@ -13641,7 +13644,7 @@
   br_source: ADR-008
   anchors: [ADR-008]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1377
   statement: Where the stage has genuine recourse — reserve committed before intraday information — the model is two-stage stochastic.
@@ -17483,7 +17486,7 @@
   br_source: ADR-017
   anchors: [ADR-017]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1760
   statement: marktwertMonth crosses as [S] rather than as a scalar because a point forecast understates the premium, most severely when AW and MW_month are close.
@@ -17493,7 +17496,7 @@
   br_source: ADR-017
   anchors: [ADR-017]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1761
   statement: blockIndex maps each slot to its aFRR product block.
@@ -17633,7 +17636,7 @@
   br_source: ADR-005
   anchors: [INV-D-07]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
   vague: true
 - id: CLM-1775
@@ -18026,7 +18029,7 @@
   br_source: ADR-008
   anchors: [ADR-008]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1814
   statement: Because the horizon is shorter than the accounting period, the full period charge must not be applied to a partial window.
@@ -18056,7 +18059,7 @@
   br_source: ADR-008
   anchors: [INV-V-13]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-1817
   statement: A BoundTerm carries a target variable or linear expression, per-slot lower and upper bounds either of which may be null for a one-sided bound, a reason, and an optional softPenalty where null means a hard bound.
@@ -22455,7 +22458,7 @@
   br_source: ADR-005
   anchors: [INV-D-07]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
   vague: true
 - id: CLM-2254
@@ -22616,7 +22619,7 @@
   br_source: ADR-008
   anchors: [INV-V-13]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-2270
   statement: binariesByOrigin sums to binaryCount and binaryCount matches the binaries the Planner actually builds; checked by the composer then the L3 model build at warn severity.
@@ -23501,7 +23504,7 @@
   br_source: ADR-008
   anchors: [INV-V-13]
   evidence: unlabelled
-  tn: null
+  tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-2358
   statement: "Metamorphic relations over a MILP can fail for reasons that are not bugs: degenerate optima, ties broken differently by the solver, and a non-zero MIP gap all produce legitimate small violations."
@@ -30492,3 +30495,93 @@
   evidence: unlabelled
   tn: null
   band: null
+
+# ---- 06-theory/TN-01-cvar-across-stages.md ----
+- id: CLM-3055
+  statement: "The naive weighted tail mean always understates CVaR_alpha, by at most the tail spread divided by n_eff = (1-alpha)/max_s w_s; only the split-atom Rockafellar-Uryasev form is CVaR."
+  owner: 06-theory/TN-01-cvar-across-stages.md §9
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-005
+  anchors: []
+  evidence: unlabelled
+  tn: TN-01-cvar-across-stages
+  band: null
+  depends_on: [CLM-0359, CLM-1242]
+- id: CLM-3056
+  statement: "The sum of per-view CVaR terms is coherent on the loss vector and bounds CVaR_alpha of the aggregate loss from above, with equality iff the components are comonotone; it is not CVaR of anything."
+  owner: 06-theory/TN-01-cvar-across-stages.md §9
+  class: analytic
+  blast_radius: expensive-later
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: TN-01-cvar-across-stages
+  band: null
+  depends_on: [CLM-1241, CLM-1255, CLM-1270]
+- id: CLM-3057
+  statement: The diversification gap between the summed CVaR terms and the CVaR of the aggregate loss is the risk benefit the objective forgoes, and is measurable on the realised ensemble at no modelling cost.
+  owner: 06-theory/TN-01-cvar-across-stages.md §9
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-005
+  anchors: []
+  evidence: unlabelled
+  tn: TN-01-cvar-across-stages
+  band: null
+  depends_on: [CLM-3056]
+- id: CLM-3058
+  statement: "The peak term's scenario-reduction error is at most the Wasserstein-1 distance between the full and reduced measures divided by (1-alpha), so reduction error is amplified twentyfold at alpha = 0.95, and reduction understates the risk because it drops upper-tail paths."
+  owner: 06-theory/TN-01-cvar-across-stages.md §9
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-005
+  anchors: []
+  evidence: unlabelled
+  tn: TN-01-cvar-across-stages
+  band: null
+  depends_on: [CLM-0367, CLM-1241]
+- id: CLM-3059
+  statement: The gap between the value the tick objective claims and one terminal static CVaR of realised EUR under the rolled policy is the measured price of accepting time inconsistency.
+  owner: 06-theory/TN-01-cvar-across-stages.md §9
+  class: empirical
+  blast_radius: very-expensive
+  br_source: argued
+  anchors: []
+  evidence: unlabelled
+  tn: TN-01-cvar-across-stages
+  band: null
+  depends_on: [CLM-1376]
+- id: CLM-3060
+  statement: "The mean projection of the Marktpraemie is exact unless the probability that anzulegenderWert exceeds MW_month lies strictly between zero and one, so the delineation tail machinery buys nothing on an accumulator that is deep in or out of the money for a whole month."
+  owner: 06-theory/TN-01-cvar-across-stages.md §9
+  class: empirical
+  blast_radius: moderate
+  br_source: ADR-017
+  anchors: []
+  evidence: unlabelled
+  tn: TN-01-cvar-across-stages
+  band: null
+  depends_on: [CLM-0755, CLM-1110]
+- id: CLM-3061
+  statement: peakPrice is a deterministic scalar fixed before the backtest, which is what makes the positive-homogeneity pass-through legal and lets the peak tail be taken in kW and priced outside the risk functional.
+  owner: 06-theory/TN-01-cvar-across-stages.md §9
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-011
+  anchors: []
+  evidence: assumed-declared
+  tn: TN-01-cvar-across-stages
+  band: null
+  depends_on: [CLM-1749]
+- id: CLM-3062
+  statement: "Because cvarWeight reaches only the imbalance term, positive homogeneity makes peakPrice the peak term's sole risk weight, so an error in it shifts risk aversion rather than mispricing a kW."
+  owner: 06-theory/TN-01-cvar-across-stages.md §9
+  class: analytic
+  blast_radius: expensive-later
+  br_source: ADR-011
+  anchors: []
+  evidence: unlabelled
+  tn: TN-01-cvar-across-stages
+  band: null
+  depends_on: [CLM-1376, CLM-3061]

@@ -26,6 +26,7 @@ plan. Implementation happens in the engine repository against these documents.
 | Compliance architecture | Normative |
 | Implementation plan | Advisory |
 | Verification protocol | Normative |
+| Technical notes (`06-theory/`) | Advisory — builder output. A note's verdicts bind nothing until adjudicated (PROTOCOL §5.1) |
 
 **Status vocabulary.** Three values, defined in `07-verification/PROTOCOL.md` §9.3:
 
@@ -71,6 +72,10 @@ Read in this order. Each part assumes the previous one.
    the five mechanisms, the evidence labels, and what happens to a refutation.
    `07-verification/claims.yaml` is the register every label attaches to. Read
    before asserting anything new.
+10. `06-theory/` — the technical notes. `TN-NN` numbering is sequential and
+   never recycled (PROTOCOL §11), but it is per-repository: a note carrying the
+   same number on a research branch is a different note. Read a note as the
+   builder's argument, not as a verdict the specification has accepted.
 
 ---
 
@@ -103,6 +108,7 @@ one-tick lag.
 03-contracts/    the six seams — the frozen surface (C0 conventions, C1-C6)
 04-compliance/   invariants, property tests, replay, gap instrumentation (T0-T6)
 05-implementation/ workstreams, sequencing, agent playbook
+06-theory/        technical notes: the analytic work behind a claim's label
 07-verification/ how a claim earns trust: protocol, claim register, machine check
 stubs/           C# interface stubs — signatures only, no bodies
 ```

@@ -6,7 +6,7 @@ W0 definition of done (a)): parse the specification markdown, derive the set of
 things that must be covered, and assert one-to-one correspondence with the
 register. The doc and the register cannot drift silently.
 
-Eight checks:
+Nine checks:
 
   1. schema      — every entry has exactly the declared keys, enums are legal.
   2. ids         — CLM ids unique, well-formed, never recycled (RETIRED list).
@@ -24,6 +24,9 @@ Eight checks:
   8. depends_on  — every dependency names a live claim, nothing depends on
                    itself, and the graph is acyclic, so PROTOCOL §10.1 promotion
                    terminates.
+  9. notes       — every `tn` names a technical note that exists. A pointer to
+                   a note that never landed on trunk reads exactly like a real
+                   one, so it is checked rather than trusted.
 
 Stdlib only, no venv. Run: python3 07-verification/check_claims.py
 """
@@ -37,6 +40,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 REGISTER = ROOT / "07-verification" / "claims.yaml"
 EXEMPTIONS = ROOT / "07-verification" / "no-claim-sections.yaml"
+THEORY = ROOT / "06-theory"
 
 # Documents the register must cover exhaustively.
 CORPUS = ["00-overview", "01-adr", "02-layers", "03-contracts", "04-compliance"]
@@ -278,6 +282,12 @@ def main() -> int:
         if cycle := find_cycle(cid, graph):
             fail(f"depends_on cycle: {' -> '.join(cycle)}")
             break
+
+    # 9 notes
+    for e in entries:
+        note = e.get("tn")
+        if note is not None and not (THEORY / f"{note}.md").exists():
+            fail(f"{e.get('id')}: tn {note!r} names no note in 06-theory/")
 
     # 5 sections
     for f in spec_files():
