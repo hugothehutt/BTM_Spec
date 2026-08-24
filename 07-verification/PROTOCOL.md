@@ -456,6 +456,7 @@ place where derivations fail, and that is durable information.
 | `assumed-declared` never appears at `expensive-later` or `very-expensive` | An assumption where a derivation is required |
 | Every `empirical-pending` claim's band appears in its owning document | An unnamed unknown |
 | No `depends_on` names a retired or non-existent claim, and the graph is acyclic | A promotion sweep (§10.1) that cannot terminate |
+| Every `tn` names a note present in `06-theory/` | A claim pointing at a note that never landed on trunk |
 
 **Live today.** `check_claims.py` implements the checks decidable from the
 register and the specification alone: register coverage, id uniqueness and
