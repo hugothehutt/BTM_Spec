@@ -25,7 +25,7 @@ One row per order.
 | Field | Type | Unit | Range | Null | Notes |
 |---|---|---|---|---|---|
 | `intentId` | `string` | — | unique | no | Stable across replaces |
-| `market` | `Da \| IdContinuous \| IdAuction \| AfrrCapacity \| AfrrEnergy` | — | — | no | |
+| `market` | `Da \| IdContinuous \| AfrrCapacity \| AfrrEnergy` | — | — | no | |
 | `productId` | `string` | — | — | no | From the market calendar |
 | `slot` / `block` | `SlotId` / `BlockId` | — | — | no | Delivery period |
 | `side` | `Buy \| Sell` | — | — | no | Market frame (sell = discharge) |
@@ -40,7 +40,7 @@ One row per order.
 | `tag` | `StrategyTag` | — | — | no | `Arbitrage \| PeakShave \| ReserveHedge \| Rebalance \| CommitmentCover` |
 
 **The price and volume pairs are exclusive, and `market` decides which.** For
-`Da`, `IdContinuous`, `IdAuction` and `AfrrEnergy` the order carries
+`Da`, `IdContinuous` and `AfrrEnergy` the order carries
 `limitPriceEurPerMwh` and `volumeMwh`; for `AfrrCapacity` it carries
 `limitPriceEurPerMwH` and `volumeMw`. Exactly one of each pair is present and the
 other is absent — populating both, or the wrong one for the market, is a contract
