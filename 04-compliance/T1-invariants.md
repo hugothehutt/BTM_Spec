@@ -19,6 +19,11 @@ pipeline. It is not a test; it is a runtime check that tests exercise. The tests
 prove the check is wired up and that the system does not violate it on inputs
 nobody thought of.
 
+`INV-V-*` and `INV-D-*` keep their family letters even though `V` names the
+terminal value function and `D` is not a quantity symbol. A family letter and a
+quantity symbol occupy different syntactic positions and have never been
+confused in practice.
+
 ### 1.1 Severity semantics
 
 Three severities, and nothing between them.

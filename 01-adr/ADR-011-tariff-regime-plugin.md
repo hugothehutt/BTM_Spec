@@ -65,6 +65,11 @@ must not be reachable through an approximation error.
 
 ## Consequences
 
+- **The §19(2) tariff tier keeps its name.** `tier` otherwise means the
+  co-optimiser ladder and nothing else (`06-theory/TN-03-vocabulary.md` §3.3),
+  but a tariff tier is a regulatory primitive: it is given, and renaming it
+  would break the correspondence with the ordinance. Write it **tariff tier**
+  in full, never bare `tier`.
 - A regime change is a configuration date plus a new regime implementation, not a
   rewrite.
 - Backtests spanning a regime change are honest, because the regime is selected
