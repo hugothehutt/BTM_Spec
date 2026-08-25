@@ -7,3 +7,24 @@
 # Format: `<path> §<section token>: <reason>`
 
 01-adr/ADR-011-tariff-regime-plugin.md §sources: A list of source URLs, not assertions about the engine.
+
+# The glossary is definitional throughout. A definition fixes what a word means;
+# it asserts nothing about the engine that a datum or an argument could refute,
+# so it carries no claim in the §2 sense. Where a glossary entry looks like a
+# claim, the claim belongs to the owning document named in the entry's third
+# column, and is registered there.
+00-overview/04-glossary.md §1: States what the document is and is not. No assertion about the engine.
+00-overview/04-glossary.md §2: The collision rulings. A choice of word, not a statement that can be false.
+00-overview/04-glossary.md §3: Definitions of layers and components; the rules are owned elsewhere.
+00-overview/04-glossary.md §4: Definitions of time vocabulary; the grid and calendar rules are owned by §4 of the conventions.
+00-overview/04-glossary.md §5: Definitions of gate, stage and fan; the method claims are owned by TN-02.
+00-overview/04-glossary.md §6: Definitions of belief vocabulary; the store's properties are owned by L1 and ADR-004.
+00-overview/04-glossary.md §7: Definitions of valuation vocabulary; the term algebra is owned by ADR-008 and ADR-009.
+00-overview/04-glossary.md §8: Definitions of planning vocabulary; the tier ladder is owned by ADR-010.
+00-overview/04-glossary.md §9: Definitions of execution vocabulary; the boundary rules are owned by L4 and C3.
+00-overview/04-glossary.md §10: Definitions of settlement vocabulary; the decomposition is owned by L5 and C5.
+00-overview/04-glossary.md §11: Definitions of delineation vocabulary; the quantities are regulatory primitives owned by the MiSpel reference.
+00-overview/04-glossary.md §12: Definitions of tariff vocabulary; the regime rules are owned by ADR-011.
+00-overview/04-glossary.md §13: Definitions of degradation vocabulary; the ladder is owned by ADR-014.
+00-overview/04-glossary.md §14: Describes what each invariant family covers. The invariants themselves are owned by T1 and carry their own claims.
+00-overview/04-glossary.md §15: A list of retired spellings and their replacements. A naming decision, not an assertion.
