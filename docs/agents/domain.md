@@ -9,18 +9,21 @@ layout the skills assume by default.
 
 - **`00-overview/01-*`** — the layer model `L0`–`L5` and the four clocks. Read
   first; everything else is scoped to a layer.
-- **`00-overview/02-conventions.md`** — the glossary in this repo: normative
-  units, the two sign frames, the 15-minute `SlotId` grid, naming conventions.
-  This is the vocabulary source, in place of a root `CONTEXT.md`.
+- **`00-overview/04-glossary.md`** — the glossary: what each term means, and the
+  document that owns the concept. This is the vocabulary source, in place of a
+  root `CONTEXT.md`. §2 records where one word carried two meanings and which
+  meaning kept it; §15 lists the retired spellings.
+- **`00-overview/02-conventions.md`** — normative units, the three sign frames,
+  the 15-minute `SlotId` grid, naming and numeric policy. Rules, not
+  definitions.
 - **`00-overview/03-mispel-reference.md`** — the MiSpel delineation regime.
-- **`01-adr/`** — ADRs, named `ADR-NNN-<slug>.md` (`ADR-001` … `ADR-016`). Read
+- **`01-adr/`** — ADRs, named `ADR-NNN-<slug>.md` (`ADR-001` … `ADR-017`). Read
   the ones touching the area you are about to work in. **Not `docs/adr/`.**
-- **`01-adr/ADR-015-open-decisions.md`** — the open-decision register. Check it
-  before proposing anything in a contested area.
 - **`03-contracts/`** — the frozen seams `C0`–`C6`. Anything crossing a layer
   boundary is constrained by a versioned payload here.
-- **`RECONCILIATION.md`** — cross-document consistency findings and small open
-  questions.
+- **`07-verification/PROTOCOL.md`** — normative. How a claim earns its evidence
+  label, what masking means, and what happens on a refutation. Read before
+  changing anything a claim is anchored to.
 
 If a file listed above does not exist, **proceed silently**. Don't flag its
 absence; don't suggest creating it upfront.
@@ -32,31 +35,41 @@ Single-context repo. There is no `CONTEXT.md`, no `CONTEXT-MAP.md` and no
 
 ```
 /
-├── 00-overview/        ← layer model, conventions (the glossary), MiSpel reference
-├── 01-adr/             ← ADR-NNN-<slug>.md, incl. ADR-015 open decisions
+├── 00-overview/        ← layer model, conventions, MiSpel reference, glossary
+├── 01-adr/             ← ADR-NNN-<slug>.md
 ├── 02-layers/          ← L0–L5 internals
 ├── 03-contracts/       ← C0–C6 frozen seams
 ├── 04-compliance/      ← T0–T6 test levels
 ├── 05-implementation/  ← P0 sequencing, P1 agent playbook
+├── 06-theory/          ← TN-NN-<slug>.md technical notes
+├── 07-verification/    ← PROTOCOL.md, the claim register, the machine checks
 ├── stubs/              ← illustrative C# type sketches
 └── docs/agents/        ← this file, issue-tracker.md, triage-labels.md
 ```
 
 New ADRs continue the `01-adr/ADR-NNN-<slug>.md` numbering. Do not create
-`docs/adr/`.
+`docs/adr/`. Technical notes are numbered independently of ADRs: a note may span
+several ADRs or none.
 
 ## Use the repo's vocabulary
 
 When your output names a domain concept — an issue title, a refactor proposal, a
 hypothesis, a test name — use the term exactly as defined in
-`00-overview/02-conventions.md` and the relevant `03-contracts/` payload. Never
-conflate the battery and POI sign frames. Time is `SlotId` on the 15-minute UTC
-grid; monthly and annual accounting is Europe/Berlin civil calendar. The
-objective is denominated in EUR and nothing else.
+`00-overview/04-glossary.md` and the relevant `03-contracts/` payload.
+
+Check §15 before coining anything. A retired spelling is retired because a
+ruling gave the word to another meaning, and
+`07-verification/check_glossary.py` fails the build on its return.
+
+Never conflate the battery and POI sign frames — the bridge between them is the
+only sign flip in the system. Time is `SlotId` on the 15-minute UTC grid;
+monthly and annual accounting is Europe/Berlin civil calendar. The objective is
+denominated in EUR and nothing else.
 
 If a concept you need has no term yet, that's a signal — either you're inventing
-language the spec doesn't use (reconsider) or there's a real gap (note it for
-`/domain-modeling`, which extends `02-conventions.md`).
+language the spec doesn't use (reconsider) or there's a real gap. A real gap is
+a glossary entry plus the document that owns it, never a word used in passing
+and left undefined.
 
 ## Flag ADR conflicts
 
@@ -65,5 +78,5 @@ silently overriding:
 
 > _Contradicts ADR-010 (cross-market tier ladder) — but worth reopening because…_
 
-An open item in `ADR-015` is not a licence to decide it unilaterally: surface the
-decision point, per working rule 3 in `CLAUDE.md`.
+Per working rule 3 in `CLAUDE.md`: surface the decision point rather than
+deciding it unilaterally.

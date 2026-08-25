@@ -472,6 +472,19 @@ tokens, and that a dimensionless field carries `—` plus a declared range. It
 exists because the audit that deleted `ADR-003` moved unit and frame safety out
 of the type system and into the identifier, and a naming rule that no machine
 reads is a review convention wearing an invariant's number.
+
+`check_glossary.py` is the third live check, and like the second it guards a
+naming rule rather than the register. `00-overview/04-glossary.md` is normative
+for what a term means, so the check asserts that no term is defined twice, that
+every entry names an owning document that exists, that every defined term is
+actually used somewhere in the corpus, and that no retired spelling returns
+outside a written allowance in `retired-vocabulary.yaml`. The last is the one
+that costs something: the glossary's §2 rules one meaning per word, and the
+retired spellings are the losing side of each ruling. `claims.yaml` is exempt
+from that scan because it quotes the owning text by construction — a retired
+word surviving there after its owning section is fixed is a register defect, and
+`check_claims.py` is where that belongs.
+
 The remaining rows above are gated on artefacts that do not exist yet —
 procedure records, run manifests, packets and adjudications — and land with the
 harness. Two known gaps carry no check at all and are tracked as tickets rather

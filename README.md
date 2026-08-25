@@ -17,6 +17,7 @@ plan. Implementation happens in the engine repository against these documents.
 |---|---|
 | Layer model and clocks | Normative |
 | Units, signs, time grid | Normative |
+| Glossary | Normative for what a term means; never for what the thing does. Machine-checked by `07-verification/check_glossary.py` |
 | Delineation regime (MiSpel, A1/A5) | Normative, transcribed from Anlage 1; route split and identities derived |
 | Delineation in the objective (ADR-017) | Normative — accumulators on C5/C6, state equations in L3, exact recomputation in L5 |
 | ADR-001 … ADR-014, ADR-016, ADR-017 | Accepted |
@@ -61,18 +62,21 @@ Read in this order. Each part assumes the previous one.
    naming. Every other document depends on these being unambiguous.
 3. `00-overview/03-mispel-reference.md` — the MiSpel delineation machinery
    (Abgrenzungsoption, cases A1 and A5) in the regulator's own notation.
-4. `01-adr/` — the sixteen decisions that are expensive to reverse, each with
-   context, decision, consequences and the rejected alternatives.
-5. `03-contracts/` — the six seams. These are the frozen surface. If you read
+4. `00-overview/04-glossary.md` — what each term means and which document owns
+   it. Keep it open while reading the rest; §2 records the words that carried
+   two meanings and which meaning kept each one.
+5. `01-adr/` — the decisions that are expensive to reverse, each with context,
+   decision, consequences and the rejected alternatives.
+6. `03-contracts/` — the seven seams. These are the frozen surface. If you read
    only one section, read `C0-conventions` and `C2-valuation-to-planner`.
-6. `02-layers/` — the internals of each layer.
-7. `04-compliance/` — how we know it works: the seven test levels.
-8. `05-implementation/` — sequencing and the agent playbook.
-9. `07-verification/PROTOCOL.md` — how a claim in this repository earns trust:
+7. `02-layers/` — the internals of each layer.
+8. `04-compliance/` — how we know it works: the seven test levels.
+9. `05-implementation/` — sequencing and the agent playbook.
+10. `07-verification/PROTOCOL.md` — how a claim in this repository earns trust:
    the five mechanisms, the evidence labels, and what happens to a refutation.
    `07-verification/claims.yaml` is the register every label attaches to. Read
    before asserting anything new.
-10. `06-theory/` — the technical notes. `TN-NN` numbering is sequential and
+11. `06-theory/` — the technical notes. `TN-NN` numbering is sequential and
    never recycled (PROTOCOL §11), but it is per-repository: a note carrying the
    same number on a research branch is a different note. Read a note as the
    builder's argument, not as a verdict the specification has accepted.
@@ -102,10 +106,10 @@ one-tick lag.
 ## Repository map
 
 ```
-00-overview/     system model, conventions
+00-overview/     system model, conventions, MiSpel reference, glossary
 01-adr/          architecture decision records (stable IDs, referenced everywhere)
 02-layers/       per-layer internal design (L0-L5)
-03-contracts/    the six seams — the frozen surface (C0 conventions, C1-C6)
+03-contracts/    the seven seams — the frozen surface (C0 conventions, C1-C6)
 04-compliance/   invariants, property tests, replay, gap instrumentation (T0-T6)
 05-implementation/ workstreams, sequencing, agent playbook
 06-theory/        technical notes: the analytic work behind a claim's label
