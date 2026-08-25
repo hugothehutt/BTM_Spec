@@ -164,7 +164,7 @@
   tn: null
   band: null
 - id: CLM-0014
-  statement: λ_SOC and peak_to_go are both feedback edges from downstream components to upstream components.
+  statement: λ_SOC and pPoiRealisedPeakMw are both feedback edges from downstream components to upstream components.
   owner: 00-overview/01-system-model.md §2
   class: analytic
   blast_radius: very-expensive
@@ -2952,7 +2952,7 @@
   tn: null
   band: null
 - id: CLM-0311
-  statement: The warm tier is memory-mapped columnar frames, LRU-evicted, one frame per (series, day), holding what the current replay position needs for the session, accessed by the Belief cursor.
+  statement: The warm tier is memory-mapped columnar slabs, LRU-evicted, one slab per (series, day), holding what the current replay position needs for the session, accessed by the Belief cursor.
   owner: 01-adr/ADR-004-bitemporal-belief-store.md §Decision
   class: analytic
   blast_radius: very-expensive
@@ -3225,7 +3225,7 @@
   tn: null
   band: null
 - id: CLM-0338
-  statement: A database in the hot path introduces query latency and non-determinism, while a memory-mapped columnar frame is orders of magnitude faster and exactly reproducible.
+  statement: A database in the hot path introduces query latency and non-determinism, while a memory-mapped columnar slab is orders of magnitude faster and exactly reproducible.
   owner: 01-adr/ADR-004-bitemporal-belief-store.md §Rejected
   class: empirical
   blast_radius: very-expensive
@@ -3553,7 +3553,7 @@
   band: null
   vague: true
 - id: CLM-0371
-  statement: "The five-layer pipeline is intended to be one-directional, and two dependencies break that: λ_SOC being a dual of the Planner's optimisation, and peak_to_go and the §19(2) qualification state depending on realised history."
+  statement: "The five-layer pipeline is intended to be one-directional, and two dependencies break that: λ_SOC being a dual of the Planner's optimisation, and pPoiRealisedPeakMw and the §19(2) qualification state depending on realised history."
   owner: 01-adr/ADR-006-feedback-resolution.md §Context
   class: analytic
   blast_radius: very-expensive
@@ -4248,7 +4248,7 @@
   tn: TN-01-cvar-across-stages
   band: null
 - id: CLM-0440
-  statement: The peak epigraph floor is precisely peak_to_go, which is why the peak term must be composed last.
+  statement: The peak epigraph floor is precisely pPoiRealisedPeakMw, which is why the peak term must be composed last.
   owner: 01-adr/ADR-008-linearizable-primitives.md §Decision
   class: analytic
   blast_radius: very-expensive
@@ -4500,7 +4500,7 @@
   tn: null
   band: null
 - id: CLM-0465
-  statement: The composer applies terms in the fixed order tariff, then opp-cost plus λ_SOC, then peak_to_go last, then validate.
+  statement: The composer applies terms in the fixed order tariff, then opp-cost plus λ_SOC, then pPoiRealisedPeakMw last, then validate.
   owner: 01-adr/ADR-009-term-ownership.md §Context
   class: analytic
   blast_radius: moderate
@@ -7045,7 +7045,7 @@
   tn: null
   band: null
 - id: CLM-0741
-  statement: A new composer stage 3, Delineation, requires battery energy marked and establishes (21).
+  statement: A new composition step 3, Delineation, requires battery energy marked and establishes (21).
   owner: 01-adr/ADR-017-delineation-in-the-objective.md §Consequences
   class: analytic
   blast_radius: very-expensive
@@ -7659,7 +7659,7 @@
   tn: null
   band: null
 - id: CLM-0802
-  statement: "Three dependencies break the intended one-directional pipeline: λ_SOC is a dual of the Planner's own problem, peak_to_go and the §19(2) qualification state depend on realised history, and the commitment ledger is Execution output feeding a later Planner run."
+  statement: "Three dependencies break the intended one-directional pipeline: λ_SOC is a dual of the Planner's own problem, pPoiRealisedPeakMw and the §19(2) qualification state depend on realised history, and the commitment ledger is Execution output feeding a later Planner run."
   owner: 02-layers/L0-state-value-store.md §1
   class: analytic
   blast_radius: very-expensive
@@ -9538,7 +9538,7 @@
   tn: null
   band: null
 - id: CLM-0989
-  statement: L1's input is the cold tier plus warm frames plus derived artefacts, addressed by the run manifest, and its output is the BeliefSnapshot.
+  statement: L1's input is the cold tier plus warm slabs plus derived artefacts, addressed by the run manifest, and its output is the BeliefSnapshot.
   owner: 02-layers/L1-belief.md §1
   class: analytic
   blast_radius: very-expensive
@@ -10018,7 +10018,7 @@
   tn: null
   band: null
 - id: CLM-1037
-  statement: A warm frame is a derived artefact reproducible from cold plus a FrameSpecHash, is not a second source of truth, and may be deleted and rebuilt at any time.
+  statement: A warm slab is a derived artefact reproducible from cold plus a SlabSpecHash, is not a second source of truth, and may be deleted and rebuilt at any time.
   owner: 02-layers/L1-belief.md §2.2
   class: analytic
   blast_radius: very-expensive
@@ -10028,7 +10028,7 @@
   tn: null
   band: null
 - id: CLM-1038
-  statement: A frame is a single memory-mapped file with all offsets 64-byte aligned, carrying a 64-byte header, run pairs per slot, ascending knowledgeTime entries, scenario-major values and packed quality.
+  statement: A slab is a single memory-mapped file with all offsets 64-byte aligned, carrying a 64-byte header, run pairs per slot, ascending knowledgeTime entries, scenario-major values and packed quality.
   owner: 02-layers/L1-belief.md §2.2
   class: analytic
   blast_radius: very-expensive
@@ -10038,7 +10038,7 @@
   tn: null
   band: null
 - id: CLM-1039
-  statement: "A frame's slotCount is not 96 but whatever the CivilCalendar says the frame's day contains: 92, 96 or 100."
+  statement: "A slab's slotCount is not 96 but whatever the CivilCalendar says the slab's day contains: 92, 96 or 100."
   owner: 02-layers/L1-belief.md §2.2
   class: analytic
   blast_radius: very-expensive
@@ -10048,7 +10048,7 @@
   tn: null
   band: null
 - id: CLM-1040
-  statement: A frame covers a local civil day, because every consumer that cares about day boundaries cares about local ones.
+  statement: A slab covers a local civil day, because every consumer that cares about day boundaries cares about local ones.
   owner: 02-layers/L1-belief.md §2.2
   class: analytic
   blast_radius: very-expensive
@@ -10058,7 +10058,7 @@
   tn: null
   band: null
 - id: CLM-1041
-  statement: "Resolving asOf inside a frame is: index the slot's run, binary-search knowledgeTime for the last entry at most asOf, read the value."
+  statement: "Resolving asOf inside a slab is: index the slot's run, binary-search knowledgeTime for the last entry at most asOf, read the value."
   owner: 02-layers/L1-belief.md §2.2
   class: analytic
   blast_radius: very-expensive
@@ -10189,7 +10189,7 @@
   tn: null
   band: null
 - id: CLM-1054
-  statement: The warm tier's resident bytes are a configured, LRU-bounded frame budget that does not grow with backtest length.
+  statement: The warm tier's resident bytes are a configured, LRU-bounded slab budget that does not grow with backtest length.
   owner: 02-layers/L1-belief.md §2.4
   class: analytic
   blast_radius: very-expensive
@@ -10279,7 +10279,7 @@
   tn: null
   band: null
 - id: CLM-1063
-  statement: The cursor owns the hot window, the mapped frame set and the LRU.
+  statement: The cursor owns the hot window, the mapped slab set and the LRU.
   owner: 02-layers/L1-belief.md §3
   class: analytic
   blast_radius: very-expensive
@@ -10299,7 +10299,7 @@
   tn: null
   band: null
 - id: CLM-1065
-  statement: At H_hot = 192, two days, the frame set covering the window is two or three frames per series.
+  statement: At H_hot = 192, two days, the slab set covering the window is two or three slabs per series.
   owner: 02-layers/L1-belief.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -10309,7 +10309,7 @@
   tn: null
   band: null
 - id: CLM-1066
-  statement: Advancing maps any unmapped frame, registers it in the LRU, refills the hot window and bumps the generation.
+  statement: Advancing maps any unmapped slab, registers it in the LRU, refills the hot window and bumps the generation.
   owner: 02-layers/L1-belief.md §3.1
   class: analytic
   blast_radius: very-expensive
@@ -10319,7 +10319,7 @@
   tn: null
   band: null
 - id: CLM-1067
-  statement: LRU eviction is over a byte budget and not a frame count, because frame sizes differ by series and by DST day.
+  statement: LRU eviction is over a byte budget and not a slab count, because slab sizes differ by series and by DST day.
   owner: 02-layers/L1-belief.md §3.2
   class: analytic
   blast_radius: very-expensive
@@ -10329,7 +10329,7 @@
   tn: null
   band: null
 - id: CLM-1068
-  statement: Evicting unmaps the frame while the OS page cache retains the pages, so re-mapping a recently evicted frame costs a syscall and no I/O.
+  statement: Evicting unmaps the slab while the OS page cache retains the pages, so re-mapping a recently evicted slab costs a syscall and no I/O.
   owner: 02-layers/L1-belief.md §3.2
   class: empirical
   blast_radius: very-expensive
@@ -10350,7 +10350,7 @@
   tn: null
   band: null
 - id: CLM-1070
-  statement: Prefetch runs when the cursor crosses a configured fraction of the current frame, mapping the next frame per series and advising WILLNEED on a background thread.
+  statement: Prefetch runs when the cursor crosses a configured fraction of the current slab, mapping the next slab per series and advising WILLNEED on a background thread.
   owner: 02-layers/L1-belief.md §3.2
   class: analytic
   blast_radius: very-expensive
@@ -10360,7 +10360,7 @@
   tn: null
   band: null
 - id: CLM-1071
-  statement: Prefetch is purely a performance concern and cannot affect output, because frames are immutable and content-addressed so a prefetched frame and a demand-mapped frame are the same bytes.
+  statement: Prefetch is purely a performance concern and cannot affect output, because slabs are immutable and content-addressed so a prefetched slab and a demand-mapped slab are the same bytes.
   owner: 02-layers/L1-belief.md §3.2
   class: analytic
   blast_radius: very-expensive
@@ -10380,7 +10380,7 @@
   tn: null
   band: null
 - id: CLM-1073
-  statement: Sequential forward replay with prefetch on costs about zero frame maps per tick amortised and is bound by the memory bandwidth of the refill copy.
+  statement: Sequential forward replay with prefetch on costs about zero slab maps per tick amortised and is bound by the memory bandwidth of the refill copy.
   owner: 02-layers/L1-belief.md §3.3
   class: empirical
   blast_radius: very-expensive
@@ -10391,7 +10391,7 @@
   band: null
   vague: true
 - id: CLM-1074
-  statement: Sequential forward replay with prefetch off costs zero frame maps except a burst at each day boundary, on the critical path.
+  statement: Sequential forward replay with prefetch off costs zero slab maps except a burst at each day boundary, on the critical path.
   owner: 02-layers/L1-belief.md §3.3
   class: empirical
   blast_radius: very-expensive
@@ -10402,7 +10402,7 @@
   band: null
   vague: true
 - id: CLM-1075
-  statement: A backward seek inside the LRU budget costs zero frame maps and behaves as sequential.
+  statement: A backward seek inside the LRU budget costs zero slab maps and behaves as sequential.
   owner: 02-layers/L1-belief.md §3.3
   class: analytic
   blast_radius: very-expensive
@@ -10412,7 +10412,7 @@
   tn: null
   band: null
 - id: CLM-1076
-  statement: A random jump costs one cold frame map per series and is bound by storage IOPS.
+  statement: A random jump costs one cold slab map per series and is bound by storage IOPS.
   owner: 02-layers/L1-belief.md §3.3
   class: empirical
   blast_radius: very-expensive
@@ -10453,7 +10453,7 @@
   tn: null
   band: null
 - id: CLM-1080
-  statement: A jump invalidates the entire frame set, costing one cold frame map per series and a page-fault storm on first touch.
+  statement: A jump invalidates the entire slab set, costing one cold slab map per series and a page-fault storm on first touch.
   owner: 02-layers/L1-belief.md §3.4
   class: analytic
   blast_radius: very-expensive
@@ -10484,7 +10484,7 @@
   tn: null
   band: null
 - id: CLM-1083
-  statement: If the sampled day set's frames fit in the frame budget, the second pass is free.
+  statement: If the sampled day set's slabs fit in the slab budget, the second pass is free.
   owner: 02-layers/L1-belief.md §3.4
   class: analytic
   blast_radius: very-expensive
@@ -10844,7 +10844,7 @@
   tn: null
   band: null
 - id: CLM-1119
-  statement: Raw order-book rows are never built into warm frames for a production cursor and never mapped by the tick loop.
+  statement: Raw order-book rows are never built into warm slabs for a production cursor and never mapped by the tick loop.
   owner: 02-layers/L1-belief.md §5.1
   class: analytic
   blast_radius: very-expensive
@@ -10955,7 +10955,7 @@
   tn: null
   band: null
 - id: CLM-1130
-  statement: "The research/production split is enforced structurally: the two live in different frame families and a cursor is constructed with the production family only."
+  statement: "The research/production split is enforced structurally: the two live in different slab families and a cursor is constructed with the production family only."
   owner: 02-layers/L1-belief.md §5.4
   class: analytic
   blast_radius: very-expensive
@@ -11508,7 +11508,7 @@
   tn: null
   band: null
 - id: CLM-1185
-  statement: A handle — a cursor, a frame, anything that can be advanced or that aliases storage whose contents may change under the reader — is forbidden in a contract.
+  statement: A handle — a cursor, a slab, anything that can be advanced or that aliases storage whose contents may change under the reader — is forbidden in a contract.
   owner: 02-layers/L1-belief.md §8.2
   class: analytic
   blast_radius: very-expensive
@@ -11608,7 +11608,7 @@
   tn: null
   band: null
 - id: CLM-1195
-  statement: The snapshot content hash covers asOf, slotStart, slotCount, scenarioCount, ordered series ids, the frame content hash per series, the feature spec hash per artefact used, the scenario weights hash, the quality stamp digest, criticalMissing and degradationMode.
+  statement: The snapshot content hash covers asOf, slotStart, slotCount, scenarioCount, ordered series ids, the slab content hash per series, the feature spec hash per artefact used, the scenario weights hash, the quality stamp digest, criticalMissing and degradationMode.
   owner: 02-layers/L1-belief.md §8.3
   class: analytic
   blast_radius: very-expensive
@@ -11618,7 +11618,7 @@
   tn: null
   band: null
 - id: CLM-1196
-  statement: Because frames are immutable and content-addressed, hashing the derivation is exactly as discriminating as hashing the data, and it is O(series) instead of O(series × H_hot × S).
+  statement: Because slabs are immutable and content-addressed, hashing the derivation is exactly as discriminating as hashing the data, and it is O(series) instead of O(series × H_hot × S).
   owner: 02-layers/L1-belief.md §8.3
   class: analytic
   blast_radius: very-expensive
@@ -11638,7 +11638,7 @@
   tn: null
   band: null
 - id: CLM-1198
-  statement: Frame resolution and mapping cost amortised about zero on the sequential path.
+  statement: Slab resolution and mapping cost amortised about zero on the sequential path.
   owner: 02-layers/L1-belief.md §8.3
   class: empirical
   blast_radius: very-expensive
@@ -11719,7 +11719,7 @@
   tn: null
   band: null
 - id: CLM-1206
-  statement: Revision replay is tested on a series revised three times, asserting that a read at each of the four asOf points returns exactly the revision in force, that a forward-advancing cursor observes each revision exactly once and never a later one, and that the frame-resolved answer equals a naive cold-tier scan at every point.
+  statement: Revision replay is tested on a series revised three times, asserting that a read at each of the four asOf points returns exactly the revision in force, that a forward-advancing cursor observes each revision exactly once and never a later one, and that the slab-resolved answer equals a naive cold-tier scan at every point.
   owner: 02-layers/L1-belief.md §9
   class: analytic
   blast_radius: very-expensive
@@ -11729,7 +11729,7 @@
   tn: null
   band: null
 - id: CLM-1207
-  statement: "Revision replay is extended with a cross-frame revision: a restatement arriving on day d for a validSlot on day d − 1."
+  statement: "Revision replay is extended with a cross-slab revision: a restatement arriving on day d for a validSlot on day d − 1."
   owner: 02-layers/L1-belief.md §9
   class: analytic
   blast_radius: very-expensive
@@ -11739,7 +11739,7 @@
   tn: null
   band: null
 - id: CLM-1208
-  statement: The frame for the spring-forward day has 92 slots and the autumn day 100.
+  statement: The slab for the spring-forward day has 92 slots and the autumn day 100.
   owner: 02-layers/L1-belief.md §9
   class: analytic
   blast_radius: very-expensive
@@ -11749,7 +11749,7 @@
   tn: null
   band: null
 - id: CLM-1209
-  statement: Frame boundaries sit at local midnight rather than at a fixed UTC offset.
+  statement: Slab boundaries sit at local midnight rather than at a fixed UTC offset.
   owner: 02-layers/L1-belief.md §9
   class: analytic
   blast_radius: very-expensive
@@ -11759,7 +11759,7 @@
   tn: null
   band: null
 - id: CLM-1210
-  statement: "A hot window spanning a DST transition still has slotCount equal to H_hot, because SlotId is a UTC quarter-hour count and is DST-independent: the frame count changes and the window length does not."
+  statement: "A hot window spanning a DST transition still has slotCount equal to H_hot, because SlotId is a UTC quarter-hour count and is DST-independent: the slab count changes and the window length does not."
   owner: 02-layers/L1-belief.md §9
   class: analytic
   blast_radius: very-expensive
@@ -11769,7 +11769,7 @@
   tn: null
   band: null
 - id: CLM-1211
-  statement: Frame boundary tests cover windows spanning two and three frames, a window starting exactly on a boundary, windows ending one slot before and one slot after a boundary, a series whose frame is absent for one day asserting the ladder is entered rather than an exception, and a frame whose contentHash does not verify asserting HALT.
+  statement: Slab boundary tests cover windows spanning two and three slabs, a window starting exactly on a boundary, windows ending one slot before and one slot after a boundary, a series whose slab is absent for one day asserting the ladder is entered rather than an exception, and a slab whose contentHash does not verify asserting HALT.
   owner: 02-layers/L1-belief.md §9
   class: analytic
   blast_radius: very-expensive
@@ -13014,7 +13014,7 @@
 
 # ---- 02-layers/L3 ----
 - id: CLM-1335
-  statement: "L3 owns the whole decision: it composes the primitives from C2 into a MILP family, solves it at staged market gates carrying commitments forward, and emits order intent."
+  statement: "L3 owns the whole decision: it composes the primitives from C2 into a MILP family, solves it at gates carrying commitments forward, and emits order intent."
   owner: 02-layers/L3-planner.md §1
   class: analytic
   blast_radius: moderate
@@ -21093,7 +21093,7 @@
   tn: null
   band: null
 - id: CLM-2139
-  statement: T0's scope is one view, one composer stage, one calendar function or one term shape, with no I/O and no solver, budgeted at 60 seconds for the whole suite, blocking a commit on failure, owned by the layer owner.
+  statement: T0's scope is one view, one composition step, one calendar function or one term shape, with no I/O and no solver, budgeted at 60 seconds for the whole suite, blocking a commit on failure, owned by the layer owner.
   owner: 04-compliance/T0-test-architecture.md §3
   class: analytic
   blast_radius: cheap
@@ -21516,7 +21516,7 @@
   tn: null
   band: null
 - id: CLM-2181
-  statement: For each composer stage T0 asserts the preconditions and postconditions of the stage table hold in isolation.
+  statement: For each composition step T0 asserts the preconditions and postconditions of the stage table hold in isolation.
   owner: 04-compliance/T0-test-architecture.md §6
   class: analytic
   blast_radius: moderate

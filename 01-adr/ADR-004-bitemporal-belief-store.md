@@ -52,7 +52,7 @@ which is exactly what the engine saw.
 | Tier | Medium | Contents | Lifetime | Accessed by |
 |---|---|---|---|---|
 | **Cold** | Immutable Parquet, partitioned `(series, source, date)` | Everything, at source fidelity, including raw order-book deltas and derived feature artefacts | Permanent | Offline calibration, cold-start of a replay |
-| **Warm** | Memory-mapped columnar frames, LRU-evicted, one frame per `(series, day)` | What the current replay position needs | Session | The Belief cursor |
+| **Warm** | Memory-mapped columnar slabs, LRU-evicted, one slab per `(series, day)` | What the current replay position needs | Session | The Belief cursor |
 | **Hot** | Preallocated struct-of-arrays window covering `[t, t + H_hot]` | Only the series and slots the current tick's contract requires | One tick, refilled in place | Valuation, via C1 |
 
 The **hot window is bounded by the horizon, not by history**. Memory is
@@ -116,5 +116,5 @@ tick loop.
 - **Recompute features per tick.** Slow, and worse, silently version-drifting
   between a research run and a production run.
 - **Database as the hot path.** Query latency and non-determinism in the tick
-  loop; a memory-mapped columnar frame is orders of magnitude faster and exactly
+  loop; a memory-mapped columnar slab is orders of magnitude faster and exactly
   reproducible.

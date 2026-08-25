@@ -13,7 +13,7 @@ the component whose existence makes the within-tick dependency graph acyclic.
 ## 1. Why it exists
 
 The five-layer pipeline is intended to be one-directional, and three dependencies
-break that: `λ_SOC` is a dual of the Planner's own problem, `peak_to_go` and the
+break that: `λ_SOC` is a dual of the Planner's own problem, `pPoiRealisedPeakMw` and the
 §19(2) qualification state depend on realised history, and the commitment ledger
 is Execution output feeding a later Planner run (ADR-006 Context;
 `00-overview/01-system-model.md` §2).

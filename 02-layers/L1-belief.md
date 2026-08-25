@@ -5,7 +5,7 @@ exactly one question — "what could the engine have known at `asOf`, over
 `[t, t + H_hot]`?" — and it answers it in a way that makes the wrong answer
 structurally unreachable rather than merely discouraged.
 
-**Input:** cold tier (immutable Parquet) + warm frames + derived artefacts, addressed by the run manifest
+**Input:** cold tier (immutable Parquet) + warm slabs + derived artefacts, addressed by the run manifest
 **Output:** `BeliefSnapshot` (C1)
 **Purity:** pure read over immutable, content-addressed data. No writes, no clock, no randomness, no network. Ingestion is a separate process and never runs inside a tick.
 
@@ -140,15 +140,15 @@ the dominant access pattern is a forward replay over valid time; revisions
 scatter across knowledge time but land in the partition they describe, which is
 the one the reader wants.
 
-### 2.2 Warm — memory-mapped frames, one per `(series, day)`
+### 2.2 Warm — memory-mapped slabs, one per `(series, day)`
 
-A frame is a derived artefact, reproducible from cold plus a `FrameSpecHash`. It
+A slab is a derived artefact, reproducible from cold plus a `SlabSpecHash`. It
 is not a second source of truth; it may be deleted and rebuilt at any time.
 
 ```
-Frame layout (single mmap'd file, all offsets 64-byte aligned)
+Slab layout (single mmap'd file, all offsets 64-byte aligned)
 
-  header  64 B   magic, formatVersion, seriesId, frameSpecHash,
+  header  64 B   magic, formatVersion, seriesId, slabSpecHash,
                  dayStartSlot, slotCount, scenarioCount,
                  revisionCount, runOffset, ktOffset, valueOffset,
                  qualityOffset, contentHash
@@ -159,12 +159,12 @@ Frame layout (single mmap'd file, all offsets 64-byte aligned)
   quality [revisionCount]  uint16  packed (provenance, quality)
 ```
 
-`slotCount` is **not** 96. It is whatever the `CivilCalendar` says the frame's
-day contains — 92, 96 or 100 (`00-overview/02-conventions.md` §4.2). A frame
+`slotCount` is **not** 96. It is whatever the `CivilCalendar` says the slab's
+day contains — 92, 96 or 100 (`00-overview/02-conventions.md` §4.2). A slab
 covers a *local* civil day, because every consumer that cares about day
 boundaries (peak accounting, HLZF windows) cares about local ones.
 
-Resolving `asOf` inside a frame is: index the slot's run, binary-search `kt` for
+Resolving `asOf` inside a slab is: index the slot's run, binary-search `kt` for
 the last entry `≤ asOf`, read the value. For the overwhelmingly common case
 `revisionPolicy = Never`, every run has length 1 and the search is a load.
 
@@ -216,7 +216,7 @@ Nothing in the read path is indexed by history:
 | Tier | Resident bytes | Grows with backtest length? |
 |---|---|---|
 | Cold | 0 | — (never mapped by the tick loop) |
-| Warm | configured frame budget, LRU-bounded | no |
+| Warm | configured slab budget, LRU-bounded | no |
 | Hot | `#series × H_hot × S × sizeof(value)` + small side arrays | no |
 
 Concretely, with the ADR-005 working numbers `K = 8` ensemble series, `S = 64`,
@@ -244,38 +244,38 @@ sealed class BeliefCursor : IDisposable {
 ```
 
 A replay advances a cursor; it does not issue queries. The cursor owns the hot
-window, the mapped frame set, and the LRU.
+window, the mapped slab set, and the LRU.
 
 ### 3.1 Advancing
 
 1. `Advance` moves `_slotStart` forward and `_asOf` forward. Both are monotone by
    default; a backwards `Advance` is rejected.
-2. For each required series, compute the frame set covering
-   `[t, t + H_hot)`. At `H_hot = 192` (two days) this is two or three frames.
-3. Map any frame not already mapped; register it in the LRU.
+2. For each required series, compute the slab set covering
+   `[t, t + H_hot)`. At `H_hot = 192` (two days) this is two or three slabs.
+3. Map any slab not already mapped; register it in the LRU.
 4. Refill the hot window per §2.3.
 5. Bump `_generation`.
 
 ### 3.2 LRU eviction and prefetch
 
-Eviction is over a **byte budget**, not a frame count, because frame sizes differ
-by series and by DST day. Evicting unmaps the frame; the OS page cache retains
-the pages, so re-mapping a recently evicted frame costs a syscall and no I/O.
+Eviction is over a **byte budget**, not a slab count, because slab sizes differ
+by series and by DST day. Evicting unmaps the slab; the OS page cache retains
+the pages, so re-mapping a recently evicted slab costs a syscall and no I/O.
 This is the division of labour ADR-004 §2 intends: the LRU manages address space,
 the page cache manages memory.
 
-Prefetch runs when the cursor crosses a configured fraction of the current frame:
-the next frame per series is mapped and advised `WILLNEED` on a background
+Prefetch runs when the cursor crosses a configured fraction of the current slab:
+the next slab per series is mapped and advised `WILLNEED` on a background
 thread. Prefetch is **purely a performance concern and cannot affect output** —
-frames are immutable and content-addressed, so a prefetched frame and a
-demand-mapped frame are the same bytes. `T3` asserts this by running an audit day
+slabs are immutable and content-addressed, so a prefetched slab and a
+demand-mapped slab are the same bytes. `T3` asserts this by running an audit day
 with prefetch disabled and comparing artefact hashes.
 
 ### 3.3 Why sequential is the right bet
 
-| Pattern | Frame maps per tick | Bound by |
+| Pattern | Slab maps per tick | Bound by |
 |---|---|---|
-| Sequential forward, prefetch on | ~0 amortised (one frame per series per civil day) | memory bandwidth of the refill copy |
+| Sequential forward, prefetch on | ~0 amortised (one slab per series per civil day) | memory bandwidth of the refill copy |
 | Sequential forward, prefetch off | 0, except a burst at each day boundary, on the critical path | as above, plus a periodic stall |
 | Backward seek inside the LRU budget | 0 | as sequential |
 | Random jump | `#series`, all cold | storage IOPS |
@@ -291,7 +291,7 @@ Jumping cursors are real. Three harnesses need them: sampled-day scenario
 analysis, the counterfactual re-runs behind C5 §6's four-bucket decomposition,
 and targeted debugging of a single historical tick.
 
-A jump invalidates the entire frame set. Cost per jump is `#series` cold frame
+A jump invalidates the entire slab set. Cost per jump is `#series` cold slab
 maps and a page-fault storm on first touch; throughput falls from sequential
 bandwidth to random-read IOPS, typically one to two orders of magnitude on
 spinning or networked storage and a factor of a few on local NVMe.
@@ -301,7 +301,7 @@ Mitigations, in order of preference:
 1. **Sort the jumps.** A harness that visits a *set* of ticks can visit them in
    slot order and is then sequential again with gaps. The C5 §6 counterfactual
    re-runs allow this; make it the default in the harness rather than an option.
-2. **Raise the frame budget.** If the sampled day set's frames fit in the budget,
+2. **Raise the slab budget.** If the sampled day set's slabs fit in the budget,
    the second pass is free.
 3. **Accept it.** A jumping harness is a research tool run on tens of days, not
    the production path run on years.
@@ -430,7 +430,7 @@ limitation of the layer.
 LOB deltas are ingested at source fidelity into the cold tier, partitioned
 `(productId, tradingDate)`, ordered by exchange sequence number, with sequence
 gaps recorded explicitly as tombstone rows rather than interpolated. They are
-never built into warm frames for a production cursor and never mapped by the tick
+never built into warm slabs for a production cursor and never mapped by the tick
 loop. `INV-D-17`.
 
 ### 5.2 What crosses C1
@@ -479,7 +479,7 @@ now so it is not discovered later.
 | **Production features** | reliable volume per slot (and per band), plus its `QualityStamp` | C1 §5 | yes, via the hot window |
 
 The split is enforced structurally, not by convention. The two live in different
-**frame families**, and a cursor is constructed with the production family only.
+**slab families**, and a cursor is constructed with the production family only.
 Reaching the raw book from the tick loop would require constructing a second
 cursor over the research family — a visible, reviewable code change, not an
 accident of a stray query. This is the same design move as ADR-004's missing
@@ -635,7 +635,7 @@ Belief store". ADR-004 §3 describes `BeliefSnapshot` as carrying a "hot window
 reference". These are reconciled by distinguishing two things that are easily
 conflated:
 
-- A **handle** — a cursor, a frame, anything that can be advanced or that aliases
+- A **handle** — a cursor, a slab, anything that can be advanced or that aliases
   storage whose contents may change under the reader. Forbidden.
 - A **read-only view** over a buffer that is contractually immutable for the
   lifetime of the tick. Permitted, and it is what makes the snapshot cheap.
@@ -666,14 +666,14 @@ The snapshot's content is **completely determined** by its derivation:
 ```
 contentHash = H( asOf , slotStart , slotCount , scenarioCount
                , orderedSeriesIds
-               , frameContentHash per series          (immutable, precomputed)
+               , slabContentHash per series          (immutable, precomputed)
                , featureSpecHash per artefact used
                , scenarioWeightsHash
                , qualityStampDigest
                , criticalMissing , degradationMode )
 ```
 
-Because frames are immutable and content-addressed, hashing the derivation is
+Because slabs are immutable and content-addressed, hashing the derivation is
 exactly as discriminating as hashing the data, and it is `O(#series)` instead of
 `O(#series × H_hot × S)`. Two snapshots with equal derivation hashes hold
 identical arrays; that implication is `INV-D-16` and is verified on audit days by
@@ -683,7 +683,7 @@ Total per-tick cost of building a snapshot:
 
 | Step | Cost |
 |---|---|
-| Frame resolution and mapping | amortised ~0 on the sequential path (§3.3) |
+| Slab resolution and mapping | amortised ~0 on the sequential path (§3.3) |
 | Hot-window refill | one bounded copy, `≤ #series × H_hot × S × 4 B` |
 | Derivation hash | `O(#series)` — tens of hashes |
 | C0 §3 + C1 §9 validation | one linear scan over memory already hot in L1/L2 cache |
@@ -712,23 +712,23 @@ The properties that matter most:
   `k0 < k1 < k2 < k3` for the same `validSlot`. Assert that a read at each of the
   four `asOf` points between and after them returns exactly the revision in
   force, that a forward-advancing cursor observes each revision exactly once and
-  never a later one, and that the frame-resolved answer equals a naive
-  cold-tier scan at every point. Extend with a cross-frame revision: a
+  never a later one, and that the slab-resolved answer equals a naive
+  cold-tier scan at every point. Extend with a cross-slab revision: a
   restatement arriving on day `d` for a `validSlot` on day `d − 1`.
 
 - **DST fixture days.** Both Europe/Berlin transition days are fixtures in every
-  calendar-dependent test (`INV-T-01` … `INV-T-04`, ADR-002). Assert: the frame
-  for the spring-forward day has 92 slots and the autumn day 100; frame
+  calendar-dependent test (`INV-T-01` … `INV-T-04`, ADR-002). Assert: the slab
+  for the spring-forward day has 92 slots and the autumn day 100; slab
   boundaries sit at local midnight, not at a fixed UTC offset; and — the subtlety
   most likely to be coded wrong — a hot window spanning a transition still has
   `slotCount = H_hot`, because `SlotId` is a UTC quarter-hour count and is
-  DST-independent (`00-overview/02-conventions.md` §4.1). The frame *count*
+  DST-independent (`00-overview/02-conventions.md` §4.1). The slab *count*
   changes; the window *length* does not.
 
-- **Frame boundary.** Windows spanning two and three frames; a window starting
+- **Slab boundary.** Windows spanning two and three slabs; a window starting
   exactly on a boundary; windows ending one slot before and one slot after a
-  boundary; a series whose frame is absent for one day (assert the ladder is
-  entered, not an exception); a frame whose `contentHash` does not verify (assert
+  boundary; a series whose slab is absent for one day (assert the ladder is
+  entered, not an exception); a slab whose `contentHash` does not verify (assert
   `HALT`).
 
 - **Allocation counts in the tick loop.** After a warm-up of `W` ticks, run `N`

@@ -8,7 +8,7 @@ The five-layer pipeline is intended to be one-directional. Two dependencies
 break that:
 
 1. `λ_SOC` is a dual of the Planner's optimisation but was placed in Valuation.
-2. `peak_to_go`, and the §19(2) qualification state, depend on realised history,
+2. `pPoiRealisedPeakMw`, and the §19(2) qualification state, depend on realised history,
    which is a Settlement output.
 
 There is also a third, easily missed: the **commitment ledger**. Orders filled at
