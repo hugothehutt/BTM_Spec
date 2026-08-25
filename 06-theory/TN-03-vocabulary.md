@@ -129,9 +129,9 @@ never been reached.
 - **Settlement timeline stage** (`L5` §3 — intraday, D+1, M+X) becomes
   **settlement point**. `L5` already spends "Phase" on Phase A and Phase B, so
   that word was unavailable.
-- **`README`:90 still reads "solved at staged market gates"** — the exact
-  conflation `TN-02`:68 declares repaired. The repair never reached the front
-  page.
+- **`README` read "solved at staged market gates"** — the exact conflation
+  `TN-02`:68 declares repaired, which had never reached the front page. Renamed
+  with batch one.
 
 The composer sense is the one that bites hardest: `L2`:153 writes "at stage 3"
 bare, and `S3` is the post-DA rebalance gate.

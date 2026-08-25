@@ -352,5 +352,30 @@ class EveryRulingIsTraceableToItsArgument(unittest.TestCase):
                                           section="5"))
         blobs = {"06-theory/TN-02-fan-not-tree.md": "## 5. Two errors, opposite signs\n"}
         self.assertEqual(cg.check_anchors([ruling], blobs), [])
+
+
+class ARetiredSpellingInThePluralIsTheSameSpelling(unittest.TestCase):
+    """"Composition stages" survived batch one because the trailing boundary
+    rejected the `s`. A matcher blind to the plural is a silent gap."""
+
+    def test_a_plural_is_found_and_named_by_its_singular(self):
+        found = cg.find_retired([_ruling("composition stage", "composition step", False)],
+                                "stubs/Enums.cs", "/// Composition stages (L2 4).")
+        self.assertEqual([(f.word, f.replacement) for f in found],
+                         [("composition stage", "composition step")])
+
+    def test_a_longer_word_that_merely_starts_the_same_is_not_a_plural(self):
+        self.assertEqual(
+            cg.find_retired([_ruling("frame set", "slab set", False)],
+                            "a.md", "the frame setting"),
+            [])
+
+    def test_liveness_does_not_admit_the_plural(self):
+        """A warning should err towards silence, so it stays exact."""
+        entries = [cg.Entry(term="slab", definition="d", owner="`x.md`", line=1)]
+        self.assertEqual([f.word for f in cg.check_live(entries, {"a.md": "the slabs"})],
+                         ["slab"])
+
+
 if __name__ == "__main__":
     unittest.main()

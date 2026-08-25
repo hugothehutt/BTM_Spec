@@ -307,8 +307,17 @@ def parse_glossary(text: str) -> list[Entry]:
 # --- matching ---------------------------------------------------------------
 
 
-def _boundary(spelling: str, case_sensitive: bool) -> re.Pattern:
+def _boundary(spelling: str, case_sensitive: bool, plural: bool = False) -> re.Pattern:
+    """A word-boundary match, optionally admitting a plural.
+
+    `plural` is for the retired scan only. A retired spelling written in the
+    plural is the same spelling, and a matcher blind to it leaves a silent gap of
+    exactly the kind this check exists to close: "Composition stages" survived
+    the first propagation batch because the trailing guard rejected the `s`.
+    Liveness does not use it — a warning should err towards silence.
+    """
     return re.compile(r"(?<![A-Za-z0-9_])" + re.escape(spelling)
+                      + (r"s?" if plural else r"")
                       + r"(?![A-Za-z0-9_])",
                       0 if case_sensitive else re.IGNORECASE)
 
@@ -332,7 +341,8 @@ def find_retired(rulings: list[Ruling], path: str, text: str) -> list[Finding]:
     hits: list[tuple[int, Finding]] = []
     seen: set[tuple[int, str]] = set()
     for _ruling, spelling in spellings:
-        for m in _boundary(spelling.spelling, spelling.case_sensitive).finditer(text):
+        pattern = _boundary(spelling.spelling, spelling.case_sensitive, plural=True)
+        for m in pattern.finditer(text):
             if any(a < m.end() and m.start() < b for a, b in claimed):
                 continue
             claimed.append((m.start(), m.end()))
