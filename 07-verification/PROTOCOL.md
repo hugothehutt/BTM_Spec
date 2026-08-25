@@ -478,7 +478,7 @@ naming rule rather than the register. `00-overview/04-glossary.md` is normative
 for what a term means, so the check asserts that no term is defined twice, that
 every entry names an owning document that exists, that every defined term is
 actually used somewhere in the corpus, and that no retired spelling returns
-outside a written allowance in `retired-vocabulary.yaml`. The last is the one
+outside a written allowance in `rulings.json`. The last is the one
 that costs something: the glossary's §2 rules one meaning per word, and the
 retired spellings are the losing side of each ruling. `claims.yaml` is exempt
 from that scan because it quotes the owning text by construction — a retired

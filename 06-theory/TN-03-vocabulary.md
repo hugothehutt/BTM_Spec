@@ -49,7 +49,7 @@ sentence and know which number it means.
 ## 3. The rulings
 
 Each ruling names the sense that keeps the word. The losing spelling is retired
-into `07-verification/retired-vocabulary.yaml` and enforced.
+into `07-verification/rulings.json` and enforced.
 
 ### 3.1 `frame` — the sign frame keeps it
 

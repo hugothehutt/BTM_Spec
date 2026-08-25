@@ -125,6 +125,9 @@ symbol occupy different syntactic positions and do not collide in practice.
 | **quarantine** | Where a fact whose knowledge time cannot be established is put, unreachable from a production read. | `02-layers/L1-belief.md` |
 | **fill-probability surface** | The fitted belief about whether an order fills; it exports volumes and never a price. | `02-layers/L1-belief.md` |
 | **reliable volume** | The volume that fills with at least the configured probability, used as a bound. | `02-layers/L1-belief.md` |
+| **slab** | L1's warm-tier artefact: one memory-mapped, content-addressed file per `(series, civil day)`, derived from cold and rebuildable at any time. | `02-layers/L1-belief.md` |
+| `refillCount` | The hot window's own counter, bumped once per refill; not L0's `generation`. | `02-layers/L1-belief.md` |
+| `fitScenarioCount` | The size of the slow loop's own, larger and lower-resolution ensemble; not `S`. | `02-layers/L0-state-value-store.md` |
 
 ## 7. Valuation
 
@@ -148,6 +151,8 @@ symbol occupy different syntactic positions and do not collide in practice.
 | **proration** | Scaling the in-horizon share of a charge assessed over a longer accounting period. | `02-layers/L2-valuation.md` |
 | **CVaR** | The mean of the worst tail mass of a loss distribution, taken on the reduced measure. | `06-theory/TN-01-cvar-across-stages.md` |
 | **coherent** | Of a risk measure: monotone, translation-equivariant, positively homogeneous and subadditive. | `06-theory/TN-01-cvar-across-stages.md` |
+| `B(E)` | The aFRR capacity bid curve's expected value as a function of offered energy; concave, and not the terminal value function. | `02-layers/L2-valuation.md` |
+| **composition step** | One step of the composer's declared order, whose preconditions are checked before it runs and whose postconditions are established when it has. | `02-layers/L2-valuation.md` |
 
 ## 8. Planning
 
@@ -203,6 +208,8 @@ symbol occupy different syntactic positions and do not collide in practice.
 | `PolicyQuality` | Realised value over the physically-backed, index-granularity benchmark value. | `06-theory/TN-02-fan-not-tree.md` |
 | `CaptureRatio` | Execution quality: the share of the room between the market and the shadow value that the fill actually got. | `04-compliance/T4-calibration-and-execution-quality.md` |
 | **adverse selection** | The volume-weighted tendency of the market to move against a fill after it happens. | `04-compliance/T4-calibration-and-execution-quality.md` |
+| `pPoiRealisedPeakMw` | The grid peak already realised in the current accounting period; the epigraph floor the peak term is composed against. | `03-contracts/C5-settlement-to-state.md` |
+| **settlement point** | A point on the settlement timeline at which a conclusion becomes available. | `02-layers/L5-settlement.md` |
 
 ## 11. Delineation
 
@@ -276,8 +283,8 @@ unreadable.
 
 ## 15. Retired vocabulary
 
-Enforced by `07-verification/check_glossary.py`; the register with its
-allowances is `07-verification/retired-vocabulary.yaml`.
+Enforced by `07-verification/check_glossary.py`; the ruling set with its
+allowances is `07-verification/rulings.json`.
 
 | Retired | Use instead |
 |---|---|

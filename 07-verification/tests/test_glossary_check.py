@@ -166,3 +166,159 @@ class TheShippedRulingDataParses(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# --- the failures of the implementation this replaces -----------------------
+#
+# One test per known defect, so that each is a regression rather than a memory.
+
+
+def _ruling(spelling: str, replacement: str, case_sensitive: bool,
+            allowed=()) -> cg.Ruling:
+    return cg.Ruling(
+        word=spelling, keeps="x", loses="y", replacements=[replacement],
+        anchor=cg.Anchor(doc="06-theory/TN-03-vocabulary.md", section="3.1"),
+        retired=[cg.RetiredSpelling(
+            spelling=spelling, replacement=replacement,
+            case_sensitive=case_sensitive,
+            allowed=[cg.Allowance(path=p, reason=r) for p, r in allowed],
+        )],
+    )
+
+
+class TheMatcherRespectsDeclaredCase(unittest.TestCase):
+
+    def test_a_capitalised_occurrence_of_a_case_insensitive_spelling_is_found(self):
+        """Five capitalised `Oracle`s were invisible, because the old matcher
+        inferred case sensitivity from whether the spelling contained a space."""
+        found = cg.find_retired([_ruling("oracle", "accuracy reference", False)],
+                                "04-compliance/T5.md", "The Oracle is the reference.")
+        self.assertEqual(len(found), 1)
+        self.assertEqual(found[0].word, "oracle")
+        self.assertEqual(found[0].replacement, "accuracy reference")
+        self.assertEqual(found[0].line, 1)
+
+    def test_an_exact_case_identifier_is_not_matched_loosely(self):
+        found = cg.find_retired([_ruling("ORACLE_BUDGET", "REFERENCE_BUDGET", True)],
+                                "04-compliance/T5.md", "the oracle_budget knob")
+        self.assertEqual(found, [])
+
+
+class TheMatcherReportsAPlaceToEditNotACharacter(unittest.TestCase):
+
+    def test_a_nested_spelling_reports_once_at_its_most_specific_form(self):
+        """`frame set` and `warm frame set` both match the same text; the
+        inflated 89-vs-81 figure came from counting both."""
+        rulings = [_ruling("frame set", "slab set", False),
+                   _ruling("warm frame set", "warm slab set", False)]
+        found = cg.find_retired(rulings, "02-layers/L1.md", "map the warm frame set now")
+        self.assertEqual([(f.word, f.replacement) for f in found],
+                         [("warm frame set", "warm slab set")])
+
+    def test_repeated_hits_on_one_line_collapse_to_a_single_finding(self):
+        found = cg.find_retired([_ruling("frame set", "slab set", False)],
+                                "02-layers/L1.md",
+                                "a frame set, another frame set, a third frame set\n"
+                                "and a frame set on the next line")
+        self.assertEqual([f.line for f in found], [1, 2])
+
+    def test_an_allowance_silences_only_the_document_it_names(self):
+        rulings = [_ruling("staging table", "gate table", False,
+                           allowed=[("06-theory/TN-02-fan-not-tree.md",
+                                     "names the old table in the sentence that renames it")])]
+        self.assertEqual(
+            cg.find_retired(rulings, "06-theory/TN-02-fan-not-tree.md", "the staging table"),
+            [])
+        self.assertEqual(
+            len(cg.find_retired(rulings, "02-layers/L3-planner.md", "the staging table")), 1)
+
+
+class TheGlossaryParserReadsTablesNotHeadings(unittest.TestCase):
+
+    GLOSSARY = """# Glossary
+
+## 1. What this document is
+
+## 2. Rulings
+
+| Word | Keeps | Loses | Replacement |
+|---|---|---|---|
+| **frame** | the sign frame | L1's storage artefact | **slab** |
+
+## 3. A ruling of thumb for reading this section
+
+| Term | Definition | Owner |
+|---|---|---|
+| **slab** | L1's warm-tier artefact. | `02-layers/L1-belief.md` |
+| **hot window** | The preallocated buffer. | |
+"""
+
+    def test_a_heading_that_resembles_a_skipped_section_swallows_nothing(self):
+        """The old parser skipped any section whose heading contained the
+        substring "ruling", so §3 above would have taken its entries with it."""
+        entries = cg.parse_glossary(self.GLOSSARY)
+        self.assertEqual([e.term for e in entries], ["slab", "hot window"])
+
+    def test_a_four_column_ruling_table_is_not_an_entry_table(self):
+        entries = cg.parse_glossary(self.GLOSSARY)
+        self.assertNotIn("frame", [e.term for e in entries])
+
+    def test_an_entry_with_no_owner_fails(self):
+        entries = cg.parse_glossary(self.GLOSSARY)
+        found = cg.check_owner(entries, exists=lambda rel: True)
+        self.assertEqual([(f.check, f.word, f.severity) for f in found],
+                         [("OWNER", "hot window", "failure")])
+
+    def test_an_owner_that_does_not_exist_fails(self):
+        entries = cg.parse_glossary(self.GLOSSARY)
+        found = cg.check_owner(entries, exists=lambda rel: False)
+        self.assertEqual([f.word for f in found], ["slab", "hot window"])
+
+    def test_a_term_defined_twice_fails(self):
+        entries = cg.parse_glossary(self.GLOSSARY + "| **slab** | Again. | `a.md` |\n")
+        found = cg.check_unique(entries)
+        self.assertEqual([(f.check, f.word) for f in found], [("UNIQUE", "slab")])
+
+
+class LivenessIsAWordBoundaryWarning(unittest.TestCase):
+
+    ENTRIES = [cg.Entry(term="gate", definition="A market commit point.",
+                        owner="`x.md`", line=7)]
+
+    def test_gate_is_not_satisfied_by_mitigate(self):
+        found = cg.check_live(self.ENTRIES, {"a.md": "we mitigate the risk"})
+        self.assertEqual([(f.check, f.word) for f in found], [("LIVE", "gate")])
+
+    def test_a_real_use_satisfies_liveness(self):
+        self.assertEqual(cg.check_live(self.ENTRIES, {"a.md": "the S3 gate closes"}), [])
+
+    def test_liveness_never_fails_the_run(self):
+        found = cg.check_live(self.ENTRIES, {"a.md": "we mitigate the risk"})
+        self.assertEqual(cg.failures(found), [])
+        self.assertEqual(cg.warnings(found), found)
+
+
+class EveryReplacementNameResolvesToAnEntry(unittest.TestCase):
+
+    def test_a_replacement_with_no_glossary_entry_fails(self):
+        rulings = [_ruling("frame set", "slab set", False)]
+        entries = [cg.Entry(term="hot window", definition="d", owner="`x.md`", line=1)]
+        found = cg.check_replacements_resolve(rulings, entries)
+        self.assertEqual([(f.check, f.severity, f.word) for f in found],
+                         [("RESOLVES", "failure", "frame set")])
+
+    def test_a_replacement_that_is_defined_passes(self):
+        rulings = [_ruling("frame set", "slab set", False)]
+        entries = [cg.Entry(term="slab set", definition="d", owner="`x.md`", line=1)]
+        self.assertEqual(cg.check_replacements_resolve(rulings, entries), [])
+
+
+class FindingsAreStructuredAndFormattedOnce(unittest.TestCase):
+
+    def test_a_finding_names_the_spelling_its_replacement_and_its_location(self):
+        f = cg.find_retired([_ruling("peak_to_go", "pPoiRealisedPeakMw", True)],
+                            "README.md", "x\ny\nthe `peak_to_go` floor")[0]
+        self.assertEqual((f.path, f.line, f.word, f.replacement), 
+                         ("README.md", 3, "peak_to_go", "pPoiRealisedPeakMw"))
+        self.assertIn("README.md:3", cg.format_finding(f))
+        self.assertIn("pPoiRealisedPeakMw", cg.format_finding(f))
