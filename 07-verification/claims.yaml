@@ -3469,16 +3469,6 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-0362
-  statement: Scenario count S is a first-class tuning parameter with a measurable cost/quality curve.
-  owner: 01-adr/ADR-005-joint-scenario-ensemble.md §Consequences
-  class: empirical
-  blast_radius: very-expensive
-  br_source: ADR-005
-  anchors: [ADR-005, T5]
-  evidence: unlabelled
-  tn: null
-  band: null
 - id: CLM-0363
   statement: T5 requires reporting objective value and solve time as a function of S, so the choice of S is evidenced rather than guessed.
   owner: 01-adr/ADR-005-joint-scenario-ensemble.md §Consequences
@@ -13225,7 +13215,7 @@
   tn: null
   band: null
 - id: CLM-1355
-  statement: There is one formulation, one set of tests and six information sets.
+  statement: There is one formulation, one set of tests and six gates; each gate solve is a separate two-stage problem and the gates are not nested stages of a single stochastic program.
   owner: 02-layers/L3-planner.md §1
   class: analytic
   blast_radius: moderate
@@ -28721,16 +28711,6 @@
   evidence: unlabelled
   tn: null
   band: null
-- id: CLM-2898
-  statement: The objective-versus-S curve shows where the accuracy curve flattens, and scenario count is a first-class tuning parameter with a measurable cost/quality curve.
-  owner: 04-compliance/T5-gap-and-performance.md §6.2
-  class: empirical
-  blast_radius: very-expensive
-  br_source: ADR-005
-  anchors: [ADR-005]
-  evidence: unlabelled
-  tn: null
-  band: null
 - id: CLM-2899
   statement: The solve-time-versus-S curve reports p50 and p99 per tier and is the cost side of the scenario-count trade.
   owner: 04-compliance/T5-gap-and-performance.md §6.2
@@ -30383,3 +30363,154 @@
   tn: TN-01-cvar-across-stages
   band: null
   depends_on: [CLM-1376, CLM-3061]
+
+# ---- 06-theory/TN-02: fan structure, declared method, suboptimality instruments ----
+- id: CLM-3063
+  statement: "The ADR-005 ensemble is a fan, not a recombining tree: every scenario is a complete path distinct from slot 1, so F_1 = F_2 = ... = F_H."
+  owner: 01-adr/ADR-005-joint-scenario-ensemble.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: derived
+  tn: TN-02-fan-not-tree
+  band: null
+- id: CLM-3064
+  statement: The declared solution method is rolling two-stage SAA over the fan, glued by the commitment ledger and closed by a terminal value function; no multistage-optimality claim is available from this artefact.
+  owner: 02-layers/L3-planner.md §0
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005, ADR-010]
+  evidence: derived
+  tn: TN-02-fan-not-tree
+  band: null
+  depends_on: [CLM-3063]
+- id: CLM-3065
+  statement: Dropping the scenario index from first-stage variables is exactly equivalent to imposing explicit non-anticipativity constraints, requiring no convexity, continuity or integrality assumption.
+  owner: 02-layers/L3-planner.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: derived
+  tn: TN-02-fan-not-tree
+  band: null
+- id: CLM-3066
+  statement: The first stage at each gate is what is irreversible; at S3 and S4 that is the order sent this tick and nothing else, one slot wide.
+  owner: 02-layers/L3-planner.md §2
+  class: analytic
+  blast_radius: moderate
+  br_source: ADR-010
+  anchors: [ADR-010]
+  evidence: derived
+  tn: TN-02-fan-not-tree
+  band: null
+  depends_on: [CLM-3064]
+- id: CLM-3067
+  statement: Stage-aggregation error survives an exact terminal value function, so lookahead plus an exact V is not optimal for S1 through S4.
+  owner: 02-layers/L3-planner.md §0
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005, ADR-007]
+  evidence: derived
+  tn: TN-02-fan-not-tree
+  band: null
+  depends_on: [CLM-3063]
+- id: CLM-3068
+  statement: The filtration distance between a fan and any real tree is O(1) and is not reduced by any refinement of the scenario distance, so raising S cannot recover what the fan structure gives away.
+  owner: 01-adr/ADR-005-joint-scenario-ensemble.md §Consequences
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005]
+  evidence: derived
+  tn: TN-02-fan-not-tree
+  band: null
+  depends_on: [CLM-3063]
+- id: CLM-3069
+  statement: Scenario count S controls the discretisation of the joint law and the solve time; the objective-versus-S curve measures convergence to the ensemble's own large-S value and is not an accuracy claim.
+  owner: 01-adr/ADR-005-joint-scenario-ensemble.md §Consequences
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005, T5]
+  evidence: empirical-pending
+  tn: TN-02-fan-not-tree
+  band: "objective within 1% of the S=256 reference at the configured S"
+  depends_on: [CLM-3068]
+- id: CLM-3070
+  statement: The net market position summed across day-ahead, intraday and aFRR equals the physical flow in the same slot; every position is physically backed.
+  owner: 02-layers/L3-planner.md §2
+  class: analytic
+  blast_radius: very-expensive
+  br_source: ADR-010
+  anchors: [INV-X-07, ADR-010]
+  evidence: derived
+  tn: TN-02-fan-not-tree
+  band: null
+- id: CLM-3071
+  statement: A perfect-foresight benchmark that buys and sells the same delivery period violates the physical-backing constraint the policy obeys, so it is not a bound on the feasible region and is rejected as the suboptimality reference.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2.1
+  class: analytic
+  blast_radius: moderate
+  br_source: argued
+  anchors: [INV-X-07]
+  evidence: derived
+  tn: TN-02-fan-not-tree
+  band: null
+  depends_on: [CLM-3070]
+- id: CLM-3072
+  statement: PolicyQuality is realised value over a physically-backed, index-granularity, sequential-re-solve benchmark, bounded by 1 by construction, and is reported at both the H_plan and the monthly horizon.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2.1
+  class: empirical
+  blast_radius: moderate
+  br_source: argued
+  anchors: [T5, INV-X-07]
+  evidence: empirical-pending
+  tn: TN-02-fan-not-tree
+  band: "reported, no threshold; both horizons required in the same report"
+  depends_on: [CLM-3071]
+- id: CLM-3073
+  statement: The difference between PolicyQuality at the monthly horizon and at the matched horizon is the cost of the H_plan truncation, and is the specification's only direct measurement of the terminal value function's adequacy.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2.1
+  class: empirical
+  blast_radius: moderate
+  br_source: argued
+  anchors: [T5, ADR-007]
+  evidence: empirical-pending
+  tn: TN-02-fan-not-tree
+  band: "reported, no threshold"
+  depends_on: [CLM-3072]
+- id: CLM-3074
+  statement: Report-versus-realised drift D(tau) is a signed monitor over matched windows with matched terminal terms, carries no band because it mixes anticipativity, ensemble misspecification and V error, and is read as a trend.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2.1
+  class: empirical
+  blast_radius: cheap
+  br_source: argued
+  anchors: [T5]
+  evidence: empirical-pending
+  tn: TN-02-fan-not-tree
+  band: "no threshold by design; trend only"
+- id: CLM-3075
+  statement: The stage-aggregation error A equals (z_MS - z_rolling-fan)/z_MS measured on a synthetic instance whose multistage tree is enumerable, and isolates stage aggregation because sampling, misspecification, reduction, V error and financial arbitrage all cancel by construction.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2.1
+  class: empirical
+  blast_radius: very-expensive
+  br_source: ADR-005
+  anchors: [ADR-005, T5]
+  evidence: empirical-pending
+  tn: TN-02-fan-not-tree
+  band: "A <= 5%; breach reopens tree construction"
+  depends_on: [CLM-3064, CLM-3067]
+- id: CLM-3076
+  statement: The industry term capture rate is not used for policy quality because its published denominators are energy-only while its numerators include ancillary revenue, so it is unbounded above; T4's CaptureRatio keeps its name and measures execution quality.
+  owner: 04-compliance/T5-gap-and-performance.md §6.2.1
+  class: analytic
+  blast_radius: cheap
+  br_source: argued
+  anchors: [T4, T5]
+  evidence: derived
+  tn: TN-02-fan-not-tree
+  band: null

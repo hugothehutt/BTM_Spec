@@ -59,6 +59,14 @@ EVIDENCE = {"unlabelled", "derived", "prototyped", "empirical-pending",
 # T1 §10 reserved invariant ids. Procedure ids are voided by a different
 # mechanism into `voided.yaml` (PROTOCOL §4.3); the two id spaces never interact.
 RETIRED: set[str] = {
+    # Two claims narrowed by TN-02 (#34). CLM-0362 said scenario count S has a
+    # measurable cost/quality curve; CLM-2898 said the objective-versus-S curve
+    # shows where accuracy flattens. Both assert distance to the optimum. The fan's
+    # filtration distance is O(1) and refinement-proof, so the curve measures
+    # discretisation only. Withdrawn rather than reworded: the successors
+    # (CLM-3069, and the instruments CLM-3072..3075) assert strictly less.
+    "CLM-0362",
+    "CLM-2898",
     # ADR-015's OPEN-1/2/3 and review-protocol sections, deleted from the
     # specification. The deferred decisions are still asserted by `README.md`
     # and `05-implementation/P0-workstreams.md`; a rebuilt ADR-015 registers

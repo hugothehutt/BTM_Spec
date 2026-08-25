@@ -66,13 +66,19 @@ ensemble and never independently:
 - Memory: `S × H × K × 4 bytes`. With `K=8`, `H=192`, `S=64` this is ~400 kB per
   snapshot — trivial. The scenario axis is affordable *because* the hot window is
   bounded (ADR-004).
-- Scenario count `S` becomes a first-class tuning parameter with a measurable
-  cost/quality curve. `04-compliance/T5` requires reporting objective value and
-  solve time as a function of `S`, so the choice is evidenced rather than
-  guessed.
+- Scenario count `S` controls the **discretisation** of the joint law and the solve
+  time. `04-compliance/T5` requires reporting objective value and solve time as a
+  function of `S`, so the choice is evidenced rather than guessed. The curve measures
+  convergence to the ensemble's own large-`S` value; it is not a measure of distance to
+  the true optimum, which is bounded separately (`T5` §6.2, `06-theory/TN-02`).
 - The Planner's stochastic formulations (chance constraints, CVaR, two-stage
   recourse) all index the same axis, so they are mutually consistent by
   construction.
+- The ensemble is a **fan**, not a recombining tree: every scenario is a complete path,
+  distinct from slot 1, so `F_1 = F_2 = … = F_H`. This fixes the solution method as
+  rolling two-stage SAA glued by `V` (`L3` §0) and makes two-stage SAA theory available.
+  No multistage-optimality claim is available from this artefact. A tree cannot be
+  obtained by reducing the fan; it would require tree construction, a different artefact.
 - Any single-series forecast improvement must be re-integrated into the joint
   model rather than patched in downstream. This is a real workflow cost and it is
   the price of correctness.
