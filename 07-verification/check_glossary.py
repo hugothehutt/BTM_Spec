@@ -32,6 +32,8 @@ Stdlib only, no venv. Run: python3 07-verification/check_glossary.py
 
 from __future__ import annotations
 
+import dataclasses
+import json
 import pathlib
 import re
 import sys
@@ -71,7 +73,12 @@ RETIRED_EXEMPT_FILES = {
     "07-verification/retired-vocabulary.yaml",
     "07-verification/check_glossary.py",
     "07-verification/claims.yaml",
+    "07-verification/rulings.json",
 }
+
+# The check's own machinery names retired spellings because they are its subject:
+# the ruling data records them, and the tests plant them as fixtures.
+RETIRED_EXEMPT_PREFIXES = ("07-verification/tests/",)
 
 
 def corpus_files() -> list[pathlib.Path]:
@@ -171,6 +178,127 @@ def parse_retired() -> dict[str, dict]:
     return out
 
 
+# --- the ruling set ---------------------------------------------------------
+#
+# Text in, data out. `parse_rulings` takes text and returns records; it raises
+# on anything it does not understand and never exits. Exit policy belongs to the
+# entry point alone, so that an unrunnable check can never be mistaken for a
+# clean one.
+
+
+class RulingDataError(ValueError):
+    """The ruling data is not something this module can read.
+
+    Raised, never exited on. The old reader identified records by exact indent
+    position and returned an empty mapping on input it did not recognise — and
+    an empty mapping reported success, so the check that costs something was the
+    one that failed open.
+    """
+
+
+@dataclasses.dataclass(frozen=True)
+class Allowance:
+    path: str
+    reason: str
+
+
+@dataclasses.dataclass(frozen=True)
+class RetiredSpelling:
+    spelling: str
+    replacement: str
+    case_sensitive: bool
+    allowed: list[Allowance] = dataclasses.field(default_factory=list)
+
+
+@dataclasses.dataclass(frozen=True)
+class Anchor:
+    doc: str
+    section: str
+
+
+@dataclasses.dataclass(frozen=True)
+class Ruling:
+    word: str
+    keeps: str
+    loses: str
+    replacements: list[str]
+    anchor: Anchor
+    retired: list[RetiredSpelling]
+
+
+def _require(obj: dict, key: str, kind: type, where: str):
+    if key not in obj:
+        raise RulingDataError(f"{where}: missing '{key}'")
+    value = obj[key]
+    if not isinstance(value, kind):
+        raise RulingDataError(f"{where}: '{key}' must be {kind.__name__}, "
+                              f"got {type(value).__name__}")
+    return value
+
+
+def parse_rulings(text: str) -> list[Ruling]:
+    """Parse the ruling set. Raises `RulingDataError` on anything malformed."""
+    try:
+        doc = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise RulingDataError(f"not valid JSON: {exc}") from exc
+    if not isinstance(doc, dict):
+        raise RulingDataError("top level must be an object")
+    rulings = _require(doc, "rulings", dict, "top level")
+
+    out: list[Ruling] = []
+    for word, rec in rulings.items():
+        where = f"ruling '{word}'"
+        if not isinstance(rec, dict):
+            raise RulingDataError(f"{where}: must be an object")
+
+        replacements = _require(rec, "replacements", list, where)
+        for r in replacements:
+            if not isinstance(r, str) or not r.strip():
+                raise RulingDataError(f"{where}: every replacement must be a "
+                                      f"non-empty string")
+
+        anchor_obj = _require(rec, "anchor", dict, where)
+        anchor = Anchor(doc=_require(anchor_obj, "doc", str, f"{where} anchor"),
+                        section=_require(anchor_obj, "section", str,
+                                         f"{where} anchor"))
+
+        retired: list[RetiredSpelling] = []
+        for entry in _require(rec, "retired", list, where):
+            if not isinstance(entry, dict):
+                raise RulingDataError(f"{where}: every retired entry must be an object")
+            spelling = _require(entry, "spelling", str, where)
+            seat = f"{where}, spelling '{spelling}'"
+            # Case sensitivity is declared, never inferred. Inferring it from
+            # whether the spelling contains a space is why five capitalised
+            # occurrences of `Oracle` were invisible.
+            case_sensitive = _require(entry, "caseSensitive", bool, seat)
+            allowed: list[Allowance] = []
+            for a in _require(entry, "allowed", list, seat):
+                if not isinstance(a, dict):
+                    raise RulingDataError(f"{seat}: every allowance must be an object")
+                allowed.append(Allowance(
+                    path=_require(a, "path", str, f"{seat} allowance"),
+                    reason=_require(a, "reason", str, f"{seat} allowance"),
+                ))
+            retired.append(RetiredSpelling(
+                spelling=spelling,
+                replacement=_require(entry, "replacement", str, seat),
+                case_sensitive=case_sensitive,
+                allowed=allowed,
+            ))
+
+        out.append(Ruling(
+            word=word,
+            keeps=_require(rec, "keeps", str, where),
+            loses=_require(rec, "loses", str, where),
+            replacements=replacements,
+            anchor=anchor,
+            retired=retired,
+        ))
+    return out
+
+
 # --- checks -----------------------------------------------------------------
 
 def check_unique(entries: list[dict]) -> list[str]:
@@ -228,7 +356,8 @@ def check_retired(retired: dict[str, dict], blobs: dict[str, str]) -> list[str]:
         pattern = re.compile(r"(?<![A-Za-z0-9_])" + re.escape(word) + r"(?![A-Za-z0-9_])",
                              re.IGNORECASE if " " in word else 0)
         for rel, text in blobs.items():
-            if rel in RETIRED_EXEMPT_FILES or rel in allowed:
+            if (rel in RETIRED_EXEMPT_FILES or rel in allowed
+                    or rel.startswith(RETIRED_EXEMPT_PREFIXES)):
                 continue
             for m in pattern.finditer(text):
                 line = text.count("\n", 0, m.start()) + 1

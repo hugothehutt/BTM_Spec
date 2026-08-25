@@ -1,0 +1,123 @@
+{
+  "_comment": [
+    "The ruling set — the single source of truth for which word kept which meaning.",
+    "",
+    "One record per contested word, keyed by the word whose meaning was contested,",
+    "never by a losing spelling: filing by losing spelling is what let the old",
+    "grouping drift from the glossary's. `00-overview/04-glossary.md` defines what a",
+    "term means; `06-theory/TN-03-vocabulary.md` argues each ruling; this file records",
+    "it and is what `check_glossary.py` reads. No two of the three state the same fact.",
+    "",
+    "JSON rather than the repository's YAML convention, deliberately: the standard",
+    "library cannot parse YAML, the no-venv policy forbids installing a parser, and",
+    "every hand-rolled reader in this directory fails silently on input it does not",
+    "recognise. JSON's parser is total and raises.",
+    "",
+    "keeps         the sense that keeps the word",
+    "loses         the sense that gives it up",
+    "replacements  the names the losing sense is written with; each must resolve to a",
+    "              glossary entry, so a half-recorded ruling is caught the day it is",
+    "              written",
+    "anchor        doc and section of the argument. Mandatory: no ruling exists as data",
+    "              without a written justification",
+    "retired       the spellings a machine can find. A ruling whose losing sense is the",
+    "              same spelling in a different context carries none, because no matcher",
+    "              can tell the two apart; what is enforceable about it is that its",
+    "              replacement resolves",
+    "  caseSensitive  declared, never inferred. Inferring it from whether the spelling",
+    "                 contains a space is why five capitalised occurrences of `Oracle`",
+    "                 are invisible to the old checker",
+    "  allowed        a decision, not a suppression: it carries a written reason, and the",
+    "                 reason must be that the retired word is load-bearing at that site —",
+    "                 a regulatory primitive, a quotation, or a sentence whose job is to",
+    "                 say the word is retired. \"It is everywhere and hard to change\" is",
+    "                 not a reason; that is a propagation batch's work",
+    "",
+    "A ruling enters this file with its batch, so that every batch is green on arrival.",
+    "`gate`, `tier`, `primitive` and `oracle` are later batches and are absent."
+  ],
+
+  "rulings": {
+    "frame": {
+      "keeps": "the sign frame — battery, POI, market",
+      "loses": "L1's warm storage artefact per (series, civil day)",
+      "replacements": ["slab"],
+      "anchor": {"doc": "06-theory/TN-03-vocabulary.md", "section": "3.1"},
+      "retired": [
+        {"spelling": "FrameSpecHash", "replacement": "SlabSpecHash", "caseSensitive": true, "allowed": []},
+        {"spelling": "frameSpecHash", "replacement": "slabSpecHash", "caseSensitive": true, "allowed": []},
+        {"spelling": "frameContentHash", "replacement": "slabContentHash", "caseSensitive": true, "allowed": []},
+        {"spelling": "frame family", "replacement": "slab family", "caseSensitive": false, "allowed": []},
+        {"spelling": "frame set", "replacement": "slab set", "caseSensitive": false, "allowed": []},
+        {"spelling": "warm frame", "replacement": "slab", "caseSensitive": false, "allowed": []}
+      ]
+    },
+
+    "stage": {
+      "keeps": "a measurability level inside one solve — first and second",
+      "loses": "the composer's ordered steps, and the settlement timeline",
+      "replacements": ["composition step", "settlement point"],
+      "anchor": {"doc": "06-theory/TN-03-vocabulary.md", "section": "3.6"},
+      "retired": [
+        {"spelling": "composer stage", "replacement": "composition step", "caseSensitive": false, "allowed": []},
+        {"spelling": "composition stage", "replacement": "composition step", "caseSensitive": false, "allowed": []},
+        {"spelling": "staged market gates", "replacement": "gates", "caseSensitive": false, "allowed": []},
+        {"spelling": "staging table", "replacement": "gate table", "caseSensitive": false,
+         "allowed": [
+           {"path": "06-theory/TN-02-fan-not-tree.md",
+            "reason": "names the old table in the sentence that renames it"}
+         ]}
+      ]
+    },
+
+    "peak_to_go": {
+      "keeps": "nothing — the name is retired outright",
+      "loses": "the peak already realised this period, which the name reads as the peak remaining",
+      "replacements": ["pPoiRealisedPeakMw"],
+      "anchor": {"doc": "06-theory/TN-03-vocabulary.md", "section": "3.9"},
+      "retired": [
+        {"spelling": "peak_to_go", "replacement": "pPoiRealisedPeakMw", "caseSensitive": true, "allowed": []}
+      ]
+    },
+
+    "V": {
+      "keeps": "the terminal value function",
+      "loses": "the aFRR capacity bid-curve expected value",
+      "replacements": ["B(E)"],
+      "anchor": {"doc": "06-theory/TN-03-vocabulary.md", "section": "3.7"},
+      "retired": []
+    },
+
+    "generation": {
+      "keeps": "L0's state version, incremented per Commit",
+      "loses": "the hot window's per-refill counter",
+      "replacements": ["refillCount"],
+      "anchor": {"doc": "06-theory/TN-03-vocabulary.md", "section": "3.8"},
+      "retired": []
+    },
+
+    "scenarioCount": {
+      "keeps": "S, the reduced ensemble axis",
+      "loses": "the slow loop's own, larger ensemble",
+      "replacements": ["fitScenarioCount"],
+      "anchor": {"doc": "06-theory/TN-03-vocabulary.md", "section": "3.8"},
+      "retired": []
+    },
+
+    "capture rate": {
+      "keeps": "nothing — the industry metric is rejected along with its name",
+      "loses": "the ratio of realised to theoretical revenue, which is not the quantity this engine optimises",
+      "replacements": ["PolicyQuality"],
+      "anchor": {"doc": "06-theory/TN-02-fan-not-tree.md", "section": "5"},
+      "retired": [
+        {"spelling": "capture rate", "replacement": "PolicyQuality", "caseSensitive": false,
+         "allowed": [
+           {"path": "04-compliance/T5-gap-and-performance.md",
+            "reason": "names the rejected metric in order to reject it"},
+           {"path": "06-theory/TN-02-fan-not-tree.md",
+            "reason": "names the rejected metric in order to reject it"}
+         ]}
+      ]
+    }
+  }
+}
