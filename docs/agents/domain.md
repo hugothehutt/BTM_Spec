@@ -11,11 +11,14 @@ layout the skills assume by default.
   first; everything else is scoped to a layer.
 - **`00-overview/04-glossary.md`** — the glossary: what each term means, and the
   document that owns the concept. This is the vocabulary source, in place of a
-  root `CONTEXT.md`. §2 records where one word carried two meanings and which
-  meaning kept it; §15 lists the retired spellings.
-- **`00-overview/02-conventions.md`** — normative units, the three sign frames,
-  the 15-minute `SlotId` grid, naming and numeric policy. Rules, not
-  definitions.
+  root `CONTEXT.md`. Definitions only; it states no rules.
+- **`07-verification/rulings.json`** — where one word carried two meanings, which
+  meaning kept it and what the losing spelling becomes. The single source of
+  truth for that, and what the glossary check reads.
+  `06-theory/TN-03-vocabulary.md` argues each ruling.
+- **`00-overview/02-conventions.md`** — normative units, the three sign frames —
+  battery, POI and market, with one sign flip, between battery and POI — the
+  15-minute `SlotId` grid, naming and numeric policy. Rules, not definitions.
 - **`00-overview/03-mispel-reference.md`** — the MiSpel delineation regime.
 - **`01-adr/`** — ADRs, named `ADR-NNN-<slug>.md` (`ADR-001` … `ADR-017`). Read
   the ones touching the area you are about to work in. **Not `docs/adr/`.**
@@ -50,6 +53,15 @@ several ADRs or none.
 
 ## Use the repo's vocabulary
 
+Write in the terms the glossary defines, and never in a spelling the ruling set
+retires. `python3 07-verification/check_all.py` is the single command that
+verifies the repository — the claim register, `INV-G-02`'s unit and frame
+naming, and the glossary — and it is what to run before handing work back. It
+exits 2 when a check could not run, 1 when a check found violations, 0 when all
+three are clean.
+
+There is no build and no CI, so nothing fails automatically. Running the checks
+is the whole of the enforcement.
 
 ## Flag ADR conflicts
 
@@ -58,5 +70,4 @@ silently overriding:
 
 > _Contradicts ADR-010 (cross-market tier ladder) — but worth reopening because…_
 
-Per working rule 3 in `CLAUDE.md`: surface the decision point rather than
-deciding it unilaterally.
+Surface the decision point rather than deciding it unilaterally.
