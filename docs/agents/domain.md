@@ -15,12 +15,8 @@ layout the skills assume by default.
 - **`00-overview/03-mispel-reference.md`** — the MiSpel delineation regime.
 - **`01-adr/`** — ADRs, named `ADR-NNN-<slug>.md` (`ADR-001` … `ADR-016`). Read
   the ones touching the area you are about to work in. **Not `docs/adr/`.**
-- **`01-adr/ADR-015-open-decisions.md`** — the open-decision register. Check it
-  before proposing anything in a contested area.
 - **`03-contracts/`** — the frozen seams `C0`–`C6`. Anything crossing a layer
   boundary is constrained by a versioned payload here.
-- **`RECONCILIATION.md`** — cross-document consistency findings and small open
-  questions.
 
 If a file listed above does not exist, **proceed silently**. Don't flag its
 absence; don't suggest creating it upfront.
@@ -47,16 +43,6 @@ New ADRs continue the `01-adr/ADR-NNN-<slug>.md` numbering. Do not create
 
 ## Use the repo's vocabulary
 
-When your output names a domain concept — an issue title, a refactor proposal, a
-hypothesis, a test name — use the term exactly as defined in
-`00-overview/02-conventions.md` and the relevant `03-contracts/` payload. Never
-conflate the battery and POI sign frames. Time is `SlotId` on the 15-minute UTC
-grid; monthly and annual accounting is Europe/Berlin civil calendar. The
-objective is denominated in EUR and nothing else.
-
-If a concept you need has no term yet, that's a signal — either you're inventing
-language the spec doesn't use (reconsider) or there's a real gap (note it for
-`/domain-modeling`, which extends `02-conventions.md`).
 
 ## Flag ADR conflicts
 

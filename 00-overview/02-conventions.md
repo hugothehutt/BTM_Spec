@@ -105,10 +105,6 @@ regulatory primitive is transcribed in the unit its source quotes it in — the
 Leistungspreis in EUR/kW/a, for instance — and converted at ingest. Primitives
 are never rewritten to suit this table.
 
-**Rule:** the objective function is denominated in **EUR** and nothing else.
-Every term converts to EUR at its own boundary. A term that emits anything else
-is a contract violation.
-
 ### 2.1 The accounting period is an input, not a dimension
 
 `PeakPrice` is EUR/MW: a charge per MW of peak, for one accounting period. The
