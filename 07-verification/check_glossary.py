@@ -16,6 +16,9 @@ Failures — these stop the run being clean:
                true.
   RESOLVES     every replacement name in the ruling data is a glossary entry, so
                a half-recorded ruling is caught the day it is written.
+  ANCHOR       every ruling's anchor names a document and a section that exist.
+               A ruling that cannot be traced to its argument is data without a
+               justification.
   RETIRED      no retired spelling appears outside a written allowance. The
                retired spellings are the losing side of each ruling, and this is
                what stops them growing back.
@@ -407,6 +410,34 @@ def check_replacements_resolve(rulings: list[Ruling],
     return out
 
 
+def check_anchors(rulings: list[Ruling], blobs: dict[str, str]) -> list[Finding]:
+    """Every ruling's anchor names a document and a section that exist.
+
+    The anchor is mandatory in the data, so this is what stops it pointing at a
+    section that has been renumbered away. It is also why `TN-03` §3's section
+    ids are load-bearing.
+    """
+    out: list[Finding] = []
+    for r in rulings:
+        text = blobs.get(r.anchor.doc)
+        if text is None:
+            out.append(Finding(
+                check="ANCHOR", severity="failure", path=RULINGS_PATH, line=0,
+                word=r.word, replacement="",
+                detail=f"anchor document '{r.anchor.doc}' does not exist",
+            ))
+            continue
+        heading = re.compile(r"^#{2,4} " + re.escape(r.anchor.section) + r"[.\s]",
+                             re.MULTILINE)
+        if not heading.search(text):
+            out.append(Finding(
+                check="ANCHOR", severity="failure", path=RULINGS_PATH, line=0,
+                word=r.word, replacement="",
+                detail=f"'{r.anchor.doc}' has no section {r.anchor.section}",
+            ))
+    return out
+
+
 def check_live(entries: list[Entry], blobs: dict[str, str]) -> list[Finding]:
     """A warning, never a failure.
 
@@ -434,6 +465,7 @@ def run_checks(entries: list[Entry], rulings: list[Ruling],
     out += check_unique(entries)
     out += check_owner(entries, exists)
     out += check_replacements_resolve(rulings, entries)
+    out += check_anchors(rulings, blobs)
     for rel, text in sorted(blobs.items()):
         out += find_retired(rulings, rel, text)
     out += check_live(entries, blobs)

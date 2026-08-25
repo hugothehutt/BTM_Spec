@@ -238,9 +238,26 @@ and forbids.
 
 ## 5. The checker
 
-`07-verification/check_glossary.py`, stdlib only, four checks: no term defined
-twice; every entry names an owner that exists; every defined term is used
-somewhere in the corpus; no retired spelling outside a written allowance.
+`07-verification/check_glossary.py`, stdlib only, reading the ruling set from
+`07-verification/rulings.json`. Four assertions **fail**: no term defined twice;
+every entry names an owner that exists; every replacement name in the ruling set
+resolves to a glossary entry; no retired spelling outside a written allowance.
+One **warns** without failing: a term defined and used nowhere else in the
+corpus. Liveness is a warning because any honest implementation of it is either
+noisy about legitimately rare terms or vacuous, and a dead entry is a tidiness
+problem where a returned retired spelling is a correctness one.
+
+The ruling data is JSON, parsed by the standard library. The standard library
+cannot parse YAML, the no-venv policy forbids installing a parser, and a
+hand-rolled reader fails silently on input it does not recognise — which is
+precisely what the first version of this checker did, identifying records by
+exact indent position and reporting success on zero records. JSON's parser is
+total and raises, and the checker exits 2 rather than 0 when its data will not
+load.
+
+The checker has tests — the repository's first — and the first of them is that
+the parser raises. Until a parser is proven to fail loudly, every later passing
+run is ambiguous between "no violations found" and "no rulings loaded".
 
 Written before the propagation, per the precedent of
 [#41](https://github.com/hugothehutt/BTM_Spec/issues/41), where writing the unit
@@ -249,13 +266,16 @@ that a grilling had missed. It earned its place immediately: the first run
 rejected **`relaxation order`**, a term this note's author had defined and the
 corpus has never used — `C2`:126 and `L3` §6 call it *feasibility restoration*.
 
-On the corpus as it stands the checker reports **89 retired spellings across 25
-files**, which is the propagation work enumerated rather than estimated. `T5`
-alone holds 34, all of them `oracle`.
+The first version of the checker reported 89 failures, and that figure was
+wrong: nested spellings each reported independently, so `frame set` and the
+phrase enclosing it were counted twice. The propagation is **81 distinct sites
+across 24 files**. `T5` alone holds 34, all of them `oracle`. The rebuilt matcher
+takes the longest match and deduplicates per line, so its count is places to
+edit rather than characters.
 
 `claims.yaml` is exempt from the retired scan: it quotes the owning text by
-construction, so every retired word appears there a second time. The register is
-corrected *by* the propagation, not before it.
+construction, so every retired word would appear there a second time. The
+register is corrected *by* a propagation batch, not before it.
 
 ## 6. What the specification gains and loses
 
@@ -265,17 +285,28 @@ it that way. Eleven collisions closed, of which two — `INV-X-07` and
 resolved by reading.
 
 **Loses.** `oracle`, `primitive`, `frame`, `gate` and `tier` each lose a sense
-they currently carry, across 89 sites. Until the propagation lands, the glossary
-and the corpus disagree, and the checker fails by design.
+they currently carry, across 81 sites. The propagation lands in batches, and each
+batch is green on arrival: the ruling enters `rulings.json`, its sites are
+renamed, and the check passes, all in one change. A ruling is not recorded before
+its propagation, so the checker never fails by design — a red result is always
+news. Batch one carried `frame`, `stage` and `peak_to_go`; `gate`, `tier`,
+`primitive` and `oracle` follow, and two of those need a decision of their own
+first.
 
 **Not addressed.** The nine §4 findings, each of which needs its own decision.
 `06-theory` remains Advisory: nothing in this note binds until Hugo acts on it.
 
 ## 7. Where the words go
 
-`00-overview/04-glossary.md` §2 carries the rulings as a table and §15 the retired
-list. The pointers in `CLAUDE.md` and `docs/agents/domain.md`, which named
-`00-overview/02-conventions.md` as the glossary, now name the glossary.
+Three artifacts, three disjoint jobs, so that no two of them can state the same
+fact. `00-overview/04-glossary.md` defines what a term means and names the
+document that owns it. `07-verification/rulings.json` records the ruling set and
+is the single source of truth for it. This note argues each ruling, in §3, and
+each ruling record anchors into the §3 section that argues it — so those section
+ids are load-bearing and must stay stable.
+
+`docs/agents/domain.md` names the glossary by file, where it previously named
+`00-overview/02-conventions.md`.
 
 `02-conventions.md` is unchanged and remains what it always was: units, signs,
 time, naming and numeric policy. It was never a glossary, which is why the

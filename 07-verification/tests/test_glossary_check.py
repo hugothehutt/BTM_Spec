@@ -16,6 +16,7 @@ Run: python3 -m unittest discover -s 07-verification/tests
 
 from __future__ import annotations
 
+import dataclasses
 import pathlib
 import sys
 import unittest
@@ -322,3 +323,34 @@ class FindingsAreStructuredAndFormattedOnce(unittest.TestCase):
                          ("README.md", 3, "peak_to_go", "pPoiRealisedPeakMw"))
         self.assertIn("README.md:3", cg.format_finding(f))
         self.assertIn("pPoiRealisedPeakMw", cg.format_finding(f))
+
+
+class EveryRulingIsTraceableToItsArgument(unittest.TestCase):
+
+    RULING = cg.Ruling(
+        word="frame", keeps="x", loses="y", replacements=["slab"],
+        anchor=cg.Anchor(doc="06-theory/TN-03-vocabulary.md", section="3.1"),
+        retired=[])
+
+    def test_a_present_section_passes(self):
+        blobs = {"06-theory/TN-03-vocabulary.md":
+                 "## 3. The rulings\n\n### 3.1 `frame` — the sign frame keeps it\n"}
+        self.assertEqual(cg.check_anchors([self.RULING], blobs), [])
+
+    def test_a_renumbered_section_fails(self):
+        blobs = {"06-theory/TN-03-vocabulary.md": "### 3.2 `gate` keeps it\n"}
+        found = cg.check_anchors([self.RULING], blobs)
+        self.assertEqual([(f.check, f.severity, f.word) for f in found],
+                         [("ANCHOR", "failure", "frame")])
+
+    def test_a_missing_anchor_document_fails(self):
+        found = cg.check_anchors([self.RULING], {})
+        self.assertEqual(len(found), 1)
+        self.assertIn("does not exist", found[0].detail)
+
+    def test_a_top_level_section_anchor_resolves(self):
+        ruling = dataclasses.replace(
+            self.RULING, anchor=cg.Anchor(doc="06-theory/TN-02-fan-not-tree.md",
+                                          section="5"))
+        blobs = {"06-theory/TN-02-fan-not-tree.md": "## 5. Two errors, opposite signs\n"}
+        self.assertEqual(cg.check_anchors([ruling], blobs), [])
