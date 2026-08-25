@@ -10,18 +10,49 @@ intent.
 
 ---
 
-## 1. Staged decisions, not one solve
+## 0. The declared solution method
+
+**Rolling two-stage SAA over a scenario fan, glued by the commitment ledger and closed by
+a terminal value function.**
+
+The `ADR-005` ensemble is a **fan**: `S` complete paths, all distinct at slot 1, so
+`F_1 = F_2 = … = F_H`. It has no interior nodes and therefore encodes no progressive
+branching. The only correct treatment is to drop the scenario index from what is
+committed, which yields **two** measurability levels per solve and no third.
+
+So the engine does not solve one multistage stochastic program. At each gate it conditions
+a fresh ensemble on the realised state and on the commitment ledger, solves one two-stage
+problem, keeps the first-stage decision and discards the second stage entirely. The second
+stage is not a plan; it is a valuation whose only job is to price the first-stage
+commitment. Reality supplies the new information between gates, and the ledger carries the
+frozen decisions forward.
+
+**The policy is multistage. Each solve is two-stage.**
+
+**Guarantee.** An exactly optimal here-and-now decision for the `S`-point weighted
+distribution, given `V`. No claim of multistage optimality is available, and none is made.
+
+**Declared error.** The second stage sees the whole of `[τ, τ+H_plan]` while reality
+reveals progressively, so the model treats its future self as better informed than it will
+be. Stage-aggregation error survives an exact `V`. It is bounded by `T5`'s three
+instruments, of which the isolated measurement carries the acceptance band. Derivation,
+instrument definitions and the synthetic-instance design criteria are in
+`06-theory/TN-02-fan-not-tree.md`.
+
+---
+
+## 1. Decisions at gates, not one solve
 
 The Planner does not run once per day. It runs at gates, and each run has a
 different information set and a different irreversibility. Conflating them is
 the mistake that makes the problem look intractable.
 
-| Stage | Clock | Decides | Freezes | Information added since last stage |
+| Gate | Clock | Decides | Freezes | Information added since the last gate |
 |---|---|---|---|---|
 | S0 Slow loop | `C_slow` | `V(SOC, peakState, qualState)`| nothing | new realised state, refreshed long-horizon scenarios |
 | S1 Reserve | `C_gate` (aFRR capacity gate) | `rUp[b]`, `rDn[b]` offers | reserve offers once submitted | reserve price beliefs |
 | S2 Day-ahead | `C_gate` (DA gate) | DA bid curve per slot | DA position at clearing | reserve awards from S1 |
-| S3 Post-DA rebalance | `C_gate` | initial intraday target position | nothing | realised DA clearing |
+| S3 Post-DA rebalance | `C_gate` | initial intraday target position | the orders it sends | realised DA clearing |
 | S4 Continuous intraday | `C_tick` | intraday target position, re-optimised | progressively, as fills occur | book state, updated forecasts |
 | S5 Dispatch | real time | setpoint within the SOC corridor | — | activation signal |
 
@@ -30,7 +61,7 @@ the mistake that makes the problem look intractable.
 The delineation machinery is monthly, so each gate commits under a different amount of
 knowledge about the month it is committing into (ADR-017).
 
-| Stage | Delineation information | Measurement of what not knowing it cost |
+| Gate | Delineation information | Measurement of what not knowing it cost |
 |---|---|---|
 | S0 | MTD accumulators; `MW_month` distribution; AW>0 forecast for the remaining month | `V_del` projection drift against the previous slow tick |
 | S1 | Same, **without** D+1 certainty — the widest delineation uncertainty of any stage | Re-solve on the realised D+1 `(24)¼` vector; the objective delta is the reserve gate's delineation foresight cost |
@@ -42,10 +73,18 @@ month's route is knowable, so a large measured cost there is a direct argument f
 smaller reserve volumes late in an undecided month — and a small one retires the
 question.
 
-**The same core model is solved at every stage.** What changes is which variables
-are free and which are fixed by the commitment ledger. One formulation, one set
-of tests, six information sets. Writing six models would be six times the surface
-area and six chances to disagree about the physics.
+**The same core model is solved at every gate.** What changes is which variables are free
+and which are fixed by the commitment ledger. One formulation, one set of tests, six
+gates. Writing six models would be six times the surface area and six chances to disagree
+about the physics.
+
+Each gate solve is a **separate two-stage problem** (§0): the variables it commits carry no
+scenario index, everything downstream carries one. The gates are not nested stages of a
+single stochastic program — each solve conditions a fresh ensemble on the realised state
+and on the ledger.
+
+**Gate** and **stage** are distinct throughout this document. `S0`–`S5` are gates. First
+and second are stages. Six gates, two stages per solve; the counts are unrelated.
 
 S5 is a controller, not an optimiser, and is out of scope (§7).
 
@@ -62,6 +101,15 @@ envelope; the POI bridge `p_poi = load − pv_out − p_batt`, where `pv_out = �
 **Market.** Position accounting per market and slot; DA position fixed after
 clearing; intraday volume bounded by `FillProbView`'s `BoundTerm`; reserve
 offers on the product grid (`minBidMw`, `bidStepMw`, symmetry if required).
+
+**Every position is physically backed.** The net market position summed across day-ahead,
+intraday and aFRR equals the physical flow in the same slot (`INV-X-07`). This is not the
+POI bridge restated — the bridge is a physical identity, this ties the market position to
+it. Without it the formulation admits a matched buy and sell in one delivery period: zero
+flow, captured spread, no physical involvement. A physical-support *bound* does not
+deliver it, because a position netting to zero is trivially supportable. The delineation
+accumulators and the peak charge price physical flow, so an unbacked position would earn
+nothing from the `λ_j` while still perturbing the `A_j`.
 
 **Coupling** (from C2 `CouplingConstraint`, and the heart of the cross-market
 problem — ADR-010):
@@ -111,12 +159,27 @@ max  Σ LinearTerms + Σ PwlTerms + V(socTerminal) − Σ peakPriceEurPerMw·zPe
 
 ### Two-stage structure
 
-Where the stage has genuine recourse — reserve committed before intraday
-information — the model is two-stage stochastic: first-stage variables are
-scenario-independent (`rUp`, `rDn`, DA position), second-stage variables carry a
-scenario index. Non-anticipativity is structural: first-stage variables simply
-have no `s` index, which is both the cheapest and the least error-prone way to
-enforce it.
+Every gate solve is two-stage. First-stage variables are scenario-independent;
+second-stage variables carry a scenario index. Non-anticipativity is structural:
+first-stage variables simply have no `s` index. That is exactly equivalent to imposing
+explicit non-anticipativity constraints — variable elimination on `x^1 = … = x^S`,
+needing no convexity, continuity or integrality assumption — and it is both the cheapest
+and the least error-prone way to enforce it.
+
+**The first stage is what is irreversible**, and nothing else.
+
+| Gate | First stage |
+|---|---|
+| S0 | none — `C_slow` commits nothing; it refits `V` |
+| S1 | `rUp[b]`, `rDn[b]` for the auction being bid |
+| S2 | the day-ahead bid curve |
+| S3, S4 | **the order sent this tick, and nothing else** — one slot wide |
+| S5 | none — a controller, not an optimiser |
+
+At S3 and S4 a sent order can fill, and that is the whole of the irreversibility. A wider
+first stage would assert a plan as a commitment. This is also why S1 is the row that
+matters: its first stage is a month-wide blind commitment, S4's is one slot re-decided
+every tick, so the stage-aggregation error is largest at S1 and smallest at S4.
 
 ---
 

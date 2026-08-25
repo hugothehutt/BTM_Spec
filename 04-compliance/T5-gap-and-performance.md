@@ -360,7 +360,7 @@ ADR-005's rejected-alternatives note) and at the finest breakpoint grid.
 
 | Curve | Axes | What it decides |
 |---|---|---|
-| Objective vs. `S` | Objective (relative to the `S = 256` reference) against `S`, per tier | Where the accuracy curve flattens. `S` is a first-class tuning parameter with a measurable cost/quality curve (ADR-005) |
+| Objective vs. `S` | Objective (relative to the `S = 256` reference) against `S`, per tier | Where the **discretisation** curve flattens. Convergence to the ensemble's own large-`S` value — **not** an accuracy claim: the `S = 256` reference carries the same `O(1)` filtration error as `S = 64` (ADR-005, `TN-02` §6) |
 | Solve time vs. `S` | p50 and p99 solve time against `S`, per tier | The cost side of the same trade |
 | Reduction fidelity vs. `S` | `INV-D-07` marginal-mean error, and a Wasserstein distance to the full ensemble, against `S` | Distinguishes "more scenarios help" from "the reduction is bad at small `S`" |
 | Objective vs. breakpoint count | Objective and approximation error against `nbp` | ADR-008: breakpoint count is a tuning knob with a measurable accuracy/speed trade-off |
@@ -368,6 +368,36 @@ ADR-005's rejected-alternatives note) and at the finest breakpoint grid.
 | Solve time vs. binary count | Scatter, coloured by `binariesByOrigin` (`C2` §7) | **Attribution.** When a solve slows down, `binariesByOrigin` names the term responsible; this curve is that instrument, plotted |
 | Solve time vs. row/column count | Scatter | Detects super-linear blow-up before it reaches production |
 | Determinism cost | Reproducibility (single-thread, deterministic work units) vs. production configuration solve time | Makes the cost of determinism a number rather than an argument (`T3` §5.3) |
+
+### 6.2.1 Suboptimality instruments
+
+`S` does not measure distance to the optimum. Three instruments do, and they measure
+different things. Definitions and derivation: `06-theory/TN-02-fan-not-tree.md` §8.
+
+| Instrument | Definition | Isolates | Band |
+|---|---|---|---|
+| `PolicyQuality` @ matched horizon | Realised value / benchmark value, benchmark solved over `H_plan` with the Planner's terminal `V` | Policy quality. Mixes anticipativity, ensemble misspecification and reduction error | none — reported |
+| `PolicyQuality` @ monthly horizon | The same ratio, benchmark solved over one Berlin month with the peak term and the delineation regime live | Policy quality **plus** the `H_plan` truncation | none — reported |
+| **`V`-truncation cost** | monthly − matched | What the terminal value function is repairing. The specification's only direct measurement of `V`'s adequacy | none — reported |
+| Report-versus-realised drift `D(τ)` | `E_ω[z_rep − z_real]` per gate kind, EUR and %, over matched windows with matched terminal terms | Nothing — signed monitor. Positive means the model over-promises | **none, deliberately**: it mixes three errors, so a threshold would fire without saying which moved. Read as a trend; a persistently positive `D(S1)` is the earliest warning that the blind reserve commitment is mispriced |
+| **Stage-aggregation error `A`** | `(z_MS − z_rolling-fan) / z_MS` on a synthetic instance small enough that a genuine multistage tree is enumerable | **Stage aggregation alone.** Sampling, misspecification, reduction, `V` error and financial arbitrage all cancel by construction | **`A ≤ 5 %`.** Breach reopens tree construction |
+
+**The benchmark.** Sequential re-solve with only the imminent slot binding, full physical
+constraints, **physically backed** (`INV-X-07`), transacting at `DA`, `IDA` and
+`ID3`/`ID1` clearing prices only and never crossing the book, respecting §4.1's gate
+ordering. Perfect foresight is **not** used: under `INV-X-07` a benchmark that buys and
+sells the same delivery period violates the same constraint the policy obeys, so it is not
+a bound on the right feasible region. The index-granularity cap does a separate job —
+the engine trades at orderbook granularity, so a benchmark with book foresight would
+absorb execution skill into the denominator.
+
+**Naming.** The industry term *capture rate* is not used: its published denominators are
+energy-only while its numerators include ancillary revenue, so it is unbounded above.
+`T4` §3.1's `CaptureRatio` keeps its name and its meaning, which is execution quality —
+a different quantity from `PolicyQuality` and complementary to it.
+
+The staged denominator — delineation, host load and availability as separate stages — and
+the market ladder are specified separately.
 
 ### 6.3 Reading the curves
 
