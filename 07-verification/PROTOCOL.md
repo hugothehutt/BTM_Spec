@@ -419,6 +419,7 @@ place where derivations fail, and that is durable information.
 | `06-theory/TN-NN-<slug>.md` | Technical notes. Numbered independently of ADRs; a note may span several ADRs or none. |
 | `07-verification/PROTOCOL.md` | This document. |
 | `07-verification/claims.yaml` | The claim register. One entry per claim. Hand-maintained: ids are allocated by appending, never by renumbering. |
+| `07-verification/check_all.py` | Runs all three checks and reports each result. The single verification command. Stdlib only, no venv. |
 | `07-verification/check_claims.py` | The register's machine check — the subset of §12 that is decidable from the register and the specification alone. Stdlib only, no venv. |
 | `07-verification/no-claim-sections.yaml` | Specification sections that legitimately own no claim, each with its reason. Input to the coverage check. |
 | `07-verification/voided.yaml` | The void register. Append-only. |
@@ -475,15 +476,29 @@ reads is a review convention wearing an invariant's number.
 
 `check_glossary.py` is the third live check, and like the second it guards a
 naming rule rather than the register. `00-overview/04-glossary.md` is normative
-for what a term means, so the check asserts that no term is defined twice, that
-every entry names an owning document that exists, that every defined term is
-actually used somewhere in the corpus, and that no retired spelling returns
-outside a written allowance in `rulings.json`. The last is the one
-that costs something: the glossary's §2 rules one meaning per word, and the
-retired spellings are the losing side of each ruling. `claims.yaml` is exempt
-from that scan because it quotes the owning text by construction — a retired
-word surviving there after its owning section is fixed is a register defect, and
-`check_claims.py` is where that belongs.
+for what a term means and `07-verification/rulings.json` is normative for which
+word kept which meaning, so the check asserts that no term is defined twice,
+that every entry names an owning document that exists, that every replacement
+name in the ruling set resolves to an entry, and that no retired spelling
+returns outside a written allowance. It also **warns**, without failing, when a
+defined term is used nowhere else in the corpus: any honest implementation of
+liveness is either noisy about legitimately rare terms or vacuous, and a dead
+entry is a tidiness problem where a returned retired spelling is a correctness
+one.
+
+The retired scan is the one that costs something. The rulings give one meaning
+per word and the retired spellings are the losing side of each; a ruling enters
+`rulings.json` with its propagation batch, so the check is green on arrival
+rather than red against a backlog it cannot distinguish from a new violation.
+`claims.yaml` is exempt from that scan because it quotes the owning text by
+construction — a retired word surviving there after its owning section is fixed
+is a register defect, and `check_claims.py` is where that belongs.
+
+**Running them.** `python3 07-verification/check_all.py` runs all three and is
+the way to verify the repository; the individual scripts remain runnable on
+their own. It exits 2 if any check could not run, 1 if any found violations, and
+0 when all three are clean, so a check that failed to load its input is never
+mistaken for a clean one. Stdlib only, no venv, like the checks it wraps.
 
 The remaining rows above are gated on artefacts that do not exist yet —
 procedure records, run manifests, packets and adjudications — and land with the
