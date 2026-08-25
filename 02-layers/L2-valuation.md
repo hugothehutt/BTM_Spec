@@ -111,8 +111,7 @@ Prices the marginal MW of grid peak, under whichever tariff regimes are active
 - **Emits:** `PwlTerm` in volume (concave — the marginal MWh gets a worse price),
   and `BoundTerm`s from SOC/η feasibility.
 - Directional buy **and** sell, restricted to volumes the battery can physically
-  support. The restriction is a bound, not a penalty, because an infeasible
-  intraday plan is not a cheap plan, it is an invalid one.
+  support. The restriction is a bound, not a penalty.
 
 ### FillProbView — how much volume may be counted on
 

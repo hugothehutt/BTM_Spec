@@ -18345,7 +18345,7 @@
   tn: null
   band: null
 - id: CLM-1866
-  statement: The market field is one of Da, IdContinuous, IdAuction, AfrrCapacity or AfrrEnergy.
+  statement: The market field is one of Da, IdContinuous, AfrrCapacity or AfrrEnergy.
   owner: 03-contracts/C3-planner-to-execution.md §2
   class: analytic
   blast_radius: moderate

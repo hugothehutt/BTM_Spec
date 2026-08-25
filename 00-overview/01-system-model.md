@@ -53,14 +53,14 @@ test.
 **Strictly forward within a tick; all feedback is lagged and passes through L0.**
 
 ```
-                 ┌──────────────────────── L0 State/Value Store ────────────────────────┐
-                 │  realised peak · qualification state · commitments · V(SOC) · quality │
-                 └───┬──────────────────────────────────────────────────────────▲───────┘
-        read (t-1)   │                                                          │  write (t)
-                     ▼                                                          │
-  L1 Belief ──C1──▶ L2 Valuation ──C2──▶ L3 Planner ──C3──▶ L4 Execution ──C4──▶ L5 Settlement
-                                                                                     │
-                                                                                     └──C5──▶ L0
+          ┌──────────────────────── L0 State/Value Store ─────────────────────────┐
+        ┌─│  realised peak · qualification state · commitments · V(SOC) · quality │<┐
+        │ └───────────────────────────────────────────────────────────────────────┘ │
+        │  read(t-1)                                                        write(t)│ 
+        ▼                                                                           │
+  L1 Belief ──C1──▶ L2 Valuation ──C2──▶ L3 Planner ──C3──▶ L4 Execution  ──C4──▶ L5 Settlement
+                                                                                    │
+                                                                                    └──C5──▶ L0
 ```
 
 Within a single tick, every arrow points right. L0 is read at the top of the

@@ -361,7 +361,6 @@ public enum MarketId
 {
     Da,
     IdContinuous,
-    IdAuction,
     AfrrCapacity,
     AfrrEnergy,
 }

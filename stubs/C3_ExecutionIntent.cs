@@ -33,7 +33,7 @@ namespace Flexbid.Btm.Contracts;
 //
 // Exactly one of each pair is populated:
 //
-//   Da, IdContinuous, IdAuction, AfrrEnergy -> LimitPriceEurPerMwh, VolumeMwh
+//   Da, IdContinuous, AfrrEnergy -> LimitPriceEurPerMwh, VolumeMwh
 //   AfrrCapacity                            -> LimitPriceEurPerMwH, VolumeMw
 //
 // Both populated, or the wrong one for the market, is a contract failure.

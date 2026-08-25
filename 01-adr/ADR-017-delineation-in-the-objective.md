@@ -110,8 +110,6 @@ needs a second when `λ_9` may be negative — which is whenever the site has lo
   configuration per EEG vintage.
 - **Self-consumption forfeits both routes.** A MWh discharged into load never enters
   `(11)`. This falls out of the state equations, so no `SelfConsumptionView` is needed
-  and RECONCILIATION item H resolves negatively — but the resolution assumes retail
-  supply is spot-indexed.
 
 ## Rejected
 

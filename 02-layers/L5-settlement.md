@@ -121,7 +121,7 @@ MWh at dataload with everything else. There is no factor of 1000 in this layer.
 SpotEnergyValue        = Σ_{f: market = Da}
                            σ(f.side) · f.priceEurPerMwh · f.volumeMwh − f.feesEur
 
-IdEnergyValue          = Σ_{f: market ∈ {IdContinuous, IdAuction}}
+IdEnergyValue          = Σ_{f: market ∈ {IdContinuous}}
                            σ(f.side) · f.priceEurPerMwh · f.volumeMwh − f.feesEur
 
 ReserveCapacityRevenue = Σ_b ( awardedUpMw[b]·clearingPriceUpEurPerMwH[b]

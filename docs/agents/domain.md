@@ -21,9 +21,6 @@ layout the skills assume by default.
   the ones touching the area you are about to work in. **Not `docs/adr/`.**
 - **`03-contracts/`** — the frozen seams `C0`–`C6`. Anything crossing a layer
   boundary is constrained by a versioned payload here.
-- **`07-verification/PROTOCOL.md`** — normative. How a claim earns its evidence
-  label, what masking means, and what happens on a refutation. Read before
-  changing anything a claim is anchored to.
 
 If a file listed above does not exist, **proceed silently**. Don't flag its
 absence; don't suggest creating it upfront.
@@ -53,23 +50,6 @@ several ADRs or none.
 
 ## Use the repo's vocabulary
 
-When your output names a domain concept — an issue title, a refactor proposal, a
-hypothesis, a test name — use the term exactly as defined in
-`00-overview/04-glossary.md` and the relevant `03-contracts/` payload.
-
-Check §15 before coining anything. A retired spelling is retired because a
-ruling gave the word to another meaning, and
-`07-verification/check_glossary.py` fails the build on its return.
-
-Never conflate the battery and POI sign frames — the bridge between them is the
-only sign flip in the system. Time is `SlotId` on the 15-minute UTC grid;
-monthly and annual accounting is Europe/Berlin civil calendar. The objective is
-denominated in EUR and nothing else.
-
-If a concept you need has no term yet, that's a signal — either you're inventing
-language the spec doesn't use (reconsider) or there's a real gap. A real gap is
-a glossary entry plus the document that owns it, never a word used in passing
-and left undefined.
 
 ## Flag ADR conflicts
 
