@@ -27,8 +27,9 @@ none of them can drift from the others.
 
 `07-verification/check_glossary.py` checks this file against that data. Four
 things **fail**: a term defined twice, an entry whose owning document does not
-exist, a replacement name in the ruling set with no entry here, and a retired
-spelling outside a written allowance. One thing **warns** without failing: a
+exist, a replacement name in the ruling set with no entry here, a ruling whose
+anchor names a section that is not there, and a retired spelling outside a
+written allowance. One thing **warns** without failing: a
 term defined here and used nowhere else in the corpus.
 
 ## 2. Layers and components

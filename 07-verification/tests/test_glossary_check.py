@@ -165,8 +165,6 @@ class TheShippedRulingDataParses(unittest.TestCase):
         )
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 # --- the failures of the implementation this replaces -----------------------
@@ -296,7 +294,7 @@ class LivenessIsAWordBoundaryWarning(unittest.TestCase):
     def test_liveness_never_fails_the_run(self):
         found = cg.check_live(self.ENTRIES, {"a.md": "we mitigate the risk"})
         self.assertEqual(cg.failures(found), [])
-        self.assertEqual(cg.warnings(found), found)
+        self.assertEqual(cg.warning_findings(found), found)
 
 
 class EveryReplacementNameResolvesToAnEntry(unittest.TestCase):
@@ -354,3 +352,5 @@ class EveryRulingIsTraceableToItsArgument(unittest.TestCase):
                                           section="5"))
         blobs = {"06-theory/TN-02-fan-not-tree.md": "## 5. Two errors, opposite signs\n"}
         self.assertEqual(cg.check_anchors([ruling], blobs), [])
+if __name__ == "__main__":
+    unittest.main()

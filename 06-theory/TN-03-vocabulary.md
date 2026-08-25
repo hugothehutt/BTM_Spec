@@ -239,9 +239,10 @@ and forbids.
 ## 5. The checker
 
 `07-verification/check_glossary.py`, stdlib only, reading the ruling set from
-`07-verification/rulings.json`. Four assertions **fail**: no term defined twice;
+`07-verification/rulings.json`. Five assertions **fail**: no term defined twice;
 every entry names an owner that exists; every replacement name in the ruling set
-resolves to a glossary entry; no retired spelling outside a written allowance.
+resolves to a glossary entry; every ruling's anchor names a section that exists;
+no retired spelling outside a written allowance.
 One **warns** without failing: a term defined and used nowhere else in the
 corpus. Liveness is a warning because any honest implementation of it is either
 noisy about legitimately rare terms or vacuous, and a dead entry is a tidiness
@@ -298,15 +299,17 @@ first.
 
 ## 7. Where the words go
 
-Three artifacts, three disjoint jobs, so that no two of them can state the same
+Three artefacts, three disjoint jobs, so that no two of them can state the same
 fact. `00-overview/04-glossary.md` defines what a term means and names the
 document that owns it. `07-verification/rulings.json` records the ruling set and
 is the single source of truth for it. This note argues each ruling, in §3, and
 each ruling record anchors into the §3 section that argues it — so those section
 ids are load-bearing and must stay stable.
 
-`docs/agents/domain.md` names the glossary by file, where it previously named
-`00-overview/02-conventions.md`.
+`CLAUDE.md` and `docs/agents/domain.md` both named `00-overview/02-conventions.md`
+as the glossary. Both now name the glossary by file, and `domain.md` names no
+glossary section number at all, so neither breaks when a document is
+reorganised.
 
 `02-conventions.md` is unchanged and remains what it always was: units, signs,
 time, naming and numeric policy. It was never a glossary, which is why the

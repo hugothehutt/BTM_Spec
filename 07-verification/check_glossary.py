@@ -149,7 +149,7 @@ class Entry:
 class Finding:
     """A finding is structured so that an agent can act on it without parsing
     prose: it names the word at issue, what to write instead, and where."""
-    check: str          # UNIQUE | OWNER | RESOLVES | RETIRED | LIVE
+    check: str          # UNIQUE | OWNER | RESOLVES | ANCHOR | RETIRED | LIVE
     severity: str       # "failure" | "warning"
     path: str
     line: int
@@ -169,7 +169,7 @@ def failures(findings: list[Finding]) -> list[Finding]:
     return [f for f in findings if f.severity == "failure"]
 
 
-def warnings(findings: list[Finding]) -> list[Finding]:
+def warning_findings(findings: list[Finding]) -> list[Finding]:
     return [f for f in findings if f.severity == "warning"]
 
 
@@ -521,7 +521,7 @@ def main() -> int:
     print(f"glossary: {len(entries)} terms, {len(rulings)} rulings, "
           f"{spellings} retired spellings, {len(blobs)} corpus files")
 
-    for f in warnings(findings):
+    for f in warning_findings(findings):
         print(format_finding(f))
     bad = failures(findings)
     for f in bad:

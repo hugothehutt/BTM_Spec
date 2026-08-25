@@ -420,6 +420,8 @@ place where derivations fail, and that is durable information.
 | `07-verification/PROTOCOL.md` | This document. |
 | `07-verification/claims.yaml` | The claim register. One entry per claim. Hand-maintained: ids are allocated by appending, never by renumbering. |
 | `07-verification/check_all.py` | Runs all three checks and reports each result. The single verification command. Stdlib only, no venv. |
+| `07-verification/rulings.json` | The ruling set: which word kept which meaning, what each losing spelling becomes, and the allowances. Normative, and the glossary check's input. |
+| `07-verification/tests/` | Tests for the checks, standard library only. Run by `python3 -m unittest discover -s 07-verification/tests`. |
 | `07-verification/check_claims.py` | The register's machine check — the subset of §12 that is decidable from the register and the specification alone. Stdlib only, no venv. |
 | `07-verification/no-claim-sections.yaml` | Specification sections that legitimately own no claim, each with its reason. Input to the coverage check. |
 | `07-verification/voided.yaml` | The void register. Append-only. |
@@ -479,8 +481,9 @@ naming rule rather than the register. `00-overview/04-glossary.md` is normative
 for what a term means and `07-verification/rulings.json` is normative for which
 word kept which meaning, so the check asserts that no term is defined twice,
 that every entry names an owning document that exists, that every replacement
-name in the ruling set resolves to an entry, and that no retired spelling
-returns outside a written allowance. It also **warns**, without failing, when a
+name in the ruling set resolves to an entry, that every ruling's anchor names a
+section that is there, and that no retired spelling returns outside a written
+allowance. It also **warns**, without failing, when a
 defined term is used nowhere else in the corpus: any honest implementation of
 liveness is either noisy about legitimately rare terms or vacuous, and a dead
 entry is a tidiness problem where a returned retired spelling is a correctness

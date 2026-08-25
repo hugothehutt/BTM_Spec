@@ -35,7 +35,7 @@ def main(argv: list[str]) -> int:
     verdicts: list[tuple[str, int]] = []
 
     for name in CHECKS:
-        print(f"── {name} " + "─" * max(0, 60 - len(name)))
+        print(f"── {name} " + "─" * max(0, 60 - len(name)), flush=True)
         result = subprocess.run([sys.executable, str(HERE / name)],
                                 capture_output=quiet, text=True)
         code = result.returncode
@@ -44,7 +44,7 @@ def main(argv: list[str]) -> int:
             sys.stderr.write(result.stderr or "")
         verdicts.append((name, code))
         worst = max(worst, code)
-        print()
+        print(flush=True)
 
     width = max(len(n) for n, _ in verdicts)
     print("─" * 62)

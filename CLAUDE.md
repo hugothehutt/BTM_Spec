@@ -28,4 +28,4 @@ The five canonical roles, each label string equal to its name. See `docs/agents/
 
 ### Domain docs
 
-Single-context. The glossary is `00-overview/02-conventions.md`; ADRs live in `01-adr/`, not `docs/adr/`. See `docs/agents/domain.md`.
+Single-context. The glossary is `00-overview/04-glossary.md`; the ruling set is `07-verification/rulings.json`; ADRs live in `01-adr/`, not `docs/adr/`. See `docs/agents/domain.md`.
