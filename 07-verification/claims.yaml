@@ -741,7 +741,7 @@
   band: null
   vague: true
 - id: CLM-0072
-  statement: Power is in MW in every frame — battery, POI, market and reserve — and there is no kW anywhere in the specification, no unit adapter and no factor of 1000.
+  statement: Power is in MW in every frame — battery, POI, market and reserve — and no smaller power or energy unit appears anywhere in the specification, in any spelling, so there is no unit adapter and no factor of a thousand.
   owner: 00-overview/02-conventions.md §2
   class: analytic
   blast_radius: expensive-later
@@ -1403,7 +1403,7 @@
   tn: null
   band: null
 - id: CLM-0139
-  statement: Z1NB¼ is the Netzbezug at the Entnahmestelle, in kWh per quarter-hour.
+  statement: Z1NB¼ is the Netzbezug at the Entnahmestelle, in MWh per quarter-hour.
   owner: 00-overview/03-mispel-reference.md §2
   class: regulatory
   blast_radius: very-expensive
@@ -1413,7 +1413,7 @@
   tn: null
   band: null
 - id: CLM-0140
-  statement: Z1NE¼ is the Netzeinspeisung at the Einspeisestelle, in kWh per quarter-hour.
+  statement: Z1NE¼ is the Netzeinspeisung at the Einspeisestelle, in MWh per quarter-hour.
   owner: 00-overview/03-mispel-reference.md §2
   class: regulatory
   blast_radius: very-expensive
@@ -1423,7 +1423,7 @@
   tn: null
   band: null
 - id: CLM-0141
-  statement: Z2V¼ is the Verbrauch im Stromspeicher, in kWh per quarter-hour.
+  statement: Z2V¼ is the Verbrauch im Stromspeicher, in MWh per quarter-hour.
   owner: 00-overview/03-mispel-reference.md §2
   class: regulatory
   blast_radius: very-expensive
@@ -1433,7 +1433,7 @@
   tn: null
   band: null
 - id: CLM-0142
-  statement: Z2E¼ is the Erzeugung im Stromspeicher, in kWh per quarter-hour.
+  statement: Z2E¼ is the Erzeugung im Stromspeicher, in MWh per quarter-hour.
   owner: 00-overview/03-mispel-reference.md §2
   class: regulatory
   blast_radius: very-expensive
@@ -2303,7 +2303,7 @@
   tn: null
   band: null
 - id: CLM-0229
-  statement: "Discharging into load forfeits both routes: such a kWh never enters (11), so it earns neither (30) · premium nor levy_rate / η_month."
+  statement: "Discharging into load forfeits both routes: such an MWh never enters (11), so it earns neither (30) · premium nor levy_rate / η_month."
   owner: 00-overview/03-mispel-reference.md §6
   class: analytic
   blast_radius: very-expensive
@@ -14921,7 +14921,7 @@
   tn: null
   band: null
 - id: CLM-1525
-  statement: Every volume in the effect algebra is already MWh and every price EUR/MWh, so no term carries a unit conversion; the MiSpel registers are the one foreign unit, transcribed in kWh and normalised to MWh at dataload.
+  statement: Every volume in the effect algebra is already MWh and every price EUR/MWh, so no term carries a unit conversion; the MiSpel registers are normalised at dataload with every other source and reach settlement in MWh.
   owner: 02-layers/L5-settlement.md §4
   class: analytic
   blast_radius: very-expensive
@@ -30342,7 +30342,7 @@
   band: null
   depends_on: [CLM-0755, CLM-1110]
 - id: CLM-3061
-  statement: peakPrice is a deterministic scalar fixed before the backtest, which is what makes the positive-homogeneity pass-through legal and lets the peak tail be taken in kW and priced outside the risk functional.
+  statement: peakPrice is a deterministic scalar fixed before the backtest, which is what makes the positive-homogeneity pass-through legal and lets the peak tail be taken in MW and priced outside the risk functional.
   owner: 06-theory/TN-01-cvar-across-stages.md §9
   class: analytic
   blast_radius: moderate
@@ -30353,7 +30353,7 @@
   band: null
   depends_on: [CLM-1749]
 - id: CLM-3062
-  statement: "Because cvarWeight reaches only the imbalance term, positive homogeneity makes peakPrice the peak term's sole risk weight, so an error in it shifts risk aversion rather than mispricing a kW."
+  statement: "Because cvarWeight reaches only the imbalance term, positive homogeneity makes peakPrice the peak term's sole risk weight, so an error in it shifts risk aversion rather than mispricing an MW."
   owner: 06-theory/TN-01-cvar-across-stages.md §9
   class: analytic
   blast_radius: expensive-later

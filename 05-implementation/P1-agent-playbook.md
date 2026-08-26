@@ -205,9 +205,10 @@ library. Correctness is carried by the identifier and enforced mechanically by
   frame is a violation, not a style preference.
 - **Beliefs and decisions are distinguished.** `pvAvailMw` is a belief;
   `pvOutMw` is post-decision. A name that could be either is a defect.
-- **Everything is MW and MWh.** There is no kW anywhere, no unit adapter and no
-  `1000.0` in the codebase. Source series are normalised at dataload, in the same
-  pass as UTC. If you write a factor of 1000, you have introduced a bug class.
+- **Everything is MW and MWh.** No smaller power or energy unit appears
+  anywhere, in any spelling, so there is no unit adapter and no scale constant in
+  the codebase. Source series are normalised at dataload, in the same pass as
+  UTC. If you write a factor of a thousand, you have introduced a bug class.
 - **Three frames.** Battery: positive = discharge. POI: positive = import.
   Market: positive = sale. Market is sign-aligned with battery, so **battery ↔
   POI is the only sign flip in the system** — one bridge,
@@ -461,10 +462,11 @@ on a power quantity. A second implementation of the bridge is a defect even if i
 is currently correct.
 
 **2. Units.** EUR/MWh versus EUR/MW — an energy price read as a capacity price is
-now the live confusion, since there is only one unit system and kW no longer
-exists. Also MWh versus fraction for SOC. Search the diff for `1000`, `0.001`,
-`/ 1000.0` and `* 1e-3`: **every one of them is a defect**, because the kW/MW seam
-was deleted and normalisation happens once, at dataload. Search for `/ 4.0` and
+now the live confusion, since there is only one unit system and no smaller unit
+exists. Also MWh versus fraction for SOC. Search the diff for any factor of a
+thousand, written as a literal, a reciprocal or an exponent: **every one of them
+is a defect**, because the mixed-scale seam was deleted and normalisation
+happens once, at dataload. Search for `/ 4.0` and
 `* 0.25` too: these must be a documented slot-to-hour conversion via
 `SlotSpan.Hours`. A magic `4` is a quarter-hour assumption and a quarter-hour
 assumption is a DST bug.

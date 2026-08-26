@@ -22,10 +22,10 @@ Normative transcription of the delineation machinery from `Anlage1_Arbeitsstand.
 
 | Symbol | Meaning | Granularity | Unit |
 |---|---|---|---|
-| `Z1NB¼` | Netzbezug at the Entnahmestelle (NB: Netzbezug) | quarter-hour | kWh |
-| `Z1NE¼` | Netzeinspeisung at the Einspeisestelle (NE: Netzeinspeisung) | quarter-hour | kWh |
-| `Z2V¼` | Verbrauch im Stromspeicher (V: Verbrauch) | quarter-hour | kWh |
-| `Z2E¼` | Erzeugung im Stromspeicher (E: Erzeugung) | quarter-hour | kWh |
+| `Z1NB¼` | Netzbezug at the Entnahmestelle (NB: Netzbezug) | quarter-hour | MWh |
+| `Z1NE¼` | Netzeinspeisung at the Einspeisestelle (NE: Netzeinspeisung) | quarter-hour | MWh |
+| `Z2V¼` | Verbrauch im Stromspeicher (V: Verbrauch) | quarter-hour | MWh |
+| `Z2E¼` | Erzeugung im Stromspeicher (E: Erzeugung) | quarter-hour | MWh |
 | `AW¼`, `AWa¼`, `AWb¼` | anzulegender Wert of the EE-Anlage, resp. of plant a / b in A5 | quarter-hour | EUR/MWh |
 | `Pa_inst`, `Pb_inst` | installierte Leistung of EE-Anlage a resp. b per § 24 Abs. 3 S. 2 Halbsatz 2 EEG. For gleichartige Windenergieanlagen an Land, use Referenzertrag / Standardertrag instead (§ 24 Abs. 3 S. 2 Halbsatz 1 EEG). | static | MW |
 | `ZF` | Zuordnungs-Faktor — leistungsgewichteter share of the Netzeinspeisung assigned to one plant | static | fraction 0..1 |
@@ -36,6 +36,13 @@ Normative transcription of the delineation machinery from `Anlage1_Arbeitsstand.
 Monthly and yearly boundaries are Europe/Berlin civil-calendar boundaries
 (`02-conventions.md` § 4.2). Within this scope `(14) ≡ (14)A1` and
 `(19) ≡ (19)A1,A4`, so `(20)` carries no case distinction.
+
+The four `Z` registers are meter values published per quarter-hour in the
+smaller energy unit. They are normalised to MWh at dataload, in the same pass as
+UTC normalisation (`02-conventions.md` § 2), and every register and formula in
+this document is stated in the normalised unit. The scale is the whole of the
+difference: no formula, ratio or case distinction changes, because every term of
+every formula is scaled alike and the two ratios — `ZF` and `(30)` — cancel it.
 
 ## 3. Formulas
 
@@ -180,7 +187,7 @@ Consequences that follow from the algebra alone:
 | Relief falls by `(12)/η_rt` | `(12) > 0` |
 | `(12) = 0` is arithmetically impossible to violate | monthly charge throughput `> η_d · E_usable / (1 − η_rt)` ≈ 8 charge-equivalent cycles |
 
-**Discharging into load forfeits both routes.** Such a kWh never enters `(11)`, so it
+**Discharging into load forfeits both routes.** Such an MWh never enters `(11)`, so it
 earns neither `(30)·premium` nor `levy_rate/η_month`. This is priced by the state
 equations, not by a term (ADR-017).
 

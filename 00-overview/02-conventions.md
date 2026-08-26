@@ -82,8 +82,9 @@ conversion between frames and lives in exactly one place.
 ## 2. Units
 
 **Everything is MW and MWh.** Site scale, market scale and reserve scale share
-one unit system, matching market convention. There is no kW anywhere in the
-specification, no unit adapter, and no factor of 1000 to misplace.
+one unit system, matching market convention. No smaller power or energy unit
+appears anywhere in the specification, in any spelling, and there is therefore
+no unit adapter and no factor of a thousand to misplace.
 
 | Quantity | Unit | Note |
 |---|---|---|
@@ -100,10 +101,13 @@ specification, no unit adapter, and no factor of 1000 to misplace.
 | Duration | slot count (int) | Never seconds in business logic |
 
 Source data is not required to arrive in these units. **Normalisation to MW/MWh
-happens at dataload**, in the same pass as UTC normalisation (§4.1). A
-regulatory primitive is transcribed in the unit its source quotes it in — the
-Leistungspreis in EUR/kW/a, for instance — and converted at ingest. Primitives
-are never rewritten to suit this table.
+happens at dataload**, in the same pass as UTC normalisation (§4.1), and it is
+the only place a scale factor exists. A regulatory primitive is normalised with
+everything else: the Leistungspreis, for instance, is quoted per year and is
+carried as EUR/MW/a. What a primitive **means** is never rewritten to suit this
+table — its definition, its accounting period and its slot set are the
+regulation's — but the unit it is carried in always is, because a second unit
+system is a defect this specification does not accept anywhere.
 
 ### 2.1 The accounting period is an input, not a dimension
 

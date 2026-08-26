@@ -112,10 +112,9 @@ are negative. `feesEur` are always explicit and never netted into a price (C4 §
 
 Let `σ(Sell) = +1`, `σ(Buy) = −1`, and `Δt_h = 0.25` h. Every volume below is
 already MWh and every price EUR/MWh, so no term carries a unit conversion
-(`02-conventions.md` §2). The MiSpel registers are the one place a foreign unit
-enters: they are transcribed in kWh because that is the unit the regulation
-quotes them in (`00-overview/03-mispel-reference.md` §2), and are normalised to
-MWh at dataload with everything else. There is no factor of 1000 in this layer.
+(`02-conventions.md` §2). The MiSpel registers are normalised at dataload with
+every other source (`00-overview/03-mispel-reference.md` §2), so they reach this
+layer in MWh like everything else. There is no scale factor in this layer.
 
 ```
 SpotEnergyValue        = Σ_{f: market = Da}

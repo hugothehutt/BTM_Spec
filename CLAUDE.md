@@ -4,12 +4,14 @@
 
 | Path | Contents |
 |---|---|
-| `00-overview/` | Entry point: the layer model and four clocks (`01`), the normative units / signs / time-grid / naming conventions (`02`), the MiSpel delineation reference (`03`). |
+| `00-overview/` | Entry point: the layer model and four clocks (`01`), the normative units / signs / time-grid / naming conventions (`02`), the MiSpel delineation reference (`03`), the glossary (`04`). |
 | `01-adr/` | Decisions expensive to reverse, `ADR-001` … `ADR-017`, each with context, decision, consequences and rejected alternatives. `ADR-015` is the open-decision register; `ADR-017` fixes how the delineation regime enters the objective. |
 | `02-layers/` | Internals of the six layers: `L0` state/value store, `L1` belief, `L2` valuation, `L3` planner, `L4` execution boundary, `L5` settlement. |
 | `03-contracts/` | The seven frozen seams: `C0` conventions plus `C1`–`C6` payloads, each versioned with a field table and invariants. |
 | `04-compliance/` | The seven test levels `T0`–`T6`: architecture, invariant register, property/metamorphic tests, determinism, calibration, optimality gap, adversarial audit. |
 | `05-implementation/` | Advisory: `P0` workstreams and sequencing, `P1` agent playbook. |
+| `06-theory/` | Technical notes `TN-NN-<slug>.md`, numbered independently of the ADRs. Each argues one question and is advisory until acted on. |
+| `07-verification/` | `PROTOCOL.md`, the claim register, the ruling set, and the machine checks with their tests. `check_all.py` runs every check. |
 | `stubs/` | C# type sketches for the contract payloads, quantities, enums and interfaces. Illustrative, not the implementation. |
 | `README.md` | Reading order, specification status per part, one-paragraph system summary. |
 | `docs/agents/` | Agent-skill configuration: issue tracker, triage labels, domain-doc layout. |

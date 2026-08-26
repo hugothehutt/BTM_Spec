@@ -446,9 +446,10 @@ Now suppose the same term computes
 constant was baked into a breakpoint, or a threshold in EUR is compared against a
 quantity in MW. **Then the term does not scale by `k`, and the test fires.**
 
-The kW/MW half of this hazard no longer exists. There is one unit system and no
-factor of 1000 anywhere (conventions §2), so the classic
-`price_EUR_per_MWh * energy_kWh` defect cannot be written. What remains is the
+The mixed-scale half of this hazard no longer exists. There is one unit system
+and no scale factor anywhere (conventions §2), so the classic defect — a price
+per MWh multiplied by an energy in a smaller unit — cannot be written. What
+remains is the
 confusion between an energy price and a capacity price, which this test catches
 only in its mixed form — the pure form is caught earlier, by `INV-G-02`, because
 the two units force different identifier suffixes.

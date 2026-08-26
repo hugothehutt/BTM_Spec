@@ -21,10 +21,12 @@ INV-G-02 is a seam invariant, so (a)-(c) are scoped to `03-contracts`. A stale
 unit in a layer design or a test fixture is just as wrong, and nothing was
 looking for it, so a fourth check runs repo-wide:
 
-  (d) FOREIGN no kW, no kWh and no factor of 1000 outside
-              `allowed-foreign-units.yaml`, which holds the regulatory
-              primitives and the sentences whose job is to say kW does not
-              exist. Adding a line there is a decision someone writes down.
+  (d) FOREIGN one unit system repo-wide: no smaller power or energy scale in
+              any spelling and no factor of a thousand, with no allowance and
+              no allowance file. A regulatory primitive is normalised at
+              dataload like every other source, so no document has a reason to
+              write a foreign unit — not even a sentence whose subject is that
+              the unit does not exist.
 
 Stdlib only, no venv. Run: python3 07-verification/check_units.py
 """
@@ -146,59 +148,30 @@ def tables(text: str):
 
 FOREIGN = re.compile(r"\bkW\b|\bkWh\b|\bKwh\b|/ ?1000\b|\* ?1e-3\b|\b0\.001\b",
                      re.IGNORECASE)
-ALLOWLIST = ROOT / "07-verification" / "allowed-foreign-units.yaml"
-
-
-def load_allowlist() -> tuple[set[str], dict[str, list[str]]]:
-    """A deliberately small reader for the allowlist's fixed shape."""
-    whole: set[str] = set()
-    subs: dict[str, list[str]] = {}
-    current = None
-    in_allow = False
-    for raw in ALLOWLIST.read_text().split("\n"):
-        if not raw.strip() or raw.lstrip().startswith("#"):
-            continue
-        if not raw.startswith(" ") and raw.rstrip().endswith(":"):
-            current = raw.rstrip()[:-1].strip()
-            subs.setdefault(current, [])
-            in_allow = False
-        elif current and raw.strip() == "allow:":
-            in_allow = True
-        elif current and raw.strip().startswith("allow_whole_file: true"):
-            whole.add(current)
-        elif current and in_allow and raw.strip().startswith("- "):
-            item = raw.strip()[2:].strip()
-            if len(item) >= 2 and item[0] == item[-1] and item[0] in "\"'":
-                item = item[1:-1]
-            subs[current].append(item)
-        elif raw.strip().endswith(">") or raw.startswith("    "):
-            continue
-    return whole, subs
-
-
 def foreign_units() -> list[str]:
-    """Repo-wide: no kW, no kWh, no factor of 1000, outside the allowlist.
+    """Repo-wide: one unit system, no smaller scale, no factor of a thousand.
+
+    There is no allowance file and there is no allowance. Conventions §2 admits
+    one unit system, and a regulatory primitive is normalised at dataload like
+    every other source, so no document has a reason to write a foreign unit —
+    not even a sentence whose subject is that the unit does not exist. Its
+    absence is what makes the rule checkable by a match rather than by judgement.
 
     INV-G-02 is scoped to the contract field tables, which is correct — it is a
     seam invariant. But a stale unit in a layer design or a test fixture is just
     as wrong and nothing was looking for it. This pass is that check.
     """
-    whole, subs = load_allowlist()
     errors: list[str] = []
     for pattern in ("**/*.md", "**/*.cs"):
         for path in sorted(ROOT.glob(pattern)):
             rel = path.relative_to(ROOT).as_posix()
-            if rel.startswith((".claude/", "docs/")) or rel in whole:
+            if rel.startswith((".claude/", "docs/")):
                 continue
-            allowed = subs.get(rel, [])
             for i, line in enumerate(path.read_text().split("\n"), 1):
-                if not FOREIGN.search(line):
-                    continue
-                if any(a in line for a in allowed):
-                    continue
-                errors.append(
-                    f"{rel}:{i}: FOREIGN a stale unit or a factor of 1000 — "
-                    f"{line.strip()[:80]!r}")
+                if FOREIGN.search(line):
+                    errors.append(
+                        f"{rel}:{i}: FOREIGN a stale unit or a factor of a "
+                        f"thousand — {line.strip()[:80]!r}")
     return errors
 
 
