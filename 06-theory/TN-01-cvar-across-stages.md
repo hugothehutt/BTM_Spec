@@ -52,11 +52,11 @@ A single `cvarLevel` applied without a stated orientation reads as `CVaR_α(V_de
 on the third row, which takes the tail of the *best* months. This is a sign defect,
 not a tuning question, and it is invisible to every current invariant.
 
-**Why the spec's kW-denominated notation is nonetheless sound.** `L2`:61-66 writes the
-peak risk term over `max_t p_poi[s,t]` — a quantity in kW, apparently in breach of the
+**Why the spec's power-denominated notation is nonetheless sound.** `L2`:61-66 writes the
+peak risk term over `max_t p_poi[s,t]` — a quantity in MW, apparently in breach of the
 EUR-only rule. It is not, and the reason is an axiom: `CVaR_α` is **positively
 homogeneous**, so for any deterministic `c ≥ 0`, `c · CVaR_α(X) = CVaR_α(c · X)`. With
-`peakPrice` and `prorationFactor` deterministic and non-negative, taking the tail in kW
+`peakPrice` and `prorationFactor` deterministic and non-negative, taking the tail in MW
 and pricing outside is *identical* to taking the tail of the EUR loss. The two forms are
 the same number.
 
@@ -69,7 +69,7 @@ Two things the identity does **not** buy. It moves a scalar in and out of *one* 
 it does not merge the peak tail with the imbalance or delineation tails, which remain
 §4's sum-of-CVaRs. And since `L3`:109 grants `cvarWeight` to the imbalance term alone,
 under a scalar rate **`peakPrice` is the peak term's only risk weight** — an error in it
-is not merely a mispriced kW, it is a shift in risk aversion, on the same lever `L2`:69
+is not merely a mispriced MW, it is a shift in risk aversion, on the same lever `L2`:69
 already warns about.
 
 ---
@@ -112,7 +112,7 @@ that by pricing at a single scalar rate — `−peakPrice · zPeak · proration`
 settled as `peakPrice · realisedPeakKw` (`L5`:216) — which is linear, hence convex. All
 four `ADR-011` regimes are of this shape. **On the spec as written the condition holds.**
 
-It fails the moment the rate is piecewise with a *decreasing* marginal €/kW — a first
+It fails the moment the rate is piecewise with a *decreasing* marginal €/MW — a first
 slope steeper than the second. Then `c(·)` is concave non-decreasing and
 `c(max_t p_poi)` is **not convex**. Consequences, kept separate because they fail
 differently:
@@ -454,7 +454,7 @@ Chaining:
 **Reduction error is amplified by `1/(1−α)` — a factor of 20 at `α = 0.95`.** Scenario
 reduction (fast-forward / Wasserstein-optimal, ADR-005) minimises `W₁` against *all*
 functionals equally; it is not tail-aware. This bound is directly usable as an
-acceptance band: choose `S` such that `W₁/(1−α)` sits below a stated kW tolerance.
+acceptance band: choose `S` such that `W₁/(1−α)` sits below a stated MW tolerance.
 
 **Sign of the bias.** Reduction drops the scenarios furthest from the mass — the
 extremes — because `W₁` is dominated by mass, not by extremes. Dropping upper-tail
@@ -567,7 +567,7 @@ should be deleted, not qualified.
 | 16 | A single `cvarLevel` "would push some accumulators the wrong way" | `L2`:142-147 | **Refuted** — vacuous under the aggregate-tail decision it sits beside; delete |
 | 17 | `MW_month` must cross C1 as `double[S]` on the shared axis | `ADR-017`:102-106 | **Confirmed** — follows from 14 plus ADR-005 |
 | 18 | `V` is risk-neutral while the tick objective is risk-averse | `L0` §5.4 + `L3`:103-110 | **Confirmed as a defect** — risk attitude is discontinuous at a horizon boundary that moves every tick |
-| 19 | The peak term is convex, hence exact with no binaries | `ADR-008`:37, `ADR-011`:41-44 | **Conditional** — holds because `peakPrice` is a **scalar**, so the charge is linear in the level. A rate with decreasing marginal €/kW makes the term concave: relaxation understates the charge (third downward bias) and the risk term loses convexity. RU is unaffected |
+| 19 | The peak term is convex, hence exact with no binaries | `ADR-008`:37, `ADR-011`:41-44 | **Conditional** — holds because `peakPrice` is a **scalar**, so the charge is linear in the level. A rate with decreasing marginal €/MW makes the term concave: relaxation understates the charge (third downward bias) and the risk term loses convexity. RU is unaffected |
 
 ---
 

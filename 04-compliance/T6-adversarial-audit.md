@@ -197,11 +197,12 @@ property ConfigPoisoning():
 
     # 3. a valid key with the wrong TYPE is rejected, never coerced
     assert_raises(ConfigurationError, () => LoadConfig({scenarioCount: "64"}))
-    # "120 EUR/kW" is rejected as a FOREIGN UNIT, not as a wrong denominator on
-    # an accepted one: kW is not in the unit system at all (conventions §2), and
-    # a value carrying it must be normalised at dataload or refused. The same
-    # assertion held before the audit, for the opposite reason.
-    assert_raises(ConfigurationError, () => LoadConfig({peakPriceEurPerMw: "120 EUR/kW"}))
+    # "120 EUR/GW" is rejected as a FOREIGN UNIT, not as a wrong denominator on
+    # an accepted one: no power scale other than MW is in the unit system at all
+    # (conventions §2), and a value carrying one must be normalised at dataload
+    # or refused. The same assertion held before the audit, for the opposite
+    # reason.
+    assert_raises(ConfigurationError, () => LoadConfig({peakPriceEurPerMw: "120 EUR/GW"}))
     # and a unit that IS in the system but is the wrong one for this field is
     # rejected on the suffix, by INV-G-02, before the value is ever parsed
     assert_raises(ConfigurationError, () => LoadConfig({peakPriceEurPerMw: "120 EUR/MWh"}))

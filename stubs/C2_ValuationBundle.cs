@@ -154,7 +154,7 @@ public sealed record PwlTerm
 /// tariff regime: <c>z_peak ≥ p_poi[t] ∀t ∈ window</c>,
 /// <c>z_peak ≥ pPoiRealisedPeakMw</c>, objective <c>−peakPriceEurPerMw · z_peak</c>. No
 /// binaries, no max operator, exact (ADR-008).
-/// The floor is precisely <c>peak_to_go</c>, which is why the peak term must be
+/// The floor is precisely <c>pPoiRealisedPeakMw</c>, which is why the peak term must be
 /// composed <b>last</b> (<see cref="StageId.Peak"/>, ADR-009).
 /// </remarks>
 public sealed record EpigraphTerm

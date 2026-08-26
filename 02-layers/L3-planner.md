@@ -1,7 +1,7 @@
 # L3 — Planner
 
 Owns the whole decision. Composes the primitives from C2 into a MILP family,
-solves it at staged market gates carrying commitments forward, and emits order
+solves it at gates carrying commitments forward, and emits order
 intent.
 
 **Input:** `ValuationBundle` (C2) + `StateSnapshot` (L0, lagged)

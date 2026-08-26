@@ -29,11 +29,12 @@
 //
 //  Two things are deliberately gone rather than ported:
 //
-//    * MarketUnits, which held the only sanctioned kW<->MW conversion in each
-//      direction. There is no kW and therefore no seam. Normalisation to MW/MWh
-//      happens once, at dataload, alongside UTC (conventions §2, §4.1). Any
-//      factor of 1000 in this codebase is now a defect.
-//    * EnergyKwh.At(EnergyPrice), which existed to hide the kWh->MWh factor
+//    * MarketUnits, which held the only sanctioned conversion between the two
+//      power scales, in each direction. There is only one scale now and
+//      therefore no seam. Normalisation to MW/MWh happens once, at dataload,
+//      alongside UTC (conventions §2, §4.1). Any factor of a thousand in this
+//      codebase is now a defect.
+//    * The small-unit energy wrapper, which existed to hide a scale factor
 //      inside a price conversion. Energy is MWh and price is EUR/MWh, so the
 //      product is EUR and needs no helper.
 // -----------------------------------------------------------------------------

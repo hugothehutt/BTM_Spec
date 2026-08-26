@@ -1,44 +1,59 @@
 #!/usr/bin/env python3
-"""The glossary lint.
+"""The glossary check.
 
 `00-overview/04-glossary.md` is normative for what a word *means* and for
-nothing else. That is only worth anything if a machine checks it, so this is the
-machine.
+nothing else. `07-verification/rulings.json` is normative for which word kept
+which meaning. That is only worth anything if a machine checks it, so this is
+the machine.
 
-Four checks:
+Failures — these stop the run being clean:
 
-  (a) UNIQUE    no term is defined twice in the glossary. A second definition of
-                a word is the defect the glossary exists to remove, and it is
-                cheapest to catch inside the glossary itself.
-  (b) OWNER     every entry names an owning document, and that document exists.
-                An entry with no owner is a definition with nobody to keep it
-                true.
-  (c) LIVE      every term the glossary defines appears somewhere in the corpus
-                outside the glossary. A defined word nobody uses is dead
-                vocabulary, and dead vocabulary is how a glossary stops being
-                read.
-  (d) RETIRED   no retired spelling appears outside `retired-vocabulary.yaml`,
-                which holds the sites where a retired word is load-bearing —
-                a regulatory primitive, a quotation, or a sentence whose job is
-                to say the word is retired. Adding a line there is a decision
-                someone writes down.
+  UNIQUE       no term is defined twice. A second definition of a word is the
+               defect the glossary exists to remove, and it is cheapest to catch
+               inside the glossary itself.
+  OWNER        every entry names an owning document, and that document exists.
+               An entry with no owner is a definition with nobody to keep it
+               true.
+  RESOLVES     every replacement name in the ruling data is a glossary entry, so
+               a half-recorded ruling is caught the day it is written.
+  ANCHOR       every ruling's anchor names a document and a section that exist.
+               A ruling that cannot be traced to its argument is data without a
+               justification.
+  RETIRED      no retired spelling appears outside a written allowance. The
+               retired spellings are the losing side of each ruling, and this is
+               what stops them growing back.
 
-(d) is the check that costs something. §2 of the glossary rules one meaning per
-word; the retired spellings are the losing side of each ruling, and this is what
-stops them growing back.
+Warning — reported, does not fail the run:
+
+  LIVE         every defined term is used somewhere outside the glossary. Any
+               honest implementation of this is either strict enough to be noisy
+               about legitimately rare terms or loose enough to be vacuous, and a
+               dead entry is a tidiness problem where a returned retired spelling
+               is a correctness one.
+
+Detection only. The machine reports; a human or an agent remediates. Nothing
+here rewrites a document.
+
+Seams: text in, data out. Parsing functions take text and return records. Check
+functions take records and return findings. Parsers raise; they never exit. Only
+`main` touches the filesystem and owns exit policy — 2 for a condition that
+stops the check running, 1 for a violation, 0 for clean — matching
+`check_claims.py`.
 
 Stdlib only, no venv. Run: python3 07-verification/check_glossary.py
 """
 
 from __future__ import annotations
 
+import dataclasses
+import json
 import pathlib
 import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-GLOSSARY = ROOT / "00-overview" / "04-glossary.md"
-RETIRED_FILE = ROOT / "07-verification" / "retired-vocabulary.yaml"
+GLOSSARY_PATH = "00-overview/04-glossary.md"
+RULINGS_PATH = "07-verification/rulings.json"
 
 # Where a term must appear to count as live, and where a retired spelling is
 # looked for. `06-theory` is included: a technical note is where a ruling is
@@ -55,23 +70,427 @@ CORPUS = [
     "stubs",
     "README.md",
 ]
+CORPUS_SUFFIXES = {".md", ".cs", ".py", ".yaml", ".json"}
 
-# Files that are allowed to hold retired vocabulary wholesale, because saying
-# what a word no longer means is their subject.
+# Files allowed to hold retired vocabulary wholesale, because saying what a word
+# no longer means is their subject.
 #
 # `claims.yaml` is exempt for a different reason: it quotes the owning text by
-# construction, so every retired word in the spec appears there a second time.
-# Reporting both would double the count and imply two sites to fix where there
-# is one. The register is corrected *by* the propagation, not before it — a
-# claim whose statement still quotes a retired word after its owning section is
-# fixed is a register defect, and `check_claims.py` is what should catch it.
+# construction, so every retired word in the spec would appear there a second
+# time. Reporting both would double the count and imply two sites to fix where
+# there is one. The register is corrected *by* a propagation batch, not before
+# it — a claim still quoting a retired word after its owning section is fixed is
+# a register defect, and `check_claims.py` is what should catch it.
 RETIRED_EXEMPT_FILES = {
-    "00-overview/04-glossary.md",
+    GLOSSARY_PATH,
+    RULINGS_PATH,
     "06-theory/TN-03-vocabulary.md",
-    "07-verification/retired-vocabulary.yaml",
     "07-verification/check_glossary.py",
     "07-verification/claims.yaml",
 }
+
+# The check's own tests name retired spellings because they plant them as
+# fixtures.
+RETIRED_EXEMPT_PREFIXES = ("07-verification/tests/",)
+
+
+# --- records ----------------------------------------------------------------
+
+
+class RulingDataError(ValueError):
+    """The ruling data is not something this module can read.
+
+    Raised, never exited on. The reader this replaces identified records by
+    exact indent position and returned an empty mapping on input it did not
+    recognise — and an empty mapping reported success, so the check that costs
+    something was the one that failed open.
+    """
+
+
+@dataclasses.dataclass(frozen=True)
+class Allowance:
+    path: str
+    reason: str
+
+
+@dataclasses.dataclass(frozen=True)
+class RetiredSpelling:
+    spelling: str
+    replacement: str
+    case_sensitive: bool
+    allowed: list[Allowance] = dataclasses.field(default_factory=list)
+
+
+@dataclasses.dataclass(frozen=True)
+class Anchor:
+    doc: str
+    section: str
+
+
+@dataclasses.dataclass(frozen=True)
+class Ruling:
+    word: str
+    keeps: str
+    loses: str
+    replacements: list[str]
+    anchor: Anchor
+    retired: list[RetiredSpelling]
+
+
+@dataclasses.dataclass(frozen=True)
+class Entry:
+    term: str
+    definition: str
+    owner: str
+    line: int
+
+
+@dataclasses.dataclass(frozen=True)
+class Finding:
+    """A finding is structured so that an agent can act on it without parsing
+    prose: it names the word at issue, what to write instead, and where."""
+    check: str          # UNIQUE | OWNER | RESOLVES | ANCHOR | RETIRED | LIVE
+    severity: str       # "failure" | "warning"
+    path: str
+    line: int
+    word: str
+    replacement: str    # "" where the finding names no replacement
+    detail: str
+
+
+def format_finding(f: Finding) -> str:
+    """Findings are formatted once, at the boundary."""
+    where = f"{f.path}:{f.line}" if f.line else f.path
+    tail = f" — use '{f.replacement}'" if f.replacement else ""
+    return f"{f.check:<8} '{f.word}' at {where} — {f.detail}{tail}"
+
+
+def failures(findings: list[Finding]) -> list[Finding]:
+    return [f for f in findings if f.severity == "failure"]
+
+
+def warning_findings(findings: list[Finding]) -> list[Finding]:
+    return [f for f in findings if f.severity == "warning"]
+
+
+# --- parsing: the ruling set ------------------------------------------------
+
+
+def _require(obj: dict, key: str, kind: type, where: str):
+    if key not in obj:
+        raise RulingDataError(f"{where}: missing '{key}'")
+    value = obj[key]
+    if not isinstance(value, kind):
+        raise RulingDataError(f"{where}: '{key}' must be {kind.__name__}, "
+                              f"got {type(value).__name__}")
+    return value
+
+
+def parse_rulings(text: str) -> list[Ruling]:
+    """Parse the ruling set. Raises `RulingDataError` on anything malformed."""
+    try:
+        doc = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise RulingDataError(f"not valid JSON: {exc}") from exc
+    if not isinstance(doc, dict):
+        raise RulingDataError("top level must be an object")
+    rulings = _require(doc, "rulings", dict, "top level")
+
+    out: list[Ruling] = []
+    for word, rec in rulings.items():
+        where = f"ruling '{word}'"
+        if not isinstance(rec, dict):
+            raise RulingDataError(f"{where}: must be an object")
+
+        replacements = _require(rec, "replacements", list, where)
+        for r in replacements:
+            if not isinstance(r, str) or not r.strip():
+                raise RulingDataError(f"{where}: every replacement must be a "
+                                      f"non-empty string")
+
+        anchor_obj = _require(rec, "anchor", dict, where)
+        anchor = Anchor(doc=_require(anchor_obj, "doc", str, f"{where} anchor"),
+                        section=_require(anchor_obj, "section", str,
+                                         f"{where} anchor"))
+
+        retired: list[RetiredSpelling] = []
+        for entry in _require(rec, "retired", list, where):
+            if not isinstance(entry, dict):
+                raise RulingDataError(f"{where}: every retired entry must be an object")
+            spelling = _require(entry, "spelling", str, where)
+            seat = f"{where}, spelling '{spelling}'"
+            # Case sensitivity is declared, never inferred. Inferring it from
+            # whether the spelling contains a space is why five capitalised
+            # occurrences of `Oracle` were invisible.
+            case_sensitive = _require(entry, "caseSensitive", bool, seat)
+            allowed: list[Allowance] = []
+            for a in _require(entry, "allowed", list, seat):
+                if not isinstance(a, dict):
+                    raise RulingDataError(f"{seat}: every allowance must be an object")
+                allowed.append(Allowance(
+                    path=_require(a, "path", str, f"{seat} allowance"),
+                    reason=_require(a, "reason", str, f"{seat} allowance"),
+                ))
+            retired.append(RetiredSpelling(
+                spelling=spelling,
+                replacement=_require(entry, "replacement", str, seat),
+                case_sensitive=case_sensitive,
+                allowed=allowed,
+            ))
+
+        out.append(Ruling(
+            word=word,
+            keeps=_require(rec, "keeps", str, where),
+            loses=_require(rec, "loses", str, where),
+            replacements=replacements,
+            anchor=anchor,
+            retired=retired,
+        ))
+    return out
+
+
+# --- parsing: the glossary --------------------------------------------------
+
+ROW = re.compile(r"^\|(?P<cells>.*)\|\s*$")
+SEP = re.compile(r"^\|[\s:|-]+\|$")
+# A doc reference inside the Owner cell: `path/to/doc.md`, with or without a §.
+OWNER_PATH = re.compile(r"`([^`]+?\.md)`")
+# The header a table must carry to be an entry table. Three columns, the first
+# naming what the row defines. Deciding this by the *table's own header* rather
+# than by a substring in the enclosing heading is deliberate: the reader this
+# replaces skipped any section whose heading contained "ruling", so a future
+# subsection so named would silently swallow every entry beneath it.
+ENTRY_HEADERS = {
+    ("term", "definition", "owner"),
+    ("word", "definition", "owner"),
+    ("family", "what its invariants cover", "owner"),
+}
+
+
+def strip_markup(s: str) -> str:
+    return s.replace("`", "").replace("**", "").replace("*", "").strip()
+
+
+def _cells(line: str) -> list[str] | None:
+    m = ROW.match(line)
+    if not m:
+        return None
+    return [c.strip() for c in m.group("cells").split("|")]
+
+
+def parse_glossary(text: str) -> list[Entry]:
+    """Parse the glossary's entry tables. Text in, records out."""
+    entries: list[Entry] = []
+    in_entry_table = False
+    for lineno, line in enumerate(text.splitlines(), 1):
+        cells = _cells(line)
+        if cells is None:
+            if line.strip():
+                in_entry_table = False
+            continue
+        if SEP.match(line):
+            continue
+        header = tuple(strip_markup(c).lower() for c in cells)
+        if header in ENTRY_HEADERS:
+            in_entry_table = True
+            continue
+        if not in_entry_table or len(cells) != 3:
+            continue
+        term = strip_markup(cells[0])
+        if not term:
+            continue
+        entries.append(Entry(term=term, definition=cells[1], owner=cells[2],
+                             line=lineno))
+    return entries
+
+
+# --- matching ---------------------------------------------------------------
+
+
+def _boundary(spelling: str, case_sensitive: bool, plural: bool = False) -> re.Pattern:
+    """A word-boundary match, optionally admitting a plural.
+
+    `plural` is for the retired scan only. A retired spelling written in the
+    plural is the same spelling, and a matcher blind to it leaves a silent gap of
+    exactly the kind this check exists to close: "Composition stages" survived
+    the first propagation batch because the trailing guard rejected the `s`.
+    Liveness does not use it — a warning should err towards silence.
+    """
+    return re.compile(r"(?<![A-Za-z0-9_])" + re.escape(spelling)
+                      + (r"s?" if plural else r"")
+                      + r"(?![A-Za-z0-9_])",
+                      0 if case_sensitive else re.IGNORECASE)
+
+
+def find_retired(rulings: list[Ruling], path: str, text: str) -> list[Finding]:
+    """Every retired spelling in one document.
+
+    Longest match wins, so a nested spelling is reported once at its most
+    specific form rather than once per enclosing spelling. Findings are
+    deduplicated per line, so a line carrying three occurrences yields one: a
+    backlog figure should count places to edit, not characters.
+    """
+    if path in RETIRED_EXEMPT_FILES or path.startswith(RETIRED_EXEMPT_PREFIXES):
+        return []
+
+    spellings = [(r, s) for r in rulings for s in r.retired
+                 if path not in {a.path for a in s.allowed}]
+    spellings.sort(key=lambda rs: len(rs[1].spelling), reverse=True)
+
+    claimed: list[tuple[int, int]] = []
+    hits: list[tuple[int, Finding]] = []
+    seen: set[tuple[int, str]] = set()
+    for _ruling, spelling in spellings:
+        pattern = _boundary(spelling.spelling, spelling.case_sensitive, plural=True)
+        for m in pattern.finditer(text):
+            if any(a < m.end() and m.start() < b for a, b in claimed):
+                continue
+            claimed.append((m.start(), m.end()))
+            line = text.count("\n", 0, m.start()) + 1
+            key = (line, spelling.spelling)
+            if key in seen:
+                continue
+            seen.add(key)
+            hits.append((m.start(), Finding(
+                check="RETIRED", severity="failure", path=path, line=line,
+                word=spelling.spelling, replacement=spelling.replacement,
+                detail="retired spelling",
+            )))
+    return [f for _, f in sorted(hits, key=lambda h: h[0])]
+
+
+# --- checks -----------------------------------------------------------------
+
+
+def check_unique(entries: list[Entry]) -> list[Finding]:
+    seen: dict[str, int] = {}
+    out: list[Finding] = []
+    for e in entries:
+        key = e.term.lower()
+        if key in seen:
+            out.append(Finding(
+                check="UNIQUE", severity="failure", path=GLOSSARY_PATH,
+                line=e.line, word=e.term, replacement="",
+                detail=f"defined twice, first at line {seen[key]}",
+            ))
+        else:
+            seen[key] = e.line
+    return out
+
+
+def check_owner(entries: list[Entry], exists) -> list[Finding]:
+    """`exists` is a predicate on a repository-relative path, so this check
+    never touches the filesystem itself."""
+    out: list[Finding] = []
+    for e in entries:
+        if strip_markup(e.owner) in {"", "—", "-"}:
+            out.append(Finding(
+                check="OWNER", severity="failure", path=GLOSSARY_PATH,
+                line=e.line, word=e.term, replacement="",
+                detail="names no owning document",
+            ))
+            continue
+        for path in OWNER_PATH.findall(e.owner):
+            if not exists(path):
+                out.append(Finding(
+                    check="OWNER", severity="failure", path=GLOSSARY_PATH,
+                    line=e.line, word=e.term, replacement="",
+                    detail=f"owning document '{path}' does not exist",
+                ))
+    return out
+
+
+def check_replacements_resolve(rulings: list[Ruling],
+                               entries: list[Entry]) -> list[Finding]:
+    """Every replacement name the ruling data proposes is a defined term.
+
+    A ruling recorded without its replacement being defined is half a ruling,
+    and this is what catches it the day it is written.
+    """
+    terms = {e.term.lower() for e in entries}
+    out: list[Finding] = []
+    for r in rulings:
+        for name in r.replacements:
+            if name.lower() not in terms:
+                out.append(Finding(
+                    check="RESOLVES", severity="failure", path=RULINGS_PATH,
+                    line=0, word=r.word, replacement="",
+                    detail=f"replacement '{name}' is not a glossary entry",
+                ))
+    return out
+
+
+def check_anchors(rulings: list[Ruling], blobs: dict[str, str]) -> list[Finding]:
+    """Every ruling's anchor names a document and a section that exist.
+
+    The anchor is mandatory in the data, so this is what stops it pointing at a
+    section that has been renumbered away. It is also why `TN-03` §3's section
+    ids are load-bearing.
+    """
+    out: list[Finding] = []
+    for r in rulings:
+        text = blobs.get(r.anchor.doc)
+        if text is None:
+            out.append(Finding(
+                check="ANCHOR", severity="failure", path=RULINGS_PATH, line=0,
+                word=r.word, replacement="",
+                detail=f"anchor document '{r.anchor.doc}' does not exist",
+            ))
+            continue
+        heading = re.compile(r"^#{2,4} " + re.escape(r.anchor.section) + r"[.\s]",
+                             re.MULTILINE)
+        if not heading.search(text):
+            out.append(Finding(
+                check="ANCHOR", severity="failure", path=RULINGS_PATH, line=0,
+                word=r.word, replacement="",
+                detail=f"'{r.anchor.doc}' has no section {r.anchor.section}",
+            ))
+    return out
+
+
+def check_live(entries: list[Entry], blobs: dict[str, str]) -> list[Finding]:
+    """A warning, never a failure.
+
+    Matched on a word boundary rather than as a substring, so `gate` is not
+    satisfied by "mitigate". Matched case-insensitively, because there is no
+    declared flag to consult here and a warning should err towards silence.
+    """
+    out: list[Finding] = []
+    for e in entries:
+        pattern = _boundary(e.term, case_sensitive=False)
+        if any(pattern.search(text) for rel, text in blobs.items()
+               if rel != GLOSSARY_PATH):
+            continue
+        out.append(Finding(
+            check="LIVE", severity="warning", path=GLOSSARY_PATH, line=e.line,
+            word=e.term, replacement="",
+            detail="defined but used nowhere in the corpus",
+        ))
+    return out
+
+
+def run_checks(entries: list[Entry], rulings: list[Ruling],
+               blobs: dict[str, str], exists) -> list[Finding]:
+    out: list[Finding] = []
+    out += check_unique(entries)
+    out += check_owner(entries, exists)
+    out += check_replacements_resolve(rulings, entries)
+    out += check_anchors(rulings, blobs)
+    for rel, text in sorted(blobs.items()):
+        out += find_retired(rulings, rel, text)
+    out += check_live(entries, blobs)
+    return out
+
+
+# --- entry point ------------------------------------------------------------
+#
+# The only part of this module that touches the filesystem, and the only part
+# that decides an exit code.
+
+
+def die(msg: str) -> None:
+    print(f"FATAL {msg}", file=sys.stderr)
+    raise SystemExit(2)
 
 
 def corpus_files() -> list[pathlib.Path]:
@@ -83,183 +502,45 @@ def corpus_files() -> list[pathlib.Path]:
         elif p.is_dir():
             out.extend(sorted(q for q in p.rglob("*")
                               if q.is_file()
-                              and q.suffix in {".md", ".cs", ".py", ".yaml"}
+                              and q.suffix in CORPUS_SUFFIXES
                               and "__pycache__" not in q.parts))
     return out
 
 
-# --- glossary parsing -------------------------------------------------------
-
-# An entry row: | term | definition | owner |
-ROW = re.compile(r"^\|\s*(?P<term>[^|]+?)\s*\|\s*(?P<defn>[^|]+?)\s*\|\s*(?P<owner>[^|]*?)\s*\|\s*$")
-SEP = re.compile(r"^\|[\s:|-]+\|$")
-# A doc reference inside the Owner cell: `path/to/doc.md` or `path` §N
-OWNER_PATH = re.compile(r"`([^`]+?\.md)`")
-
-
-def strip_markup(s: str) -> str:
-    return s.replace("`", "").replace("**", "").replace("*", "").strip()
-
-
-def parse_glossary() -> list[dict]:
-    if not GLOSSARY.exists():
-        print(f"FAIL  glossary not found: {GLOSSARY.relative_to(ROOT)}")
-        sys.exit(1)
-    entries: list[dict] = []
-    skipping = False
-    for lineno, line in enumerate(GLOSSARY.read_text(encoding="utf-8").splitlines(), 1):
-        if line.startswith("#"):
-            # Two sections are not entry tables. §2 records the rulings, whose
-            # replacement names are deliberately not yet in the corpus — they
-            # go live with the propagation, not with the ruling. §15 lists the
-            # losing side of each ruling.
-            head = line.lower()
-            skipping = "ruling" in head or "retired vocabulary" in head
-            continue
-        if skipping or SEP.match(line):
-            continue
-        m = ROW.match(line)
-        if not m:
-            continue
-        term = strip_markup(m.group("term"))
-        if not term or term.lower() in {"term", "word", "family"}:
-            continue
-        entries.append({
-            "term": term,
-            "defn": m.group("defn").strip(),
-            "owner": m.group("owner").strip(),
-            "line": lineno,
-        })
-    return entries
-
-
-def parse_retired() -> dict[str, dict]:
-    """Minimal YAML reader for the retired-vocabulary shape. Stdlib only.
-
-    retired:
-      "cold tier":
-        replacement: cold store
-        allowed:
-          - path: 04-compliance/T3-determinism-and-replay.md
-            reason: quotes the retired name to say it is retired
-    """
-    if not RETIRED_FILE.exists():
-        print(f"FAIL  retired vocabulary not found: {RETIRED_FILE.relative_to(ROOT)}")
-        sys.exit(1)
-    out: dict[str, dict] = {}
-    current: str | None = None
-    current_allow: dict | None = None
-    for raw in RETIRED_FILE.read_text(encoding="utf-8").splitlines():
-        line = raw.rstrip()
-        if not line.strip() or line.strip().startswith("#"):
-            continue
-        indent = len(line) - len(line.lstrip())
-        body = line.strip()
-        if indent == 0:
-            continue  # the `retired:` key
-        if indent == 2 and body.endswith(":"):
-            current = body[:-1].strip().strip('"').strip("'")
-            out[current] = {"replacement": "", "allowed": []}
-            current_allow = None
-        elif indent == 4 and body.startswith("replacement:") and current:
-            out[current]["replacement"] = body.split(":", 1)[1].strip().strip('"')
-        elif indent == 6 and body.startswith("- path:") and current:
-            current_allow = {"path": body.split(":", 1)[1].strip().strip('"'), "reason": ""}
-            out[current]["allowed"].append(current_allow)
-        elif indent == 8 and body.startswith("reason:") and current_allow is not None:
-            current_allow["reason"] = body.split(":", 1)[1].strip().strip('"')
-    return out
-
-
-# --- checks -----------------------------------------------------------------
-
-def check_unique(entries: list[dict]) -> list[str]:
-    seen: dict[str, int] = {}
-    fails = []
-    for e in entries:
-        key = e["term"].lower()
-        if key in seen:
-            fails.append(f"UNIQUE  '{e['term']}' defined twice "
-                         f"(04-glossary.md:{seen[key]} and :{e['line']})")
-        else:
-            seen[key] = e["line"]
-    return fails
-
-
-def check_owner(entries: list[dict]) -> list[str]:
-    fails = []
-    for e in entries:
-        if not e["owner"] or strip_markup(e["owner"]) in {"", "—", "-"}:
-            fails.append(f"OWNER   '{e['term']}' names no owning document "
-                         f"(04-glossary.md:{e['line']})")
-            continue
-        for path in OWNER_PATH.findall(e["owner"]):
-            if not (ROOT / path).exists():
-                fails.append(f"OWNER   '{e['term']}' owner '{path}' does not exist "
-                             f"(04-glossary.md:{e['line']})")
-    return fails
-
-
-def check_live(entries: list[dict], blobs: dict[str, str]) -> list[str]:
-    fails = []
-    for e in entries:
-        needle = e["term"]
-        # A term written as an identifier is matched verbatim; a prose term is
-        # matched case-insensitively, since prose capitalises at sentence start.
-        found = False
-        for rel, text in blobs.items():
-            if rel == "00-overview/04-glossary.md":
-                continue
-            hay = text if needle[:1].isupper() or "_" in needle else text.lower()
-            hit = needle if hay is text else needle.lower()
-            if hit in hay:
-                found = True
-                break
-        if not found:
-            fails.append(f"LIVE    '{e['term']}' is defined but used nowhere in the corpus "
-                         f"(04-glossary.md:{e['line']})")
-    return fails
-
-
-def check_retired(retired: dict[str, dict], blobs: dict[str, str]) -> list[str]:
-    fails = []
-    for word, spec in retired.items():
-        allowed = {a["path"] for a in spec["allowed"]}
-        pattern = re.compile(r"(?<![A-Za-z0-9_])" + re.escape(word) + r"(?![A-Za-z0-9_])",
-                             re.IGNORECASE if " " in word else 0)
-        for rel, text in blobs.items():
-            if rel in RETIRED_EXEMPT_FILES or rel in allowed:
-                continue
-            for m in pattern.finditer(text):
-                line = text.count("\n", 0, m.start()) + 1
-                repl = spec["replacement"] or "(no replacement recorded)"
-                fails.append(f"RETIRED '{word}' at {rel}:{line} — use '{repl}'")
-    return fails
+def read(rel: str) -> str:
+    p = ROOT / rel
+    if not p.exists():
+        die(f"{rel} not found")
+    return p.read_text(encoding="utf-8")
 
 
 def main() -> int:
-    entries = parse_glossary()
-    retired = parse_retired()
+    entries = parse_glossary(read(GLOSSARY_PATH))
+    try:
+        rulings = parse_rulings(read(RULINGS_PATH))
+    except RulingDataError as exc:
+        die(f"{RULINGS_PATH}: {exc}")
+
     blobs = {
         str(p.relative_to(ROOT)): p.read_text(encoding="utf-8", errors="replace")
         for p in corpus_files()
     }
+    findings = run_checks(entries, rulings, blobs, lambda rel: (ROOT / rel).exists())
 
-    fails: list[str] = []
-    fails += check_unique(entries)
-    fails += check_owner(entries)
-    fails += check_live(entries, blobs)
-    fails += check_retired(retired, blobs)
+    spellings = sum(len(r.retired) for r in rulings)
+    print(f"glossary: {len(entries)} terms, {len(rulings)} rulings, "
+          f"{spellings} retired spellings, {len(blobs)} corpus files")
 
-    print(f"glossary: {len(entries)} terms, {len(retired)} retired spellings, "
-          f"{len(blobs)} corpus files")
-    if not fails:
-        print("OK")
-        return 0
-    for f in fails:
-        print(f)
-    print(f"\n{len(fails)} failure(s)")
-    return 1
+    for f in warning_findings(findings):
+        print(format_finding(f))
+    bad = failures(findings)
+    for f in bad:
+        print(format_finding(f))
+    if bad:
+        print(f"\n{len(bad)} failure(s)")
+        return 1
+    print("OK")
+    return 0
 
 
 if __name__ == "__main__":

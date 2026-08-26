@@ -7,7 +7,7 @@
 The composer applies terms in a fixed order:
 
 ```
-tariff → opp-cost + λ_SOC → peak_to_go (last) → validate
+tariff → opp-cost + λ_SOC → pPoiRealisedPeakMw (last) → validate
 ```
 
 with the stated reason that peak headroom must be priced on top of a battery

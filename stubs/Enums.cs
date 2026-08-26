@@ -234,7 +234,7 @@ public enum ScenarioScopeKind
 }
 
 /// <summary>
-/// Composition stages (L2 §4, ADR-009). Preconditions are declared and checked;
+/// Composition steps (L2 §4, ADR-009). Preconditions are declared and checked;
 /// composing out of order raises rather than producing a plausible wrong number
 /// (INV-V-07). Recorded in <c>ValuationBundle.compositionOrder</c> for audit.
 /// </summary>

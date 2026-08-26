@@ -91,7 +91,7 @@ information the engine did not yet know. **Valuation** turns beliefs into
 *linearizable economic primitives* — piecewise-linear curves, epigraph
 coefficients, bounds — never into scalar prices, because peak and reserve terms
 are not linear in the decision. **Planner** composes those primitives into a
-single MILP family solved at staged market gates, carrying a commitment ledger
+single MILP family solved at gates, carrying a commitment ledger
 forward, and emits order *intent*. **Execution** is the pre-existing market
 simulation and is treated as an external system behind a thin adapter.
 **Settlement** recomputes the truth ex post and decomposes the gap between
@@ -122,7 +122,7 @@ stubs/           C# interface stubs — signatures only, no bodies
 The original five-layer framing was sound. Five things in it did not survive
 contact with the detail, and each is now an ADR:
 
-1. **The graph had a cycle.** λ_SOC is a Planner dual and `peak_to_go` is a
+1. **The graph had a cycle.** λ_SOC is a Planner dual and `pPoiRealisedPeakMw` is a
    Settlement output, yet both sat in Valuation. Resolved by L0 and a strict
    forward-within-a-tick, lagged-across-ticks rule (ADR-006).
 2. **λ_SOC as a scalar misprices the curve.** Replaced by a concave piecewise

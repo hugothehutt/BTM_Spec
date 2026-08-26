@@ -67,7 +67,7 @@ specification of the unit level. §6 covers the unit level proper.
 
 | Level | Scope | Runtime budget | Failure action | Owner |
 |---|---|---|---|---|
-| `T0` | One view, one composer stage, one calendar function, one term shape. No I/O, no solver. | ≤ 60 s for the whole suite | Block commit | Layer owner |
+| `T0` | One view, one composition step, one calendar function, one term shape. No I/O, no solver. | ≤ 60 s for the whole suite | Block commit | Layer owner |
 | `T1` | Each seam payload `C1`…`C5` and `StateSnapshot`; the `MarketCalendar` artefact; backend agreement on one model | ≤ 3 min | Block merge | Contracts owner |
 | `T2` | Per layer (`L1`, `L2`, `L3`, `L5`) and per seam. Generated inputs, bounded shrinking. | ≤ 15 min in CI; extended corpus nightly | Block merge | Layer owner |
 | `T3` | Whole tick, then whole run. Golden hashes over a canonical 7-day window in CI; full-history nightly. | ≤ 8 min CI; ≤ 3 h nightly | Block merge on unexplained hash change; nightly failure pages the on-call | Platform owner |
@@ -177,7 +177,7 @@ solver, no file system, no recorded seam.
 | Target | What `T0` asserts |
 |---|---|
 | Each `IValuationView` | `Evaluate` output validates against the view's own `PublishedSchema`; `ClaimedEffects` matches what the terms actually carry; hand-computed values on a 4-slot fixture |
-| Each composer stage | Preconditions and postconditions of the stage table (ADR-009, `L2` §4) hold in isolation |
+| Each composition step | Preconditions and postconditions of the stage table (ADR-009, `L2` §4) hold in isolation |
 | Curvature checker | Concave, convex, general and pathological breakpoint sets classify correctly, including ties and a two-point curve |
 | Epigraph builder | `z ≥ expr[t] ∀t`, `z ≥ floor`, correct `overSlots` subset, correct `prorationFactor` application |
 | `CivilCalendar` | `SlotId ↔ (local date, local time, HLZF window)` on ordinary days and both DST days; 92 / 96 / 100-slot civil days |

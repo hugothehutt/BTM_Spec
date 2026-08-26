@@ -36,7 +36,7 @@ no `object`. Every shape is a serialisable value type with a declared schema.
 - **PeakView → `EpigraphTerm`.** `max(·)` is linear in epigraph form:
   `z_peak ≥ p_poi[t] ∀t ∈ window`, `z_peak ≥ pPoiRealisedPeakMw` (the floor, from L0),
   objective `−peakPriceEurPerMw · z_peak`. No binaries, no max operator, exact. The floor
-  is precisely `peak_to_go`, and it is why the term must be composed last
+  is precisely `pPoiRealisedPeakMw`, and it is why the term must be composed last
   (ADR-009).
 - **AfrrCapacity → `PwlTerm` (concave, Max) + `BoundTerm` (MW envelope).** The
   expected value of the capacity bid curve `V(E)` is concave in offered MW under
