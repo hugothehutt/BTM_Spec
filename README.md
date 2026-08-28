@@ -17,36 +17,31 @@ plan. Implementation happens in the engine repository against these documents.
 |---|---|
 | Layer model and clocks | Normative |
 | Units, signs, time grid | Normative |
-| Glossary | Normative for what a term means; never for what the thing does. Machine-checked by `07-verification/check_glossary.py` |
+| Glossary | Normative for what a term means; never for what the thing does. §14 carries the vocabulary rulings |
 | Delineation regime (MiSpel, A1/A5) | Normative, transcribed from Anlage 1; route split and identities derived |
 | Delineation in the objective (ADR-017) | Normative — accumulators on C5/C6, state equations in L3, exact recomputation in L5 |
-| ADR-001 … ADR-014, ADR-016, ADR-017 | Accepted |
-| ADR-015 (open register) | Placeholder — its three decisions are named below and carry no register entries |
+| ADR-001 … ADR-014, ADR-016 … ADR-017 | Accepted |
+| ADR-015 (open register) | Placeholder — its three decisions are named below |
 | Seam contracts C1–C6 | Normative, versioned |
 | Layer designs L0–L5 | Normative for structure, indicative for algorithm choice |
 | Compliance architecture | Normative |
 | Implementation plan | Advisory |
-| Verification protocol | Normative |
-| Technical notes (`06-theory/`) | Advisory — builder output. A note's verdicts bind nothing until adjudicated (PROTOCOL §5.1) |
+| Technical notes (`06-theory/`) | Advisory — builder output. A note's verdicts bind nothing until an ADR acts on them |
 
-**Status vocabulary.** Three values, defined in `07-verification/PROTOCOL.md` §9.3:
+**Status vocabulary.** Two values:
 
 | Status | Meaning |
 |---|---|
 | **Normative** | Binding as written. |
 | **Advisory** | Guidance; may be departed from with reason. |
-| **Holed** | Binding except where a hole marker stands. A refuted section has been deleted and nothing may assume a replacement. Carries the count of open holes. |
 
-A part with a hole in it is neither normative nor absent, which is why the third
-value exists. Holes are greppable (`> [!HOLE]`), each names an open ticket, and
-no document may cite a holed section without carrying a marker itself.
+Consistency between documents is held by the ADRs and by review.
 
 Three decisions are deliberately **deferred**: the MILP solver (Gurobi
 intended), the per-tick latency budget, and intraday fill-model fidelity.
 Nothing in this specification depends on them. Where a document must reference
 one, it references the *abstraction*, never the choice. `01-adr/ADR-015` is a
-title-only placeholder: the three are outside the verification route and hold no
-claim-register entries, and they return only if a technical note acquires a
+title-only placeholder: the three return only if a technical note acquires a
 dependency on one. `05-implementation/P0-workstreams.md` carries the per-workstream
 review that checks no such dependency has appeared.
 
@@ -63,7 +58,7 @@ Read in this order. Each part assumes the previous one.
 3. `00-overview/03-mispel-reference.md` — the MiSpel delineation machinery
    (Abgrenzungsoption, cases A1 and A5) in the regulator's own notation.
 4. `00-overview/04-glossary.md` — what each term means and which document owns
-   it. Keep it open while reading the rest; §2 records the words that carried
+   it. Keep it open while reading the rest; §14 records the words that carried
    two meanings and which meaning kept each one.
 5. `01-adr/` — the decisions that are expensive to reverse, each with context,
    decision, consequences and the rejected alternatives.
@@ -72,14 +67,10 @@ Read in this order. Each part assumes the previous one.
 7. `02-layers/` — the internals of each layer.
 8. `04-compliance/` — how we know it works: the seven test levels.
 9. `05-implementation/` — sequencing and the agent playbook.
-10. `07-verification/PROTOCOL.md` — how a claim in this repository earns trust:
-   the five mechanisms, the evidence labels, and what happens to a refutation.
-   `07-verification/claims.yaml` is the register every label attaches to. Read
-   before asserting anything new.
-11. `06-theory/` — the technical notes. `TN-NN` numbering is sequential and
-   never recycled (PROTOCOL §11), but it is per-repository: a note carrying the
-   same number on a research branch is a different note. Read a note as the
-   builder's argument, not as a verdict the specification has accepted.
+10. `06-theory/` — the technical notes. `TN-NN` numbering is sequential and
+   never recycled, but it is per-repository: a note carrying the same number on
+   a research branch is a different note. Read a note as the builder's argument,
+   not as a verdict the specification has accepted.
 
 ---
 
@@ -112,8 +103,7 @@ one-tick lag.
 03-contracts/    the seven seams — the frozen surface (C0 conventions, C1-C6)
 04-compliance/   invariants, property tests, replay, gap instrumentation (T0-T6)
 05-implementation/ workstreams, sequencing, agent playbook
-06-theory/        technical notes: the analytic work behind a claim's label
-07-verification/ how a claim earns trust: protocol, claim register, machine check
+06-theory/        technical notes: the analytic work behind a decision
 stubs/           C# interface stubs — signatures only, no bodies
 ```
 

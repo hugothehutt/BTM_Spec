@@ -12,25 +12,17 @@ restates a rule is a defect — a second normative statement of one thing is wha
 this document exists to remove.
 
 Scope is the domain: the battery, the markets, the optimisation, the accounting.
-The vocabulary of how this repository verifies itself — evidence labels, masking,
-adjudication, blast radius, hole markers, voiding — is owned by
-`07-verification/PROTOCOL.md` and is not repeated here.
 
 Not every English word is here. A term earns an entry when a reader needs it
 defined to work: the identifiers, the named quantities, the concepts a document
 leans on. Ordinary words used ordinarily are not vocabulary.
 
-The rulings are not here. Which word kept which meaning is data, in
-`07-verification/rulings.json`; the argument for each ruling is
-`06-theory/TN-03-vocabulary.md` §3. No two of the three state the same fact, so
-none of them can drift from the others.
+Where one word carried two meanings, §14 records which meaning kept it and what
+the losing sense is written with. The argument for each ruling is
+`06-theory/TN-03-vocabulary.md` §3; this file states the ruling, that note states
+why, and neither restates the other.
 
-`07-verification/check_glossary.py` checks this file against that data. Four
-things **fail**: a term defined twice, an entry whose owning document does not
-exist, a replacement name in the ruling set with no entry here, a ruling whose
-anchor names a section that is not there, and a retired spelling outside a
-written allowance. One thing **warns** without failing: a
-term defined here and used nowhere else in the corpus.
+Nothing here is machine-checked. Consistency is held by ADR and by review.
 
 ## 2. Layers and components
 
@@ -262,4 +254,47 @@ it.
 Severity is a property of an invariant, not of its family. An id is never reused
 once allocated, and never renumbered: a reused id makes an incident timeline
 unreadable.
+
+## 14. Contested words
+
+Seven names were contested. Five kept one of their two meanings and the loser is
+written differently; two are retired outright. Filed by the contested name,
+never by a losing spelling. `06-theory/TN-03-vocabulary.md` §3 argues each
+ruling — except *capture rate*, argued in `06-theory/TN-02-fan-not-tree.md` §5.
+
+| Word | Keeps | Loses | Write the loser as | Argument |
+|---|---|---|---|---|
+| **frame** | The sign frame — battery, POI, market. | L1's warm storage artefact per (series, civil day). | `slab` | TN-03 §3.1 |
+| **stage** | A measurability level inside one solve — first and second. | The composer's ordered steps, and the settlement timeline. | `composition step`, `settlement point` | TN-03 §3.6 |
+| **peak_to_go** | Nothing — the name is retired outright. | The peak already realised this period, which the name reads as the peak remaining. | `pPoiRealisedPeakMw` | TN-03 §3.9 |
+| **V** | The terminal value function. | The aFRR capacity bid-curve expected value. | `B(E)` | TN-03 §3.7 |
+| **generation** | L0's state version, incremented per Commit. | The hot window's per-refill counter. | `refillCount` | TN-03 §3.8 |
+| **scenarioCount** | `S`, the reduced ensemble axis. | The slow loop's own, larger ensemble. | `fitScenarioCount` | TN-03 §3.8 |
+| **capture rate** | Nothing — the industry metric is rejected along with its name. | The ratio of realised to theoretical revenue, which is not the quantity this engine optimises. | `PolicyQuality` | TN-02 §5 |
+
+**Retired spellings.** These are the concrete strings a reader or a `grep` can
+find. Each is a defect wherever it appears, except at the sites named below.
+
+| Retired | Write instead |
+|---|---|
+| `FrameSpecHash`, `frameSpecHash` | `SlabSpecHash`, `slabSpecHash` |
+| `frameContentHash` | `slabContentHash` |
+| frame family, frame set | slab family, slab set |
+| warm frame | slab |
+| composer stage, composition stage | composition step |
+| staged market gates | gates |
+| staging table | gate table |
+| `peak_to_go` | `pPoiRealisedPeakMw` |
+| capture rate | `PolicyQuality` |
+
+Two allowances, each because the site's job is to name the retired word in order
+to retire it: *staging table* in `06-theory/TN-02-fan-not-tree.md`, and *capture
+rate* in `04-compliance/T5-gap-and-performance.md` and
+`06-theory/TN-02-fan-not-tree.md`. "It is everywhere and hard to change" is not
+an allowance; that is a rename's work.
+
+Four further words — *gate*, *tier*, *primitive*, *oracle* — are ruled in
+`TN-03` §§3.2–3.5 but not propagated, so they are not recorded here. A ruling
+enters this table with its rename, never before it: what stands here is true of
+the corpus as it is.
 

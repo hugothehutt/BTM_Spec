@@ -6,11 +6,18 @@
 Harvests the vocabulary the seven contracts, six layers, seventeen ADRs, seven
 test levels, two technical notes and the verification protocol actually use;
 finds where one word carries two meanings; and rules each collision that matters.
-The glossary `00-overview/04-glossary.md` carries the resulting definitions. This
-note carries the reasoning and nothing else.
+The glossary `00-overview/04-glossary.md` carries the resulting definitions and,
+in §14, the rulings themselves. This note carries the reasoning and nothing else.
 
-Nothing here is an ADR. §6 lists what the specification gains and loses; the act
+Nothing here is an ADR. §5 lists what the specification gains and loses; the act
 is Hugo's.
+
+**NOTE** The corpus this note harvested included
+`07-verification/`, since deleted. References below to `PROTOCOL`, to
+`claims.yaml` and to the ruling set as a separate data file are historical: they
+describe the corpus as it stood, not as it is. Two rulings, `gate` §3.2 and
+`primitive` §3.5, were argued against senses `PROTOCOL` owned and now stand on
+their remaining senses alone; both are still unpropagated.
 
 ---
 
@@ -20,8 +27,8 @@ Six independent readers, one per corpus slice, each recording every term of
 consequence with the meaning **as used** rather than as it ought to be, then
 listing every word carrying two or more meanings inside its own slice. Slices
 were `00-overview` plus `01-adr`; `L0`–`L1`; `L2`–`L5`; `03-contracts` plus
-`stubs`; `04-compliance`; and `05-implementation` plus `06-theory` plus
-`07-verification`.
+`stubs`; `04-compliance`; and `05-implementation` plus `06-theory` plus the
+then-existing `07-verification`.
 
 Independence is the point. A single reader normalises as it goes — it sees
 `stage` in `L2` and `stage` in `L5`, understands both, and never records that
@@ -49,7 +56,7 @@ sentence and know which number it means.
 ## 3. The rulings
 
 Each ruling names the sense that keeps the word. The losing spelling is retired
-into `07-verification/rulings.json` and enforced.
+into the glossary's §14 table.
 
 ### 3.1 `frame` — the sign frame keeps it
 
@@ -208,7 +215,7 @@ it goes to the invariant-register ticket.
 
 ## 4. What the harvest found that is not vocabulary
 
-Nine findings surfaced by a vocabulary sweep that are not vocabulary defects.
+Eight findings surfaced by a vocabulary sweep that are not vocabulary defects.
 None is ruled here; each is a modelling or register decision with its own
 consequences.
 
@@ -221,7 +228,6 @@ consequences.
 | `INV-G-19` has three inequivalent trigger sets across three statements, and gates `DEFENSIVE` | `L0`:366,643,666 |
 | `INV-S-10` says four buckets zero; its own test asserts five quantities zero | `L5`:493,519 |
 | `INV-S-16` asserts `(12) = 0` where §5.1 computes `(12)` unconditionally | `L5`:297,499 |
-| The `derived` label carries two incompatible proof requirements by blast radius | `PROTOCOL`:50,384 |
 | `T1` claims to be the single authoritative register and omits 35 invariants; two tests consequently cite the wrong ids | `T1`:3,11,184; `T2`:966,1003 |
 
 The last is the most consequential. `T2` §5.3's zero-gap test — its own text calls
@@ -236,75 +242,30 @@ fields absent from `stubs/C5_StateUpdate.cs`, and `stubs/C5_StateUpdate.cs`:235
 computes `forecastErrorEur` by the exact method `C5`:188-193 names, distinguishes
 and forbids.
 
-## 5. The checker
+## 5. What the specification gains and loses
 
-`07-verification/check_glossary.py`, stdlib only, reading the ruling set from
-`07-verification/rulings.json`. Five assertions **fail**: no term defined twice;
-every entry names an owner that exists; every replacement name in the ruling set
-resolves to a glossary entry; every ruling's anchor names a section that exists;
-no retired spelling outside a written allowance.
-One **warns** without failing: a term defined and used nowhere else in the
-corpus. Liveness is a warning because any honest implementation of it is either
-noisy about legitimately rare terms or vacuous, and a dead entry is a tidiness
-problem where a returned retired spelling is a correctness one.
-
-The ruling data is JSON, parsed by the standard library. The standard library
-cannot parse YAML, the no-venv policy forbids installing a parser, and a
-hand-rolled reader fails silently on input it does not recognise — which is
-precisely what the first version of this checker did, identifying records by
-exact indent position and reporting success on zero records. JSON's parser is
-total and raises, and the checker exits 2 rather than 0 when its data will not
-load.
-
-The checker has tests — the repository's first — and the first of them is that
-the parser raises. Until a parser is proven to fail loudly, every later passing
-run is ambiguous between "no violations found" and "no rulings loaded".
-
-Written before the propagation, per the precedent of
-[#41](https://github.com/hugothehutt/BTM_Spec/issues/41), where writing the unit
-checker first is what found the five naming groups and the two unnameable fields
-that a grilling had missed. It earned its place immediately: the first run
-rejected **`relaxation order`**, a term this note's author had defined and the
-corpus has never used — `C2`:126 and `L3` §6 call it *feasibility restoration*.
-
-The first version of the checker reported 89 failures, and that figure was
-wrong: nested spellings each reported independently, so `frame set` and the
-phrase enclosing it were counted twice. The propagation is **81 distinct sites
-across 24 files**. `T5` alone holds 34, all of them `oracle`. The rebuilt matcher
-takes the longest match and deduplicates per line, so its count is places to
-edit rather than characters.
-
-`claims.yaml` is exempt from the retired scan: it quotes the owning text by
-construction, so every retired word would appear there a second time. The
-register is corrected *by* a propagation batch, not before it.
-
-## 6. What the specification gains and loses
-
-**Gains.** A named vocabulary with one meaning per word, and a machine that keeps
-it that way. Eleven collisions closed, of which two — `INV-X-07` and
-`INV-G-11`–`16` — were live id collisions that a register consumer could not have
-resolved by reading.
+**Gains.** A named vocabulary with one meaning per word. Eleven collisions
+closed, of which two — `INV-X-07` and `INV-G-11`–`16` — were live id collisions
+that a register consumer could not have resolved by reading.
 
 **Loses.** `oracle`, `primitive`, `frame`, `gate` and `tier` each lose a sense
-they currently carry, across 81 sites. The propagation lands in batches, and each
-batch is green on arrival: the ruling enters `rulings.json`, its sites are
-renamed, and the check passes, all in one change. A ruling is not recorded before
-its propagation, so the checker never fails by design — a red result is always
-news. Batch one carried `frame`, `stage` and `peak_to_go`; `gate`, `tier`,
-`primitive` and `oracle` follow, and two of those need a decision of their own
-first.
+they currently carry, across 81 distinct sites in 24 files — `T5` alone holds 34,
+all of them `oracle`. The propagation lands in batches: the ruling enters
+glossary §14 and its sites are renamed in one change, so no ruling is recorded
+before it is true. Batch one carried `frame`, `stage` and `peak_to_go`; `gate`,
+`tier`, `primitive` and `oracle` follow, and two of those need a decision of
+their own first.
 
-**Not addressed.** The nine §4 findings, each of which needs its own decision.
+**Not addressed.** The eight §4 findings, each of which needs its own decision.
 `06-theory` remains Advisory: nothing in this note binds until Hugo acts on it.
 
-## 7. Where the words go
+## 6. Where the words go
 
-Three artefacts, three disjoint jobs, so that no two of them can state the same
-fact. `00-overview/04-glossary.md` defines what a term means and names the
-document that owns it. `07-verification/rulings.json` records the ruling set and
-is the single source of truth for it. This note argues each ruling, in §3, and
-each ruling record anchors into the §3 section that argues it — so those section
-ids are load-bearing and must stay stable.
+Two artefacts, two disjoint jobs, so that neither can state the other's fact.
+`00-overview/04-glossary.md` defines what a term means, names the document that
+owns it, and records the rulings in §14. This note argues each ruling, in §3, and
+glossary §14 anchors into the §3 section that argues it — so those section ids
+are load-bearing and must stay stable.
 
 `CLAUDE.md` and `docs/agents/domain.md` both named `00-overview/02-conventions.md`
 as the glossary. Both now name the glossary by file, and `domain.md` names no

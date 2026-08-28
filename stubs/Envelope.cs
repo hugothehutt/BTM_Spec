@@ -286,8 +286,8 @@ public interface IContractValidator
 ///   <item><term>INV-G-02</term><description>Every dimensioned field's unit
 ///     suffix equals its declared unit, every power and energy field names its
 ///     frame, and every dimensionless field declares a kind and a closed range
-///     (conventions §5.2, §2.3). Checked off the contract field tables by
-///     <c>07-verification/check_units.py</c>.</description></item>
+///     (conventions §5.2, §2.3). Asserted off the contract field
+///     tables.</description></item>
 ///   <item><term>INV-G-03</term><description><c>schemaVersion</c> is recognised
 ///     by the consumer.</description></item>
 ///   <item><term>INV-G-04</term><description><c>contentHash</c> matches the

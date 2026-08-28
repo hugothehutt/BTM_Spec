@@ -19,8 +19,8 @@
 //        pPoi* (POI), the product's own name (market), load*/pv*/aux* (site),
 //        mtd* and the MiSpel register names (delineation)
 //
-//  INV-G-02 checks both mechanically, off the contract field tables, in
-//  07-verification/check_units.py. Nothing is enforced by review.
+//  INV-G-02 asserts both, off the contract field tables. In the engine
+//  repository it is a schema check; here it is held by review.
 //
 //  Two types survive, because neither carries a unit in the sense above: SlotId
 //  is an index and SlotSpan is a count. Replacing them with `long` and `int`

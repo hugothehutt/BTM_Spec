@@ -321,12 +321,11 @@ identifier and enforced by a check, not by a type.
 - **Beliefs and decisions are distinguished.** `pvAvailMw` is a belief;
   `pvOutMw` is post-decision. A name that could be either is a defect.
 
-`INV-G-02` enforces this mechanically, and the check is executable:
-`07-verification/check_units.py` reads the contract field tables and asserts
-that a field's suffix unit equals its declared unit, that every MW or MWh field
-carries one of the five frame tokens, and that a dimensionless field carries `—`
-plus a range (§2.3). It remains a `HALT` schema check at serialisation and
-deserialisation.
+`INV-G-02` enforces this: a field's suffix unit equals its declared unit, every
+MW or MWh field carries one of the five frame tokens, and a dimensionless field
+carries `—` plus a range (§2.3). It is a `HALT` schema check at serialisation and
+deserialisation. In this repository the contract field tables are held to it by
+review; the engine repository is where it becomes executable.
 
 A field whose unit depends on another field's value has no suffix it can carry
 and is therefore forbidden. Where one existed — an order volume that was MWh on

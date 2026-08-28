@@ -339,11 +339,11 @@ Corrections, per `CLAUDE.md` rule 2 — the replaced text is deleted, not annota
 | `T5` §6.2 | The objective-versus-`S` row is relabelled a discretisation curve; rows are added for instruments 1–3 and for the `V`-truncation difference |
 | `INV-*` | One new invariant for §4.2's backing constraint |
 
-Two register claims assert more than their replacements and are **retired** rather than
-reworded (`PROTOCOL` §11): `CLM-0362` (`S` has a measurable cost/quality curve) and
-`CLM-2898` (the objective-versus-`S` curve shows where accuracy flattens). `CLM-1355`
-(one formulation, one set of tests, six information sets) is a genuine restatement — the
-engineering assertion is unchanged and only its framing was false — and keeps its id.
+Two assertions the specification carried are **withdrawn**, not reworded: that `S`
+has a measurable cost/quality curve, and that the objective-versus-`S` curve shows
+where accuracy flattens. Both claim more than §6 supports. A third — one
+formulation, one set of tests, six information sets — is a genuine restatement:
+the engineering assertion is unchanged and only its framing was false.
 
 **Out of scope, with a re-entry condition.** Tree construction is beyond this map's
 destination. It returns as a fresh effort if instrument 3 measures `A > 5 %`.
