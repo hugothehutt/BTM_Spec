@@ -20,7 +20,7 @@ plan. Implementation happens in the engine repository against these documents.
 | Glossary | Normative for what a term means; never for what the thing does. §14 carries the vocabulary rulings |
 | Delineation regime (MiSpel, A1/A5) | Normative, transcribed from Anlage 1; route split and identities derived |
 | Delineation in the objective (ADR-017) | Normative — accumulators on C5/C6, state equations in L3, exact recomputation in L5 |
-| ADR-001 … ADR-014, ADR-016 … ADR-017 | Accepted |
+| ADR-001 … ADR-014, ADR-016 … ADR-018 | Accepted |
 | ADR-015 (open register) | Placeholder — its three decisions are named below |
 | Seam contracts C1–C6 | Normative, versioned |
 | Layer designs L0–L5 | Normative for structure, indicative for algorithm choice |
@@ -63,7 +63,7 @@ Read in this order. Each part assumes the previous one.
 5. `01-adr/` — the decisions that are expensive to reverse, each with context,
    decision, consequences and the rejected alternatives.
 6. `03-contracts/` — the seven seams. These are the frozen surface. If you read
-   only one section, read `C0-conventions` and `C2-valuation-to-planner`.
+   only one section, read `C0-contract-conventions` and `C2-valuation-to-planner`.
 7. `02-layers/` — the internals of each layer.
 8. `04-compliance/` — how we know it works: the seven test levels.
 9. `05-implementation/` — sequencing and the agent playbook.

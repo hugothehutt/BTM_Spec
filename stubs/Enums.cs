@@ -365,6 +365,16 @@ public enum MarketId
     AfrrEnergy,
 }
 
+/// <summary>Reserve product direction. Upward and downward capacity are separate
+/// products with separate auctions, merit orders and marginal prices — which is
+/// why an award is split <c>Up</c>/<c>Dn</c> and a fill, carrying only
+/// <see cref="OrderSide"/>, could never express it (C4 §4).</summary>
+public enum ReserveDirection
+{
+    Up,
+    Dn,
+}
+
 /// <summary>Order side, in the <b>market frame</b>: <c>Sell = discharge</c> (C3 §2).</summary>
 public enum OrderSide
 {

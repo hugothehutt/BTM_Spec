@@ -553,6 +553,68 @@ public interface IQuotingPolicy
 }
 
 /// <summary>
+/// The auction sibling of <see cref="IQuotingPolicy"/>: it prices aFRR capacity
+/// bids (<b>ADR-018</b>, ADR-012).
+/// </summary>
+/// <remarks>
+/// A sealed-bid auction shares the economic idea with a continuous limit-order
+/// ladder and none of the mechanics, which is why this is a separate interface
+/// rather than a second shape inside <see cref="IQuotingPolicy"/>.
+/// <para>
+/// <b>Capacity is pay-as-bid.</b> The awarded MW is paid the price offered, so
+/// the markup over the reservation price <c>μ</c> is the <i>whole</i> of the
+/// margin — not spread captured from a counterparty. Bidding at <c>μ</c> earns
+/// exactly zero surplus on every award, and bidding below it is a certain loss
+/// (INV-P-11).
+/// </para>
+/// <para>
+/// The two inputs must come from different places and it matters: <c>μ</c> is a
+/// dual of the <i>Planner's</i> problem, carrying the opportunity cost of the
+/// headroom being sold, while <c>P(award | p, b)</c> is a tail mass of the
+/// scenario ensemble. <c>AfrrCapacityView</c>'s envelope has an internal
+/// revenue-maximising price, and it is deliberately <b>not</b> published,
+/// because it ignores what the headroom would have earned on spot.
+/// </para>
+/// <para>
+/// Called <b>inside</b> the Tier 2 subgradient loop: <c>B(E)</c> depends on
+/// <c>P(award | p)</c>, <c>p</c> depends on <c>μ</c>, and <c>μ</c> depends on the
+/// solve. Tier 3 calls it once against <c>μ̂</c> and carries the one-pass error
+/// into its measured gap (T5).
+/// </para>
+/// </remarks>
+public interface IReserveBidPolicy
+{
+    /// <summary>One bid per block and direction — a single price/volume point,
+    /// not a curve. Whether several pairs may be submitted for one block is
+    /// unconfirmed; until it is, C3 carries one (ADR-018 §8).</summary>
+    IReadOnlyList<OrderIntent> Bid(
+        in PlanResult plan,
+        IReadOnlyList<ReserveAwardProbability> awardCurves,
+        DegradationMode mode);
+}
+
+/// <summary><c>P(award | price, block)</c> for one block and direction.
+/// <para>Derived from the reduced ensemble, <b>not</b> a fitted artefact: a bid
+/// wins iff it sits at or below the marginal price, so this is
+/// <c>Σ_s w_s · 1[afrrCapPriceEurPerMwH[s,b] ≥ p]</c>. Taking it from the shared
+/// scenario axis is what keeps award probability correlated with spot prices and
+/// activation (ADR-005); a standalone surface would be independent by
+/// construction and would discard exactly the structure that matters.</para>
+/// </summary>
+public readonly record struct ReserveAwardProbability
+{
+    public required BlockId Block { get; init; }
+
+    public required ReserveDirection Direction { get; init; }
+
+    /// <summary>Unit EUR/MW/h, ascending.</summary>
+    public required ReadOnlyMemory<double> PriceGrid { get; init; }
+
+    /// <summary>Range <c>[0,1]</c>, non-increasing in price.</summary>
+    public required ReadOnlyMemory<double> AwardProbability { get; init; }
+}
+
+/// <summary>
 /// The adapter onto the pre-existing market simulator (<b>ADR-012</b>,
 /// <c>01-system-model.md</c> §5).
 /// </summary>

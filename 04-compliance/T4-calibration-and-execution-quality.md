@@ -238,6 +238,46 @@ The frontier view is the useful one: plot capture ratio against fill rate, per
 policy configuration, and compare configurations on the frontier rather than on
 either axis alone.
 
+### 3.1.1 Reserve bid policy: award rate and markup
+
+`IReserveBidPolicy` is separated from the Planner for the same reason and gets the
+same treatment (ADR-018). The auction differs from the book in one way that
+simplifies the measurement and one that complicates it: the outcome is binary per
+block rather than a partial fill path, and the counterfactual is *published* — the
+marginal price tells you exactly what would have won.
+
+```
+for each reserve intent i on block b, direction d:
+    awarded   = outcome.awardedMw(b, d) > 0
+    predicted = P_award(i.limitPriceEurPerMwH, b)      # from the ensemble, ex ante
+    margin    = i.limitPriceEurPerMwH − i.reserveShadowValueEurPerMwH
+
+    # the two error modes, both signed, never netted
+    if not awarded and marginalPrice(b,d) > i.reserveShadowValueEurPerMwH:
+        forfeited = (marginalPrice(b,d) − i.reserveShadowValueEurPerMwH)
+                    · i.submittedMw · blockHours[b]      # we could have won at a profit
+    if awarded:
+        donated   = (marginalPrice(b,d) − i.limitPriceEurPerMwH)
+                    · awardedMw · blockHours[b]          # we would still have won higher
+```
+
+| Reported cut | Why |
+|---|---|
+| **Award-rate calibration**: realised award rate against `predicted`, by price band | The direct analogue of the fill-rate check in §2. Systematic divergence means `afrrCapPriceEurPerMwH` is mis-calibrated as a *marginal* price — the ensemble is being fitted to the wrong quantity |
+| Realised markup `margin`, by block and by direction | The policy's whole job. A markup that never varies with `μ` means the policy is a fixed offset wearing a model |
+| `forfeited` and `donated`, **separately**, never netted | Opposite errors from one policy. A policy that bids too high on some blocks and too low on others nets to zero and looks perfect |
+| By block position in the day, and by `qualCritical` / `peakCritical` | Reserve competes with peak and qualification on exactly the days those flags fire |
+
+**Reconciliation with `C5`.** These two quantities are `reserveBidErrorEur`, the
+declared sub-bucket of `executionSlippageEur` (`C5` §6). `T4` asserts they agree
+over the same period within tolerance, on the same reasoning as §3.2's
+reconciliation below.
+
+**This section exists only because capacity is pay-as-bid.** Under marginal
+pricing there is no markup to measure and no counterfactual to run: the price paid
+is not a decision. It is worth noticing that the market design that creates the
+bidding problem also publishes the answer key.
+
 ### 3.2 Adverse selection measurement
 
 A fill that occurs precisely because the market was about to move against you is

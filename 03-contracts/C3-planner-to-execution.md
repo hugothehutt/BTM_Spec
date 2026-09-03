@@ -1,6 +1,6 @@
 # C3 — Planner → Execution
 
-**Payload:** `ExecutionIntent` **Version:** 2.0 **Direction:** L3 → L4
+**Payload:** `ExecutionIntent` **Version:** 3.0 **Direction:** L3 → L4
 
 Execution is the pre-existing market simulator, treated as an external system.
 This contract is deliberately thin and carries **intent only** (ADR-012).
@@ -35,7 +35,8 @@ One row per order.
 | `volumeMw` | `double` | MW | lot-aligned, `>0` | yes | `AfrrCapacity` only |
 | `validity` | `Ioc \| Fok \| GtdUntil(SlotId) \| GtcUntilGate` | — | — | no | |
 | `replacesIntentId` | `string?` | — | — | yes | Cancel/replace semantics |
-| `shadowValueEurPerMwh` | `double` | EUR/MWh | — | no | Planner's indifference price — **audit only**, Execution must ignore it |
+| `shadowValueEurPerMwh` | `double` | EUR/MWh | — | yes | Energy markets only. Planner's indifference price — **audit only**, Execution must ignore it |
+| `reserveShadowValueEurPerMwH` | `double` | EUR/MW/h | — | yes | `AfrrCapacity` only. `μ[b]`, the reservation price of a MW of headroom — **audit only**, Execution must ignore it |
 | `urgency` | `double` | — | `[0,1]` | no | `fraction`. Audit only |
 | `tag` | `StrategyTag` | — | — | no | `Arbitrage \| PeakShave \| ReserveHedge \| Rebalance \| CommitmentCover` |
 
@@ -50,11 +51,25 @@ its declared unit, and a field with two possible units has no suffix it can
 carry. The unit of a capacity order is MW of committed power, not MWh of energy,
 and the seam now says so in the field name.
 
-`shadowValueEurPerMwh` and `urgency` are carried across the seam **for settlement
-attribution, not for execution**. They let L5 answer "did the quoting policy
-trade through indifference?" without the Planner and the quoting policy having a
-private side channel. `INV-X-04` asserts Execution does not read them — enforced
-by the adapter interface exposing a projection that omits them.
+**The shadow-value pair is exclusive on the same rule.** `shadowValueEurPerMwh`
+is present on the energy markets, `reserveShadowValueEurPerMwH` on
+`AfrrCapacity`, and never both: they are the same economic object — the Planner's
+indifference price — in the two units the markets are denominated in, and
+`INV-G-02` forbids one identifier carrying both suffixes.
+
+**On `AfrrCapacity`, the limit price is the price you are paid.** Capacity is
+pay-as-bid (ADR-018): the awarded MW settles at `limitPriceEurPerMwH`, not at any
+clearing price, and `INV-X-12` asserts that identity across the C3→C4 round trip.
+The price is chosen by `IReserveBidPolicy` as a markup over
+`reserveShadowValueEurPerMwH`, which is why the two travel together.
+
+`shadowValueEurPerMwh`, `reserveShadowValueEurPerMwH` and `urgency` are carried
+across the seam **for settlement attribution, not for execution**. They let L5
+answer "did the quoting policy trade through indifference?" and "what markup did
+the reserve bid policy take, and did it cost us the block?" without the Planner
+and those policies having a private side channel. `INV-X-04` asserts Execution
+does not read them — enforced by the adapter interface exposing a projection that
+omits them.
 
 ## 3. Bid curves (DA)
 
@@ -98,11 +113,23 @@ follow an activation signal, but never out of the corridor.
 | `INV-P-06` | Total planned discharge over any window respects energy availability including reserve corridor | `HALT` |
 | `INV-P-09` | DA curves monotone | `HALT` |
 | `INV-P-10` | No sell intent priced below `shadowValueEurPerMwh`; no buy intent priced above it | warn + block the intent |
+| `INV-P-11` | No `AfrrCapacity` intent priced below its `reserveShadowValueEurPerMwH` | warn + block the intent |
+| `INV-P-12` | For every block carrying a confirmed award, an `AfrrEnergy` intent exists in every slot of the block with volume ≥ the awarded MW | `HALT` |
 
 `INV-P-10` is the economic safety net for the quoting policy. It is a warning
 rather than a halt because a legitimate edge case exists — covering a commitment
 at a loss is sometimes correct — but such intents must carry the
 `CommitmentCover` tag, and an untagged violation is blocked.
+
+`INV-P-11` is the same net for `IReserveBidPolicy`, and it bites harder: capacity
+is pay-as-bid, so a bid below `μ` is not a thin margin but a certain loss on every
+MW awarded. The `CommitmentCover` exception carries over unchanged.
+
+`INV-P-12` is a compliance obligation, not an economic one — awarded capacity
+must be offered into the balancing energy market. It is `HALT` rather than a
+warning because the consequence of breaching it is a prequalification risk, the
+same reasoning `INV-S-04` rests on. The bound is `≥`, not `=`: offering more than
+the obligation is permitted, and occasionally profitable.
 
 ## 6. What does *not* cross C3
 

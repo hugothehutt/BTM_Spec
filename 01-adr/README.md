@@ -1,6 +1,7 @@
+
 # Architecture Decision Records
 
-Seventeen live decisions that are expensive to reverse. Each records context, the
+Eighteen live decisions that are expensive to reverse. Each records context, the
 decision, its consequences, and what was rejected and why. ADR IDs are stable
 and referenced throughout the specification: a deleted decision keeps its id and
 its row, and the id is never reissued.
@@ -24,6 +25,7 @@ its row, and the id is never reissued.
 | [015](ADR-015-open-decisions.md) | Register of deliberately deferred decisions | **Open** | — |
 | [016](ADR-016-curtailment-as-priced-decision.md) | Curtailment is a priced MILP decision, never a rule | Accepted | Moderate |
 | [017](ADR-017-delineation-in-the-objective.md) | Delineation as MILP state equations plus marginal values | Accepted | Very expensive |
+| [018](ADR-018-reserve-bid-price-formation.md) | Reserve capacity is pay-as-bid; the bid price is a policy, not a dual | Accepted | Moderate |
 
 ## Reversibility as a sequencing guide
 

@@ -1,6 +1,6 @@
 # C1 — Belief → Valuation
 
-**Payload:** `BeliefSnapshot` **Version:** 2.0 **Direction:** L1 → L2
+**Payload:** `BeliefSnapshot` **Version:** 3.0 **Direction:** L1 → L2
 
 Carries everything Valuation may know about the world, as of a knowledge-time
 boundary, over the hot window. Nothing else reaches Valuation. In particular
@@ -50,7 +50,7 @@ Plus:
 | `daClearedEurPerMwh` | `double` | EUR/MWh | `[H]` | as above | yes | — | — | Present only post-gate; null pre-gate |
 | `idPriceRefEurPerMwh` | `double` | EUR/MWh | `[S,H]` | as above | no | — | 2 | Reference (e.g. ID index) belief |
 | `idSpreadBeliefEurPerMwh` | `double` | EUR/MWh | `[S,H]` | `≥0` | no | wide | 2 | Half-spread belief; wide default suppresses trading |
-| `afrrCapPriceEurPerMwH` | `double` | EUR/MW/h | `[S,B]` | `≥0` | no | `0` | gate | Per product block; zero default = do not chase |
+| `afrrCapPriceEurPerMwH` | `double` | EUR/MW/h | `[S,B]` | `≥0` | no | `0` | gate | **The marginal (last accepted) capacity price** per product block — not a revenue price. Capacity is pay-as-bid, so a bid is awarded iff it sits at or below this; `P(award \| p, b)` is read off the scenario axis (ADR-018 §3). Zero default = do not chase |
 | `afrrEnergyPriceUpEurPerMwh`,`afrrEnergyPriceDnEurPerMwh` | `double` | EUR/MWh | `[S,H]` | — | no | `0` | gate | |
 | `activationUp`,`activationDn` | `double` | — | `[S,H]` | `[0,1]` | no | — | 96 | `fraction` of committed MW actually called. Scenario-consistent with prices (ADR-005) |
 | `imbalancePriceEurPerMwh` | `double` | EUR/MWh | `[S,H]` | — | no | — | 96 | reBAP-type belief |

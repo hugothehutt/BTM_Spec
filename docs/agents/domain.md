@@ -19,7 +19,7 @@ layout the skills assume by default.
   battery, POI and market, with one sign flip, between battery and POI — the
   15-minute `SlotId` grid, naming and numeric policy. Rules, not definitions.
 - **`00-overview/03-mispel-reference.md`** — the MiSpel delineation regime.
-- **`01-adr/`** — ADRs, named `ADR-NNN-<slug>.md` (`ADR-001` … `ADR-017`). Read
+- **`01-adr/`** — ADRs, named `ADR-NNN-<slug>.md` (`ADR-001` … `ADR-018`). Read
   the ones touching the area you are about to work in. **Not `docs/adr/`.**
 - **`03-contracts/`** — the frozen seams `C0`–`C6`. Anything crossing a layer
   boundary is constrained by a versioned payload here.

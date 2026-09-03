@@ -39,8 +39,14 @@ no `object`. Every shape is a serialisable value type with a declared schema.
   is precisely `pPoiRealisedPeakMw`, and it is why the term must be composed last
   (ADR-009).
 - **AfrrCapacity → `PwlTerm` (concave, Max) + `BoundTerm` (MW envelope).** The
-  expected value of the capacity bid curve `V(E)` is concave in offered MW under
-  a standard clearing model, so it embeds with no binaries.
+  term is `B(E) = max_p [ p · E · P(award | p, b) ]`, the envelope of the
+  pay-as-bid trade-off between markup and award probability (ADR-018). It is a
+  function of offered MW alone, so it embeds with no binaries **when it is
+  concave** — which is checked, not assumed: the envelope of a maximisation is
+  not concave for free. `INV-V-12` verifies it against the breakpoints on every
+  composition, and a failure means the term is declared `General` and pays for
+  its binaries. Earlier text justified concavity by "a standard clearing model"
+  that the corpus never defined; ADR-018 §3 defines it.
 - **AfrrEnergy / ImbalanceRisk → `LinearTerm` per scenario + `PwlTerm` (convex,
   Min) for the risk functional.** CVaR is representable as a linear program
   (Rockafellar–Uryasev), so a CVaR-penalised objective stays a MILP.

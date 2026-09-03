@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C4: Execution → Settlement
 //
-//  Payload: ExecutionOutcome   Version: 2.0   Direction: L4 → L5
+//  Payload: ExecutionOutcome   Version: 3.0   Direction: L4 → L5
 //  Normative source: 03-contracts/C4-execution-to-settlement.md §1–§8.
 //
 //  What actually happened. Settlement must be able to reconstruct the truth from
@@ -22,7 +22,12 @@ namespace Flexbid.Btm.Contracts;
 //  §2 Fills
 // =============================================================================
 
-/// <summary>C4 §2. One executed trade.</summary>
+/// <summary>C4 §2. One executed trade on an <b>energy market</b>
+/// (<c>Da</c>, <c>IdContinuous</c>, <c>AfrrEnergy</c>).
+/// <para>An <see cref="MarketId.AfrrCapacity"/> commitment is an
+/// <see cref="ReserveAward"/>, never a fill. Earlier revisions carried it as
+/// both, which was a live double-count: L5 read capacity revenue from the award
+/// and only fees from the fill, but nothing reconciled the two.</para></summary>
 public sealed record Fill
 {
     public required string FillId { get; init; }
@@ -45,21 +50,12 @@ public sealed record Fill
 
     public required OrderSide Side { get; init; }
 
-    /// <summary>Executed price. Unit EUR/MWh. Energy markets only.</summary>
-    public double? PriceEurPerMwh { get; init; }
+    /// <summary>Executed price. Unit EUR/MWh.</summary>
+    public required double PriceEurPerMwh { get; init; }
 
-    /// <summary>Executed price. Unit EUR/MW/h.
-    /// <see cref="MarketId.AfrrCapacity"/> only.</summary>
-    public double? PriceEurPerMwH { get; init; }
-
-    /// <summary>Executed volume. Unit MWh. Energy markets only. Summed across all
-    /// fills for an intent, never exceeds the intended volume (INV-X-02).</summary>
-    public double? VolumeMwh { get; init; }
-
-    /// <summary>Executed volume. Unit MW of committed power.
-    /// <see cref="MarketId.AfrrCapacity"/> only. Summed across all fills for an
-    /// intent, never exceeds the intended volume (INV-X-02).</summary>
-    public double? VolumeMw { get; init; }
+    /// <summary>Executed volume. Unit MWh. Summed across all fills for an intent,
+    /// never exceeds the intended volume (INV-X-02).</summary>
+    public required double VolumeMwh { get; init; }
 
     /// <summary>Unit EUR. <b>Explicit, never netted into the price</b> (C4 §2) —
     /// netting would corrupt the execution-slippage bucket in C5 §6.</summary>
@@ -90,12 +86,13 @@ public sealed record Unfilled
     /// <summary>Populated for <see cref="Disposition.Rejected"/>.</summary>
     public string? RejectReason { get; init; }
 
-    /// <summary>What did not trade. Unit MWh. Energy markets only.</summary>
+    /// <summary>What did not trade. Unit MWh. Energy markets only.
+    /// <para>There is no capacity counterpart: an unawarded reserve bid still
+    /// appears here for the <c>IntentId</c> linkage (INV-X-01), but its volume
+    /// is <c>SubmittedMw − Awarded*Mw</c> on the
+    /// <see cref="ReserveAward"/> — exact under partial awards, and one source
+    /// of truth instead of two.</para></summary>
     public double? ResidualVolumeMwh { get; init; }
-
-    /// <summary>What did not trade. Unit MW.
-    /// <see cref="MarketId.AfrrCapacity"/> only.</summary>
-    public double? ResidualVolumeMw { get; init; }
 }
 
 // =============================================================================
@@ -108,17 +105,46 @@ public sealed record ReserveAward
 {
     public required BlockId Block { get; init; }
 
+    /// <summary>The C3 intent this award answers. INV-X-12 compares the awarded
+    /// price against this intent's <c>LimitPriceEurPerMwH</c>.</summary>
+    public required string IntentId { get; init; }
+
+    /// <summary>What was bid. Unit MW. Present so Phase A can compute the
+    /// unawarded remainder <c>SubmittedMw − Awarded*Mw</c> without reading the
+    /// plan (C4 §8). Replaces the deleted <c>residualVolumeMw</c>.</summary>
+    public required double SubmittedMw { get; init; }
+
     /// <summary>Unit MW.</summary>
     public required double AwardedUpMw { get; init; }
 
     /// <summary>Unit MW.</summary>
     public required double AwardedDnMw { get; init; }
 
-    /// <summary>Unit EUR/MW/h.</summary>
-    public required double ClearingPriceUpEurPerMwH { get; init; }
+    /// <summary><b>What was paid.</b> Unit EUR/MW/h. Capacity is
+    /// <b>pay-as-bid</b> (ADR-018), so this equals the originating intent's
+    /// <c>LimitPriceEurPerMwH</c> — INV-X-12, <c>HALT</c> on mismatch.
+    /// <para>Formerly <c>ClearingPriceUpEurPerMwH</c>, which was wrong twice:
+    /// nothing clears at a single price under pay-as-bid, and a marginal price
+    /// genuinely exists, so the old name denoted a real series that does not
+    /// settle.</para></summary>
+    public required double AwardedPriceUpEurPerMwH { get; init; }
 
-    /// <summary>Unit EUR/MW/h.</summary>
-    public required double ClearingPriceDnEurPerMwH { get; init; }
+    /// <summary><b>What was paid.</b> Unit EUR/MW/h. See
+    /// <see cref="AwardedPriceUpEurPerMwH"/>.</summary>
+    public required double AwardedPriceDnEurPerMwH { get; init; }
+
+    /// <summary>The published last-accepted price for the block. Unit EUR/MW/h.
+    /// <b>Benchmark only — never enters a revenue formula.</b> It is the
+    /// counterfactual behind <c>reserveBidErrorEur</c> (C5 §6); wiring it into
+    /// settlement produces a plausible, wrong P&amp;L.</summary>
+    public required double MarginalPriceUpEurPerMwH { get; init; }
+
+    /// <summary>See <see cref="MarginalPriceUpEurPerMwH"/>. Unit EUR/MW/h.</summary>
+    public required double MarginalPriceDnEurPerMwH { get; init; }
+
+    /// <summary>Unit EUR. Explicit, never netted into the price. Moved here from
+    /// the deleted <see cref="MarketId.AfrrCapacity"/> fill.</summary>
+    public required double FeesEur { get; init; }
 }
 
 /// <summary>C4 §4, per slot. Realised activation against an award.</summary>

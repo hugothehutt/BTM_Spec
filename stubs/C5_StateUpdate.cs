@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C5: Settlement → State/Value Store, and the read side
 //
-//  Payload:  StateUpdate    Version: 2.0   Direction: L5 → L0   (write)
+//  Payload:  StateUpdate    Version: 3.0   Direction: L5 → L0   (write)
 //            StateSnapshot  Version: 2.0   Direction: L0 → L2/L3 (read, lagged)
 //  Normative source: 03-contracts/C5-settlement-to-state.md §1–§9,
 //                    ADR-006 (the only backwards edge), ADR-007, ADR-011, ADR-014.
@@ -252,6 +252,20 @@ public sealed record ErrorDecomposition
     /// executed prices — which requires <c>shadowValueEurPerMwh</c> to have crossed C3
     /// (C3 §2).</summary>
     public required double ExecutionSlippageEur { get; init; }
+
+    /// <summary>Unit EUR. Declared sub-bucket of
+    /// <see cref="ExecutionSlippageEur"/> — it does not change the telescoping
+    /// sum, it attributes within it. <b>Fix lives in
+    /// <c>IReserveBidPolicy</c>.</b>
+    /// <para>Signed, and the signs are not netted: forfeiting an awardable block
+    /// by bidding above the margin and clearing below what would still have won
+    /// are opposite errors from one policy, and a policy doing both badly would
+    /// otherwise report zero.</para>
+    /// <para>Computable <b>only because capacity is pay-as-bid</b> and the
+    /// marginal price is published per block (C4 §4). Under marginal pricing the
+    /// price paid is not a decision, so there is no counterfactual to
+    /// run.</para></summary>
+    public required double ReserveBidErrorEur { get; init; }
 
     /// <summary>Which tier actually ran, for conditioning the gap
     /// (ADR-010).</summary>

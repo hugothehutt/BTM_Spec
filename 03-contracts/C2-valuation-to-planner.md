@@ -1,6 +1,6 @@
 # C2 — Valuation → Planner
 
-**Payload:** `ValuationBundle` **Version:** 2.0 **Direction:** L2 → L3
+**Payload:** `ValuationBundle` **Version:** 3.0 **Direction:** L2 → L3
 
 The load-bearing seam. Everything the Planner knows about economics arrives here,
 expressed in the closed algebra of ADR-008. The Planner has **no** access to
@@ -157,13 +157,29 @@ because its staleness is handled specially.
 | Field | Type | Unit | Card. | Notes |
 |---|---|---|---|---|
 | `rUpMaxMw`,`rDnMaxMw` | `double` | MW | `[B]` | Envelope from prequalification and asset limits |
-| `capacityValueCurveUp`,`…Dn` | `PwlTerm` | — | `[B]` | Concave in offered MW; the expected value of the bid curve |
+| `capacityValueCurveUp`,`…Dn` | `PwlTerm` | — | `[B]` | `B(E)`, the pay-as-bid envelope in offered MW. Declared `Concave`/`Maximize`, and **verified**, never assumed |
 | `sustainDuration` | `SlotSpan` | — | 1 | Echoed from C1 for the corridor constraints |
 | `deliveryObligationMw` | `double` | MW | `[B]` | Already-confirmed awards from L0 — a **hard** commitment |
 
+`capacityValueCurveUp`/`…Dn` is `B(E) = max_p [ p · E · P(award | p, b) ]`
+(ADR-018 §4). Capacity is pay-as-bid, so the bid price is a real decision and the
+curve is the **envelope** of it: for each offered volume `E`, the value attainable
+at the best markup over the award-probability trade-off. The curve's argument is
+still offered MW alone, so the Planner's variable is unchanged — but the maximiser
+`p*` is *not* carried here, because it is not this layer's to choose. The right
+base for a markup is the opportunity cost of the headroom sold, which is `μ`, a
+dual of the Planner's own problem that Valuation cannot see. `IReserveBidPolicy`
+combines the two.
+
+Concavity of an envelope is not free. `INV-V-12` verifies it against the
+breakpoints on every composition; a failure means `General` curvature and its
+binaries, not a mis-declaration.
+
 `deliveryObligationMw` is separated from the offer decision deliberately: confirmed
 awards are physical obligations that survive every degradation mode (ADR-014 §3),
-whereas offers are decisions.
+whereas offers are decisions. Both are *offered* quantities in the Planner's
+variables — feasibility binds on the whole offer, and only revenue is discounted
+by award probability (ADR-018 §7).
 
 ## 6. Risk profile
 

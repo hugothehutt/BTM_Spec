@@ -39,6 +39,15 @@ fast. Its primary job is to be right and to serve as the oracle everything else
 is scored against, and **it runs offline on every backtest day regardless of
 which tier ships**.
 
+`rUp[b]`, `rDn[b]` are *offered* quantities: the coupling constraints bind on the
+whole offer, and only revenue is weighted by `P(award)` (ADR-018 §7). The gap
+therefore has a second component on reserve days that it does not have elsewhere.
+Tiers 1 and 2 take the bid-price fixed point inside the `μ` iteration; Tier 3
+prices once against `μ̂`. **That one-pass error is part of Tier 3's measured gap
+and is reported as its own cut**, because it is the component that grows with the
+markup and is invisible in an objective comparison alone — two tiers can agree on
+offered MW while bidding it at materially different prices.
+
 ### 2.2 Procedure
 
 ```

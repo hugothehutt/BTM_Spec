@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C3: Planner → Execution
 //
-//  Payload: ExecutionIntent   Version: 2.0   Direction: L3 → L4
+//  Payload: ExecutionIntent   Version: 3.0   Direction: L3 → L4
 //  Normative source: 03-contracts/C3-planner-to-execution.md §1–§6,
 //                    ADR-012 (intent, not routing; quoting is a separate policy),
 //                    L3-planner.md §5 (position → orders), §7 (dispatch boundary).
@@ -133,7 +133,21 @@ public sealed record OrderIntent
     /// <see cref="OrderIntentProjection"/>, which does not have it.
     /// </para>
     /// </remarks>
-    public required double ShadowValueEurPerMwh { get; init; }
+    public double? ShadowValueEurPerMwh { get; init; }
+
+    /// <summary>Unit EUR/MW/h. <see cref="MarketId.AfrrCapacity"/> only, and
+    /// exclusive with <see cref="ShadowValueEurPerMwh"/> — the same economic
+    /// object in the two units the markets are denominated in, which INV-G-02
+    /// forbids one identifier from carrying.
+    /// <para><c>μ[b]</c>, the reservation price of a MW of headroom, taken from
+    /// the coupling dual (ADR-010). <see cref="IReserveBidPolicy"/> marks up from
+    /// it and INV-P-11 forbids bidding below it — which bites harder than
+    /// INV-P-10, because capacity is <b>pay-as-bid</b> (ADR-018): a bid below
+    /// <c>μ</c> is a certain loss on every MW awarded, not a thin margin.</para>
+    /// <para><b>Audit only.</b> Absent from
+    /// <see cref="OrderIntentProjection"/> like its energy-market twin
+    /// (INV-X-04).</para></summary>
+    public double? ReserveShadowValueEurPerMwH { get; init; }
 
     /// <summary>Range <c>[0,1]</c>. Objective degradation if the position is not
     /// reached, normalised. <b>Audit only</b>, same treatment as
@@ -300,7 +314,8 @@ public sealed record OrderIntentProjection
     /// unread on C4, not a decision input (C3 §6).</summary>
     public required StrategyTag Tag { get; init; }
 
-    // Deliberately absent: ShadowValueEurPerMwh, Urgency. See the type remarks.
+    // Deliberately absent: ShadowValueEurPerMwh, ReserveShadowValueEurPerMwH,
+    // Urgency. See the type remarks.
 }
 
 /// <summary>

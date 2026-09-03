@@ -107,7 +107,7 @@ Nothing here is machine-checked. Consistency is held by ADR and by review.
 
 | Term | Definition | Owner |
 |---|---|---|
-| `B(E)` | The aFRR capacity bid curve's expected value as a function of offered energy; concave, and not the terminal value function. | `02-layers/L2-valuation.md` |
+| `B(E)` | The envelope of aFRR capacity value over offered MW, maximised across bid price; concave, and not the terminal value function. | `02-layers/L2-valuation.md` |
 | **base** | The quantity an effect applies to: POI import, battery throughput, market volume, terminal SOC, reserve capacity, delineation. | `01-adr/ADR-009-term-ownership.md` |
 | `BoundTerm` | A bound on a variable or expression, carrying no price field. | `03-contracts/C2-valuation-to-planner.md` |
 | **coherent** | Of a risk measure: monotone, translation-equivariant, positively homogeneous and subadditive. | `06-theory/TN-01-cvar-across-stages.md` |
@@ -137,7 +137,9 @@ Nothing here is machine-checked. Consistency is held by ADR and by review.
 | **feasibility restoration** | Softening bounds in a declared order when a solve is infeasible; physical and regulatory bounds are never in that order. | `02-layers/L3-planner.md` |
 | **physically backed** | Of a market position: equal to physical flow in the same slot, so a matched buy and sell is not a position. | `06-theory/TN-02-fan-not-tree.md` |
 | **POI bridge** | The identity relating site load, delivered generation and battery power to net grid power. | `00-overview/02-conventions.md` |
-| **reservation price** | The internal transfer price of a MW of battery headroom, produced by the Tier 2 dual. | `01-adr/ADR-010-cross-market-tier-ladder.md` |
+| **markup** | The amount by which a reserve bid exceeds the reservation price; under pay-as-bid it is the whole of the margin, not spread taken from a counterparty. | `01-adr/ADR-018-reserve-bid-price-formation.md` |
+| **reservation price** | The internal transfer price of a MW of battery headroom, produced by the Tier 2 dual; the base a reserve bid is marked up from. | `01-adr/ADR-010-cross-market-tier-ladder.md` |
+| `IReserveBidPolicy` | The component mapping a reservation price and an award-probability curve onto one capacity bid; the auction sibling of the quoting policy. | `01-adr/ADR-018-reserve-bid-price-formation.md` |
 | **shadow value** | The dual on the position accounting constraint; the price at which the Planner is indifferent to trading. | `01-adr/ADR-012-order-intent.md` |
 | **SOC corridor** | The band the dispatch controller must remain within; the binding instruction, unlike the setpoint. | `02-layers/L3-planner.md` |
 | `SolveBudget` | The deterministic work limit for a solve, never wall clock. | `01-adr/ADR-013-determinism-and-replay.md` |
@@ -151,11 +153,15 @@ Nothing here is machine-checked. Consistency is held by ADR and by review.
 
 | Term | Definition | Owner |
 |---|---|---|
+| **award** | The outcome of a capacity auction: MW committed for a block and direction, at the price bid. Not a fill, and never carried as one. | `03-contracts/C4-execution-to-settlement.md` |
 | **battery frame** | The sign convention in which positive power is discharge. | `00-overview/02-conventions.md` |
 | `ExecutionIntent` | The C3 payload: what to submit, and nothing about why. | `03-contracts/C3-planner-to-execution.md` |
+| **fill** | An executed trade on an energy market, in MWh at EUR/MWh. A capacity commitment is an award, not a fill. | `03-contracts/C4-execution-to-settlement.md` |
 | `intentId` | The idempotency key for an order, stable across replaces. | `02-layers/L4-execution-boundary.md` |
+| **marginal price** | The last accepted bid in a capacity auction; the threshold a bid must sit at or below to be awarded, and the benchmark Settlement scores bid error against. It never settles anything. | `03-contracts/C4-execution-to-settlement.md` |
 | **market frame** | The sign convention in which a positive volume is a sale. | `00-overview/02-conventions.md` |
 | **orphan** | A live venue order with no ledger entry. | `02-layers/L4-execution-boundary.md` |
+| **pay-as-bid** | The remuneration rule under which an awarded bid is paid the price it offered. aFRR capacity is pay-as-bid; aFRR energy is marginal-priced. | `01-adr/ADR-018-reserve-bid-price-formation.md` |
 | **phantom fill** | A fill referencing no submitted intent. | `03-contracts/C4-execution-to-settlement.md` |
 | **POI frame** | The sign convention in which positive power is import. | `00-overview/02-conventions.md` |
 | **projection** | The narrowing of C3 that removes the fields Execution must not read, enforced by a type with nowhere to put them. | `02-layers/L4-execution-boundary.md` |
@@ -172,6 +178,7 @@ Nothing here is machine-checked. Consistency is held by ADR and by review.
 | `forecastErrorEur` | Value the belief carried that the world did not deliver, with the plan held fixed. | `03-contracts/C5-settlement-to-state.md` |
 | `modelErrorEur` | Value lost because Valuation and Settlement disagree about what a term means. | `03-contracts/C5-settlement-to-state.md` |
 | `optimalityGapEur` | Value given up because the tier used was not Tier 1. | `03-contracts/C5-settlement-to-state.md` |
+| `reserveBidErrorEur` | The declared sub-bucket of `executionSlippageEur` holding value lost by the reserve bid price, scored against the published marginal price. | `03-contracts/C5-settlement-to-state.md` |
 | **Phase A** | Accounting: ex-post truth recomputed from realised data alone, without sight of the plan. | `02-layers/L5-settlement.md` |
 | **Phase B** | Attribution: comparing the sealed accounting against what was planned and believed. | `02-layers/L5-settlement.md` |
 | `PolicyQuality` | Realised value over the physically-backed, index-granularity benchmark value. | `06-theory/TN-02-fan-not-tree.md` |
@@ -215,6 +222,8 @@ for all of them.
 | **full-load hours** | Annual energy over annual peak; the quantity a reduction qualification turns on. | `03-contracts/C5-settlement-to-state.md` |
 | **HLZF** | The published high-load time windows a regime measures its peak within. | `01-adr/ADR-011-tariff-regime-plugin.md` |
 | `peakCritical` | The flag raised when the realised peak is close enough to matter to this solve. | `03-contracts/C5-settlement-to-state.md` |
+| **prequalification** | The reserve market's certification that the asset can deliver a product; enters as a sustained-delivery duration and an MW envelope, both exogenous. **Not** tariff qualification, which shares the word and nothing else. | `01-adr/ADR-010-cross-market-tier-ladder.md` |
+| **qualification** | Unqualified, always the §19(2) StromNEV tariff status — a state variable with accumulators, a margin and a cliff. Reserve certification is **prequalification**. | `01-adr/ADR-011-tariff-regime-plugin.md` |
 | `qualCritical` | The flag raised when the qualification margin is inside its configured band. | `03-contracts/C5-settlement-to-state.md` |
 | **qualification margin** | The distance to the cliff, published as a continuous quantity because a boolean status arrives too late to act on. | `02-layers/L5-settlement.md` |
 | **realised peak** | The highest settled POI import in the accounting period so far; the floor the planned peak cannot go below. | `03-contracts/C5-settlement-to-state.md` |

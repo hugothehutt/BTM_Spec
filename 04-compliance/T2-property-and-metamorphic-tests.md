@@ -433,6 +433,32 @@ metamorphic ScaleEquivariance(snapshot, k in {0.01, 0.5, 2, 100, 1e4}):
     assert_close(pb.muStar,    k * pa.muStar,    rel=1e-9)   # Tier 2
 ```
 
+Two conformance properties on the reserve round trip, which scale equivariance
+cannot reach because both are identities rather than magnitudes:
+
+```
+property AwardPaysTheBidPrice(intent, outcome):          # INV-X-12
+    for award in outcome.reserveAwards:
+        bid = intent.orders[award.intentId]
+        assert award.awardedPriceUpEurPerMwH == bid.limitPriceEurPerMwH
+        assert award.awardedDnPriceEurPerMwH == bid.limitPriceEurPerMwH
+        assert award.awardedMw <= award.submittedMw     # partial award is routine
+    # the benchmark series must NOT be what settles
+    assert marginalPrice* appears in no revenue formula in Phase A
+
+property AwardObligesAnEnergyOffer(plan):                # INV-P-12
+    for b in blocks_with_confirmed_award(plan):
+        for t in slots_of(b):
+            assert exists AfrrEnergy intent at t
+                   with volume >= awardedMw(b)
+```
+
+**Why `AwardPaysTheBidPrice` earns its place.** It is the cheapest possible check
+that the market is the market this specification assumes. A pay-as-cleared venue,
+a mis-mapped adapter field, and a test fixture built from the published marginal
+price series all fail it immediately and identically — and all three would
+otherwise produce a P&L that looks entirely plausible.
+
 **Why this catches unit mixing, precisely.** Suppose a term computes a euro
 amount as `capacityPrice_EUR_per_MW_h * awarded_MW` and someone forgot to
 multiply by the block length in hours. That term is wrong by a factor of
@@ -486,6 +512,17 @@ property ConcavityOfCapacityCurve(snapshot):
     assert concave(curve.breakpoints)
     assert curve.curvature == Concave and curve.sense == Maximize
     assert problemClassHint.binariesByOrigin[curve.termId] == 0
+
+    # B(E) is the pay-as-bid envelope (ADR-018 §4), so verify it IS the envelope
+    # and not a curve fitted under some other model. For each breakpoint E:
+    for (E, value) in curve.breakpoints:
+        best = max over p in price_grid of
+                   p * E * P_award(snapshot, p, curve.block)
+        assert value ≈ best                                  # within money tolerance
+    # and P_award must come from the ensemble, not a fitted artefact
+    assert P_award(snapshot, p, b) ==
+               Σ_s snapshot.scenarioWeights[s]
+                   * indicator(snapshot.afrrCapPriceEurPerMwH[s,b] >= p)
 ```
 
 **Why it catches a real bug.** Concavity is not an aesthetic property here — it
@@ -802,6 +839,8 @@ the calendar and every other price.
 | # | Input change | Expected relation | Bug class caught |
 |---|---|---|---|
 | `M-P1` | `afrrCapPriceEurPerMwH[·,b] ↑` by `δ > 0` | Planned reserve `rUp[b] + rDn[b]` is **non-decreasing** | Sign error on capacity revenue; headroom coupling with the wrong sense; a reserve term that is being ignored entirely |
+| `M-P5` | `afrrCapPriceEurPerMwH[·,b] ↑` by `δ > 0` | The submitted `limitPriceEurPerMwH[b]` is **non-decreasing** | The bid policy ignoring the award-probability shift; a markup hardcoded as a fixed offset from `μ` rather than solved against `P(award \| p)` |
+| `M-P6` | Spot spread widened (raising the opportunity cost of headroom), reserve prices held fixed | `reserveShadowValueEurPerMwH[b]` is **non-decreasing**, the submitted price is **non-decreasing**, and offered `rUp[b] + rDn[b]` is **non-increasing** | `μ` not actually flowing from the coupling dual; the bid policy pricing off capacity revenue alone and ignoring what the headroom is worth elsewhere — the exact error ADR-018 rejects |
 | `M-P2` | All energy price beliefs shifted by `+Δ` (uniform additive, all scenarios, all slots; tariff, peak and reserve prices held fixed) | Planned **net export energy** over the horizon is non-decreasing | Sign frame confusion between battery and POI frames; a charge/discharge asymmetry with the wrong sign |
 | `M-P3` | `peakPriceEurPerMw ↑` for a regime | The planned peak `zPeak` for that regime is **non-increasing**, and the objective is non-increasing | Epigraph built with the wrong sense; `prorationFactor` applied to the wrong side; peak floor ignored |
 | `M-P4` | `pPoiImportLimitMw` tightened (or `pPoiExportLimitMw` tightened) | The objective is **non-increasing** | Missing POI envelope constraint; a bound applied to the wrong frame; a soft bound where a hard one was specified |

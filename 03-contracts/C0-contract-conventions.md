@@ -85,7 +85,19 @@ producer is in an unknown state and nothing downstream can be trusted.
   identifier's unit suffix to change with the unit, so the rename is the alarm
   and `INV-G-02` fails the build if the two disagree.
 
-**`C1` through `C6` are at 2.0.** The MW/MWh cascade
+**`C1` through `C5` are at 3.0; `C6` is at 2.0.** The pay-as-bid cascade
+([ADR-018](../01-adr/ADR-018-reserve-bid-price-formation.md)) changed a semantic
+on five seams at once: `afrrCapPriceEurPerMwH` became the *marginal* price rather
+than an unqualified "capacity price belief" (`C1`), `capacityValueCurve*` became
+the pay-as-bid envelope rather than a curve in an undefined clearing model (`C2`),
+`C3` gained `reserveShadowValueEurPerMwH` and two invariants, `C4` renamed
+`clearingPrice*EurPerMwH` to `awardedPrice*EurPerMwH` and deleted the duplicate
+`AfrrCapacity` fill, and `C5` gained `reserveBidErrorEur`. Under the rule above
+each is major on its own. `C6` is untouched: it reads the commitment ledger, whose
+`priceEurPerMwH` means the same number before and after — pay-as-bid makes an
+open order's limit price and an award's paid price the same value.
+
+**`C1` through `C6` were at 2.0.** The MW/MWh cascade
 ([Propagate MW/MWh and retire typed quantities](https://github.com/hugothehutt/BTM_Spec/issues/41))
 changed a unit on every one of them — `peakPriceEurPerMw` became a capacity
 price with the accounting period an explicit input, `vSocSlopesEurPerMwh` moved to

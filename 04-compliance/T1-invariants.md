@@ -165,6 +165,8 @@ Sources: `C3` §5, `L3` §4/§5, `00-overview/02-conventions.md` §3.
 | `INV-P-08` | *Reserved. Not allocated. Do not reuse — see §10.* | — | — | — |
 | `INV-P-09` | Every DA bid curve is monotone: quantity non-increasing in price for a buy curve, non-decreasing for a sell curve. Asserted, never sorted into compliance. A non-monotone curve is rejected by the exchange **and** is diagnostic of a formulation error, most often a missing coupling constraint (ADR-012, `L3` §5). | `L3` after the parametric re-solve; `C3` producer | `HALT` | `T2` (DA curve monotonicity) |
 | `INV-P-10` | No sell intent is priced below its `shadowValueEurPerMwh`; no buy intent above it. The quoting policy never trades through the Planner's own indifference price. A legitimate exception exists — covering a commitment at a loss is sometimes correct — but such an intent must carry the `CommitmentCover` tag. An untagged violation is blocked. | Quoting policy output, before `C3` seal; `L5` re-checks ex post | `warn`, **and the intent is blocked** | `T2`, `T4` (trade-through check) |
+| `INV-P-11` | No `AfrrCapacity` intent is priced below its `reserveShadowValueEurPerMwH`. The reserve bid policy never bids through the reservation price of the headroom it is selling. Capacity is **pay-as-bid** (ADR-018), so this bites harder than `INV-P-10`: a bid below `μ` is not a thin margin but a certain loss on every MW awarded. Same `CommitmentCover` exception, same blocking behaviour. | `IReserveBidPolicy` output, before `C3` seal; `L5` re-checks ex post | `warn`, **and the intent is blocked** | `T2`, `T4` (reserve markup check) |
+| `INV-P-12` | For every block carrying a confirmed reserve award, an `AfrrEnergy` intent exists in every slot of the block with volume ≥ the awarded MW. Awarded capacity must be offered into the balancing energy market; the bound is `≥` because offering beyond the obligation is permitted. | `L3` formulation; `C3` producer, per block | `HALT` | `T2` (obligation fixtures), `T6` |
 
 ---
 
@@ -181,6 +183,7 @@ Sources: `C4` §7, `C3` §2.
 | `INV-X-05` | `socMeasuredMwh` is consistent with `pBattChargeEnergyMwh`, `pBattDischargeEnergyMwh` and the declared efficiencies, within tolerance. Persistent divergence is the earliest available signal that the efficiency or SOH model has drifted, and it feeds the `modelErrorEur` bucket in `C5` §6. | `L5`, per slot and as a rolling statistic | `warn`, escalating to `alert` on persistent drift | `T2`, `T4` |
 | `INV-X-06` | Every reserve award in `C4` has a corresponding `Confirmed` entry in the commitment ledger by the end of the tick. | `L5` at `C5` write | `HALT` | `T1`, `T2`, `T6` |
 | `INV-X-07` | The net market position summed across day-ahead, intraday and aFRR equals the physical flow in the same slot: every position is physically backed. The POI bridge is a physical identity; this ties the market position to it. Without it a matched buy and sell in one delivery period is feasible — zero flow, captured spread, no physical involvement — and `L2`'s physical-support bound does not exclude it, because a position netting to zero is trivially supportable. | `L3` formulation, per slot; `L5` on realised data | `HALT` | `T1`, `T2`, `T5` (benchmark feasible set) |
+| `INV-X-12` | For every reserve award, `awardedPrice{Up,Dn}EurPerMwH` equals the `limitPriceEurPerMwH` of the intent named by `intentId`. **Prices only** — `awardedMw < submittedMw` is a partial award, which is routine. The identity exists only because capacity is pay-as-bid; under marginal pricing there would be nothing to compare against. A mismatch means either the adapter mis-mapped the venue response or the market is not pay-as-bid, and the second is a premise failure for ADR-018 rather than a data error. | `L5` on `C4` receipt | `HALT` | `T1`, `T2` (round-trip fixture), `T6` |
 
 ---
 
@@ -295,5 +298,7 @@ message or an alert history is a reliable way to make an incident timeline
 unreadable.
 
 A new Valuation or Planner invariant takes the next free number above the
-highest allocated in its family — `INV-V-17`, `INV-P-11` — and the reserved IDs
-stay empty permanently.
+highest allocated in its family — `INV-V-17`, `INV-P-13` — and the reserved IDs
+stay empty permanently. `INV-P-11` and `INV-P-12` were allocated by ADR-018;
+`INV-X-12` likewise, skipping `INV-X-11`, which `TN-03` §3.10 reserves for the
+idempotency invariant when that rename is propagated.

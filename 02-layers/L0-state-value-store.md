@@ -106,8 +106,16 @@ binary flag tells the engine nothing until it is too late (C5 §3, ADR-011).
 | `priceEurPerMwH` | `double` | `AfrrCapacity` only |
 | `feasibilityRequirement` | `SocCorridor?` | Hard constraint in every degradation mode |
 
+On `AfrrCapacity`, `priceEurPerMwH` carries the submitted limit price while the
+entry is an `OpenOrder` and the awarded price once it is a `ReserveAward` — and
+those are **the same number**, because capacity is pay-as-bid (ADR-018). That is
+why the field needs no split: the transition confirms a price rather than
+replacing it. Under a pay-as-cleared market it would need two.
+
 `Confirmed` entries are hard constraints; `Pending` entries are probabilistic
-exposure that the Planner models as a scenario-dependent position (L3 §4). This
+exposure that the Planner models as a scenario-dependent position (L3 §4) — for a
+submitted reserve bid, weighted by `P(award | p, b)` from the scenario ensemble,
+the reserve counterpart of the fill belief that weights an open energy order. This
 distinction is what lets the continuous intraday loop re-optimise without either
 double-selling or ignoring live exposure.
 

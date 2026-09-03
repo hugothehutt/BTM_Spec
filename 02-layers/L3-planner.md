@@ -120,7 +120,21 @@ p_c[t] + rDn[b(t)]        ≤ pBattMaxChargeMw[t]
 soc[t] − rUp[b(t)]·D/η_d  ≥ socMinMwh
 soc[t] + rDn[b(t)]·D·η_c  ≤ socMaxMwh
 soc[s,t] ∈ [socMinMwh, socMaxMwh]  for weighted scenario mass ≥ 1−ε
+
+Σ_slots∈b  eAfrrUp[t] ≥ awardedUpMw[b],  eAfrrDn[t] ≥ awardedDnMw[b]   ∀ t ∈ b
 ```
+
+`rUp[b]`, `rDn[b]` are the quantity **offered**, and every constraint above binds
+on the whole of it: an award obliges the full offer, so feasibility may not be
+discounted by the chance of not winning. Only the *revenue* term is weighted, by
+`P(award | p, b)` (ADR-018 §7). Planning feasibility against an expected award
+would leave the battery unable to serve the blocks it actually won.
+
+The last pair is the **energy-offer obligation** (`INV-P-12`): awarded capacity
+must be offered into the balancing energy market in every slot of its block. It is
+`≥`, not `=` — offering beyond the obligation is permitted and sometimes
+profitable. The energy leg is marginal-priced, so bidding true marginal cost there
+is optimal and it does not inherit the capacity leg's shading problem.
 
 **Delineation** (ADR-017). The seven month-to-date accumulators of C6 §3.1 are carried
 forward as variables over the horizon, and their state equations are constraints:
@@ -254,6 +268,33 @@ re-solve over a grid of candidate clearing prices; the resulting price-quantity
 schedule *is* the curve. Monotonicity is asserted (`INV-P-09`); a non-monotone
 result signals a formulation error, most often a missing coupling constraint, and
 halts rather than being sorted into compliance.
+
+**aFRR capacity is different again**, and for a different reason: it is
+**pay-as-bid** (ADR-018), so the price offered is the price paid and the markup
+over indifference is the entire margin rather than spread captured from a
+counterparty.
+
+1. Extract `μ_up[b]`, `μ_dn[b]` — the duals on the headroom coupling constraints,
+   which are the reservation price of a MW of headroom in EUR/MW/h. Tier 2
+   produces these directly; Tier 3 evaluates `μ̂`.
+2. `IReserveBidPolicy` maps `(μ[b], P(award | ·, b), envelope)` to one
+   `(limitPriceEurPerMwH, volumeMw)` per block and direction. A single point, not
+   a curve: whether several price/volume pairs may be submitted for one block is
+   unconfirmed, and until it is, C3 carries one.
+3. `μ[b]` crosses C3 as `reserveShadowValueEurPerMwH`, audit-only, so Settlement
+   can attribute the markup without the policy and the Planner sharing a private
+   channel.
+4. **Hard rule:** never bid below `μ`. `INV-P-11`, same shape and same
+   `CommitmentCover` exception as `INV-P-10`, and it bites harder — under
+   pay-as-bid a bid below `μ` is not a thin margin but a certain loss on every MW
+   awarded.
+
+**The bid policy runs inside the Tier 2 loop.** `B(E)` depends on `P(award | p)`,
+`p` depends on `μ`, and `μ` depends on the solve. The circularity is one scalar
+per block, and Tier 2 already iterates `μ` by subgradient, so the fixed point
+costs nothing structural. Tier 3 prices once against `μ̂` and carries the one-pass
+error into its measured gap — the ladder making the same trade-off it exists to
+make everywhere else.
 
 ---
 

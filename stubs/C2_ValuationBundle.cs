@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C2: Valuation → Planner
 //
-//  Payload: ValuationBundle   Version: 2.0   Direction: L2 → L3
+//  Payload: ValuationBundle   Version: 3.0   Direction: L2 → L3
 //  Normative source: 03-contracts/C2-valuation-to-planner.md §1–§9,
 //                    ADR-008 (linearizable primitives — this file IS that ADR),
 //                    ADR-007 (V(SOC), not λ), ADR-009 (term ownership),
@@ -411,10 +411,18 @@ public sealed record ReserveEnvelope
     /// <summary>Card. <c>[B]</c>. Unit MW.</summary>
     public required ReadOnlyMemory<double> RDnMaxMw { get; init; }
 
-    /// <summary>Card. <c>[B]</c>. Concave in offered MW: the expected value of the
-    /// capacity bid curve. Concavity arises from the clearing model — offering
-    /// more MW lowers the probability of clearing at a good price — and is
-    /// verified against the breakpoints, not assumed (L2 §2, INV-V-12).</summary>
+    /// <summary>Card. <c>[B]</c>. <c>B(E) = max_p [ p · E · P(award | p, b) ]</c>
+    /// — the <b>pay-as-bid envelope</b> in offered MW (ADR-018 §4).
+    /// <para>Capacity is pay-as-bid, so the bid price is a real decision and
+    /// value is a surface over <c>(p, E)</c>; what crosses this seam is its
+    /// envelope, still a function of offered MW alone. The maximiser <c>p*</c> is
+    /// deliberately <b>not</b> carried: it maximises capacity revenue while
+    /// ignoring the opportunity cost of the headroom sold, so it is the wrong
+    /// base for a markup. That base is <c>μ</c>, a dual of the Planner's own
+    /// problem which Valuation cannot see.</para>
+    /// <para>Concavity of an envelope is <b>not</b> automatic. Verified against
+    /// the breakpoints, never assumed (L2 §2, INV-V-12); a failure means
+    /// <c>General</c> curvature and its binaries.</para></summary>
     public required IReadOnlyList<PwlTerm> CapacityValueCurveUp { get; init; }
 
     /// <summary>Card. <c>[B]</c>. See <see cref="CapacityValueCurveUp"/>.</summary>

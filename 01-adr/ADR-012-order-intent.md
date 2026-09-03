@@ -54,6 +54,17 @@ uses, deliberately kept apart:
   time-to-gate)` is available, because that is precisely the trade-off it exists
   to make.
 
+**The auction case has its own policy.** `IQuotingPolicy` maps a target onto a
+ladder of limit orders against a continuous book. A sealed-bid auction shares the
+economic idea and none of the mechanics, so reserve capacity gets a sibling
+interface rather than a second shape inside the same one: `IReserveBidPolicy`
+maps `(μ[b], P(award | ·, b), envelope) → (limitPriceEurPerMwH, volumeMw)`
+(ADR-018). The handoff is identical in structure — `reserveShadowValueEurPerMwH`
+is the Planner's indifference price for a MW of headroom, and `INV-P-11` forbids
+bidding below it exactly as `INV-P-10` forbids quoting through it. What differs is
+that reserve is **pay-as-bid**, so the markup over indifference is not spread
+captured from a counterparty but the whole of the margin.
+
 **Calibration target is the existing simulator.** Since Execution is fixed, the
 fill model is calibrated against the simulator's actual behaviour, and re-verified
 whenever the simulator changes. `T4` includes a quoting-policy backtest that
@@ -68,6 +79,9 @@ divergence is a calibration failure, reported, not absorbed.
   the Planner held fixed — which also means its contribution to P&L is separately
   measurable (this is the "execution slippage" bucket in Settlement's four-way
   decomposition).
+- Three markets, three shapes, one principle. Intraday gets a ladder, DA gets a
+  bid curve, aFRR capacity gets a single point priced above `μ` — and in each the
+  Planner emits an indifference price it does not itself act on.
 - The DA case is different and handled explicitly: DA requires a **bid curve**,
   not a single quantity. The Planner produces it by parametric re-solve across a
   grid of DA clearing prices, yielding a monotone price-quantity schedule.

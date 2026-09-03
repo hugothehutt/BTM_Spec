@@ -15,8 +15,9 @@ reconciles. A number it needs but does not receive belongs upstream in a view
 ## 1. `IExecutionAdapter`
 
 ```csharp
-// The projection: shadowValueEurPerMwh and urgency are absent from the TYPE, so Execution
-// cannot read them. INV-X-04 is structural, not a rule anyone must remember.
+// The projection: shadowValueEurPerMwh, reserveShadowValueEurPerMwH and urgency are absent
+// from the TYPE, so Execution cannot read them. INV-X-04 is structural, not a rule anyone
+// must remember.
 readonly record struct OrderInstruction(
     string IntentId,                      // idempotency key, stable across replaces
     MarketId Market, string ProductId, DeliveryKey Delivery, Side Side,
@@ -40,6 +41,32 @@ interface IExecutionAdapter {
 
 `Poll` and `Subscribe` are alternatives, normalised into one `VenueEvent` stream.
 `Seal` is the only producer of C4 and validates before returning (C0 §4).
+
+### Reserve awards are not fills
+
+An `AfrrCapacity` submission does not produce a fill. It produces an **award**,
+and the adapter emits it into C4 §4 — never into §2, which is energy markets only.
+The distinction is not pedantry: an award is per block and per direction, carries
+`submittedMw` alongside `awardedMw` so a partial award is legible, and settles at
+the price bid rather than at anything the venue clears. A fill row could express
+none of that; it has no up/down field and no notion of a submitted quantity.
+
+The adapter must populate three things the venue reports separately:
+
+- `awardedPrice*EurPerMwH` — **the price on the originating intent.** Capacity is
+  pay-as-bid, so the venue pays what was offered. `INV-X-12` asserts the identity,
+  and it is `HALT` on failure: a mismatch means either this adapter mis-mapped the
+  response or the market is not pay-as-bid, and the second invalidates a premise
+  of ADR-018 rather than merely corrupting a number.
+- `marginalPrice*EurPerMwH` — the published last-accepted price for the block.
+  Carried for Settlement's benchmark and **never** used as a revenue price. An
+  adapter that wires this into `awardedPrice*` produces a plausible, wrong P&L,
+  which is precisely why the two now have different names.
+- `submittedMw` — what was bid, so Phase A can compute the unawarded remainder
+  without reading the plan (C4 §8).
+
+Unawarded and partially awarded bids still appear in §3 as dispositions for the
+`intentId` linkage; the residual volume itself comes from `submittedMw − awardedMw`.
 
 ## 2. The projection rule
 

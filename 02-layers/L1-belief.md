@@ -341,6 +341,22 @@ artefact rather than a quietly different result.
 The run manifest pins every `FeatureSpecHash` in force. Reading an artefact whose
 spec hash is not in the manifest is a hard failure, not a fallback. `INV-D-14`.
 
+**`afrrCapPriceEurPerMwH` is the marginal price**, meaning the last accepted bid
+in the block's capacity auction — not an expected revenue price. Capacity is
+pay-as-bid (ADR-018), so a bid is awarded exactly when it sits at or below that
+number, and award probability is a tail mass of the ensemble rather than a fitted
+surface:
+
+```
+P(award | p, b) = Σ_s w_s · 1[ afrrCapPriceEurPerMwH[s,b] ≥ p ]
+```
+
+Nothing is materialised for this, deliberately. A separately fitted award surface
+would be independent of the price and activation draws by construction, and the
+one thing that matters about reserve is that not winning a block correlates with
+what spot was doing (ADR-005). Reading it off the shared axis keeps that; a
+standalone artefact would quietly discard it.
+
 ### 4.2 What is materialised
 
 | Artefact | Shape | Reaches C1 as | Refresh |
@@ -349,6 +365,7 @@ spec hash is not in the manifest is a hard failure, not a fallback. `INV-D-14`.
 | Reduced ensemble + weights | `[S, H, K]` float32, `double[S]` | §1 `scenarioWeights`, §3, §4 arrays | daily, `C_slow` |
 | Fill-probability surface | `P(fill | product, priceBand, timeToGate, volume)` | §5 `idReliableVolume*` (volumes only) | recalibration, `C_slow` |
 | Price-impact curve | `volume → expected price concession` | **not C1** — quoting policy only (ADR-012) | recalibration |
+| Reserve award probability | **not materialised** — derived from the reduced ensemble | §4 `afrrCapPriceEurPerMwH` | — |
 | Activation-probability model | exported PWL / lookup table | §4 `activationUp`, `activationDn` | `C_slow` |
 | Peak / load climatology | quantile surfaces by calendar bucket | ladder rung 4 imputation (§7) | seasonal |
 | AW>0 indicator `(24)¼` | `bool[H]`, and `bool[S, H]` beyond the settled day-ahead horizon | C1 delineation block | `C_gate`, on day-ahead publication |

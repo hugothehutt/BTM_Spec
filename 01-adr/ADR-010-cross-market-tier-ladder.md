@@ -51,7 +51,10 @@ gap between them.**
 ### Tier 1 — Joint stochastic MILP (the reference)
 
 One model. Reserve capacity per block `r_up[b]`, `r_dn[b]` are decision
-variables alongside spot dispatch. The coupling constraints are explicit:
+variables alongside spot dispatch. **They are the quantity *offered*, not the
+quantity awarded** (ADR-018 §7): every constraint below binds on the full offer,
+because an award obliges the whole of it, while only the revenue term is weighted
+by `P(award)`. The coupling constraints are explicit:
 
 ```
 power headroom     p_d[t] + r_up[b(t)]        ≤ P_max_dis          ∀t
@@ -66,7 +69,9 @@ peak               z_peak ≥ p_poi[t] ∀t ;  z_peak ≥ pPoiRealisedPeakMw
 ```
 
 `D` is the sustained-delivery requirement from prequalification, a calendar
-parameter (ADR-002), not a constant.
+parameter (ADR-002), not a constant. Awarded capacity additionally obliges an
+energy offer of at least the awarded MW in every slot of the block (ADR-018 §9,
+`INV-P-12`).
 
 Tier 1 is the **accuracy reference**. It does not need to be fast, because its
 primary job is to be right and to serve as the oracle everything else is scored
@@ -81,9 +86,17 @@ separates into:
   `μ · (headroom consumed)` for the resource it uses.
 - **Reserve subproblem** — a small, near-analytic problem over coarse blocks:
   offer reserve where expected capacity revenue plus expected activation value
-  exceeds `μ`.
+  exceeds `μ`. Capacity is **pay-as-bid** (ADR-018), so "expected capacity
+  revenue" is `B(E) = max_p [ p · E · P(award | p, b) ]`, discounted by award
+  probability — not `μ · E`. Offering *at* `μ` would earn zero surplus on every
+  award; the margin is the markup, and `IReserveBidPolicy` chooses it.
 
-Iterate `μ` with a subgradient or bundle method to primal feasibility.
+Iterate `μ` with a subgradient or bundle method to primal feasibility. The bid
+policy runs **inside** this loop: `B(E)` depends on `P(award | p)`, `p` depends on
+`μ`, and `μ` depends on the solve. That circularity is one scalar per block, and
+the iteration is already here, so the fixed point is taken at no structural cost.
+Tier 3 prices once against `μ̂` instead and carries the one-pass error into its
+measured gap.
 
 Three properties make this the centre of the design:
 

@@ -123,12 +123,19 @@ SpotEnergyValue        = Σ_{f: market = Da}
 IdEnergyValue          = Σ_{f: market ∈ {IdContinuous}}
                            σ(f.side) · f.priceEurPerMwh · f.volumeMwh − f.feesEur
 
-ReserveCapacityRevenue = Σ_b ( awardedUpMw[b]·clearingPriceUpEurPerMwH[b]
-                             + awardedDnMw[b]·clearingPriceDnEurPerMwH[b] ) · blockHours[b]
-                         − Σ_{f: market = AfrrCapacity} f.feesEur
+ReserveCapacityRevenue = Σ_b ( awardedUpMw[b]·awardedPriceUpEurPerMwH[b]
+                             + awardedDnMw[b]·awardedPriceDnEurPerMwH[b] ) · blockHours[b]
+                         − Σ_b feesEur[b]
                          [ MW · EUR/MW/h · h = EUR ;  blockHours from the market
                            calendar, never a constant — block length is a product
-                           attribute and changes ]
+                           attribute and changes.
+                           awardedPrice* is the price *bid*: capacity is
+                           pay-as-bid (ADR-018). marginalPrice* is published per
+                           block and never appears here — it is the benchmark for
+                           §6's reserveBidErrorEur, not a revenue term.
+                           Fees come from the award record; the duplicate
+                           AfrrCapacity fill that used to carry them is gone
+                           (C4 §2). ]
 
 ReserveEnergyRevenue   = Σ_t ( activatedEnergyUpMwh[t]·activationPriceUpEurPerMwh[t]
                              − activatedEnergyDnMwh[t]·activationPriceDnEurPerMwh[t] )
@@ -347,6 +354,23 @@ J  = Book(x)           what Settlement booked
 
 `modelErrorEur` carries a declared sub-bucket, `linearizationGap` — see below. Residual
 `modelErrorEur` net of it is still asserted zero.
+
+`executionSlippageEur` carries a declared sub-bucket on the same pattern,
+`reserveBidErrorEur` (C5 §6), which separates the reserve bid price's contribution
+from the quoting policy's. Both are ways of losing value between intent and
+outcome; they are owned by different components and must be attributable
+separately or neither can be tuned.
+
+| Sub-bucket | Counterfactual re-run | Large value means | Fix owned by |
+|---|---|---|---|
+| `reserveBidErrorEur` | Re-price each block's bid against the published `marginalPrice*EurPerMwH`: for an unawarded bid, the surplus `(marginalPrice − μ)·submittedMw·blockHours` a bid at the margin would have earned; for an awarded one, the `(marginalPrice − awardedPrice)` per MW that would still have cleared | The markup policy is mis-tuned — bidding through the margin and losing blocks, or under it and donating margin | `IReserveBidPolicy` (ADR-018) |
+
+The sub-bucket is signed and both signs are real: forfeiting an awardable block
+and clearing at less than you could have are opposite errors from the same policy.
+Netting them would let a policy that does both badly report zero. This
+decomposition exists **only because capacity is pay-as-bid** and the marginal
+price is published — under marginal pricing the price paid is not a decision, so
+there is no counterfactual to run.
 
 By construction these telescope:
 

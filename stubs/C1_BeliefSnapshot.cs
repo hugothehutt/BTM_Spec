@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C1: Belief → Valuation
 //
-//  Payload: BeliefSnapshot   Version: 2.0   Direction: L1 → L2
+//  Payload: BeliefSnapshot   Version: 3.0   Direction: L1 → L2
 //  Normative source: 03-contracts/C1-belief-to-valuation.md §1–§10,
 //                    ADR-004 (bitemporal store), ADR-005 (joint ensemble),
 //                    ADR-014 (quality, defaults).
@@ -137,8 +137,15 @@ public sealed record MarketBeliefs
     /// (C1 §4).</summary>
     public required ScenarioSlotMatrix<double> IdSpreadBeliefEurPerMwh { get; init; }
 
-    /// <summary>aFRR capacity price belief per product block. Unit EUR/MW/h.
-    /// Card. <c>[S,B]</c>. Range <c>≥0</c>. MaxStale: gate.
+    /// <summary><b>Marginal (last accepted) capacity price</b> belief per product
+    /// block — not a revenue price. Unit EUR/MW/h. Card. <c>[S,B]</c>.
+    /// Range <c>≥0</c>. MaxStale: gate.
+    /// <para>Capacity is pay-as-bid (ADR-018), so a bid is awarded exactly when
+    /// it sits at or below this, and award probability is a tail mass of the
+    /// ensemble rather than a fitted surface:
+    /// <c>P(award | p, b) = Σ_s w_s · 1[AfrrCapPriceEurPerMwH[s,b] ≥ p]</c>.
+    /// Reading it off the shared scenario axis is what keeps it correlated with
+    /// spot prices and activation (ADR-005, INV-D-05).</para>
     /// <b>Zero default = do not chase revenue on invented prices</b>
     /// (ADR-014 §4 rung 5).</summary>
     public required ScenarioBlockMatrix<double> AfrrCapPriceEurPerMwH { get; init; }

@@ -1,6 +1,6 @@
 # C5 — Settlement → State/Value Store
 
-**Payload:** `StateUpdate` **Version:** 2.0 **Direction:** L5 → L0
+**Payload:** `StateUpdate` **Version:** 3.0 **Direction:** L5 → L0
 
 The **only** backwards edge in the system (ADR-006). Written at the end of a
 tick, read at the top of the next. Everything here is therefore, by
@@ -153,6 +153,27 @@ buckets:
 | `forecastErrorEur` | `double` | Value lost because the world differed from the belief the plan was built on | L1 / scenario model |
 | `modelErrorEur` | `double` | Value lost because the valuation was wrong *given* the belief | L2 |
 | `executionSlippageEur` | `double` | Value lost between intent and fill | quoting policy |
+
+`executionSlippageEur` carries one declared sub-decomposition. It stays a single
+bucket in the telescoping identity below — the sum is unchanged — but the value
+lost by *pricing* policies splits by which policy priced it:
+
+| Field | Type | Meaning | Fix lives in |
+|---|---|---|---|
+| `reserveBidErrorEur` | `double` | Value lost by the reserve bid price, signed: negative where a bid above the margin forfeited an awardable block, positive-but-forgone where a bid below it gave away markup | `IReserveBidPolicy` |
+
+This bucket is computable **only because capacity is pay-as-bid** and the marginal
+price is published per block (C4 §4, `marginalPrice*EurPerMwH`). Both halves are
+counterfactuals against that series: for an unawarded bid, the surplus
+`(marginalPrice − μ) · submittedMw · blockHours` that a bid at the margin would
+have earned; for an awarded one, the additional `(marginalPrice − awardedPrice)`
+per MW that a higher bid would still have cleared at. Under marginal pricing
+neither counterfactual exists, because the price paid is not a decision.
+
+`residualVolumeMw` was deleted from C4 §3 alongside the capacity fill, so the
+unawarded volume this bucket needs is `submittedMw − awardedMw` from the award
+record — exact under partial awards, and available to Phase A without reading the
+plan.
 
 ### The anchor, and why it is not the used-tier plan value
 

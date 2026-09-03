@@ -87,13 +87,32 @@ Prices the marginal MW of grid peak, under whichever tariff regimes are active
 ### AfrrCapacityView — reserve capacity value
 
 - **Emits:** `BoundTerm` (MW envelope from prequalification and asset limits) and
-  a `PwlTerm` (concave, Maximize) for the expected value of the capacity bid
-  curve `V(E)`.
-- Concavity arises from the clearing model: offering more MW lowers the
-  probability of clearing at a good price, so expected revenue is concave in
-  offered volume. Concavity is *verified against the breakpoints*, not assumed —
-  if the fitted curve is not concave, that is a modelling signal, and it must be
-  declared `General` (costing binaries) rather than mis-declared.
+  a `PwlTerm` (concave, Maximize) for `B(E)`, the pay-as-bid envelope.
+- **The market is pay-as-bid** (ADR-018). Awarded MW is paid the price offered, so
+  the bid price is a genuine decision and expected revenue is a surface over
+  `(p, E)`, not a curve in `E`. What crosses C2 is its envelope:
+
+  ```
+  B(E) = max_p [ p · E · P(award | p, b) ]
+  ```
+
+  with `P(award | p, b) = Σ_s w_s · 1[ afrrCapPriceEurPerMwH[s,b] ≥ p ]` read
+  directly off the scenario ensemble — a bid wins iff it sits at or below the
+  marginal price. No separate award-probability artefact is fitted, and the point
+  of taking it from the ensemble rather than a standalone surface is correlation:
+  award probability shares the axis with spot prices and activation (ADR-005), so
+  "not awarded *and* spot was extreme" stays representable.
+- **The maximiser `p*` is computed here and deliberately not published.** It
+  maximises capacity *revenue*, ignoring what the headroom would have earned
+  elsewhere, so it is the wrong base for a markup. The right base is `μ`, a dual
+  of the Planner's own problem which this layer cannot see. `IReserveBidPolicy`
+  combines the two downstream (ADR-012).
+- Concavity of an envelope is **not** automatic. It is *verified against the
+  breakpoints*, never assumed (`INV-V-12`) — if the fitted curve is not concave,
+  that is a modelling signal, and it must be declared `General` (costing binaries)
+  rather than mis-declared. Earlier revisions justified concavity by appeal to "the
+  clearing model", a model the corpus never defined; the definition above is what
+  that verification now runs against.
 
 ### AfrrEnergyView / ImbalanceRiskView — activation value and imbalance risk
 
