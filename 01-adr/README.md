@@ -1,10 +1,11 @@
 
 # Architecture Decision Records
 
-Eighteen live decisions that are expensive to reverse. Each records context, the
-decision, its consequences, and what was rejected and why. ADR IDs are stable
-and referenced throughout the specification: a deleted decision keeps its id and
-its row, and the id is never reissued.
+Seventeen live decisions that are expensive to reverse, at ids 001–018. Each
+records context, the decision, its consequences, and what was rejected and why.
+ADR IDs are stable and referenced throughout the specification: a deleted
+decision keeps its id and its row — 003 is the one such row below — and the id is
+never reissued.
 
 | ID | Decision | Status | Reversibility |
 |---|---|---|---|

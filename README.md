@@ -123,6 +123,12 @@ contact with the detail, and each is now an ADR:
 4. **Hard pre-allocation of aFRR capacity is a primal restriction** — it deletes
    options and the loss is invisible. Replaced by a *dual price* for headroom,
    discovered by Lagrangian decomposition, with a certified gap (ADR-010).
+5. **The annual maximum is not the only tariff regime.** §19(2) S.1 prices the
+   peak within published HLZF windows rather than the annual maximum, and §19(2)
+   S.2 intensive-use qualification is a cliff that battery operation moves
+   directly, through both the numerator and the denominator of full-load hours.
+   `PeakView` is a plug-in and qualification state is a dimension of V (ADR-011).
+
 ## Change discipline
 
 A change to any file in `03-contracts/` requires, in the same commit:
