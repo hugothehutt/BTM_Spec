@@ -124,6 +124,11 @@ Prices the marginal MW of grid peak, under whichever tariff regimes are active
 - Activation and imbalance draw from the **same** scenario axis as prices
   (ADR-005), which is what makes "activated when prices are extreme" representable
   at all.
+- **Activation carries no cost term** (ADR-019). Its euros are revenue
+  (`ReserveEnergyRevenue`); the energy moved to deliver an activation is already
+  priced by `SpotView`, `OppCostView` and `V`. The hazard activation presents is
+  deliverability, and it is carried by `chanceLevel` on SOC feasibility (§6) —
+  never by a second, dimensionless entry in the risk functional.
 
 ### IdOptionView — option value of the post-DA intraday position
 
@@ -253,7 +258,6 @@ Normative. Each effect has exactly one owner.
 | `SubsidyRevenue` | `DelineationView` | `Delineation` |
 | `CycleDegradation` | `OppCostView` | `BatteryThroughput` |
 | `StoredEnergyContinuation` | `OppCostView` (via `V`) | `TerminalSoc` |
-| `ActivationRisk` | `AfrrEnergyView` | `MarketVolume` |
 
 **Note on `SpotView`.** DA energy value enters as a `LinearTerm` on
 `vDaBuy`/`vDaSell` emitted by a thin `SpotView`. This view is not in the original

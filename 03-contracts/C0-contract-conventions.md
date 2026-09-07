@@ -85,7 +85,17 @@ producer is in an unknown state and nothing downstream can be trusted.
   identifier's unit suffix to change with the unit, so the rename is the alarm
   and `INV-G-02` fails the build if the two disagree.
 
-**`C1` through `C5` are at 3.0; `C6` is at 2.0.** The pay-as-bid cascade
+**`C2` and `C5` are at 4.0; `C1`, `C3` and `C4` are at 3.0; `C6` is at 2.0.**
+Removing `ActivationRisk` from the `EconomicEffect` enumeration
+([ADR-019](../01-adr/ADR-019-activation-carries-no-cost-term.md)) narrowed the
+value set of `effect`, `effectCoverage` and `unclaimedEffects` (`C2`) and of
+`realisedByEffect` and `plannedByEffect` (`C5`). No field table changed, but a
+range that tightens is major under the rule above, and here for a concrete
+reason: a producer still emitting the member would pass field validation and be
+rejected by `INV-V-02` one stage later, which is the silent failure the major
+bump exists to prevent. `C1`, `C3`, `C4` and `C6` never carried the enumeration.
+
+**`C1` through `C5` went to 3.0 at once.** The pay-as-bid cascade
 ([ADR-018](../01-adr/ADR-018-reserve-bid-price-formation.md)) changed a semantic
 on five seams at once: `afrrCapPriceEurPerMwH` became the *marginal* price rather
 than an unqualified "capacity price belief" (`C1`), `capacityValueCurve*` became

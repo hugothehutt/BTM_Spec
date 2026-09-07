@@ -44,7 +44,6 @@ Each term carries an `EconomicEffect` tag from a closed enumeration:
 SpotEnergyValue · IdEnergyValue · ReserveCapacityRevenue · ReserveEnergyRevenue
 ImbalanceCost · NetworkPeakCharge · NetworkVolumetricCharge · LeviesAndTaxes
 EnfgLevies · SubsidyRevenue · CycleDegradation · StoredEnergyContinuation
-ActivationRisk
 ```
 
 The normative owner for each effect is the matrix in `02-layers/L2-valuation.md`

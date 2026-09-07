@@ -75,9 +75,6 @@ public enum EconomicEffect
     /// <summary>Terminal value of stored energy, carried by V(SOC).
     /// Owner: <c>OppCostView</c> via <c>V</c>. Base <c>TerminalSoc</c>.</summary>
     StoredEnergyContinuation,
-
-    /// <summary>Risk cost of activation exposure. Owner: <c>AfrrEnergyView</c>.</summary>
-    ActivationRisk,
 }
 
 /// <summary>

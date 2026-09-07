@@ -20,7 +20,7 @@ plan. Implementation happens in the engine repository against these documents.
 | Glossary | Normative for what a term means; never for what the thing does. §14 carries the vocabulary rulings |
 | Delineation regime (MiSpel, A1/A5) | Normative, transcribed from Anlage 1; route split and identities derived |
 | Delineation in the objective (ADR-017) | Normative — accumulators on C5/C6, state equations in L3, exact recomputation in L5 |
-| ADR-001 … ADR-014, ADR-016 … ADR-018 | Accepted |
+| ADR-001 … ADR-014, ADR-016 … ADR-019 | Accepted |
 | ADR-015 (open register) | Placeholder — its three decisions are named below |
 | Seam contracts C1–C6 | Normative, versioned |
 | Layer designs L0–L5 | Normative for structure, indicative for algorithm choice |

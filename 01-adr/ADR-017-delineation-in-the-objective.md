@@ -73,7 +73,7 @@ Four rules follow and are normative:
 | `EnfgLevies` | `DelineationView` | `Delineation` | Charged on `(21)`, the reducible EnFG components only |
 | `LeviesAndTaxes` | `TariffView` | `PoiImport` | **Narrowed** to the non-reducible components — Stromsteuer, Konzessionsabgabe |
 
-Thirteen effects. The split is a base split, not a relief booked as revenue, so
+Twelve effects (ADR-019 removed `ActivationRisk`). The split is a base split, not a relief booked as revenue, so
 ADR-009 exclusivity holds unchanged. A new composition step **3 `Delineation`**
 requires battery energy marked and establishes `(21)`; stage 1 keeps only the
 non-reducible tariff surface and stays linear.

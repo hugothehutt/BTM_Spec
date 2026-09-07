@@ -168,7 +168,7 @@ of its own — if it needs a number, a view must own it.
 ```
 max  Σ LinearTerms + Σ PwlTerms + V(socTerminal) − Σ peakPriceEurPerMw·zPeak·proration
      + Σ_j λ_j · A_j
-     − cvarWeight · CVaR_α(imbalance + activation cost)
+     − cvarWeight · CVaR_α(imbalance cost)
 ```
 
 ### Two-stage structure

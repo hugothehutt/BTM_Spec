@@ -1,4 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PropertiesComponent">{}</component>
+  <component name="ChangeListManager">
+    <list default="true" id="50ec6f7a-ee88-4de5-8941-3e576ae51377" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/01-adr/ADR-009-term-ownership.md" beforeDir="false" afterPath="$PROJECT_DIR$/01-adr/ADR-009-term-ownership.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/01-adr/ADR-017-delineation-in-the-objective.md" beforeDir="false" afterPath="$PROJECT_DIR$/01-adr/ADR-017-delineation-in-the-objective.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/01-adr/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/01-adr/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/02-layers/L2-valuation.md" beforeDir="false" afterPath="$PROJECT_DIR$/02-layers/L2-valuation.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/02-layers/L3-planner.md" beforeDir="false" afterPath="$PROJECT_DIR$/02-layers/L3-planner.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/02-layers/L5-settlement.md" beforeDir="false" afterPath="$PROJECT_DIR$/02-layers/L5-settlement.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03-contracts/C0-contract-conventions.md" beforeDir="false" afterPath="$PROJECT_DIR$/03-contracts/C0-contract-conventions.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03-contracts/C2-valuation-to-planner.md" beforeDir="false" afterPath="$PROJECT_DIR$/03-contracts/C2-valuation-to-planner.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03-contracts/C5-settlement-to-state.md" beforeDir="false" afterPath="$PROJECT_DIR$/03-contracts/C5-settlement-to-state.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CLAUDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/CLAUDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/agents/domain.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/agents/domain.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stubs/Enums.cs" beforeDir="false" afterPath="$PROJECT_DIR$/stubs/Enums.cs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "kpfefferlcreatica"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/hugothehutt/BTM_Spec.git",
+    "accountId": "9981ac68-6e10-45cb-b670-8cd8d99cc8fd"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="3IzycW3D5o5Lpf9z7gDE3GUR3ug" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "ai.playground.ignore.import.keys.banner.in.settings": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/katharinapfefferl/Downloads/Analysen/BTM_engine/BTM_Spec",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="50ec6f7a-ee88-4de5-8941-3e576ae51377" name="Changes" comment="" />
+      <created>1788781771063</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1788781771063</updated>
+      <workItem from="1788781772254" duration="1012000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
 </project>

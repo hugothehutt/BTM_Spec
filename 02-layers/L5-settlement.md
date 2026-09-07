@@ -52,7 +52,7 @@ It recomputes using the **same `EconomicEffect` enumeration Valuation used**
 (ADR-009, `L2-valuation.md` §5). That shared enumeration is the whole mechanism:
 
 - `plannedByEffect` (from `PlanResult`, `L3-planner.md` §8) and `realisedByEffect`
-  (from Phase A) are indexed by the same closed set of thirteen effects, so
+  (from Phase A) are indexed by the same closed set of twelve effects, so
   planned-versus-realised is a term-by-term comparison, not an aggregate one.
 - A discrepancy localises to an effect, and the ownership matrix maps that effect
   to exactly one view. "We lost money" becomes "`NetworkPeakCharge` came in 4 kEUR
@@ -176,8 +176,6 @@ CycleDegradation       = − degCostEurPerMwh
 StoredEnergyContinuation
                        = V(socMeasuredMwh[T], peakState_T, qualState_T)
                        − V(socMeasuredMwh[T₀], peakState_T₀, qualState_T₀)
-
-ActivationRisk         = 0     (see below)
 ```
 
 Three points that decide whether these numbers are comparable to plan at all:
@@ -191,11 +189,13 @@ Three points that decide whether these numbers are comparable to plan at all:
   the run manifest (ADR-013). Using a refreshed `V` measures value-function drift
   and books it as P&L, which is wrong: drift belongs in the slow loop's own
   diagnostics, not in the day's ledger.
-- **Risk terms are not cashflows.** `ActivationRisk` and the CVaR weighting on
-  imbalance are decision-shaping penalties in the objective; ex post there is no
-  risk, only an outcome, which has already been booked to `ReserveEnergyRevenue`
-  and `ImbalanceCost`. Realised `ActivationRisk` is therefore identically zero, and
-  the **four-bucket decomposition uses the risk-free objective on both sides**.
+- **Risk terms are not cashflows.** The CVaR weighting on imbalance is a
+  decision-shaping penalty in the objective; ex post there is no risk, only an
+  outcome, which has already been booked to `ImbalanceCost` — and, on the
+  activation side, to `ReserveEnergyRevenue` and the effects that own the energy
+  moved to deliver it (ADR-019). No effect in the enumeration settles a risk
+  premium, and the **four-bucket decomposition uses the risk-free objective on
+  both sides**.
   `PlanResult` reports the objective gross and net of risk terms for exactly this
   reason. Comparing a risk-loaded planned value against a risk-free realised value
   makes the engine appear to lose the risk premium every single day.

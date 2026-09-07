@@ -1,6 +1,6 @@
 # C5 — Settlement → State/Value Store
 
-**Payload:** `StateUpdate` **Version:** 3.0 **Direction:** L5 → L0
+**Payload:** `StateUpdate` **Version:** 4.0 **Direction:** L5 → L0
 
 The **only** backwards edge in the system (ADR-006). Written at the end of a
 tick, read at the top of the next. Everything here is therefore, by
@@ -220,12 +220,13 @@ pure function of a recorded input (ADR-013):
 
 ### Risk-term neutrality
 
-`ActivationRisk` and the CVaR weighting are **objective penalties, not
-cashflows**. Realised value can never contain them, so comparing a risk-loaded
-planned value against a risk-free realised one books the risk premium as a loss
-every single day. Both sides of the decomposition therefore use the **risk-free**
-objective; `PlanResult` reports gross (risk-free) and net (risk-loaded) values,
-and only the gross figure enters this chain.
+The CVaR weighting on imbalance is an **objective penalty, not a cashflow**, and
+it is the only one — no `EconomicEffect` names a risk premium (ADR-019). Realised
+value can never contain it, so comparing a risk-loaded planned value against a
+risk-free realised one books the risk premium as a loss every single day. Both
+sides of the decomposition therefore use the **risk-free** objective;
+`PlanResult` reports gross (risk-free) and net (risk-loaded) values, and only the
+gross figure enters this chain.
 
 ### Reconciliation
 

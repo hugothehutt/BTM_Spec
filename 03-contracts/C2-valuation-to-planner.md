@@ -1,6 +1,6 @@
 # C2 — Valuation → Planner
 
-**Payload:** `ValuationBundle` **Version:** 3.0 **Direction:** L2 → L3
+**Payload:** `ValuationBundle` **Version:** 4.0 **Direction:** L2 → L3
 
 The load-bearing seam. Everything the Planner knows about economics arrives here,
 expressed in the closed algebra of ADR-008. The Planner has **no** access to
