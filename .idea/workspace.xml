@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="50ec6f7a-ee88-4de5-8941-3e576ae51377" name="Changes" comment="taken out activation cost term.">
-      <change beforePath="$PROJECT_DIR$/01-adr/ADR-019-activation-carries-no-cost-term.md" beforeDir="false" afterPath="$PROJECT_DIR$/01-adr/ADR-019-activation-carries-no-cost-term.md" afterDir="false" />
+    <list default="true" id="50ec6f7a-ee88-4de5-8941-3e576ae51377" name="Changes" comment="Update.">
+      <change beforePath="$PROJECT_DIR$/00-overview/02-conventions.md" beforeDir="false" afterPath="$PROJECT_DIR$/00-overview/02-conventions.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00-overview/04-glossary.md" beforeDir="false" afterPath="$PROJECT_DIR$/00-overview/04-glossary.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/01-adr/ADR-015-open-decisions.md" beforeDir="false" afterPath="$PROJECT_DIR$/01-adr/ADR-015-open-decisions.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/01-adr/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/01-adr/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/02-layers/L2-valuation.md" beforeDir="false" afterPath="$PROJECT_DIR$/02-layers/L2-valuation.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/02-layers/L3-planner.md" beforeDir="false" afterPath="$PROJECT_DIR$/02-layers/L3-planner.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03-contracts/C0-contract-conventions.md" beforeDir="false" afterPath="$PROJECT_DIR$/03-contracts/C0-contract-conventions.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03-contracts/C2-valuation-to-planner.md" beforeDir="false" afterPath="$PROJECT_DIR$/03-contracts/C2-valuation-to-planner.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-compliance/T0-test-architecture.md" beforeDir="false" afterPath="$PROJECT_DIR$/04-compliance/T0-test-architecture.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-compliance/T1-invariants.md" beforeDir="false" afterPath="$PROJECT_DIR$/04-compliance/T1-invariants.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-compliance/T2-property-and-metamorphic-tests.md" beforeDir="false" afterPath="$PROJECT_DIR$/04-compliance/T2-property-and-metamorphic-tests.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/05-implementation/P0-workstreams.md" beforeDir="false" afterPath="$PROJECT_DIR$/05-implementation/P0-workstreams.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/06-theory/TN-01-cvar-across-stages.md" beforeDir="false" afterPath="$PROJECT_DIR$/06-theory/TN-01-cvar-across-stages.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/06-theory/TN-04-imbalance-risk-measure.md" beforeDir="false" afterPath="$PROJECT_DIR$/06-theory/TN-04-imbalance-risk-measure.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CLAUDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/CLAUDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/agents/domain.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/agents/domain.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/handover-2026-08.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/handover-2026-08.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stubs/C2_ValuationBundle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/stubs/C2_ValuationBundle.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stubs/Interfaces.cs" beforeDir="false" afterPath="$PROJECT_DIR$/stubs/Interfaces.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +71,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1788781771063</updated>
-      <workItem from="1788781772254" duration="18026000" />
+      <workItem from="1788781772254" duration="18663000" />
     </task>
     <task id="LOCAL-00001" summary="taken out activation cost term.">
       <option name="closed" value="true" />
@@ -63,7 +81,15 @@
       <option name="project" value="LOCAL" />
       <updated>1788783065981</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Update.">
+      <option name="closed" value="true" />
+      <created>1788939891281</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1788939891281</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -71,6 +97,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="taken out activation cost term." />
-    <option name="LAST_COMMIT_MESSAGE" value="taken out activation cost term." />
+    <MESSAGE value="Update." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update." />
   </component>
 </project>

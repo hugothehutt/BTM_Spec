@@ -116,10 +116,9 @@ Nothing here is machine-checked. Consistency is held by ADR and by review.
 | **curvature** | The declared shape of a piecewise-linear term, verified against its breakpoints rather than trusted. | `01-adr/ADR-008-linearizable-primitives.md` |
 | **CVaR** | The mean of the worst tail mass of a loss distribution, taken on the reduced measure. | `06-theory/TN-01-cvar-across-stages.md` |
 | `EconomicEffect` | The closed enumeration naming what a term prices. | `01-adr/ADR-009-term-ownership.md` |
-| `EpigraphTerm` | A variable, the slot set it must dominate, a floor and a unit price; how a maximum becomes linear. | `03-contracts/C2-valuation-to-planner.md` |
+| `EpigraphTerm` | A variable, the slot set it must dominate, a floor, a unit price and the accounting period assessed; how a maximum becomes linear. | `03-contracts/C2-valuation-to-planner.md` |
 | **invalidation** | A value function fitted at a conditioning state the engine has left: the wrong curve, which no penalty repairs. | `02-layers/L0-state-value-store.md` |
 | `LinearTerm` | A per-unit EUR coefficient on a decision variable and slot. | `03-contracts/C2-valuation-to-planner.md` |
-| **proration** | Scaling the in-horizon share of a charge assessed over a longer accounting period. | `02-layers/L2-valuation.md` |
 | `PwlTerm` | A breakpoint table with declared curvature and sense. | `03-contracts/C2-valuation-to-planner.md` |
 | **staleness** | A value function past its validity horizon: the right curve, out of date, priced by shrinking its slopes. | `02-layers/L0-state-value-store.md` |
 | **term ownership matrix** | The normative mapping from each effect to the one view that owns it. | `01-adr/ADR-009-term-ownership.md` |
@@ -266,16 +265,20 @@ unreadable.
 
 ## 14. Contested words
 
-Seven names were contested. Five kept one of their two meanings and the loser is
-written differently; two are retired outright. Filed by the contested name,
-never by a losing spelling. `06-theory/TN-03-vocabulary.md` §3 argues each
-ruling — except *capture rate*, argued in `06-theory/TN-02-fan-not-tree.md` §5.
+Eight names are ruled here. Five kept one of their two meanings and the loser is
+written differently; three are retired outright — two that lost a contest, and
+one whose concept the specification removed. Filed by the contested name, never
+by a losing spelling. `06-theory/TN-03-vocabulary.md` §3 argues each ruling —
+except *capture rate*, argued in `06-theory/TN-02-fan-not-tree.md` §5, and
+*proration*, decided in
+[ADR-020](../01-adr/ADR-020-peak-charge-carries-no-proration.md).
 
 | Word | Keeps | Loses | Write the loser as | Argument |
 |---|---|---|---|---|
 | **frame** | The sign frame — battery, POI, market. | L1's warm storage artefact per (series, civil day). | `slab` | TN-03 §3.1 |
 | **stage** | A measurability level inside one solve — first and second. | The composer's ordered steps, and the settlement timeline. | `composition step`, `settlement point` | TN-03 §3.6 |
 | **peak_to_go** | Nothing — the name is retired outright. | The peak already realised this period, which the name reads as the peak remaining. | `pPoiRealisedPeakMw` | TN-03 §3.9 |
+| **proration** | Nothing — the name is retired outright, with the concept. | Scaling the in-horizon share of a charge assessed over a longer accounting period. Exact for a time-additive charge and only for that; the peak charge is a max. | — | ADR-020 |
 | **V** | The terminal value function. | The aFRR capacity bid-curve expected value. | `B(E)` | TN-03 §3.7 |
 | **generation** | L0's state version, incremented per Commit. | The hot window's per-refill counter. | `refillCount` | TN-03 §3.8 |
 | **scenarioCount** | `S`, the reduced ensemble axis. | The slow loop's own, larger ensemble. | `fitScenarioCount` | TN-03 §3.8 |
@@ -294,13 +297,20 @@ find. Each is a defect wherever it appears, except at the sites named below.
 | staged market gates | gates |
 | staging table | gate table |
 | `peak_to_go` | `pPoiRealisedPeakMw` |
+| `prorationFactor`, proration, prorate | nothing — the rate is charged in full, and the period is `EpigraphTerm.accountingPeriod` |
 | capture rate | `PolicyQuality` |
 
-Two allowances, each because the site's job is to name the retired word in order
-to retire it: *staging table* in `06-theory/TN-02-fan-not-tree.md`, and *capture
-rate* in `04-compliance/T5-gap-and-performance.md` and
-`06-theory/TN-02-fan-not-tree.md`. "It is everywhere and hard to change" is not
-an allowance; that is a rename's work.
+Three allowances, each because the site's job is to name the retired word in
+order to retire it: *staging table* in `06-theory/TN-02-fan-not-tree.md`;
+*capture rate* in `04-compliance/T5-gap-and-performance.md` and
+`06-theory/TN-02-fan-not-tree.md`; and *proration* in
+`01-adr/ADR-020-peak-charge-carries-no-proration.md`, at the sites that record
+its retirement — this table, `01-adr/README.md`, `CLAUDE.md`, `C0` §5, `L2` §2,
+`T1` §10, `T2` §5.3, `stubs/C2_ValuationBundle.cs` — and throughout
+`06-theory/TN-01-cvar-across-stages.md`, which argued the term away and keeps its
+own record of having done so, proofs included. Every link to ADR-020 also carries
+the word in its filename. "It is everywhere and hard to change" is not an
+allowance; that is a rename's work.
 
 Four further words — *gate*, *tier*, *primitive*, *oracle* — are ruled in
 `TN-03` §§3.2–3.5 but not propagated, so they are not recorded here. A ruling

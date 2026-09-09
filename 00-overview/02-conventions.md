@@ -113,15 +113,18 @@ system is a defect this specification does not accept anywhere.
 
 `PeakPrice` is EUR/MW: a charge per MW of peak, for one accounting period. The
 period (year or month, per regime) is a **mandatory explicit input** to the peak
-term, carried as its own field. It is not a unit denominator.
+term, carried as its own field — `EpigraphTerm.accountingPeriod`, a `SlotRange`.
+It is not a unit denominator, and it is not a coefficient either (ADR-020).
 
 This is what makes the objective's unit algebra close. The peak contribution is
 
 ```
-peakPriceEurPerMw · zPeak · proration    (EUR/MW) · MW · [0,1]  =  EUR
+peakPriceEurPerMw · zPeak    (EUR/MW) · MW  =  EUR
 ```
 
-with `proration` dimensionless and exactly one period in scope per term.
+with exactly one period in scope per term. The period fixes *which* realised peak
+is that term's floor. It never scales the rate: the charge is levied on the
+period max, so a MW of new peak costs the full rate in whichever slot it lands.
 
 ### 2.2 Marginal values of the delineation accumulators
 

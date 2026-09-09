@@ -1,6 +1,6 @@
 # C2 — Valuation → Planner
 
-**Payload:** `ValuationBundle` **Version:** 4.0 **Direction:** L2 → L3
+**Payload:** `ValuationBundle` **Version:** 5.0 **Direction:** L2 → L3
 
 The load-bearing seam. Everything the Planner knows about economics arrives here,
 expressed in the closed algebra of ADR-008. The Planner has **no** access to
@@ -106,13 +106,17 @@ choice rather than mysterious.
 | `overSlots` | `SlotId[]` | — | Subset — this is how HLZF is expressed |
 | `pPoiFloorMw` | `double` | MW | Realised peak so far, from L0 (`pPoiRealisedPeakMw`) |
 | `unitPriceEurPerMw` | `double` | EUR/MW | |
-| `prorationFactor` | `double` | — | `fraction`, range `[0,1]`. Fraction of the accounting period inside this horizon |
+| `accountingPeriod` | `SlotRange` | — | The period the charge is assessed over, from `ITariffRegime` |
 
-`prorationFactor` matters: the horizon is shorter than the accounting period, so
-the *full* period charge must not be applied to a partial window. The remaining
-period value is carried by `V` (ADR-007). Mis-setting this is a classic
-overweighting of peak; `INV-V-13` asserts it is in `[0,1]` and consistent with
-the calendar.
+The term prices the level at the full rate: `unitPriceEurPerMw · epigraphVar`,
+with no scalar between them (ADR-020). The charge is levied on the period max, so
+exceeding `pPoiFloorMw` by `Δ` costs the full `unitPriceEurPerMw · Δ` whichever
+slot it happens in.
+
+`accountingPeriod` is what makes `pPoiFloorMw` checkable: a floor is the realised
+peak *of a period*, and a curve fitted against a period the engine has left
+prices a floor that no longer exists (`L0` §5.1). `INV-V-18` asserts the two
+agree.
 
 ### 3.4 `BoundTerm`
 
@@ -224,11 +228,11 @@ down, `binariesByOrigin` names the term responsible.
 | `INV-V-07` | `compositionOrder` satisfies the stage precondition table (ADR-009) | `HALT` |
 | `INV-V-11` | `vSocSlopesEurPerMwh` strictly decreasing (concavity) | `HALT` |
 | `INV-V-12` | Declared `curvature` matches the breakpoints | `HALT` |
-| `INV-V-13` | `prorationFactor ∈ [0,1]` and consistent with the calendar | `HALT` |
 | `INV-V-14` | `binariesByOrigin` sums to `binaryCount` | warn |
 | `INV-V-15` | Every `BoundTerm` has a `reason`; no `Physical` bound is soft | `HALT` |
 | `INV-V-16` | `FillProbView` emits only `BoundTerm`; it has no priced term | `HALT` |
 | `INV-V-17` | No term references a provenance flow — energy attributed to a path or to a named installation (§2) | `HALT` |
+| `INV-V-18` | `pPoiFloorMw` is the realised peak of the declared `accountingPeriod`; no scalar stands between `unitPriceEurPerMw` and `epigraphVar` (ADR-020) | `HALT` |
 
 ## 9. What deliberately does *not* cross C2
 

@@ -250,10 +250,13 @@ workstream.
 4. **The ownership matrix works.** Four views, four effects, zero double counts —
    and `unexplainedEur` in C5 §5 is near zero, which is the empirical statement that
    Valuation and Settlement agree on what the terms mean.
-5. **The proration is right.** `prorationFactor` on a one-week horizon inside an
-   annual accounting period is the most likely place for the engine to become
-   pathologically peak-averse (L2 §2), and the slice surfaces it immediately
-   against a real bill.
+5. **The peak floor and the peak rate are right.** On a one-week horizon inside an
+   annual accounting period, `EpigraphTerm.pPoiFloorMw` is the realised peak of
+   that period and the rate is charged undiscounted (`INV-V-18`, ADR-020), so
+   `L2`'s planned peak bucket and `L5`'s booked charge are the same definition.
+   The slice surfaces a disagreement immediately, against a real bill — and this
+   is the earliest point at which the zero-gap test's peak bucket (`T2` §5.3) can
+   be exercised at all.
 
 What the slice does **not** prove: anything about cross-market co-optimisation,
 tier gaps, or the value function. Those are W7–W9 and they are supposed to be

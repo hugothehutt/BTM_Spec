@@ -48,7 +48,7 @@ What this catches that feasibility testing does not:
 | Missing coupling constraint | The relaxed problem is *more* feasible, not less | POI tightening monotonicity; DA curve monotonicity |
 | Double-counted effect | Every constraint holds; the objective is simply inflated | Duplicate-effect injection; zero-price invariance |
 | Ignoring the dependence structure of the ensemble | Marginals are all correct; only the joint is wrong | Ensemble axis coherence |
-| Peak term over-weighted by a bad `prorationFactor` | Feasible and conservative — looks like prudence | Peak price monotonicity; proration scaling |
+| Peak floor stale, or taken from an accounting period the engine has left | Feasible, and the plan reads as prudent — it shaves against a peak that is not this period's | Peak price monotonicity; the zero-gap test (§5.3) |
 
 ### 1.1 Controlling false failures
 
@@ -842,7 +842,7 @@ the calendar and every other price.
 | `M-P5` | `afrrCapPriceEurPerMwH[·,b] ↑` by `δ > 0` | The submitted `limitPriceEurPerMwH[b]` is **non-decreasing** | The bid policy ignoring the award-probability shift; a markup hardcoded as a fixed offset from `μ` rather than solved against `P(award \| p)` |
 | `M-P6` | Spot spread widened (raising the opportunity cost of headroom), reserve prices held fixed | `reserveShadowValueEurPerMwH[b]` is **non-decreasing**, the submitted price is **non-decreasing**, and offered `rUp[b] + rDn[b]` is **non-increasing** | `μ` not actually flowing from the coupling dual; the bid policy pricing off capacity revenue alone and ignoring what the headroom is worth elsewhere — the exact error ADR-018 rejects |
 | `M-P2` | All energy price beliefs shifted by `+Δ` (uniform additive, all scenarios, all slots; tariff, peak and reserve prices held fixed) | Planned **net export energy** over the horizon is non-decreasing | Sign frame confusion between battery and POI frames; a charge/discharge asymmetry with the wrong sign |
-| `M-P3` | `peakPriceEurPerMw ↑` for a regime | The planned peak `zPeak` for that regime is **non-increasing**, and the objective is non-increasing | Epigraph built with the wrong sense; `prorationFactor` applied to the wrong side; peak floor ignored |
+| `M-P3` | `peakPriceEurPerMw ↑` for a regime | The planned peak `zPeak` for that regime is **non-increasing**, and the objective is non-increasing | Epigraph built with the wrong sense; the rate discounted for a partial horizon; peak floor ignored |
 | `M-P4` | `pPoiImportLimitMw` tightened (or `pPoiExportLimitMw` tightened) | The objective is **non-increasing** | Missing POI envelope constraint; a bound applied to the wrong frame; a soft bound where a hard one was specified |
 
 ```
@@ -1067,11 +1067,22 @@ property ZeroGap(bundle, plan):
 
 **Why this is worth more than it looks.** Any non-zero bucket in this test is a
 *definitional* disagreement between `L2` and `L5` about what a term means — a fee
-netted into a price on one side and not the other, a proration applied twice, an
-effect assigned to a different bucket. Those disagreements are invisible in
-production because they hide inside genuine forecast error, and they are exactly
-what makes `unexplainedRatio` creep upward over months (`INV-S-07`). The zero-gap
-test finds them on day one, deterministically, with no market data at all.
+netted into a price on one side and not the other, a rate discounted on one side
+and charged in full on the other, an effect assigned to a different bucket. Those
+disagreements are invisible in production because they hide inside genuine
+forecast error, and they are exactly what makes `unexplainedRatio` creep upward
+over months (`INV-S-07`). The zero-gap test finds them on day one,
+deterministically, with no market data at all.
+
+**The peak bucket is the case to watch.** `assert_close` above compares
+`realisedByEffect` to `plannedByEffect` term by term, and for peak that assertion
+is only satisfiable because both sides now price the same thing: `L2` charges
+`peakPriceEurPerMw · zPeak` and `L5` books
+`peakPriceEurPerMw · pPoiRealisedPeakMw` (`L5` §5). While `EpigraphTerm` carried a
+`prorationFactor`, the two differed by the horizon's share of the accounting
+period at every tick — a standing non-zero bucket that no forecast error
+explained, and the definitional split ADR-020 closed. A regression here is the
+first thing to check if `unexplainedRatio` starts climbing.
 
 Run it for each bucket in isolation by perturbing one input at a time:
 

@@ -85,7 +85,17 @@ producer is in an unknown state and nothing downstream can be trusted.
   identifier's unit suffix to change with the unit, so the rename is the alarm
   and `INV-G-02` fails the build if the two disagree.
 
-**`C2` and `C5` are at 4.0; `C1`, `C3` and `C4` are at 3.0; `C6` is at 2.0.**
+**`C2` is at 5.0; `C5` is at 4.0; `C1`, `C3` and `C4` are at 3.0; `C6` is at
+2.0.** Removing `prorationFactor` from `EpigraphTerm` and adding
+`accountingPeriod` in its place
+([ADR-020](../01-adr/ADR-020-peak-charge-carries-no-proration.md)) is one removal
+and one required addition, each major on its own under the rule above. The factor
+was never authorised by any ADR — `ADR-008`:27 gives the epigraph's cost as
+`c·z` — and `L5`:225-228 always settled the charge without it, so the bump also
+closes a definitional split between the two sides of one term. `C5` is untouched:
+its peak accounting never carried the factor.
+
+**`C2` and `C5` went to 4.0 together.**
 Removing `ActivationRisk` from the `EconomicEffect` enumeration
 ([ADR-019](../01-adr/ADR-019-activation-carries-no-cost-term.md)) narrowed the
 value set of `effect`, `effectCoverage` and `unclaimedEffects` (`C2`) and of

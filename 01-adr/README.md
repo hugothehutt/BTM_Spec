@@ -1,7 +1,7 @@
 
 # Architecture Decision Records
 
-Eighteen live decisions that are expensive to reverse, at ids 001–019. Each
+Nineteen live decisions that are expensive to reverse, at ids 001–020. Each
 records context, the decision, its consequences, and what was rejected and why.
 ADR IDs are stable and referenced throughout the specification: a deleted
 decision keeps its id and its row — 003 is the one such row below — and the id is
@@ -28,6 +28,7 @@ never reissued.
 | [017](ADR-017-delineation-in-the-objective.md) | Delineation as MILP state equations plus marginal values | Accepted | Very expensive |
 | [018](ADR-018-reserve-bid-price-formation.md) | Reserve capacity is pay-as-bid; the bid price is a policy, not a dual | Accepted | Moderate |
 | [019](ADR-019-activation-carries-no-cost-term.md) | Activation carries no cost term; the risk functional runs on imbalance alone | Accepted | Moderate |
+| [020](ADR-020-peak-charge-carries-no-proration.md) | The peak charge carries no proration; the accounting period is a field | Accepted | Moderate |
 
 ## Reversibility as a sequencing guide
 

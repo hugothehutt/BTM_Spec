@@ -57,17 +57,28 @@ Prices the marginal MW of grid peak, under whichever tariff regimes are active
   `AtypicalHlzf` — expressed through `EpigraphTerm.overSlots`, which is why that
   field is a slot *set* rather than a range.
 - **Floor:** `pPoiRealisedPeakMw` from L0, adjusted upward for the unsettled gap
-  (C5 §2) using the engine's own modelled trajectory.
+  (C5 §2) using the engine's own modelled trajectory — and the realised peak of
+  the period the term declares in `accountingPeriod`, which is what makes it
+  checkable (`INV-V-18`).
 - **Risk treatment:** the peak level used is an **empirical CVaR tail mean over
   the joint ensemble**, not the mean forecast. Concretely, over the reduced
   ensemble with weights `w_s`, take the weighted mean of the worst `(1−α)` mass
   of `max_t p_poi[s,t]`. This is a risk-averse peak level and it is the correct
   treatment: peak charge is a max-of-a-max, so the mean forecast systematically
   understates it (Jensen, in the unhelpful direction).
-- **Proration:** the horizon is shorter than the accounting period. The
-  `prorationFactor` scales the in-horizon charge; the remainder is priced by `V`.
-  Getting this wrong is the most common way to make the engine pathologically
-  peak-averse.
+- **Rate:** the full `peakPriceEurPerMw`, with no scalar for the horizon being
+  shorter than the accounting period (ADR-020). Exceeding the floor by `Δ` costs
+  `peakPriceEurPerMw · Δ` for the whole period, because the charge is levied on
+  the period max. The `prorationFactor` this replaces understated that marginal
+  cost by the horizon's share of the period — about fiftyfold on one week inside
+  an annual regime — so the warning that once stood here, that mis-setting it made
+  the engine pathologically *peak-averse*, had the direction backwards.
+- **Residual hazard:** the full rate is right when the excursion turns out to be
+  the period max, and over-charges when a later one would have dominated it.
+  Nothing in the tick prices that difference — `V` would, but `C2` §4 selects a
+  curve on `peakState` before the solve rather than making `V` a function of
+  `zPeak`. This, not proration, is the mechanism that can make the engine
+  over-averse to peak (`ADR-015`:015-1).
 - **Degradation response:** poor `loadMw` quality adds
   `riskProfile.pPoiPeakSafetyMarginMw` to the floor rather than changing behaviour.
 

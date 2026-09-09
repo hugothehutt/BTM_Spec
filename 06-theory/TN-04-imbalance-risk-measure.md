@@ -42,7 +42,7 @@ Three functionals take a tail. They agree on nothing except the parameter.
 | Carrier | Argument | Orientation | Declared payload shape | Risk weight |
 |---|---|---|---|---|
 | **Imbalance** (`L2`:117-126, `L3`:171) | imbalance cost — a **cost**, upper tail | correct | `PwlTerm` convex/Min (`ADR-008`:50-52) | `cvarWeight` |
-| **Peak** (`L2`:61-66) | `max_t p_poi[s,t]` — a cost **driver** in MW, upper tail | correct | `EpigraphTerm` (`ADR-008`:36-40) | `peakPrice · proration`, outside the functional |
+| **Peak** (`L2`:61-66) | `max_t p_poi[s,t]` — a cost **driver** in MW, upper tail | correct | `EpigraphTerm` (`ADR-008`:36-40) | `peakPrice`, outside the functional (`ADR-020`) |
 | **Delineation** (`L2`:165-168, `ADR-017`:60-61) | `V_del` — a **benefit**, so the bad tail is the **lower** one | **inverted** unless negated | `LinearTerm` on `aDel` at `λ_j = ∂V_del/∂A_j` | none — tail taken inside Valuation |
 
 The whole parameter surface is `C2`:190-192: `cvarLevel ∈ (0,1)` ("e.g. 0.95; widened when

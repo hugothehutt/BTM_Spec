@@ -179,7 +179,7 @@ solver, no file system, no recorded seam.
 | Each `IValuationView` | `Evaluate` output validates against the view's own `PublishedSchema`; `ClaimedEffects` matches what the terms actually carry; hand-computed values on a 4-slot fixture |
 | Each composition step | Preconditions and postconditions of the stage table (ADR-009, `L2` §4) hold in isolation |
 | Curvature checker | Concave, convex, general and pathological breakpoint sets classify correctly, including ties and a two-point curve |
-| Epigraph builder | `z ≥ expr[t] ∀t`, `z ≥ floor`, correct `overSlots` subset, correct `prorationFactor` application |
+| Epigraph builder | `z ≥ expr[t] ∀t`, `z ≥ floor`, correct `overSlots` subset, the floor matching the declared `accountingPeriod`, and the rate applied undiscounted — no scalar between `unitPriceEurPerMw` and the epigraph variable (`INV-V-18`) |
 | `CivilCalendar` | `SlotId ↔ (local date, local time, HLZF window)` on ordinary days and both DST days; 92 / 96 / 100-slot civil days |
 | Typed quantities | Frame and unit conversions; that illegal conversions do not compile (compile-fail tests are part of the suite) |
 | POI bridge | `p_poi = load − pv_out − p_batt` in isolation, both signs, with aux load present, and with `q > 0` so that `pv_out < pv_avail` — passing `pv_avail` where `pv_out` belongs is the defect this case exists to catch |

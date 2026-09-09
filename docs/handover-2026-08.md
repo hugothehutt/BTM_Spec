@@ -279,9 +279,9 @@ The important consequence: this error survives an exact value function. V prices
 
 ```
 max  Σ LinearTerms + Σ PwlTerms + V(socTerminal)
-     − Σ peakPriceEurPerMw·zPeak·proration
+     − Σ peakPriceEurPerMw·zPeak
      + Σ_j λ_j · A_j
-     − cvarWeight · CVaR_α(imbalance + activation cost)
+     − cvarWeight · CVaR_α(imbalance cost)
 ```
 
 > ASSEMBLED ENTIRELY FROM C2 TERMS. THE PLANNER ADDS NO ECONOMICS OF ITS OWN — IF IT NEEDS A NUMBER, A VIEW MUST OWN IT.
@@ -298,7 +298,7 @@ Arbitrary delegates do not work: the Planner would have to sample them to build 
 | SHAPE 4 | `BoundTerm` | Feasibility, not price. Power limits, the prequalified reserve envelope, reliable intraday volume. |
 | SHAPE 5 | `CouplingConstraint` | Rows that tie markets together — headroom, SOC corridor, POI envelope. |
 
-On top of the algebra sits a term ownership matrix: thirteen economic effects, each with exactly one owning view. The composer rejects any bundle that prices the same effect on the same variable in the same slot twice. Double-counting is the failure this layer is designed to make structurally impossible, not the failure it hopes to catch in review.
+On top of the algebra sits a term ownership matrix: twelve economic effects, each with exactly one owning view. The composer rejects any bundle that prices the same effect on the same variable in the same slot twice. Double-counting is the failure this layer is designed to make structurally impossible, not the failure it hopes to catch in review.
 
 Quality never becomes a branch. Every value crossing C1 carries provenance and quality, and downstream those map onto a risk multiplier: a degraded price belief widens the risk level and shrinks position bounds; an imputed load forecast widens the peak safety margin. Bad data takes the same code path with more conservative parameters. One path to test, and the response to degradation is continuous rather than a cliff.
 

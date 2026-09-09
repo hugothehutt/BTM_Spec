@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 //  Flexbid.Btm.Contracts — C2: Valuation → Planner
 //
-//  Payload: ValuationBundle   Version: 3.0   Direction: L2 → L3
+//  Payload: ValuationBundle   Version: 5.0   Direction: L2 → L3
 //  Normative source: 03-contracts/C2-valuation-to-planner.md §1–§9,
 //                    ADR-008 (linearizable primitives — this file IS that ADR),
 //                    ADR-007 (V(SOC), not λ), ADR-009 (term ownership),
@@ -182,18 +182,21 @@ public sealed record EpigraphTerm
     /// <summary>Unit: EUR/MW.</summary>
     public required double UnitPriceEurPerMw { get; init; }
 
-    /// <summary>
-    /// Range <c>[0,1]</c>. Fraction of the accounting period inside this horizon.
-    /// </summary>
+    /// <summary>The period the charge is assessed over, from
+    /// <see cref="ITariffRegime.AccountingPeriod"/>.</summary>
     /// <remarks>
-    /// <b>This field matters.</b> The horizon is shorter than the accounting
-    /// period, so the full period charge must not be applied to a partial window;
-    /// the remaining period value is carried by <c>V</c> (ADR-007). Mis-setting
-    /// it is the classic overweighting of peak and the most common way to make
-    /// the engine pathologically peak-averse (L2 §2). INV-V-13 asserts it is in
-    /// <c>[0,1]</c> and consistent with the calendar.
+    /// The term prices the level at the full rate — <c>UnitPriceEurPerMw ·
+    /// EpigraphVar</c>, no scalar between them (ADR-020). The charge is levied on
+    /// the period max, so exceeding <see cref="Floor"/> by <c>Δ</c> costs the full
+    /// <c>UnitPriceEurPerMw · Δ</c> in whichever slot it lands.
+    /// <para>
+    /// This field is what makes <see cref="Floor"/> checkable: a floor is the
+    /// realised peak <i>of a period</i>, and one carried over from a period the
+    /// engine has left prices a floor that no longer exists (L0 §5.1).
+    /// INV-V-18 asserts the two agree.
+    /// </para>
     /// </remarks>
-    public required double ProrationFactor { get; init; }
+    public required SlotRange AccountingPeriod { get; init; }
 }
 
 /// <summary>What a <see cref="BoundTerm"/> constrains: a single variable or a
@@ -636,8 +639,9 @@ public sealed record ValuationBundle : ContractEnvelope
 ///     (concavity) → <c>HALT</c>.</description></item>
 ///   <item><term>INV-V-12</term><description>Declared <c>curvature</c> matches the
 ///     breakpoints → <c>HALT</c>.</description></item>
-///   <item><term>INV-V-13</term><description><c>prorationFactor ∈ [0,1]</c> and
-///     consistent with the calendar → <c>HALT</c>.</description></item>
+///   <item><term>INV-V-18</term><description><c>Floor</c> is the realised peak of
+///     the declared <c>AccountingPeriod</c>, and no scalar stands between
+///     <c>UnitPriceEurPerMw</c> and <c>EpigraphVar</c> → <c>HALT</c>.</description></item>
 ///   <item><term>INV-V-14</term><description><c>binariesByOrigin</c> sums to
 ///     <c>binaryCount</c> → warn.</description></item>
 ///   <item><term>INV-V-15</term><description>Every <c>BoundTerm</c> has a
@@ -646,10 +650,13 @@ public sealed record ValuationBundle : ContractEnvelope
 ///     <c>BoundTerm</c>; it has no priced term → <c>HALT</c>.</description></item>
 /// </list>
 /// <para>
-/// INV-V-08 … INV-V-10 are unassigned in C2 §8 as of version 2.0. The gap is in
-/// the source register and is preserved here rather than silently renumbered:
+/// INV-V-08 … INV-V-10 are unassigned in C2 §8. INV-V-13 was assigned and is
+/// retired: ADR-020 removed <c>prorationFactor</c>, the only thing it asserted,
+/// and INV-V-18 asserts the structure that replaced it. Both gaps are in the
+/// source register and are preserved here rather than silently renumbered:
 /// invariant IDs are stable identifiers (conventions §5) and reusing a retired
-/// number would break every cross-reference to it.
+/// number would break every cross-reference to it — and for INV-V-13 the alert
+/// history is not empty, which makes reuse worse than for a number never used.
 /// </para>
 /// </remarks>
 public static class C2Invariants
@@ -663,10 +670,10 @@ public static class C2Invariants
     public const string CompositionOrderValid = "INV-V-07";
     public const string ValueFunctionConcave = "INV-V-11";
     public const string CurvatureMatchesBreakpoints = "INV-V-12";
-    public const string ProrationFactorValid = "INV-V-13";
     public const string BinaryAttributionSums = "INV-V-14";
     public const string BoundsTaggedAndPhysicalHard = "INV-V-15";
     public const string FillProbEmitsBoundsOnly = "INV-V-16";
+    public const string PeakFloorMatchesAccountingPeriod = "INV-V-18";
 
     public static IReadOnlyList<string> All => throw new NotImplementedException();
 }

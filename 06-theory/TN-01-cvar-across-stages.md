@@ -556,8 +556,8 @@ should be deleted, not qualified.
 | 5 | Summed CVaR terms are a valid risk measure | absent from spec | **Confirmed with restatement** — coherent on the loss vector; a conservative upper bound on `CVaR_α(Σ L_k)`, equality iff comonotone. Not CVaR of anything |
 | 6 | Per-tick static CVaR is time-consistent | absent from spec | **Refuted** — no repair inside the law-invariant coherent class (Kupper–Schachermayer) |
 | 7 | Nested CVaR would fix it at no cost | absent from spec | **Conditional** — time-consistent (Ruszczyński), but strictly more conservative than static and compounding with stage count (rectangular hull) |
-| 8 | `prorationFactor` correctly splits the peak charge | `L2`:67-72 | **Refuted** — prorating a max is exact only for a time-additive charge; the split also straddles a CVaR/expectation boundary |
-| 9 | Proration is "the most common way to make the engine pathologically peak-averse" | `L2`:67-72 | **Confirmed**, with the mechanism now derived (§3b(ii)) |
+| 8 | `prorationFactor` correctly splits the peak charge | `L2`:67-72 | **Refuted** — prorating a max is exact only for a time-additive charge; the split also straddles a CVaR/expectation boundary. **Acted on by `ADR-020`**: the field is gone and the level is priced at the full rate |
+| 9 | Proration is "the most common way to make the engine pathologically peak-averse" | `L2`:67-72 | **Confirmed in effect, wrong in direction.** The over-aversion hazard is real, but its cause is the unpriced out-of-horizon remainder, not the factor. At `θ < 1` the factor *understates* the marginal cost of a new period peak by `1/θ` — about fiftyfold on a one-week horizon in an annual regime — which errs toward tolerance, not aversion. `ADR-020` removes the factor; the hazard is registered as `ADR-015`:015-1 |
 | 10 | Peak epigraph `z ≥ p_poi[t]`, `z ≥ realisedPeak` is the peak term | `ADR-008`:36-41, `ADR-010`:65 | **Refuted** — that is the deterministic term; the risk-averse one needs `z_s` per scenario, ≈12k rows per regime at `S=64, H=192` |
 | 11 | The CVaR peak is an estimator of the population peak risk | `L2`:61-66 | **Conditional** — bias `≤ W₁/(1−α)`, a 20× amplification at `α=0.95`; degenerate at `S=64` unless `n_eff` is controlled |
 | 12 | `INV-D-07` (marginal means) suffices as reduction fidelity | `INV-D-07` | **Refuted for tail functionals** — vacuous for a functional of a path max |
@@ -595,6 +595,12 @@ Advisory. ADRs are Hugo's act.
   than standing as an argument about `V_del`.
 - One of `ADR-008`:36-41 / `L2`:55-66 — the deterministic and the scenario-indexed peak
   epigraph are different terms and cannot both be the spec.
+- `C2`:109, `L2`:67-70 and `L3`:169 — the `prorationFactor` field and the factor in the
+  objective. Prorating a max is exact for a time-additive charge and only for that
+  (§3b(ii)), and no ADR ever authorised the field: `ADR-008`:27 gives the epigraph's
+  cost as `c·z`. **Acted on by `ADR-020`**, which removes the field, prices the level at
+  the full rate, and carries the period as `EpigraphTerm.accountingPeriod`. Note the
+  direction: see claim 9.
 
 **Add:**
 

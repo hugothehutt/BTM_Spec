@@ -166,7 +166,7 @@ which is ADR-016's rejected rule one level up.
 of its own — if it needs a number, a view must own it.
 
 ```
-max  Σ LinearTerms + Σ PwlTerms + V(socTerminal) − Σ peakPriceEurPerMw·zPeak·proration
+max  Σ LinearTerms + Σ PwlTerms + V(socTerminal) − Σ peakPriceEurPerMw·zPeak
      + Σ_j λ_j · A_j
      − cvarWeight · CVaR_α(imbalance cost)
 ```

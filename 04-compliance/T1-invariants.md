@@ -141,11 +141,12 @@ Sources: `C2` §8, `C2` §3.3, `L2` §2/§4/§5, ADR-008, ADR-009.
 | `INV-V-10` | *Reserved. Not allocated. Do not reuse — see §10.* | — | — | — |
 | `INV-V-11` | `vSocSlopesEurPerMwh` are strictly decreasing: `V` is concave in SOC. Concavity is what makes the PWL binary-free under maximisation (ADR-007). | Value-function artefact build; `C2` producer and consumer | `HALT` | `T1`, `T2` (concavity) |
 | `INV-V-12` | Every `PwlTerm`'s declared `curvature` is verified against its breakpoints. A term declaring `Concave` with a non-concave breakpoint set is a contract violation, not a silently-wrong relaxation, because binary count — and therefore solve time — depends on the declaration being true (ADR-008). | Composer, curvature verification | `HALT` | `T1`, `T2` (curvature honesty) |
-| `INV-V-13` | `prorationFactor ∈ [0,1]` and is consistent with the `CivilCalendar`: it equals the fraction of the accounting period covered by the planning horizon. Mis-setting it is the classic route to a pathologically peak-averse engine. | Composer; `C2` consumer | `HALT` | `T1`, `T2`, `T0` (calendar) |
+| `INV-V-13` | *Retired by ADR-020. Do not reuse — see §10.* | — | — | — |
 | `INV-V-14` | `binariesByOrigin` sums to `binaryCount`, and `binaryCount` matches the binaries the Planner actually builds. | Composer, then `L3` model build | `warn` | `T1`, `T2` |
 | `INV-V-15` | Every `BoundTerm` carries a `reason`; no bound with `reason = Physical` or `reason = Regulatory` is soft (`softPenalty` must be null). Feasibility restoration depends on this tagging (`L3` §6). | Composer; `C2` consumer | `HALT` | `T1`, `T2` (restoration ordering) |
 | `INV-V-16` | `FillProbView` emits only `BoundTerm`. It carries no priced term. Fill probability constrains the Planner and never prices for it (ADR-008, ADR-012). | Composer; view schema check | `HALT` | `T1`, `T0` |
 | `INV-V-17` | No term, bound or coupling row references a provenance flow — energy attributed to a path (PV→battery, battery→grid) or to a named installation. The delineation is arithmetic on four metered scalars per quarter-hour and grants no attribution freedom; a routing variable invents one and books value settlement will not pay (ADR-017 §Rejected). `INV-V-03` catches the symbol; this catches the intent, and names it in the alert. | Composer; `C2` producer and consumer | `HALT` | `T1`, `T6` |
+| `INV-V-18` | Every `EpigraphTerm`'s `pPoiFloorMw` is the realised peak of the `accountingPeriod` it declares — adjusted upward for the unsettled gap (`C5` §2) and, under degraded load quality, by `riskProfile.pPoiPeakSafetyMarginMw` — and no scalar stands between `unitPriceEurPerMw` and `epigraphVar`. The charge is levied on the period max, so discounting the rate for a partial horizon misprices the marginal MW by the horizon's share of the period, and a floor carrying no period cannot be checked against anything (ADR-020). | Composer; `C2` consumer | `HALT` | `T1`, `T2`, `T0` (epigraph builder) |
 
 ---
 
@@ -292,13 +293,17 @@ backtest across a rule change must see the rules that applied at the time
 ## 10. Reserved and unallocated IDs
 
 `INV-V-08`, `INV-V-09`, `INV-V-10` and `INV-P-08` are **not allocated** by any
-document in this specification. They are recorded here as reserved rather than
-recycled, because reusing an ID that once appeared in a review comment, a commit
-message or an alert history is a reliable way to make an incident timeline
-unreadable.
+document in this specification. `INV-V-13` was allocated and is **retired**:
+ADR-020 removed `prorationFactor`, the only thing it asserted, and `INV-V-18`
+asserts the structure that replaced it. All five are recorded here as reserved
+rather than recycled, because reusing an ID that once appeared in a review
+comment, a commit message or an alert history is a reliable way to make an
+incident timeline unreadable — and a retired ID is the worse case of the two,
+because the alert history for it is not empty.
 
 A new Valuation or Planner invariant takes the next free number above the
-highest allocated in its family — `INV-V-17`, `INV-P-13` — and the reserved IDs
+highest allocated in its family — `INV-V-19`, `INV-P-13` — and the reserved IDs
 stay empty permanently. `INV-P-11` and `INV-P-12` were allocated by ADR-018;
+`INV-V-18` by ADR-020;
 `INV-X-12` likewise, skipping `INV-X-11`, which `TN-03` §3.10 reserves for the
 idempotency invariant when that rename is propagated.

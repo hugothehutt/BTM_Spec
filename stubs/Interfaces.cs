@@ -237,17 +237,14 @@ public interface ITariffRegime
 
     /// <summary>The accounting period containing <paramref name="slot"/>,
     /// derived from the local civil calendar — never from UTC arithmetic
-    /// (conventions §4.2).</summary>
+    /// (conventions §4.2). Populates <c>EpigraphTerm.AccountingPeriod</c>, which
+    /// is what makes the term's floor checkable (ADR-020, INV-V-18).</summary>
     SlotRange AccountingPeriod(SlotId slot);
 
     /// <summary>The slot subset the charge applies to: all slots for
     /// <c>AnnualLeistungspreis</c>, HLZF slots only for <c>AtypicalHlzf</c>.
     /// This is what populates <c>EpigraphTerm.OverSlots</c>.</summary>
     ReadOnlyMemory<SlotId> ChargeableSlots(in BeliefSnapshot belief);
-
-    /// <summary>Fraction of the accounting period inside this horizon
-    /// (C2 §3.3, INV-V-13).</summary>
-    double ProrationFactor(SlotRange horizon, SlotRange accountingPeriod);
 
     ViewOutput Emit(in BeliefSnapshot belief, in StateSnapshot state);
 }
