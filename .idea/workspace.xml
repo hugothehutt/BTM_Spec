@@ -1,20 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="50ec6f7a-ee88-4de5-8941-3e576ae51377" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/01-adr/ADR-009-term-ownership.md" beforeDir="false" afterPath="$PROJECT_DIR$/01-adr/ADR-009-term-ownership.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/01-adr/ADR-017-delineation-in-the-objective.md" beforeDir="false" afterPath="$PROJECT_DIR$/01-adr/ADR-017-delineation-in-the-objective.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/01-adr/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/01-adr/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02-layers/L2-valuation.md" beforeDir="false" afterPath="$PROJECT_DIR$/02-layers/L2-valuation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02-layers/L3-planner.md" beforeDir="false" afterPath="$PROJECT_DIR$/02-layers/L3-planner.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02-layers/L5-settlement.md" beforeDir="false" afterPath="$PROJECT_DIR$/02-layers/L5-settlement.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03-contracts/C0-contract-conventions.md" beforeDir="false" afterPath="$PROJECT_DIR$/03-contracts/C0-contract-conventions.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03-contracts/C2-valuation-to-planner.md" beforeDir="false" afterPath="$PROJECT_DIR$/03-contracts/C2-valuation-to-planner.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03-contracts/C5-settlement-to-state.md" beforeDir="false" afterPath="$PROJECT_DIR$/03-contracts/C5-settlement-to-state.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CLAUDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/CLAUDE.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/agents/domain.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/agents/domain.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stubs/Enums.cs" beforeDir="false" afterPath="$PROJECT_DIR$/stubs/Enums.cs" afterDir="false" />
+    <list default="true" id="50ec6f7a-ee88-4de5-8941-3e576ae51377" name="Changes" comment="taken out activation cost term.">
+      <change beforePath="$PROJECT_DIR$/01-adr/ADR-019-activation-carries-no-cost-term.md" beforeDir="false" afterPath="$PROJECT_DIR$/01-adr/ADR-019-activation-carries-no-cost-term.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/06-theory/TN-04-imbalance-risk-measure.md" beforeDir="false" afterPath="$PROJECT_DIR$/06-theory/TN-04-imbalance-risk-measure.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,11 +53,24 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1788781771063</updated>
-      <workItem from="1788781772254" duration="1012000" />
+      <workItem from="1788781772254" duration="18026000" />
     </task>
+    <task id="LOCAL-00001" summary="taken out activation cost term.">
+      <option name="closed" value="true" />
+      <created>1788783065981</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1788783065981</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="taken out activation cost term." />
+    <option name="LAST_COMMIT_MESSAGE" value="taken out activation cost term." />
   </component>
 </project>

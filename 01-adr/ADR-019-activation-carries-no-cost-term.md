@@ -27,9 +27,9 @@ the corpus, and four independent places said so:
   hazard was therefore modelled twice under two different measures, one of them
   dimensionless.
 
-The argument is set out in full in `06-theory/TN-04-imbalance-risk-measure.md` §§3-4,
+The argument is set out in full in `06-theory/TN-04-imbalance-risk-measure.md` §6,
 which rules the activation leg **refuted** while confirming CVaR for the imbalance
-leg. §4 adds the sharper point: activation revenue enters as an expectation and
+leg. Its fourth point is the sharper one: activation revenue enters as an expectation and
 activation "cost" entered under CVaR, so one underlying event was carried under two
 measures with opposite signs — and because activation is called when imbalance
 prices are extreme, this is the one aggregation in the objective where the
@@ -71,7 +71,7 @@ by nothing else.
 ## Rejected
 
 - **Give `ActivationRisk` a defined base and a formula.** The other branch `TN-04`
-  §11 leaves open. It requires a euro loss variable `C1` does not carry and cannot
+  §7 leaves open. It requires a euro loss variable `C1` does not carry and cannot
   cheaply acquire, and even granted one it would model deliverability twice — once
   as a chance constraint, once as a tail — with no realised counterpart to calibrate
   either. A definition is not worth inventing for a term whose hazard is already
@@ -83,7 +83,7 @@ by nothing else.
   serves both legs, so switching it off to silence activation also switches off the
   imbalance tail — the leg CVaR is confirmed for.
 - **Widen the argument to all market-facing EUR loss** — imbalance plus the
-  spot/intraday leg that offsets it, the second half of `TN-04` §11's C2. Not
+  spot/intraday leg that offsets it, the second half of `TN-04` §7's C2. Not
   rejected on merit; it changes *what is risk-weighted* rather than removing an
   undefined quantity, and it belongs with `TN-04`'s C3 (a `cvarLevel` per functional)
   in a decision about the risk instrument. Left open deliberately.

@@ -1,388 +1,364 @@
-# TN-04 — The imbalance risk device: is CVaR the right measure?
+# TN-04 — The CVaR device: what it earns, what is broken, what needs deciding
 
 **Ticket:** [#71](https://github.com/kpfefferlcreatica/BTM_Spec/issues/71) · **Class:** analytic ·
 **Method:** derivation only, no data touched · **Branch:** none — written in place
 
-Asks of one term what `TN-01` never asks of it: not whether CVaR has the properties the
-corpus claims, but whether CVaR is the right *instrument* for the risk the term names.
-The term is `L3`:171's `− cvarWeight · CVaR_α(imbalance + activation cost)`.
+**Reading context.** Assumes `docs/handover-2026-08.md` §08 (the objective, the five `C2`
+shapes) and §10 (the RU form, positive homogeneity, time-inconsistency). Nothing from those
+is re-derived here. `TN-01` adjudicates CVaR's *properties* and this note takes them as
+settled; it asks instead whether CVaR is the right *instrument* for the risks the corpus
+names, and whether the corpus can build the instrument it names.
 
-`TN-01` takes the choice of measure as given and adjudicates its properties. This note
-takes the properties as settled — they are, and `TN-01` §§1-2 are why — and attacks the
-choice. It bears directly on
-[#71](https://github.com/kpfefferlcreatica/BTM_Spec/issues/71)'s second unwritten
-load-bearing hypothesis, *"aggregate EUR loss is the right argument"*, and on its fourth,
-*"the `S`-atom measure resolves the `(1−α)` tail"*.
+**Two things moved since that handover.** `ADR-019` removed the activation cost term, so
+the objective in handover §08 is now one term shorter — `− cvarWeight · CVaR_α(imbalance
+cost)` (`L3`:171) — and the effect enumeration is twelve, not thirteen. §6 records that
+argument and its disposal. The finding that replaces it as the note's most consequential is
+§2, below.
 
-Self-contained: every fact it rests on is either derived here or cited to a line of this
-corpus. All anchors were re-read at the time of writing.
+> **The one thing to take into the room.** Handover §08 and §10 cannot both be true. §08
+> says five term shapes cross `C2`, no prices among them, and the Planner adds no economics
+> of its own. §10 says the risk term is `S` rows in the per-scenario losses `L_s`. There is
+> no shape that carries `L_s`. The objective line at `L3`:171 is not assemblable from the
+> payload that feeds it — a frozen-contract defect, upstream of every question about which
+> measure to use.
 
-Nothing here is an ADR. §11 lists what the specification must gain or lose; the act is the
-owner's.
+**Three questions for the meeting**, in this order:
+
+1. **How does a risk functional cross `C2`?** An exception to `INV-V-06`, or a sixth shape
+   (§2, C7). Blocks everything else.
+2. **What is `cvarWeight` standing in for?** Tail risk, model risk, or a contract. Three
+   different correct instruments, only one of which is a risk penalty (§5b, C4).
+3. **Is `(α, S) = (0.95, 64)` viable?** Derivation in §5a says no, and gives the trade
+   (C3).
+
+Nothing here is an ADR. §7 lists the acts; they are the owner's.
 
 ---
 
-## 0. Notation
+## 1. How CVaR is used
 
-Follows `TN-01` §0 exactly, and that section is the reference for the loss convention.
-The three symbols used below:
+Three functionals take a tail. They agree on nothing except the parameter.
 
-| Symbol | Meaning |
+| Carrier | Argument | Orientation | Declared payload shape | Risk weight |
+|---|---|---|---|---|
+| **Imbalance** (`L2`:117-126, `L3`:171) | imbalance cost — a **cost**, upper tail | correct | `PwlTerm` convex/Min (`ADR-008`:50-52) | `cvarWeight` |
+| **Peak** (`L2`:61-66) | `max_t p_poi[s,t]` — a cost **driver** in MW, upper tail | correct | `EpigraphTerm` (`ADR-008`:36-40) | `peakPrice · proration`, outside the functional |
+| **Delineation** (`L2`:165-168, `ADR-017`:60-61) | `V_del` — a **benefit**, so the bad tail is the **lower** one | **inverted** unless negated | `LinearTerm` on `aDel` at `λ_j = ∂V_del/∂A_j` | none — tail taken inside Valuation |
+
+The whole parameter surface is `C2`:190-192: `cvarLevel ∈ (0,1)` ("e.g. 0.95; widened when
+quality degrades"), `cvarWeight ≥ 0`, `chanceLevel ∈ (0,1)`. Quality turns them rather than
+branching (`ADR-014` §1), per `L2`:292-296 and `T2`:236-243: degraded load raises
+`cvarLevel`; degraded **price beliefs** raise `cvarWeight`; degraded activation beliefs
+raise `chanceLevel`. Note the middle one — a response to *model* risk routed through a
+tail-risk knob (§5b).
+
+Since `ADR-019`, `chanceLevel` carries the whole of the engine's aversion to activation.
+It is not a tail, and it is the one instrument the corpus never formulates (§4 claim 11).
+
+Settlement is clean and worth saying so: `L5`:192-198 and `C5`:223 hold that risk is a
+decision-shaping penalty, never a cashflow; no effect settles a risk premium, the
+four-bucket decomposition runs risk-free on both sides, and `PlanResult` reports the
+objective gross and net of risk. That prevents a whole class of "the engine loses its risk
+premium every day" error.
+
+---
+
+## 2. The payload cannot carry the functional
+
+The RU program in handover §10 needs four things. `C2` provides none of them.
+
+| Requirement | In `C2`? |
 |---|---|
-| `L` | a loss in EUR — positive is bad, `L = −(contribution to the objective)` |
-| `P_w` | the reduced ensemble's induced measure: `S` atoms, weights `w_s ≥ 0`, `Σ_s w_s = 1` (`ADR-005`, `INV-D-06`) |
-| `α` | the confidence level; the tail is the worst `(1−α)` mass |
+| a scalar auxiliary `ζ` | **No.** `C2` §2 is a closed symbol enumeration (`C2`:30-44) and "adding a symbol is a **major version bump**" (`C2`:56) |
+| `S` shortfall variables `u_s ≥ L_s(x) − ζ` | **No.** No `[S]`-indexed auxiliary. `eImbalance` is `[S,H]` but it is an exposure, not a shortfall |
+| scenario-indexed loss coefficients `L_s(x)` | **No.** `LinearTerm.coefficient` is `double[H]` (`C2`:80); `PwlTerm` carries two `double[n]` vectors (`C2`:88-89); `INV-V-06` HALTs on any scenario array (`C2`:223, `T1`:137); and `C2`:235-236 makes it intent — "The Planner never sees a price series" |
+| objective coefficients `(1−α)⁻¹ w_s` | **No.** `CouplingConstraint` is the only shape with a scenario axis, and it carries constraint rows with no objective coefficient — nor an `S` axis on `coef` (`C2`:130-137) |
 
-```
-CVaR_α(L) = min_ζ { ζ + (1−α)⁻¹ · E_w[(L − ζ)⁺] }
-```
+And the Planner cannot make up the difference: `L3`:165-166 forbids it from adding
+economics of its own, and the per-scenario loss coefficients are economics.
+
+**All three carriers fail, each differently.**
+
+*Imbalance* — two readings, and the corpus does not say which. **(a)** A `LinearTerm` at
+the mean price: legal, but then the tail over `s` carries only volume dispersion, while
+`T2`:214 says price co-movement is the entire quantity. **(b)** A per-slot convex `PwlTerm`
+in `eImbalance`: genuinely representable, because positive homogeneity makes
+`v ↦ CVaR_α(price·v)` two-piece convex PWL through the origin — Valuation tabulates the two
+slopes and exports no scenario array. But the object built is then `Σ_t CVaR_α(price_t·v_t)`,
+and by subadditivity that is **192 separately-taken tails, not one tail of the horizon's
+loss** — strictly more conservative than `L3`:171 by an unstated amount, and exact only if
+the loss is bilinear in one scalar per slot.
+
+*Peak* — `L2`:63-64's argument is `max_t p_poi[s,t]`, and `C2` §2 offers `pPoi : [H]` and
+`zPeak` per regime; neither is scenario-indexed, and `EpigraphTerm`'s six fields
+(`C2`:104-109) include no scenario index and no risk-averse level. So the tail mean
+`PeakView` computes has no field to arrive in — unless it is folded into `pPoiFloorMw`,
+which is the *realised* peak from L0 (`C2`:107), mislabelling a forecast as history.
+`TN-01` §10 priced the honest repair: `z_s` per scenario, ≈12k rows per regime at
+`S=64, H=192`.
+
+*Delineation* — the one carrier that does cross, because `λ_j` is a scalar per accumulator
+and the tail is taken inside Valuation. Valid, with one unstated condition: a subgradient
+of `CVaR_α` at `A°` is `E_w[∇V_del | tail(A°)]`, exact only while the tail scenario set is
+unchanged — and `A_j` is decision-dependent, so the plan moves the tail set. A first-order
+model with no stated region of validity.
+
+**The repair is a payload decision, not a measure decision** (C7).
 
 ---
 
-## 1. The term, and where it lives
+## 3. What CVaR earns the repo
 
-The Planner's objective (`L3`:169-171) closes with
+Handover §10 already gives two of these — LP-representability and positive homogeneity.
+The other four are load-bearing and **nowhere stated in the corpus**.
+
+| Property | Consumed at | Broken if absent | Stated? |
+|---|---|---|---|
+| LP-representable (RU) on atomic non-uniform `P_w` | `ADR-008`:51-52; `C2`:94's binary-free rule; `C2`:204 | The risk term costs binaries and `problemClassHint` stops predicting solve time | yes |
+| Positively homogeneous | `L2`:61-66 takes the peak tail in MW and prices it outside; also what makes §2 reading (b) representable | The EUR-only rule breaks and `peakPrice` must move inside the functional | yes |
+| **Coherent** (sub-additive) | The composer sums three separately-taken tails; coherence is what makes that a risk measure rather than three numbers added up | The objective's risk block has no interpretation at all — and it fails today, because a tail conditional expectation on an atomic measure is not subadditive (claim 1) | no |
+| **Preserves convexity in `x`** | This, not LP-representability alone, is what keeps the MILP class | The relaxation stops being exact and `INV-V-12` has nothing to verify against | no |
+| **`cvarWeight` reads as a probability distortion** — `λ·CVaR + (1−λ)·E` is an expectation under inflated tail probabilities | The only framing in which `cvarWeight` could ever be calibrated against a stated appetite (§5b) | `cvarWeight` stays a dial with no referent, permanently | no |
+| **Imbalance cost is time-additive** (`L5`:143) | §5d: handover §10's drift is hours here, not weeks, so this carrier can be decided ahead of the two path-functional ones | The three carriers must be decided as one, and the slowest blocks the rest | no |
+
+Right shape, too, and the corpus says so correctly (`L2`:121-123): a variance penalty would
+punish a *favourable* excursion into an extreme imbalance price exactly as hard as an
+adverse one.
+
+The probability-distortion reading is the strongest single argument for keeping CVaR. No
+alternative in §8 offers it.
+
+---
+
+## 4. The broken claims
+
+| # | Claim | Anchor | Verdict |
+|---|---|---|---|
+| 1 | The tail statistic is "a weighted empirical mean over the joint ensemble" / "the weighted mean of the worst `(1−α)` mass" | `ADR-005`:61-62, `L2`:61-66 | **Refuted.** That is the naive tail mean: not coherent on an atomic measure, always understating by up to `(tail spread)/n_eff` where `n_eff = (1−α)/max_s w_s`, and not the RU object `ADR-008`:52 depends on. While it stands, CVaR is not what would be built. Seven sites: `ADR-005`:10, `ADR-005`:61-62, `ADR-017`:61, `T2`:212, `C5`:27, `L2`:61-66, `L2`:165 |
+| 2 | The risk functional crosses `C2` as a `PwlTerm` / `EpigraphTerm` | `ADR-008`:36-40, `:50-52`, `L2`:119-120 | **Refuted** — §2 |
+| 3 | "`LinearTerm` per scenario" is available | `ADR-008`:50 | **Refuted.** `LinearTerm` (`C2`:75-81) has no scenario selector and `slots` is a `SlotRange`. No term can be restricted to one scenario |
+| 4 | The terms referencing `eImbalance` price it | `C2`:42 vs `C2`:80, `:235-236` | **Refuted.** `eImbalance` is `[S,H]`; every coefficient reaching it is `[H]`. The buildable cost prices scenario-varying volume at a scenario-**invariant** price |
+| 5 | One `cvarLevel` serves all three carriers | `C2`:190 | **Refuted.** `V_del` is a benefit, so a level applied without an orientation reads as `CVaR_α(V_del)` — the tail of the *best* months (`TN-01` §0). A sign defect, invisible to every registered invariant |
+| 6 | Summing separately-taken tails is safe because the components co-move | `TN-01` §4 | **Refuted as a reassurance.** Subadditivity holds, so summing errs conservative — that part stands. But the equality condition is misstated (claim 7), and under §2 reading (b) the sum is over 192 per-slot tails, where the discarded diversification is far larger |
+| 7 | `CVaR_α(Σ L_k) = Σ CVaR_α(L_k)` **iff** comonotone | `TN-01` §4 pt 3 | **Refuted.** Comonotone-additivity gives sufficiency only. Correct condition: iff the `L_k` admit a common maximising measure in `{Q : 0 ≤ dQ/dP_w ≤ (1−α)⁻¹}` — on a finite ensemble, iff their loss orderings agree *within the α-tail*. Witness: `w=(.2,.25,.3,.25)`, `1−α=0.3`, `L_1=(10,8,0,5)`, `L_2=(10,8,5,0)` — equality holds, yet scenarios 3→4 move oppositely, so the pair is not comonotone |
+| 8 | `TN-01` §9's `INV-V-b`, `n_eff = (1−α)/max_s w_s ≥ 10`, is registrable | `TN-01` §9 | **Refuted — arithmetically infeasible.** Needs `max_s w_s ≤ 0.005` at `α=0.95`, while 64 weights summing to 1 force `≥ 1/64 = 0.0156`. Feasibility needs `S ≥ 10/(1−α)`: `S ≥ 200` at `α=0.95`, or `α ≤ 0.844` at `S=64` |
+| 9 | `cvarLevel` is live across its declared `(0,1)` | `C2`:190 | **Refuted — it saturates.** §5a. Above the saturation point the measure is an essential supremum and the knob is inert; `M-P9` (`T2`:897) asserts only *weak* monotonicity, which an inert knob satisfies exactly, so the test passes on a dead parameter |
+| 10 | ↑`cvarLevel` is a sound response to degraded quality | `L2`:293, `C2`:190, `T2`:236 | **Refuted.** Raising `α` *narrows* the tail mass, so `n_eff` falls — 3.2 → 1.28 → 0.64 as `α` goes 0.95 → 0.98 → 0.99 at `S=64` uniform. The ladder's answer to a worse belief is a more degenerate estimator. Separately, "widened" (`C2`:190) and "↑" (`L2`:293) are opposite readings of one instruction and the corpus never fixes which |
+| 11 | `chanceLevel` is a specified instrument | `C2`:192, `:136`, `T2`:665-673 | **Refuted — never formulated.** `ADR-019` moved the whole activation hazard onto the SOC chance constraint, and `L3` formulates none: the word does not appear in the layer that must build it |
+| 12 | Some invariant constrains the risk parameters | `T1` §4, `C2` §8 | **Refuted — none does.** `T1`:132-148 registers `INV-V-01`…`17`; not one mentions `cvarLevel`, `cvarWeight` or `chanceLevel`. `TN-01` §9 proposed four and none was registered. A negative `cvarWeight` is silent risk-seeking and nothing catches it. Next free ID: `INV-V-18` |
+| 13 | "A single `cvarLevel` would push some accumulators the wrong way" | `L2`:168 | **Refuted, and still present.** `L2`:165 takes the tail of `V_del` itself, not per accumulator, so there are no per-accumulator directions left to push (`TN-01` §16). Deletion was already called for and the sentence survives |
+| 14 | `V` and the tick objective have a consistent risk attitude | `L0` §5.3-5.4, `L3`:171 | **Refuted, and still unstated.** All three candidate methods at `L0`:442-444 take weighted **expectations**, and nothing anywhere assigns `V` a risk attitude. So risk aversion is discontinuous at a horizon boundary that moves every tick — handover §10's second mechanism, now with an anchor |
+
+---
+
+## 5. Where CVaR is the wrong instrument here
+
+### 5a. `(α, S) = (0.95, 64)` is the wrong point on the family
+
+Not an argument for a less risk-averse engine — an argument that the declared pair does not
+support the estimator the corpus asks for. Three effects, and they compound.
+
+**Saturation.** Order the losses `L_(1) ≥ L_(2) ≥ …` with weights `w_(i)`. The RU value on
+an atomic measure splits the straddling atom so the tail mass is exactly `1−α`, averaging
+over the atoms down to the first index whose cumulative weight reaches `1−α`. If the worst
+atom alone already carries that mass — `1−α ≤ w_(1)` — the average is over that atom only:
 
 ```
-     − cvarWeight · CVaR_α(imbalance + activation cost)
+CVaR_α(L) = (1−α)⁻¹ · (1−α) · L_(1) = L_(1) = max_s L_s ,
 ```
 
-and `cvarWeight` is granted to that term alone. The surrounding text:
+constant in `α` on all of `[1 − w_(1), 1)`. Uniform weights at `S=64` put that boundary at
+`α = 0.984`; but reduction concentrates mass, so a worst-loss atom carrying `w = 0.08`
+saturates at `α = 0.92` — **below the declared 0.95**, at which point the risk measure is
+silently an essential supremum. The threshold depends on which atom carries the worst loss,
+hence on the decision, so it is checkable only per solve (`INV-V-b″`).
 
-| Site | What it says |
+**No tail to measure.** `(1−α)·S = 3.2` scenarios, and one or two under the non-uniform
+weights a reduction actually produces. Claim 8 gives the honest alternatives: `S ≥ 200`, or
+`α ≤ 0.844`.
+
+**The reduction and the measure work against each other.** `CVaR_α` is `(1−α)⁻¹`-Lipschitz
+in `W₁` (`TN-01` §5b) — a 20× amplification at `α=0.95` — while `ADR-005`:46-47's
+`W₁`-optimal reduction is a mass criterion that drops the rare excursion the tail exists to
+price. It also names no metric and no per-series scale, so two conformant `ReduceEnsemble`
+implementations may disagree about which scenarios *are* the tail.
+
+Then claims 9-10: the degradation ladder drives `cvarLevel` toward saturation while raising
+`cvarWeight` on the same degraded number, and `M-P9` detects neither.
+
+The repair — a level per functional, market-facing one at `α ≈ 0.8–0.9` with a compensating
+weight — is nearly the same decision criterion, far better estimated, and half the
+amplification. Cheaper than changing measures (C3).
+
+### 5b. What is `cvarWeight` standing in for?
+
+`C2`:191 defines it as a weight and nothing further. No risk appetite, loss budget or risk
+limit exists anywhere in the corpus; the only text naming appetite is `P1`:434, which
+assigns it to the tier ladder and notes that "the cost of being wrong is not in the spec".
+And the corpus's own behaviour says it is being used as a *model-risk* knob: `L2`:295 and
+`T2`:243 raise it on degraded price beliefs.
+
+| If the aversion is really… | …the honest instrument is |
 |---|---|
-| `L2`:117-126 | `AfrrEnergyView` / `ImbalanceRiskView` emit `LinearTerm`s for **expected** activation value plus a `PwlTerm` (convex, Minimize) for the CVaR functional on imbalance cost. Stated reason for CVaR over a variance penalty: "same risk intent, no quadratic term, no loss of MILP structure" |
-| `ADR-008`:50-52 | The same at ADR level: CVaR is LP-representable (Rockafellar–Uryasev), "so a CVaR-penalised objective stays a MILP" |
-| `C2`:190-192 | One `cvarLevel` (`(0,1)`, e.g. 0.95), one `cvarWeight` (`≥0`, `0` recovers the risk-neutral objective), one `chanceLevel` (ε for SOC feasibility chance constraints) |
-| `C1`:53-56 | `afrrEnergyPriceUp/DnEurPerMwh` in EUR/MWh; `activationUp`/`activationDn` **dimensionless**, `[0,1]`, "fraction of committed MW actually called"; `imbalancePriceEurPerMwh` (reBAP-type belief) |
-| `L2`:248, 256 | Ownership: `ImbalanceCost` → `ImbalanceRiskView`; `ActivationRisk` → `AfrrEnergyView`. Both on base `MarketVolume` |
-| `L2`:292 | Quality→risk mapping: degraded `activation` beliefs → **↑ `chanceLevel` for SOC feasibility** |
-| `L5`:143 | `ImbalanceCost = Σ_t imbalanceCostEur[t]` — time-additive, settling per slot |
-| `L5`:180, 194-198 | Realised `ActivationRisk = 0` identically. "Risk terms are not cashflows… ex post there is no risk, only an outcome, which has already been booked to `ReserveEnergyRevenue` and `ImbalanceCost`" |
+| **Belief error** — model risk, not tail risk (and this is what the quality map does today) | `W₁`-DRO with radius equal to the reduction bound §5a already computes. Stays a finite convex program for PWL losses, so the `ADR-008` class survives; unlike CVaR it does not assume the reduced tail *is* the true tail. CVaR is itself a robust expectation over a density-bounded set, so this is an upgrade inside the family. Composes with C3 |
+| **A contractual nonlinearity** — a balancing-group markup, a penalty band, a two-price arrangement | Write the convex PWL down and take an **expectation**. A single-price regime prices one ex-post price per period for the whole control area, exogenous to any one balancing group, so the incentive is already in the expected cost; a CVaR on top double-counts unless a contract sits on top |
+| **A loss budget** — "never lose more than `B` per period" | `CVaR_α(loss) ≤ B` as a **constraint**. Also LP-representable, `B` is observable where `cvarWeight` is not, and it is the only reading that keeps CVaR while removing `cvarWeight` from the objective |
 
----
+Swept for `risk appetite`, `loss budget`, `risk limit`, `two-price`, `pass-through`,
+imbalance `markup`, `Bilanzkreis` — nothing. Under the regulatory-primitive rule the middle
+row's primitive is one the owner supplies, and it is the input that decides the row.
 
-## 2. Verdict
-
-**CONFIRMED for the imbalance leg. REFUTED for the activation leg. And the choice of
-measure is not this term's binding defect — four of the six findings below are upstream of
-it and survive replacing CVaR with anything else.**
-
-CVaR is the right *class* for imbalance: a monetary, one-sided, skewed loss that settles
-per slot. §10 shows it dominates every alternative on the axes this engine has already
-committed to. It is the wrong *instrument* for activation, because the corpus defines no
-activation cost to take a tail of (§3), and the hazard activation actually presents is
-already carried elsewhere by the right instrument.
-
----
-
-## 3. The activation leg has no loss variable — REFUTED
-
-`CVaR_α(imbalance + activation cost)` risk-adjusts a quantity that is defined nowhere in
-this corpus. Four independent confirmations, each from a different layer:
-
-**(i) `C1` carries no activation cost.** `activationUp`/`Dn` (`C1`:55) is a dimensionless
-fraction in `[0,1]`. The euros attached to activation are `afrrEnergyPriceUp/Dn`
-(`C1`:53), which is **revenue**. The energy cost of delivering an activation is already
-owned, under `L2`'s ownership matrix, by `SpotView` and by `OppCostView`/`V`. There is no
-third quantity, and adding a fraction to euros does not create one.
-
-**(ii) `L5` already concedes the term is a shadow.** `ActivationRisk = 0` identically
-(`L5`:180), because "ex post there is no risk, only an outcome" (`L5`:194-198). `L5`
-therefore runs the four-bucket decomposition on the **risk-free** objective on both sides.
-So `cvarWeight`'s effect on this leg has no realised counterpart against which it could be
-scored: it is unfalsifiable by construction, and no amount of settlement data will
-calibrate it.
-
-**(iii) The hazard is feasibility, not a euro tail.** What hurts when activation runs
-against the plan is SOC exhaustion, failure to deliver committed reserve, and loss of
-qualification. `L2`:292 already routes degraded activation beliefs to **`chanceLevel` on
-SOC feasibility** — a chance constraint, which is the correct instrument for a
-deliverability risk. The same hazard is therefore modelled twice, under two different
-measures, one of them dimensionless. That is how an engine acquires a risk aversion no
-diagnostic can attribute to a cause.
-
-**(iv) `ADR-005`'s guarantee is spent on the wrong pairing here.** The stated payoff of the
-shared scenario axis (`L2`:124-126) is that "activated when prices are extreme" stays
-representable. True, and valuable — but it is realised through the *revenue* channel and
-the *SOC* channel, neither of which needs a cost term that does not exist.
-
----
-
-## 4. The two legs are risk-weighted in opposite directions — and this is the worst pair to sum
-
-Activation revenue enters as an **expectation** `LinearTerm` (`L2`:119). Activation "cost"
-enters under **CVaR**. One underlying event, two measures, opposite signs. Even granting
-§3 a cost variable, the term would be mis-signed.
-
-This also inverts `TN-01` §4's own reassurance, and the inversion matters more than the
-sign. `TN-01` §4 establishes that
-
-```
-Σ_k CVaR_α(L_k)  ≥  CVaR_α( Σ_k L_k )
-```
-
-so summing separately-taken tails is a conservative upper bound, and the gap is exactly
-the diversification benefit the objective discards. `TN-01` then argues the gap is probably
-small "because `ADR-005` exists precisely because these components co-move in the tail".
-
-**For this pair the argument runs backwards.** Activation is called when imbalance prices
-are extreme — that is the correlation `ADR-005` exists to preserve — so activation revenue
-and imbalance cost are close to **anti**-comonotone. That is precisely the configuration
-in which `Σ_k ρ(L_k) ≫ ρ(Σ_k L_k)`. Of every aggregation in the objective, this is the one
-where the discarded diversification is *largest*, not smallest.
-
-**A correction to `TN-01` §4 that this section depends on.** `TN-01` §4 point 3 states
-equality "**iff** the `L_k` are comonotone". Comonotone-additivity gives sufficiency only;
-necessity was read off it without proof and is false. The correct condition: equality iff
-the `L_k` admit a common maximising measure in `{Q : 0 ≤ dQ/dP_w ≤ (1−α)⁻¹, Q(Ω)=1}` —
-on a finite ensemble, iff they agree on the loss ordering *restricted to the α-tail*.
-Witness, on the `TN-01` §0 definition:
-
-> `S = 4`, `w = (0.2, 0.25, 0.3, 0.25)`, `1−α = 0.3`,
-> `L_1 = (10, 8, 0, 5)`, `L_2 = (10, 8, 5, 0)`.
-> `CVaR(L_1) = CVaR(L_2) = 2.8/0.3 = 9.333`;
-> `L_1 + L_2 = (20, 16, 5, 5)`, `CVaR = 5.6/0.3 = 18.667 = 9.333 + 9.333`.
-> Equality holds, yet scenarios 3→4 carry opposite increments, so the pair is not
-> comonotone.
-
-The correction is in `TN-01`'s favour on safety — subadditivity is untouched, so summing
-still errs conservative — but it does not rescue the activation/imbalance pair, which is
-the pair least likely to satisfy the tail-ordering condition. `TN-01` §4's text is the
-place to fix the condition; it is recorded here because §4 above rests on it.
-
----
-
-## 5. Sensitivity to the reduction dominates the choice of measure
-
-`TN-01` §5b establishes that `CVaR_α` is `(1−α)⁻¹`-Lipschitz with respect to `W₁`. At
-`α = 0.95` that is a **20× amplification** of scenario-reduction error. Two consequences
-for this term specifically:
-
-**The reduction optimises the bulk and discards the tail.** `ADR-005`:47 specifies
-fast-forward selection / "Wasserstein-optimal reduction". `W₁` is a mean-transport
-criterion, so what it drops first is the rare price excursion this term exists to price.
-The reduction and the measure are working against each other, and the measure amplifies
-the disagreement twentyfold. Note also that `ADR-005`:47 and `T5`:374 name no metric and
-no per-series scale, so two conformant implementations of `ReduceEnsemble` may disagree
-about which scenarios *are* the tail.
-
-**At `S = 64` there is no tail to measure.** `(1−α)·S = 3.2` scenarios at `α = 0.95`. And
-`TN-01` §9's proposed `INV-V-b` — `n_eff = (1−α)/max_s w_s ≥ 10` — is **infeasible at the
-declared `S`**: it requires `max_s w_s ≤ 0.005`, while 64 non-negative weights summing to
-1 force `max_s w_s ≥ 1/64 = 0.0156`. No ensemble at `S = 64` can satisfy it, at any
-weighting. So the imbalance tail at the declared `S` and `α` is an estimate of nothing in
-particular, with a bias whose sign is set by the reduction artefact rather than by the
-world.
-
-This is **not** an argument for a less risk-averse engine. It is an argument that
-`α = 0.95` is the wrong point on the CVaR family for this ensemble size, and the repair
-(§11, `C3`) is cheaper than changing measures.
-
----
-
-## 6. The corpus does not currently specify CVaR
-
-`ADR-005`:61-62 defines `TailStatistic` as "CVaR-type functionals, computed as a weighted
-empirical mean over the joint ensemble (this is what `PeakView` uses)". `L2`:61-66 defines
-the peak level as "the weighted mean of the worst `(1−α)` mass". Both are the tail
-conditional expectation `E[L | L ≥ VaR_α]`, which on an atomic weighted measure is **not
-coherent** — subadditivity fails — and which **understates**. It is also not the
-Rockafellar–Uryasev object that `ADR-008`:52 relies on for LP-exactness.
-
-Recorded here because it is load-bearing for this note: while the text specifies a tail
-mean, "is CVaR the right measure" is moot, because CVaR is not what would be built. Both
-the coherence the composer's summing implicitly assumes (`TN-01` §2) and the MILP-class
-guarantee require the split-atom RU form.
-
-Seven sites carry the risk-averse form and must be checked together for the same defect:
-`ADR-005`:10, `ADR-005`:61-62, `ADR-017`:61, `T2`:212, `C5`:27, `L2`:289, `L2`:61-66.
-
----
-
-## 7. `cvarWeight` has no referent
-
-`C2`:191 defines `cvarWeight` as a weight `≥0` whose zero "recovers the risk-neutral
-objective", and nothing further. No statement of risk appetite, loss budget or risk limit
-exists anywhere in the corpus: the only text naming risk appetite is `P1`:434, which
-assigns it to the *tier ladder's escalation policy* and observes that "the cost of being
-wrong is not in the spec".
-
-So the engine's risk aversion currently lives in three levers with no common unit and no
-calibration tying any of them to a stated appetite:
-
-- `cvarWeight`, on the imbalance/activation term;
-- `peakPrice`, which by `TN-01` §0's positive-homogeneity pass-through is the peak term's
-  **only** risk weight, since `L3`:171 grants `cvarWeight` to the imbalance term alone;
-- `chanceLevel`, on SOC feasibility.
-
-**The question to force before the measure is touched: what is `cvarWeight` standing in
-for?** Three candidates, each with a *different* correct instrument, only one of which is
-a risk measure:
-
-| If the aversion is really… | …then the honest instrument is |
-|---|---|
-| **Belief error on the imbalance price** — model risk, not tail risk | A distributionally-robust formulation: a `W₁` ball whose radius is the reduction bound already computed. Still LP for piecewise-linear losses, so the `ADR-008` class survives; and unlike CVaR it does not assume the reduced tail *is* the true tail. CVaR is itself a robust expectation over a density-bounded set, so this is an upgrade inside the same family, not a change of philosophy |
-| **A contractual nonlinearity** — a balancing-group pass-through markup, a penalty band, a two-price arrangement | Write the convex PWL down and take an **expectation**. No risk measure needed. A single-price imbalance regime prices one ex-post price per settlement period for the whole control area, exogenous to any one balancing group's position, so the regulator's incentive is *already in the expected cost*; a CVaR on top of it double-counts unless a contract sits on top of it |
-| **A loss budget** — "never lose more than `B` in an accounting period" | `CVaR_α(loss) ≤ B` as a **constraint**, not a weighted penalty. Also LP-representable, and `B` is an observable business quantity where `cvarWeight` is not |
-
-**The corpus is silent on the middle row's primitive.** Swept for `risk appetite`,
-`loss budget`, `risk limit`, `two-price`, `pass-through`, imbalance `markup` and
-`Bilanzkreis`; nothing. Under the regulatory-primitive rule that is a primitive the owner
-supplies, not one this note researches — and it is the input that decides the row.
-
----
-
-## 8. Non-elicitability, and what it costs the compliance layer
+### 5c. What the compliance layer cannot conclude
 
 CVaR admits no strictly consistent scoring function (Gneiting 2011); it is only *jointly*
-elicitable with VaR (Fissler–Ziegel 2016). Expectiles are the only law-invariant family
-that is both coherent and elicitable (Bellini et al. 2014; Ziegel 2016).
+elicitable with VaR (Fissler–Ziegel 2016). So `TN-01` §3c(c)'s recommended exercise — roll
+the policy on held-out paths, compare a terminal realised CVaR against the value the tick
+objective claimed, with an acceptance band — is **not a proper scoring rule**, and at a
+handful of genuine tail events per accounting period it has almost no power to separate a
+well-calibrated risk term from a badly calibrated one. The backtest has to be on the
+`(VaR, CVaR)` pair, and the sample is still thin.
 
-This binds on `TN-01` §3c(c), which `TN-01` recommends adopting: roll the policy on
-held-out paths, evaluate one terminal static CVaR of realised EUR, and compare it against
-the value the tick objective claimed, with an acceptance band. That comparison is **not a
-proper scoring rule**, and with a handful of genuine tail events per accounting period it
-has almost no power to separate a well-calibrated risk term from a badly calibrated one.
-The backtest has to be on the `(VaR, CVaR)` pair, and even then the sample is thin.
+A compliance-layer limit, not an `L2`/`L3` defect: elicitability governs evaluating a
+forecast, not making a decision, where coherence and convexity buy the properties. It
+belongs in `T4`/`T5`, written down *before* the exercise is run and believed (C5).
 
-This is a **compliance-layer limitation, not an `L2`/`L3` defect**. Elicitability governs
-the evaluation of a forecast, not the making of a decision, where coherence and convexity
-are what buy the optimisation properties. It belongs in `T4`/`T5` as a stated limit on what
-the calibration can conclude — written down before the exercise is run and believed, not
-after.
+### 5d. Which carriers time-inconsistency actually blocks
 
----
+Handover §10 states the finding generically. It does not bite equally.
 
-## 9. Where the corpus is right: imbalance is the defensible static CVaR
+**Peak and delineation are terminal path functionals** — a running max, and month-to-date
+sums feeding a month-end `MAX[AW − MW_month; 0]`. That is exactly what makes tail
+re-selection and the horizon discontinuity bite, and claim 14 compounds it.
 
-`TN-01` §3b states its time-consistency attack generically, and it reads as though it
-applies equally to all three functionals carrying `cvarLevel`. It does not, and the
-difference is worth recording because it decouples two decisions the corpus currently
-treats as one.
+**Imbalance cost is time-additive and settles per slot** (`L5`:143). No month-long
+commitment to unwind; the mechanism still operates through SOC and the intraday position,
+so the finding is not void, but the drift is hours rather than weeks.
 
-Peak is a running max, and the delineation accumulators are month-to-date sums feeding a
-month-end `MAX[AW − MW_month; 0]`. Both are **terminal path functionals**, which is
-precisely what makes `TN-01` §3b(i)'s tail re-selection and §3b(ii)'s horizon-discontinuity
-bite: a hedge established at tick `k` is unwound at `k+1` because uncertainty resolved
-favourably, and the risk attitude is discontinuous at a truncation boundary that moves.
-
-Imbalance cost is **time-additive and settles per slot** (`L5`:143). There is no
-month-long commitment to unwind. The re-selection mechanism still operates through SOC and
-through the intraday position, so the finding is not void — but the drift is over hours
-rather than weeks, and the magnitude is correspondingly smaller.
-
-**Consequence.** Whatever is decided about conditioning-versus-regeneration across ticks
-(`L3`:24 conditions a fresh ensemble on the realised state; `L1`:364-365 regenerates it
-daily on `C_slow` — different objects, and only the first makes time consistency a
-well-posed predicate) blocks the *path-functional* terms. It does not equally block this
-one. The two can be decided separately, and this one can move first.
+**So the conditioning-versus-regeneration question** (`L3`:23-24 conditions a fresh ensemble
+on the realised state; `L1`:364-365 regenerates daily on `C_slow` — different objects, and
+only the first makes time consistency well-posed) blocks the path-functional carriers and
+not the imbalance one. Decide them separately; imbalance can move first.
 
 ---
 
-## 10. The alternatives, and why each is rejected
+## 6. Closed: the activation leg
 
-Since "is CVaR right" invites "compared to what":
+`ADR-019` accepted this note's earlier refutation, and `L3`:171 now risk-weights imbalance
+alone. In short: `C1` carried no activation cost — `activationUp/Dn` is a dimensionless
+fraction and the euros attached to activation are *revenue* (`C1`:54-55); the energy moved
+to deliver an activation was already owned by `SpotView`, `OppCostView` and `V`; `L5` booked
+realised `ActivationRisk = 0` identically, so the penalty had no realised counterpart to
+calibrate against; the real hazard is deliverability, already routed to `chanceLevel`
+(`L2`:296), so it was modelled twice under two measures, one dimensionless. And the two legs
+were weighted in opposite directions — revenue as an expectation, "cost" under CVaR — on a
+pair that is close to **anti**-comonotone, which is where `Σ_k ρ(L_k) ≫ ρ(Σ_k L_k)`: the
+aggregation discarding the *most* diversification, not the least.
 
-| Alternative | Why not, for this term |
-|---|---|
-| **Variance / mean-variance** | Penalises a *favourable* position into an extreme imbalance price exactly as hard as an adverse one. Wrong shape for a skewed one-sided loss, and it costs the MILP class. This is `L2`:121-123's own stated reason, and it is correct |
-| **VaR** | Non-convex on the atomic `P_w`, needs binaries, and blind to how bad the tail is beyond the quantile — which is the entire content of imbalance risk |
-| **Entropic / exponential utility** | The one law-invariant family that is genuinely time-consistent, so superficially attractive given `TN-01` §3. But not positively homogeneous and not LP-representable. Losing positive homogeneity specifically breaks the price-outside-the-tail identity `TN-01` §0 depends on for `L2`:61-66, and it makes the measure depend on the site's scale |
-| **Worst case / essential supremum** | Coherent and time-consistent, but at `S = 64` on a `W₁`-reduced ensemble it is the tail of an artefact (§5). Usable only with a calibrated ambiguity radius — at which point it is §7's DRO row, which is the recommendation there |
-| **Expectiles** | Coherent *and* elicitable, so they repair §8. But no interpretation as a euro amount an operator can be shown, and adopting them would isolate this term from the other two `cvarLevel` carriers. Name them as the fallback if §8's calibration limit ever becomes binding; do not adopt now |
-
-**What CVaR uniquely gives**, and the strongest single argument for keeping it:
-`λ·CVaR_α + (1−λ)·E` is coherent, and equals an expectation under *inflated tail
-probabilities*. That makes `cvarWeight` interpretable as a probability distortion — the one
-framing under which it could actually be calibrated against a stated appetite (§7). No
-other candidate offers it.
+Two things it leaves: the instrument the decision now leans on is never formulated
+(claim 11), and widening the argument to all market-facing EUR loss stays open by design
+(C2).
 
 ---
 
-## 11. Consequences for the spec
+## 7. Consequences for the spec
 
-Advisory. ADRs are the owner's act. Ordered cheapest and most decisive first; each is
-stated as an act on named text, per `CLAUDE.md` rule 2 — replaced, not annotated.
+Advisory; the acts are the owner's. Labels are stable — `ADR-019` cites C2 and C3 by label —
+so new items are appended. **Ranked: C7, C1, C3, C8, C2, C4, C5, C6.**
 
-**C1 — the definition, to the split-atom RU form.** `ADR-005`:61-62 and `L2`:61-66, plus
-the five further carriers listed in §6. This is `TN-01` §9's own first item; it is repeated
-here because §6 makes it a precondition for everything else on this list. Buys coherence
-and LP-exactness together. *Cost: a definition swap in seven places. No contract change.*
+**C7 — decide how a risk functional crosses `C2`.** The blocking item (§2). Either
+`INV-V-06` gains a stated exception for second-stage loss coefficients, or `C2` gains a
+sixth shape carrying `α`, the weight, the per-scenario loss row and its declared row/column
+cost. `C2` §2 gains the RU auxiliaries either way, and `ADR-008`:36-40 and `:50-52` are
+rewritten to name a shape that exists. *Major `C2` bump.*
 
-**C2 — drop "activation cost" from the CVaR argument.** Amend `L3`:171 so the risk
-functional runs on realised market-facing EUR loss — imbalance plus the spot/intraday leg
-that offsets it — and leave activation's deliverability hazard where `L2`:292 already
-correctly puts it, on `chanceLevel`. Consequences to carry: `ActivationRisk` (`L2`:256)
-either acquires a defined base or leaves the ownership matrix, and `L5`:180's
-identically-zero row goes with it. *Cost: one objective line, one matrix row, one `L5`
-row. No `C2` payload change.* **Highest-value item on this list**: it removes an ownerless
-dimensionless quantity from the objective and eliminates a doubly-modelled hazard.
+**C1 — the definition, to the split-atom RU form.** `ADR-005`:61-62, `L2`:61-66 and the
+five further sites in claim 1. Buys coherence and LP-exactness together. *Seven text swaps,
+no contract change.*
 
-**C3 — separate `cvarLevel` per functional, and lower it for the market tail.** `C2`:190
-carries one `cvarLevel` across three functionals. Split it, and set the market-facing one
-to `α ≈ 0.8–0.9` with a compensating `cvarWeight`: nearly the same decision criterion, far
-better estimated, and roughly half the `(1−α)⁻¹` amplification of reduction error. *Cost: a
-`C2` field change, hence a version bump.* This is **also** required by `TN-01` §0's sign
-finding — one `cvarLevel` across three functionals, one of which (`V_del`) is a benefit —
-so the change pays for itself twice.
+**C3 — a `cvarLevel` per functional, market-facing one lower.** `C2`:190 carries one level
+across three carriers. Now derived rather than asserted: claim 8 forces `α ≤ 0.844` at
+`S=64`. Also required by claim 5's sign defect, so it pays twice. *`C2` field change,
+version bump.*
 
-**C4 — state what `cvarWeight` means, then pick the instrument.** An `ADR-015` entry,
-phrased as §7's three-way question. The one item that could *remove* work: if the answer is
-"contractual nonlinearity", the correct change is to write the PWL down and delete the risk
-term for this leg. If it is "belief error", the target is a `W₁`-DRO form with radius equal
-to the reduction bound — same LP class, and it composes with `C3` rather than competing
-with it. If it is "loss budget", the penalty becomes a constraint. *Cost: a decision, not a
-change. Blocks nothing, but determines whether `C3`'s tuning is worth doing at all.*
+**C8 — register the risk-parameter invariants** (claim 12), starting at `INV-V-18`; and
+formulate the SOC chance constraint in `L3` (claim 11). *Register rows plus one `L3`
+subsection.*
 
-**C5 — record §8's limitation in the compliance layer.** `T4`/`T5`, wherever `TN-01`
-§3c(c)'s rolled-policy comparison lands: the acceptance band is not a proper scoring rule,
-the backtest is on the `(VaR, CVaR)` pair, and the power at the realised tail-event count
-must be stated. *Cost: a paragraph. Prevents a calibration exercise that would otherwise be
-run and believed.*
+**C2 — widen the risk argument to market-facing EUR loss.** The half `ADR-019` left open:
+imbalance plus the spot/intraday leg that offsets it. Changes *what* is risk-weighted.
+Decide with C3, after C7. *One objective line.*
 
-**C6 — fix `TN-01` §4's equality condition** to §4 above, and remove the reassurance that
-the diversification gap is small because the components co-move. If `C2` is adopted the
-point is moot for this pair; if `C2` slips, the reassurance must not be relied on. *Cost:
-one sentence, but it must not be skipped if `C2` slips.*
+**C4 — state what `cvarWeight` means, then pick the instrument.** An `ADR-015` entry
+(currently a stub) phrased as §5b's three-way question. The one item that could *remove*
+work. *A decision, not a change.*
 
-**Proposed invariant.** `TN-01` §9's `INV-V-b` is infeasible as stated (§5) and should not
-be registered in that form. Its replacement:
+**C5 — record §5c's limit in `T4`/`T5`.** *A paragraph. Prevents a calibration exercise
+that would otherwise be run and believed.*
+
+**C6 — fix `TN-01` §4's equality condition** to claim 7 and drop the co-movement
+reassurance. Live in a stronger form if §2 reading (b) is what gets built. *One sentence.*
+
+**Also delete** `L2`:168 (claim 13) — one line, arguing for the opposite of what `L2`:165
+does.
+
+**Proposed invariants.** `TN-01` §9's `INV-V-b` must not be registered as stated (claim 8).
 
 | Proposed | Statement | Response |
 |---|---|---|
-| `INV-V-b′` | `n_eff = (1−α)/max_s w_s ≥ 10` for every risk functional, checked **against the reduction artefact** rather than as a tuning target — the reduction must deliver weights that resolve the declared `α` at the declared `S`, or one of the three must change | warn + `DEGRADED`; and a `HALT` if the triple is arithmetically infeasible, as `(α, S) = (0.95, 64)` is |
+| `INV-V-b′` | `n_eff = (1−α)/max_s w_s ≥ 10` per risk functional, checked **against the reduction artefact**, not as a tuning target | warn + `DEGRADED`; `HALT` if the triple is arithmetically infeasible, as `(0.95, 64)` is |
+| `INV-V-b″` | `1 − cvarLevel > w_(1)`, computed **per solve** — below this the functional is an essential supremum and `cvarLevel` is inert | warn + `DEGRADED`, naming the saturated functional; the ladder must not report conservatism it did not obtain |
+| `INV-V-a` | `cvarLevel ∈ (0,1)`, `cvarWeight ≥ 0`, `chanceLevel ∈ (0,1)` — from `TN-01` §9, still unregistered | `HALT` — a negative weight is silent risk-seeking |
+| `INV-V-c` | Every functional runs on a loss under the `TN-01` §0 convention; a tail of a benefit is negated | `HALT` — sign defect, not tuning (claim 5) |
+| `INV-D-h` | Reduction preserves `CVaR_α` of each risk-carrying marginal within a stated band — companion to `INV-D-07`, vacuous for path functionals | warn + `DEGRADED` |
 
-**Registrable claims** — new, from this note, in the register's format:
+**Registrable claims** — new, in the register's format:
 
 ```
-activation carries no cost primitive in C1; the term's argument is undefined   analytic
-E[activation revenue] and CVaR(activation cost) are oppositely signed          analytic
-imbalance and activation revenue are anti-comonotone in the tail               empirical, band TBD  (§4)
-CVaR_α(Σ) = Σ CVaR_α iff tail orderings agree; comonotone sufficient only      analytic
-n_eff ≥ 10 is infeasible for every ensemble at (α, S) = (0.95, 64)             analytic
-CVaR admits no strictly consistent scoring function                            analytic
-imbalance cost is time-additive, so §3b's drift is hours not weeks             analytic
-a contract sits on top of the single imbalance price for this site             assumed-declared
+no C2 shape can carry the RU program; L3:171 is not assemblable        analytic  (§2)
+eImbalance is [S,H] but every coefficient reaching it is [H]           analytic  (claim 4)
+a per-slot PwlTerm reading gives Σ_t CVaR_α — 192 tails, not one       analytic  (§2)
+CVaR_α = ess sup, constant in α, for all α ≥ 1 − w_(1)                 analytic  (§5a)
+↑cvarLevel lowers n_eff, so the ladder degrades the estimator          analytic  (claim 10)
+M-P9 is satisfied by a saturated, inert cvarLevel                      analytic  (claim 9)
+no registered invariant constrains any risk parameter                  analytic  (claim 12)
+L3 formulates no SOC chance constraint — the instrument ADR-019 uses   analytic  (claim 11)
+n_eff ≥ 10 is infeasible for every ensemble at (α, S) = (0.95, 64)     analytic  (claim 8)
+CVaR_α(Σ) = Σ CVaR_α iff tail orderings agree in the tail             analytic  (claim 7)
+the delineation λ_j linearises a tail whose tail set moves with x      analytic  (§2)
+the Σ_t-vs-Σ_k diversification gap on realised data                    empirical, band TBD
+a contract sits on top of the single imbalance price for this site     assumed-declared
 ```
 
-The last is registered **`assumed-declared`** and currently assumed **false** — the corpus
-is silent (§7), and the consequence is pre-committed: if a balancing-group markup or
-penalty band exists, `C4` resolves to the middle row and the risk term for this leg is
-replaced by a PWL rather than retuned.
+The last is `assumed-declared` and currently assumed **false** — the corpus is silent
+(§5b) — with the consequence pre-committed: if a markup or penalty band exists, C4 resolves
+to row 2 and this leg's risk term becomes a PWL rather than being retuned.
 
 ---
 
-## 12. Sources
+## 8. Compared to what
 
-Primary only; each supports a specific line above. `TN-01` §10 carries the
-Rockafellar–Uryasev, Artzner–Delbaen–Eber–Heath, Kupper–Schachermayer, Ruszczyński,
-Shapiro, Epstein–Schneider and Dupačová–Gröwe-Kuska–Römisch results and is not duplicated
-here.
+None of these repairs §2 — the payload carries none of the first four either.
+
+| Alternative | Why not |
+|---|---|
+| **Variance / mean-variance** | Punishes a favourable excursion as hard as an adverse one; wrong shape for a skewed one-sided loss, and it costs the MILP class. `L2`:121-123's own reason, and correct |
+| **VaR** | Non-convex on atomic `P_w`, needs binaries, blind to how bad the tail is beyond the quantile — which is the whole content of imbalance risk |
+| **Entropic / exponential utility** | The one law-invariant family that is genuinely time-consistent, so superficially attractive. But not positively homogeneous and not LP-representable: it breaks the price-outside-the-tail identity `L2`:61-66 depends on, and makes the measure scale-dependent |
+| **Worst case / ess sup** | Coherent and time-consistent, but at `S=64` on a `W₁`-reduced ensemble it is the tail of an artefact. Usable only with a calibrated ambiguity radius — which is the DRO row. Note §5a: the corpus may already be here by accident |
+| **Expectiles** | Coherent *and* elicitable, so they repair §5c. But no euro interpretation to show an operator, they forfeit the probability-distortion reading, and they would isolate this carrier from the other two. Fallback if §5c's limit ever binds; not now |
+| **`W₁`-DRO on a PWL loss** | Not rejected — §5b's recommendation, conditional on C4 resolving to "belief error" |
+
+---
+
+## 9. Sources
+
+Primary only. `TN-01` §10 carries the Rockafellar–Uryasev, Artzner–Delbaen–Eber–Heath,
+Kupper–Schachermayer, Ruszczyński, Shapiro, Epstein–Schneider and
+Dupačová–Gröwe-Kuska–Römisch results and is not duplicated here.
 
 | Result used | Source |
 |---|---|
 | CVaR is not elicitable | Gneiting (2011), *Making and evaluating point forecasts*, JASA 106(494) |
 | `(VaR, CVaR)` is jointly elicitable | Fissler & Ziegel (2016), *Higher order elicitability and Osband's principle*, Ann. Statist. 44(4) |
 | Expectiles are the only coherent elicitable law-invariant measures | Bellini, Klar, Müller & Rosazza Gianin (2014), *Generalized quantiles as risk measures*, Insurance Math. Econom. 54; Ziegel (2016), *Coherence and elicitability*, Math. Finance 26(4) |
-| `W₁`-DRO with piecewise-linear loss reduces to a finite convex program | Mohajerin Esfahani & Kuhn (2018), *Data-driven distributionally robust optimization using the Wasserstein metric*, Math. Prog. 171 |
+| `W₁`-DRO with PWL loss reduces to a finite convex program | Mohajerin Esfahani & Kuhn (2018), *Data-driven distributionally robust optimization using the Wasserstein metric*, Math. Prog. 171 |
